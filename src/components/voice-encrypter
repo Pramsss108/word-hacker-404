@@ -1,0 +1,19 @@
+
+import React from 'react';
+
+interface StatusMessageProps {
+  status: string;
+  error: string | null;
+}
+
+export const StatusMessage: React.FC<StatusMessageProps> = ({ status, error }) => (
+  <div className="text-center p-2 min-h-[40px]">
+    {error ? (
+      <p className="text-red-400">
+        <span className="font-bold">Error:</span> {error}
+      </p>
+    ) : (
+      <p className="text-gray-400">{status}</p>
+    )}
+  </div>
+);

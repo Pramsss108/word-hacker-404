@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Search, Zap, Brain, Sparkles, ChevronRight, Waves, Wand2, Music4, Lock } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
+import VoiceEncrypter from './components/VoiceEncrypter'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -18,7 +19,7 @@ const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: st
 ]
 
 function App() {
-  const [gameMode, setGameMode] = useState<'menu' | 'playing'>('menu')
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter'>('menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -31,10 +32,12 @@ function App() {
 
   return (
     <div className="app">
-  {/* Background effect */}
-  <MatrixRain opacity={0.08} density={24} speed={2} />
+      {/* Background effect */}
+      <MatrixRain opacity={0.08} density={24} speed={2} />
 
-  {gameMode === 'menu' ? (
+      {gameMode === 'voice-encrypter' ? (
+        <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
+      ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}
           <div className="sysbar">
@@ -87,7 +90,12 @@ function App() {
               <div className="tools-row">
                 <button className="tool glass"><Waves size={18} /> Sound Lab</button>
                 <button className="tool glass"><Wand2 size={18} /> Slang Scanner</button>
-                <button className="tool glass"><Music4 size={18} /> Voice Encryptor</button>
+                <button 
+                  className="tool glass"
+                  onClick={() => setGameMode('voice-encrypter')}
+                >
+                  <Music4 size={18} /> Voice Encryptor
+                </button>
                 <button className="tool glass"><Lock size={18} /> Private Drops</button>
               </div>
             </section>
