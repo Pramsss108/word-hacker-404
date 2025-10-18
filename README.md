@@ -88,3 +88,8 @@ This project is private and not licensed for public use.
 ---
 
 Built with ❤️ using React + TypeScript + Vite
+
+---
+
+Voice Encrypter documentation:
+- See `VOICE_ENCRYPTER_ENGINE_PLAN.md` for the client-only audio engine plan, milestones, and acceptance criteria.

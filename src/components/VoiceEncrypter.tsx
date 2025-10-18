@@ -11,6 +11,9 @@ import {
   audioBufferToWavBlob 
 } from '../services/audioService'
 
+// Import the new engine core for live preview
+import { getEngineCore, PreviewGraph } from '../services/engineCore'
+
 type Profile = {
   name: string
   settings: EffectSettings
@@ -29,6 +32,11 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   const [processedUrl, setProcessedUrl] = useState<string | null>(null)
   const [settings, setSettings] = useState<EffectSettings>(defaultSettings)
   const [profiles, setProfiles] = useState<Profile[]>([])
+  
+  // Live preview state
+  const [originalBuffer, setOriginalBuffer] = useState<AudioBuffer | null>(null)
+  const [previewGraph, setPreviewGraph] = useState<PreviewGraph | null>(null)
+  const [isPlaying, setIsPlaying] = useState<'none' | 'original' | 'preview'>('none')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const originalAudioRef = useRef<HTMLAudioElement>(null)
@@ -79,17 +87,44 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }, [originalUrl, processedUrl])
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     if (isProcessing) return
 
     if (originalUrl) URL.revokeObjectURL(originalUrl)
     if (processedUrl) URL.revokeObjectURL(processedUrl)
+    
+    // Clean up previous preview graph
+    if (previewGraph) {
+      previewGraph.dispose()
+      setPreviewGraph(null)
+    }
 
     setOriginalFile(file)
     setOriginalUrl(URL.createObjectURL(file))
     setProcessedUrl(null)
     setError(null)
-    setStatus(`Loaded ${file.name}. Adjust effects and click 'Process'.`)
+    setIsPlaying('none')
+    setStatus(`Loading ${file.name} for live preview...`)
+    
+    try {
+      // Load audio buffer for live preview
+      const buffer = await fileToAudioBuffer(file)
+      setOriginalBuffer(buffer)
+      
+      // Initialize engine core and build preview graph
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      const graph = engine.buildPreviewGraph(buffer, settings)
+      setPreviewGraph(graph)
+      engine.setPreviewGraph(graph)
+      
+      setStatus(`${file.name} ready. Use A/B preview or adjust effects.`)
+    } catch (error) {
+      console.error('Failed to load audio for preview:', error)
+      setError('Failed to load audio file for preview.')
+      setStatus('Failed to load audio. Please try another file.')
+    }
   }
 
   const handleProcess = async () => {
@@ -186,6 +221,103 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     setStatus(`Profile "${name}" deleted.`)
   }
 
+  // Live preview controls
+  const playOriginal = async () => {
+    if (!originalBuffer) return
+    
+    stopAll()
+    setIsPlaying('original')
+    
+    try {
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      // Create simple source to play original
+      const ctx = (engine as any).ctx // Access private context
+      const source = ctx.createBufferSource()
+      source.buffer = originalBuffer
+      source.connect(ctx.destination)
+      source.start(0)
+      
+      source.onended = () => setIsPlaying('none')
+    } catch (error) {
+      console.error('Failed to play original:', error)
+      setIsPlaying('none')
+    }
+  }
+
+  const playPreview = async () => {
+    if (!previewGraph || !originalBuffer) return
+    
+    stopAll()
+    setIsPlaying('preview')
+    
+    try {
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      // Update preview graph with current settings
+      previewGraph.updateParams(settings)
+      previewGraph.connect()
+      
+      if (previewGraph.sourceNode) {
+        previewGraph.sourceNode.start(0)
+        previewGraph.sourceNode.onended = () => {
+          setIsPlaying('none')
+          previewGraph.disconnect()
+          
+          // Rebuild source for next play
+          rebuildPreviewGraph()
+        }
+      }
+    } catch (error) {
+      console.error('Failed to play preview:', error)
+      setIsPlaying('none')
+    }
+  }
+
+  const stopAll = () => {
+    setIsPlaying('none')
+    if (previewGraph && previewGraph.sourceNode) {
+      try {
+        previewGraph.sourceNode.stop()
+        previewGraph.disconnect()
+      } catch (e) {
+        // Source might already be stopped
+      }
+    }
+  }
+
+  const rebuildPreviewGraph = async () => {
+    if (!originalBuffer) return
+    
+    try {
+      // Clean up old graph
+      if (previewGraph) {
+        previewGraph.dispose()
+      }
+      
+      // Build new graph
+      const engine = getEngineCore()
+      const newGraph = engine.buildPreviewGraph(originalBuffer, settings)
+      setPreviewGraph(newGraph)
+      engine.setPreviewGraph(newGraph)
+    } catch (error) {
+      console.error('Failed to rebuild preview graph:', error)
+    }
+  }
+
+  // Update settings and rebuild preview graph
+  const updateSettings = (newSettings: Partial<EffectSettings>) => {
+    const updated = { ...settings, ...newSettings }
+    setSettings(updated)
+    
+    // Update live preview if available
+    if (previewGraph) {
+      previewGraph.updateParams(updated)
+    }
+  }
+
   return (
     <div className="app voice-encrypter-page">
       {/* Matrix Rain Background - Consistent UX */}
@@ -270,6 +402,39 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
               <p className="panel-desc">Listen to your transformed voice. Download when ready.</p>
             </div>
             
+            {/* Live A/B Preview (M1 Engine Core) */}
+            {originalBuffer && (
+              <div className="ab-preview-section mb-4">
+                <div className="preview-header">
+                  <h4 className="preview-title">🎧 Live A/B Compare</h4>
+                  <p className="preview-desc">Instant preview without processing</p>
+                </div>
+                <div className="preview-controls">
+                  <button
+                    onClick={playOriginal}
+                    className={`preview-btn ${isPlaying === 'original' ? 'playing' : ''}`}
+                    disabled={isProcessing}
+                  >
+                    {isPlaying === 'original' ? '⏸️' : '▶️'} Original
+                  </button>
+                  <button
+                    onClick={playPreview}
+                    className={`preview-btn preview ${isPlaying === 'preview' ? 'playing' : ''}`}
+                    disabled={isProcessing || !previewGraph}
+                  >
+                    {isPlaying === 'preview' ? '⏸️' : '▶️'} Preview
+                  </button>
+                  <button
+                    onClick={stopAll}
+                    className="preview-btn stop"
+                    disabled={isPlaying === 'none'}
+                  >
+                    ⏹️ Stop
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="audio-comparison">
               {originalUrl && (
                 <div className="audio-track">
@@ -324,7 +489,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableAIEnhancement}
-                    onChange={(e) => setSettings({...settings, enableAIEnhancement: e.target.checked})}
+                    onChange={(e) => updateSettings({enableAIEnhancement: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🤖 AI Enhancement</span>
@@ -339,7 +504,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="1"
                     step="0.1"
                     value={settings.aiEnhancement}
-                    onChange={(e) => setSettings({...settings, aiEnhancement: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({aiEnhancement: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -352,7 +517,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableNoiseReduction}
-                    onChange={(e) => setSettings({...settings, enableNoiseReduction: e.target.checked})}
+                    onChange={(e) => updateSettings({enableNoiseReduction: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">� Noise Reduction</span>
@@ -367,7 +532,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="1"
                     step="0.1"
                     value={settings.noiseReduction}
-                    onChange={(e) => setSettings({...settings, noiseReduction: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({noiseReduction: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -380,7 +545,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enablePitchShift}
-                    onChange={(e) => setSettings({...settings, enablePitchShift: e.target.checked})}
+                    onChange={(e) => updateSettings({enablePitchShift: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🎵 Pitch Shift</span>
@@ -395,7 +560,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="12"
                     step="0.5"
                     value={settings.pitchShift}
-                    onChange={(e) => setSettings({...settings, pitchShift: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({pitchShift: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -408,7 +573,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableDistortion}
-                    onChange={(e) => setSettings({...settings, enableDistortion: e.target.checked})}
+                    onChange={(e) => updateSettings({enableDistortion: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🔥 Distortion</span>
@@ -423,7 +588,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="1"
                     step="0.1"
                     value={settings.distortion}
-                    onChange={(e) => setSettings({...settings, distortion: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({distortion: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -436,7 +601,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableReverb}
-                    onChange={(e) => setSettings({...settings, enableReverb: e.target.checked})}
+                    onChange={(e) => updateSettings({enableReverb: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🏛️ Reverb</span>
@@ -451,7 +616,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="1"
                     step="0.1"
                     value={settings.reverbMix}
-                    onChange={(e) => setSettings({...settings, reverbMix: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({reverbMix: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -464,7 +629,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableDelay}
-                    onChange={(e) => setSettings({...settings, enableDelay: e.target.checked})}
+                    onChange={(e) => updateSettings({enableDelay: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🔄 Delay</span>
@@ -479,7 +644,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="1"
                     step="0.01"
                     value={settings.delayTime}
-                    onChange={(e) => setSettings({...settings, delayTime: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({delayTime: parseFloat(e.target.value)})}
                   />
                   <label>Feedback: {fmt(settings.delayFeedback, 1)}</label>
                   <input
@@ -488,7 +653,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="0.9"
                     step="0.1"
                     value={settings.delayFeedback}
-                    onChange={(e) => setSettings({...settings, delayFeedback: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({delayFeedback: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -501,7 +666,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableLowpass}
-                    onChange={(e) => setSettings({...settings, enableLowpass: e.target.checked})}
+                    onChange={(e) => updateSettings({enableLowpass: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🔽 Low-pass Filter</span>
@@ -516,7 +681,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="20000"
                     step="100"
                     value={settings.lowpassFreq}
-                    onChange={(e) => setSettings({...settings, lowpassFreq: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({lowpassFreq: parseFloat(e.target.value)})}
                   />
                 </div>
               )}
@@ -529,7 +694,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <input
                     type="checkbox"
                     checked={settings.enableHighpass}
-                    onChange={(e) => setSettings({...settings, enableHighpass: e.target.checked})}
+                    onChange={(e) => updateSettings({enableHighpass: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
                   <span className="effect-name">🔼 High-pass Filter</span>
@@ -544,7 +709,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     max="2000"
                     step="10"
                     value={settings.highpassFreq}
-                    onChange={(e) => setSettings({...settings, highpassFreq: parseFloat(e.target.value)})}
+                    onChange={(e) => updateSettings({highpassFreq: parseFloat(e.target.value)})}
                   />
                 </div>
               )}

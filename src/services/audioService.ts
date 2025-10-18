@@ -52,6 +52,10 @@ export const defaultSettings: EffectSettings = {
 const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 export const fileToAudioBuffer = async (file: File | Blob): Promise<AudioBuffer> => {
+    // Ensure context is running (some browsers start suspended until user gesture)
+    if (audioContext.state === 'suspended') {
+        try { await audioContext.resume(); } catch {}
+    }
     const arrayBuffer = await file.arrayBuffer();
     return await audioContext.decodeAudioData(arrayBuffer);
 };
@@ -81,65 +85,69 @@ export const applyEffects = async (
     let processedBuffer = audioBuffer;
     let progress = 0.1;
     const enabledEffects = getEnabledEffects(settings);
+    if (enabledEffects.length === 0) {
+        onProgress?.('ℹ️ No effects enabled. Returning original audio.', 1);
+        return processedBuffer;
+    }
     const progressStep = 0.8 / enabledEffects.length;
+    const tick = async () => new Promise<void>(r => setTimeout(r, 0));
     
     // Apply each enabled effect in sequence
     for (const effect of enabledEffects) {
-        switch (effect) {
-            case 'aienhancement':
-                onProgress?.('🤖 AI Voice Enhancement...', progress);
-                processedBuffer = await applyAIEnhancement(processedBuffer, settings.aiEnhancement);
-                break;
-                
-            case 'noisereduction':
-                onProgress?.('🔇 Noise Reduction...', progress);
-                processedBuffer = await applyNoiseReduction(processedBuffer, settings.noiseReduction);
-                break;
-                
-            case 'pitchshift':
-                onProgress?.('🎵 Pitch Shifting...', progress);
-                processedBuffer = await applyPitchShift(processedBuffer, settings.pitchShift);
-                break;
-                
-            case 'distortion':
-                onProgress?.('🔥 Distortion Effect...', progress);
-                processedBuffer = await applyDistortion(processedBuffer, settings.distortion);
-                break;
-                
-            case 'reverb':
-                onProgress?.('🏛️ Reverb Processing...', progress);
-                processedBuffer = await applyReverb(processedBuffer, settings.reverbMix);
-                break;
-                
-            case 'delay':
-                onProgress?.('🔄 Delay Effect...', progress);
-                processedBuffer = await applyDelay(processedBuffer, settings.delayTime, settings.delayFeedback);
-                break;
-                
-            case 'lowpass':
-                onProgress?.('🔽 Low-pass Filter...', progress);
-                processedBuffer = await applyLowpassFilter(processedBuffer, settings.lowpassFreq);
-                break;
-                
-            case 'highpass':
-                onProgress?.('🔼 High-pass Filter...', progress);
-                processedBuffer = await applyHighpassFilter(processedBuffer, settings.highpassFreq);
-                break;
-                
-            case 'mastering':
-                onProgress?.('🎚️ Professional Mastering...', progress);
-                const masteringSettings: MasteringSettings = {
-                    eqEnabled: true,
-                    eqSettings: { low: 1.1, mid: 1.2, high: 1.0 },
-                    harmonic: true,
-                    harmonicAmount: 0.15,
-                    stereoWidth: 0.2,
-                    targetLUFS: -23
-                };
-                processedBuffer = await aiEngine.masterAudio(processedBuffer, masteringSettings);
-                break;
+        try {
+            switch (effect) {
+                case 'aienhancement':
+                    onProgress?.('🤖 AI Voice Enhancement...', progress);
+                    processedBuffer = await applyAIEnhancement(processedBuffer, settings.aiEnhancement);
+                    break;
+                case 'noisereduction':
+                    onProgress?.('🔇 Noise Reduction...', progress);
+                    processedBuffer = await applyNoiseReduction(processedBuffer, settings.noiseReduction);
+                    break;
+                case 'pitchshift':
+                    onProgress?.('🎵 Pitch Shifting...', progress);
+                    processedBuffer = await applyPitchShift(processedBuffer, settings.pitchShift);
+                    break;
+                case 'distortion':
+                    onProgress?.('🔥 Distortion Effect...', progress);
+                    processedBuffer = await applyDistortion(processedBuffer, settings.distortion);
+                    break;
+                case 'reverb':
+                    onProgress?.('🏛️ Reverb Processing...', progress);
+                    processedBuffer = await applyReverb(processedBuffer, settings.reverbMix);
+                    break;
+                case 'delay':
+                    onProgress?.('🔄 Delay Effect...', progress);
+                    processedBuffer = await applyDelay(processedBuffer, settings.delayTime, settings.delayFeedback);
+                    break;
+                case 'lowpass':
+                    onProgress?.('🔽 Low-pass Filter...', progress);
+                    processedBuffer = await applyLowpassFilter(processedBuffer, settings.lowpassFreq);
+                    break;
+                case 'highpass':
+                    onProgress?.('🔼 High-pass Filter...', progress);
+                    processedBuffer = await applyHighpassFilter(processedBuffer, settings.highpassFreq);
+                    break;
+                case 'mastering':
+                    onProgress?.('🎚️ Professional Mastering...', progress);
+                    const masteringSettings: MasteringSettings = {
+                        eqEnabled: true,
+                        eqSettings: { low: 1.1, mid: 1.2, high: 1.0 },
+                        harmonic: true,
+                        harmonicAmount: 0.15,
+                        stereoWidth: 0.2,
+                        targetLUFS: -23
+                    };
+                    processedBuffer = await aiEngine.masterAudio(processedBuffer, masteringSettings);
+                    break;
+            }
+        } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e);
+            console.warn(`Effect '${effect}' failed:`, msg);
+            // Continue with the next effect without crashing the whole pipeline
         }
         progress += progressStep;
+        await tick();
     }
     
     onProgress?.('✅ Processing Complete!', 1.0);
