@@ -3,6 +3,7 @@ import { Search, Zap, Brain, Sparkles, ChevronRight, Waves, Wand2, Music4, Lock 
 import './App.css'
 import MatrixRain from './components/MatrixRain'
 import VoiceEncrypter from './components/VoiceEncrypter'
+import { VoiceEncrypterV2 } from './components/VoiceEncrypterV2'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -19,7 +20,7 @@ const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: st
 ]
 
 function App() {
-  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter'>('menu')
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'voice-encrypter-v2'>('menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -37,6 +38,8 @@ function App() {
 
       {gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
+      ) : gameMode === 'voice-encrypter-v2' ? (
+        <VoiceEncrypterV2 onBackToHome={() => setGameMode('menu')} />
       ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}
@@ -95,6 +98,12 @@ function App() {
                   onClick={() => setGameMode('voice-encrypter')}
                 >
                   <Music4 size={18} /> Voice Encryptor
+                </button>
+                <button 
+                  className="tool glass nasa-grade"
+                  onClick={() => setGameMode('voice-encrypter-v2')}
+                >
+                  <Sparkles size={18} /> NASA V2.0
                 </button>
                 <button className="tool glass"><Lock size={18} /> Private Drops</button>
               </div>

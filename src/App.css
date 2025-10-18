@@ -496,6 +496,42 @@
   .stats { grid-template-columns: repeat(4, minmax(0,1fr)); }
 }
 
+/* NASA V2.0 Special Button */
+.nasa-grade {
+  background: linear-gradient(135deg, rgba(10, 255, 106, 0.1), rgba(7, 192, 107, 0.1)) !important;
+  border: 1px solid #0aff6a !important;
+  color: #0aff6a !important;
+  text-shadow: 0 0 10px rgba(10, 255, 106, 0.5);
+  box-shadow: 0 0 20px rgba(10, 255, 106, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.nasa-grade::before {
+  content: 'AEROSPACE';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: #0aff6a;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2px 6px;
+  border-radius: 0 0 0 4px;
+  letter-spacing: 1px;
+}
+
+.nasa-grade:hover {
+  background: linear-gradient(135deg, rgba(10, 255, 106, 0.2), rgba(7, 192, 107, 0.2)) !important;
+  box-shadow: 0 0 30px rgba(10, 255, 106, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+.nasa-grade svg {
+  color: #0aff6a;
+  filter: drop-shadow(0 0 5px rgba(10, 255, 106, 0.5));
+}
+
 /* Voice Encrypter Page Styles */
 .voice-encrypter-page {
   min-height: 100vh;
