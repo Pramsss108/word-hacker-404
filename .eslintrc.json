@@ -1,0 +1,29 @@
+{
+  "root": true,
+  "env": { 
+    "browser": true, 
+    "es2020": true,
+    "node": true
+  },
+  "ignorePatterns": [
+    "dist/**/*", 
+    ".eslintrc.json",
+    "quality-check.js", 
+    "deploy-gate.js",
+    "node_modules/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts"
+  ],
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "no-console": "off"
+  }
+}

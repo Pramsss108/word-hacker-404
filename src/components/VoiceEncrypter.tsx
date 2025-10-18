@@ -1,18 +1,21 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { X, Upload, Download, Save, Trash2, ArrowLeft } from 'lucide-react'
 import MatrixRain from './MatrixRain'
 
-// Import the audio service functions
+// Import the audio service functions and new engine core
 import { 
   EffectSettings, 
   defaultSettings, 
   fileToAudioBuffer, 
-  applyEffects, 
   audioBufferToWavBlob 
 } from '../services/audioService'
 
 // Import the new engine core for live preview
 import { getEngineCore, PreviewGraph } from '../services/engineCore'
+
+// M3: Import WaveSurfer for waveform visualization
+import WaveSurfer from 'wavesurfer.js'
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js'
 
 type Profile = {
   name: string
@@ -44,6 +47,16 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const originalAudioRef = useRef<HTMLAudioElement>(null)
   const processedAudioRef = useRef<HTMLAudioElement>(null)
+  
+  // M3: WaveSurfer refs and state
+  const waveformContainerRef = useRef<HTMLDivElement>(null)
+  const waveSurferRef = useRef<WaveSurfer | null>(null)
+  const [selectedRegion, setSelectedRegion] = useState<{start: number, end: number} | null>(null)
+  const [meterData, setMeterData] = useState({
+    peak: 0,
+    rms: 0,
+    loudness: -60
+  })
 
   // Helper function to count enabled effects
   const getEnabledEffectsCount = (): number => {
@@ -90,6 +103,13 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }, [originalUrl, processedUrl])
 
+  // Initialize WaveSurfer when audio is loaded
+  useEffect(() => {
+    if (originalUrl) {
+      initializeWaveSurfer(originalUrl)
+    }
+  }, [originalUrl])
+
   const handleFileSelect = async (file: File) => {
     if (isProcessing) return
 
@@ -128,6 +148,13 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       setPreviewGraph(graph)
       engine.setPreviewGraph(graph)
       
+      // M3: Initialize WaveSurfer waveform visualization
+      setTimeout(() => {
+        if (originalUrl) {
+          initializeWaveSurfer(originalUrl)
+        }
+      }, 100) // Small delay to ensure DOM is ready
+      
       setStatus(`${file.name} ready. Use A/B preview or adjust effects.`)
     } catch (error) {
       console.error('Failed to load audio for preview:', error)
@@ -135,6 +162,84 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       setStatus('Failed to load audio. Please try another file.')
     }
   }
+
+  // M3: Initialize WaveSurfer with waveform and regions
+  const initializeWaveSurfer = (audioUrl: string) => {
+    if (!waveformContainerRef.current) return
+
+    // Dispose existing instance
+    if (waveSurferRef.current) {
+      waveSurferRef.current.destroy()
+    }
+
+    // Create new WaveSurfer instance  
+    const wavesurfer = WaveSurfer.create({
+      container: waveformContainerRef.current,
+      waveColor: '#0aff6a',
+      progressColor: '#07c06b',
+      cursorColor: '#d92e2e',
+      barWidth: 2,
+      barRadius: 1,
+      height: 100,
+      normalize: true
+    })
+
+    // Register regions plugin
+    const regions = wavesurfer.registerPlugin(RegionsPlugin.create())
+
+    wavesurfer.load(audioUrl)
+
+    // Handle region selection for looping
+    regions.on('region-created', (region) => {
+      if (region && typeof region === 'object' && 'start' in region && 'end' in region) {
+        setSelectedRegion({
+          start: region.start as number,
+          end: region.end as number
+        })
+      }
+    })
+
+    waveSurferRef.current = wavesurfer
+  }
+
+  // M3: Start live metering from preview graph
+  const startLiveMetering = useCallback(() => {
+    if (!previewGraph) return
+
+    const updateMeters = () => {
+      try {
+        // Get the meter node (last in the chain)
+        const meterNode = previewGraph.nodes[previewGraph.nodes.length - 1] as any
+        if (meterNode && typeof meterNode.getMeterData === 'function') {
+          const data = meterNode.getMeterData()
+          setMeterData({
+            peak: data.peak,
+            rms: data.rms,
+            loudness: data.loudness
+          })
+        }
+      } catch (error) {
+        console.warn('Meter update failed:', error)
+      }
+      
+      // Continue animation if playing
+      if (isPlaying !== 'none') {
+        requestAnimationFrame(updateMeters)
+      }
+    }
+
+    // Start the animation loop
+    updateMeters()
+  }, [isPlaying, previewGraph])
+
+  // Stop live metering and reset values
+  const stopLiveMetering = useCallback(() => {
+    setMeterData({
+      peak: 0,
+      rms: 0,
+      loudness: -60
+    })
+  }, [])
 
   const handleProcess = async () => {
     if (!originalFile) {
@@ -151,33 +256,18 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       setStatus('🔍 Analyzing audio structure...')
       const audioBuffer = await fileToAudioBuffer(originalFile)
       
-      // AI Processing with progress updates
-      const processedBuffer = await applyEffects(audioBuffer, settings, (stage, progress) => {
+      // Process with engineCore for export parity with preview
+      setStatus('🤖 Initializing professional audio engine...')
+      const engineCore = getEngineCore()
+      
+      const processedBuffer = await engineCore.renderOffline(audioBuffer, settings, (progress) => {
         const percentage = Math.round(progress * 100)
-        switch (stage) {
-          case 'Initializing AI Engine...':
-            setStatus('🤖 Initializing AI neural networks...')
-            break
-          case 'AI Vocal Separation...':
-            setStatus(`🎯 AI separating vocals from background... ${percentage}%`)
-            break
-          case 'Mixing separated tracks...':
-            setStatus('🎚️ Intelligently mixing audio layers...')
-            break
-          case '🤖 AI Voice Enhancement...':
-            setStatus('✨ AI enhancing voice clarity and quality...')
-            break
-          case '🔇 Noise Reduction...':
-            setStatus(`🛡️ NASA-Grade spectral noise analysis and filtering... ${percentage}%`)
-            break
-          case 'Professional Mastering...':
-            setStatus('🎵 Applying professional mastering chain...')
-            break
-          case 'Processing Complete!':
-            setStatus('🛡️ Voice successfully encrypted and enhanced!')
-            break
-          default:
-            setStatus(`🔄 ${stage} ${percentage}%`)
+        if (progress < 0.3) {
+          setStatus(`🎯 Applying effects chain... ${percentage}%`)
+        } else if (progress < 0.7) {
+          setStatus(`�️ Professional mastering... ${percentage}%`)
+        } else {
+          setStatus(`🛡️ Finalizing processed audio... ${percentage}%`)
         }
       })
       
@@ -233,6 +323,9 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   // Complete audio cleanup - stops all sources and disconnects everything
   const stopAll = () => {
     setIsPlaying('none')
+    
+    // Stop live metering
+    stopLiveMetering()
     
     // Stop active source if exists
     if (activeSourceRef.current) {
@@ -312,8 +405,13 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
         currentGraph.connect()
         
         setIsPlaying('preview')
+        
+        // Start live metering for preview
+        startLiveMetering()
+        
         currentGraph.sourceNode.onended = () => {
           setIsPlaying('none')
+          stopLiveMetering()
           currentGraph.disconnect()
         }
         
@@ -441,6 +539,66 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
               <p className="panel-desc">Listen to your transformed voice. Download when ready.</p>
             </div>
             
+            {/* M3: Waveform Visualization */}
+            {originalUrl && (
+              <div className="waveform-section">
+                <h3 className="section-title">📊 Live Waveform & Metering</h3>
+                
+                <div className="waveform-container">
+                  <div className="waveform-wrapper">
+                    <div 
+                      ref={waveformContainerRef} 
+                      className="waveform-display"
+                    />
+                    <div className="waveform-overlay" />
+                  </div>
+                
+                  {/* M3: Live Audio Meters */}
+                  <div className="live-meters">
+                  <div className="meter-group">
+                    <div className="meter-label">Peak</div>
+                    <div className="meter-bar">
+                      <div 
+                        className="meter-fill peak"
+                        style={{ width: `${Math.min(100, meterData.peak * 100)}%` }}
+                      />
+                    </div>
+                    <div className="meter-value">{(meterData.peak * 100).toFixed(1)}%</div>
+                  </div>
+                  
+                  <div className="meter-group">
+                    <div className="meter-label">RMS</div>
+                    <div className="meter-bar">
+                      <div 
+                        className="meter-fill rms"
+                        style={{ width: `${Math.min(100, meterData.rms * 100)}%` }}
+                      />
+                    </div>
+                    <div className="meter-value">{(meterData.rms * 100).toFixed(1)}%</div>
+                  </div>
+                  
+                  <div className="meter-group">
+                    <div className="meter-label">Loudness</div>
+                    <div className="meter-bar">
+                      <div 
+                        className="meter-fill loudness"
+                        style={{ width: `${Math.min(100, Math.max(0, (meterData.loudness + 60) / 60 * 100))}%` }}
+                      />
+                    </div>
+                    <div className="meter-value">{meterData.loudness.toFixed(1)} LUFS</div>
+                  </div>
+                </div>
+                </div>
+                
+                {/* Region Selection Info */}
+                {selectedRegion && (
+                  <div className="region-info">
+                    Loop Selection: <span className="highlight">{selectedRegion.start.toFixed(2)}s - {selectedRegion.end.toFixed(2)}s</span> 
+                    (Duration: <span className="highlight">{(selectedRegion.end - selectedRegion.start).toFixed(2)}s</span>)
+                  </div>
+                )}
+              </div>
+            )}
 
 
             <div className="audio-comparison">
