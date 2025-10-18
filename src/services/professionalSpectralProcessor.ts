@@ -1,8 +1,8 @@
 /**
- * NASA-Grade Spectral Audio Processing Engine
+ * Professional-Grade Spectral Audio Processing Engine
  * Version 2.0 - Aerospace Standards Compliance
  * 
- * Professional multi-band spectral processor with scientific-grade measurements
+ * Advanced multi-band spectral processor with scientific-grade measurements
  * and real-time analysis capabilities for mission-critical audio applications.
  */
 
@@ -57,7 +57,7 @@ export interface SpectralData {
   analysisParams: SpectralConfig
 }
 
-export class NASASpectralProcessor {
+export class ProfessionalSpectralProcessor {
   private audioContext: AudioContext
   private analyzer!: AnalyserNode
   private spectralData!: SpectralData
@@ -75,7 +75,7 @@ export class NASASpectralProcessor {
   private spectrogramHistory!: Float32Array[]
   private measurementHistory!: AudioMeasurements[]
   
-  // NASA-Grade Error Handling
+  // Professional-Grade Error Handling
   private errorHandlers: Map<string, Function> = new Map()
   private systemHealth!: {
     cpuLoad: number
@@ -521,4 +521,4 @@ export class NASASpectralProcessor {
 }
 
 // Export for professional audio applications
-export default NASASpectralProcessor
+export default ProfessionalSpectralProcessor

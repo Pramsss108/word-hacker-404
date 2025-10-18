@@ -1,8 +1,8 @@
 /**
- * Voice Encrypter Version 2.0 - NASA Aerospace Standards
+ * Voice Encrypter Version 2.0 - Professional Aerospace Standards
  * 
- * Professional mission-control interface with advanced spectral processing,
- * multi-agent quality assurance, and NASA-grade compliance monitoring.
+ * Advanced mission-control interface with professional spectral processing,
+ * multi-agent quality assurance, and aerospace-grade compliance monitoring.
  */
 
 import { useState } from 'react'
@@ -15,21 +15,21 @@ type VoiceEncrypterV2Props = {
 }
 
 export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props) {
-  const [status, setStatus] = useState('Ready. Upload audio file for NASA-grade processing.')
+  const [status, setStatus] = useState('Ready. Upload audio file for professional-grade processing.')
   const [error, setError] = useState<string | null>(null)
   const [originalFile, setOriginalFile] = useState<File | null>(null)
   const [originalBuffer, setOriginalBuffer] = useState<AudioBuffer | null>(null)
   const [processedBuffer, setProcessedBuffer] = useState<AudioBuffer | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [qualityReport, setQualityReport] = useState<any>(null)
-  const [nasaCompliance, setNasaCompliance] = useState<number>(0)
+  const [professionalCompliance, setProfessionalCompliance] = useState<number>(0)
 
   // File upload handler
   const handleFileSelect = async (file: File) => {
     try {
       setError(null)
       setOriginalFile(file)
-      setStatus('Processing file with NASA-grade analysis...')
+      setStatus('Processing file with professional-grade analysis...')
       
       // Convert file to audio buffer
       const arrayBuffer = await file.arrayBuffer()
@@ -39,12 +39,12 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
       setOriginalBuffer(buffer)
       setStatus('Audio loaded. Mission Control analyzing...')
       
-      console.log(`🚀 NASA Audio Processing: ${file.name} loaded - ${buffer.duration.toFixed(1)}s`)
+      console.log(`🚀 Professional Audio Processing: ${file.name} loaded - ${buffer.duration.toFixed(1)}s`)
       
     } catch (err) {
-      console.error('🚨 NASA Processing Error:', err)
-      setError(`NASA processing failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
-      setStatus('Error in NASA processing system')
+      console.error('🚨 Professional Processing Error:', err)
+      setError(`Professional processing failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      setStatus('Error in professional processing system')
     }
   }
 
@@ -52,14 +52,14 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
   const handleProcessingComplete = (result: AudioBuffer) => {
     setProcessedBuffer(result)
     setIsProcessing(false)
-    setStatus('NASA-grade processing complete. Audio optimized to aerospace standards.')
+    setStatus('Professional-grade processing complete. Audio optimized to aerospace standards.')
   }
 
   // Handle quality report updates
   const handleQualityReport = (report: any) => {
     setQualityReport(report)
     if (report && report.overallScore !== undefined) {
-      setNasaCompliance(report.overallScore)
+      setProfessionalCompliance(report.overallScore)
     }
   }
 
@@ -88,11 +88,11 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
         
         const a = document.createElement('a')
         a.href = url
-        a.download = `${originalFile?.name?.split('.')[0] || 'nasa-processed'}_NASA_GRADE.wav`
+        a.download = `${originalFile?.name?.split('.')[0] || 'professional-processed'}_PROFESSIONAL_GRADE.wav`
         a.click()
         
         URL.revokeObjectURL(url)
-        setStatus('NASA-certified audio exported successfully.')
+        setStatus('Professional-certified audio exported successfully.')
       })
       
     } catch (err) {
@@ -103,8 +103,8 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
 
   return (
     <div className="voice-encrypter-v2">
-      {/* NASA Header Interface */}
-      <div className="nasa-header">
+      {/* Professional Header Interface */}
+      <div className="professional-header">
         <button 
           onClick={onBackToHome}
           className="back-btn"
@@ -113,28 +113,28 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
           Return to Base
         </button>
         
-        <div className="nasa-branding">
+        <div className="professional-branding">
           <h1>VOICE ENCRYPTER V2.0</h1>
-          <p>NASA Aerospace Standards • Mission-Critical Audio Processing</p>
+          <p>Aerospace Standards • Mission-Critical Audio Processing</p>
         </div>
         
         <div className="compliance-indicator">
           <div className="compliance-score">
-            NASA: {nasaCompliance.toFixed(0)}%
+            Professional: {professionalCompliance.toFixed(0)}%
           </div>
-          <div className={`compliance-status ${nasaCompliance >= 90 ? 'certified' : nasaCompliance >= 70 ? 'qualified' : 'developing'}`}>
-            {nasaCompliance >= 90 ? 'CERTIFIED' : nasaCompliance >= 70 ? 'QUALIFIED' : 'DEVELOPING'}
+          <div className={`compliance-status ${professionalCompliance >= 90 ? 'certified' : professionalCompliance >= 70 ? 'qualified' : 'developing'}`}>
+            {professionalCompliance >= 90 ? 'CERTIFIED' : professionalCompliance >= 70 ? 'QUALIFIED' : 'DEVELOPING'}
           </div>
         </div>
       </div>
 
       {/* File Upload Interface */}
       {!originalBuffer && (
-        <div className="nasa-upload-section">
+        <div className="professional-upload-section">
           <div className="upload-panel">
             <div className="upload-header">
               <h3>🛡️ SECURE AUDIO UPLOAD</h3>
-              <p>Upload your audio for NASA-grade processing and analysis</p>
+              <p>Upload your audio for professional-grade processing and analysis</p>
             </div>
             
             <input
@@ -142,16 +142,16 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
               accept="audio/*,video/*"
               onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
               className="hidden"
-              id="nasa-file-input"
+              id="professional-file-input"
             />
             
-            <label htmlFor="nasa-file-input" className="nasa-upload-zone">
+            <label htmlFor="professional-file-input" className="professional-upload-zone">
               <div className="upload-icon">
                 <Upload size={48} />
               </div>
               <div className="upload-text">
                 <h4>{originalFile ? originalFile.name : 'Select Audio File'}</h4>
-                <p>Supports: WAV, MP3, M4A • Max: 100MB • NASA Security Standards</p>
+                <p>Supports: WAV, MP3, M4A • Max: 100MB • Professional Security Standards</p>
               </div>
             </label>
             
@@ -181,7 +181,7 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
           />
           
           {/* Processing Actions */}
-          <div className="nasa-actions">
+          <div className="professional-actions">
             <div className="action-panel">
               <h3>MISSION OPERATIONS</h3>
               
@@ -199,7 +199,7 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
                   disabled={!processedBuffer}
                   className="action-btn export-btn"
                 >
-                  📁 EXPORT NASA-CERTIFIED AUDIO
+                  📁 EXPORT PROFESSIONAL-CERTIFIED AUDIO
                 </button>
                 
                 <button 
@@ -224,8 +224,8 @@ export default function VoiceEncrypterV2({ onBackToHome }: VoiceEncrypterV2Props
                       <span className="score">{qualityReport.overallScore?.toFixed(1)}%</span>
                     </div>
                     <div className="quality-item">
-                      <span>NASA Compliance:</span>
-                      <span className="score">{qualityReport.nasaCompliance?.toFixed(1)}%</span>
+                      <span>Professional Compliance:</span>
+                      <span className="score">{qualityReport.professionalCompliance?.toFixed(1)}%</span>
                     </div>
                     <div className="quality-item">
                       <span>Audio Standards:</span>

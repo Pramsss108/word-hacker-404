@@ -441,6 +441,34 @@
 .tool { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 0.75rem; border-radius: 999px; color: var(--text); background: var(--panel); border: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
 .tool:hover { border-color: rgba(10,255,106,0.6); box-shadow: 0 6px 20px rgba(10,255,106,0.12); }
 
+/* Professional and Aerospace Grade Tools */
+.tool.professional-grade { 
+  background: linear-gradient(135deg, rgba(10,255,106,0.1) 0%, rgba(7,192,107,0.15) 100%);
+  border-color: rgba(10,255,106,0.4);
+  color: var(--accent);
+}
+
+.tool.aerospace-grade {
+  background: linear-gradient(135deg, rgba(10,255,106,0.15) 0%, rgba(7,192,107,0.2) 100%);
+  border: 2px solid rgba(10,255,106,0.6);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(10,255,106,0.2);
+  animation: aerospace-pulse 3s ease-in-out infinite;
+}
+
+.tool.aerospace-grade:hover {
+  background: linear-gradient(135deg, rgba(10,255,106,0.25) 0%, rgba(7,192,107,0.3) 100%);
+  border-color: var(--accent);
+  box-shadow: 0 0 25px rgba(10,255,106,0.4);
+  transform: translateY(-1px);
+}
+
+@keyframes aerospace-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(10,255,106,0.2); }
+  50% { box-shadow: 0 0 25px rgba(10,255,106,0.4); }
+}
+
 /* Featured carousel */
 .featured { margin-top: 1rem; }
 .carousel { display: grid; grid-auto-flow: column; gap: 0.75rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.4rem; }

@@ -21,7 +21,7 @@ import {
   Target,
   Shield
 } from 'lucide-react'
-import NASASpectralProcessor from '../services/nasaSpectralProcessor'
+import ProfessionalSpectralProcessor from '../services/professionalSpectralProcessor'
 import MultiAgentQualitySystem from '../services/multiAgentQuality'
 
 interface MissionControlProps {
@@ -37,7 +37,7 @@ export default function MissionControl({
 }: MissionControlProps) {
   // Core System State
   const [systemStatus, setSystemStatus] = useState<'initializing' | 'operational' | 'processing' | 'error'>('initializing')
-  const [spectralProcessor, setSpectralProcessor] = useState<NASASpectralProcessor | null>(null)
+  const [spectralProcessor, setSpectralProcessor] = useState<ProfessionalSpectralProcessor | null>(null)
   const [qualitySystem, setQualitySystem] = useState<MultiAgentQualitySystem | null>(null)
   
   // Real-time Monitoring Data
@@ -79,7 +79,7 @@ export default function MissionControl({
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
       
       // Initialize NASA Spectral Processor
-      const processor = new NASASpectralProcessor(audioContextRef.current, {
+      const processor = new ProfessionalSpectralProcessor(audioContextRef.current, {
         fftSize: 16384,
         windowFunction: 'hanning',
         overlapRatio: 0.75,
@@ -105,7 +105,7 @@ export default function MissionControl({
     }
   }
 
-  const startRealTimeMonitoring = (processor: NASASpectralProcessor, qaSystem: MultiAgentQualitySystem) => {
+  const startRealTimeMonitoring = (processor: ProfessionalSpectralProcessor, qaSystem: MultiAgentQualitySystem) => {
     const updateInterval = setInterval(() => {
       try {
         // Update audio measurements

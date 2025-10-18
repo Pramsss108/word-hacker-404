@@ -1,5 +1,55 @@
-/* NASA Mission Control Professional Interface Styles */
+/* Professional Mission Control Interface Styles */
 /* Version 2.0 - Aerospace Standards Compliance */
+
+/* Professional Header Styles */
+.professional-header,
+.nasa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, rgba(11, 11, 13, 0.95) 0%, rgba(26, 26, 31, 0.98) 100%);
+  backdrop-filter: blur(25px);
+  border-bottom: 2px solid #0aff6a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.professional-branding,
+.nasa-branding {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.professional-upload-section,
+.nasa-upload-section {
+  padding: 2rem;
+  margin: 1rem 0;
+}
+
+.professional-upload-zone,
+.nasa-upload-zone {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 2px dashed #0aff6a;
+  border-radius: 12px;
+  background: rgba(10, 255, 106, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-actions,
+.nasa-actions {
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
 
 .mission-control {
   min-height: 100vh;
