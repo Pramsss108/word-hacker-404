@@ -291,7 +291,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   }
 
   const playPreview = async () => {
-    if (!previewGraph || !originalBuffer) return
+    if (!originalBuffer) return
     
     // CRITICAL: Stop everything first to prevent mixing
     stopAll()
@@ -303,18 +303,21 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       // Rebuild clean preview graph with current settings
       await rebuildPreviewGraph()
       
-      if (previewGraph && previewGraph.sourceNode) {
+      // Get the updated graph state
+      const currentGraph = engine.getPreviewGraph()
+      
+      if (currentGraph && currentGraph.sourceNode) {
         // Update and connect the effect chain
-        previewGraph.updateParams(settings)
-        previewGraph.connect()
+        currentGraph.updateParams(settings)
+        currentGraph.connect()
         
         setIsPlaying('preview')
-        previewGraph.sourceNode.onended = () => {
+        currentGraph.sourceNode.onended = () => {
           setIsPlaying('none')
-          previewGraph.disconnect()
+          currentGraph.disconnect()
         }
         
-        previewGraph.sourceNode.start(0)
+        currentGraph.sourceNode.start(0)
       }
     } catch (error) {
       console.error('Failed to play preview:', error)
@@ -438,38 +441,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
               <p className="panel-desc">Listen to your transformed voice. Download when ready.</p>
             </div>
             
-            {/* Live A/B Preview (M1 Engine Core) */}
-            {originalBuffer && (
-              <div className="ab-preview-section mb-4">
-                <div className="preview-header">
-                  <h4 className="preview-title">🎧 Live A/B Compare</h4>
-                  <p className="preview-desc">Instant preview without processing</p>
-                </div>
-                <div className="preview-controls">
-                  <button
-                    onClick={playOriginal}
-                    className={`preview-btn ${isPlaying === 'original' ? 'playing' : ''}`}
-                    disabled={isProcessing}
-                  >
-                    {isPlaying === 'original' ? '⏸️' : '▶️'} Original
-                  </button>
-                  <button
-                    onClick={playPreview}
-                    className={`preview-btn preview ${isPlaying === 'preview' ? 'playing' : ''}`}
-                    disabled={isProcessing || !previewGraph}
-                  >
-                    {isPlaying === 'preview' ? '⏸️' : '▶️'} Preview
-                  </button>
-                  <button
-                    onClick={stopAll}
-                    className="preview-btn stop"
-                    disabled={isPlaying === 'none'}
-                  >
-                    ⏹️ Stop
-                  </button>
-                </div>
-              </div>
-            )}
+
 
             <div className="audio-comparison">
               {originalUrl && (
@@ -477,8 +449,48 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   <div className="track-header">
                     <span className="track-label">📁 Original</span>
                     <span className="track-info">Source Audio</span>
+                    {originalBuffer && (
+                      <div className="transport-controls">
+                        <button
+                          onClick={isPlaying === 'original' ? stopAll : playOriginal}
+                          className={`transport-btn ${isPlaying === 'original' ? 'playing' : ''}`}
+                          disabled={isProcessing}
+                          title={isPlaying === 'original' ? 'Stop' : 'Play Original'}
+                        >
+                          {isPlaying === 'original' ? '⏸' : '▶'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <audio ref={originalAudioRef} src={originalUrl} controls className="audio-player" />
+                </div>
+              )}
+              
+              {originalBuffer && (
+                <div className="audio-track preview">
+                  <div className="track-header">
+                    <span className="track-label">🎛️ Live Preview</span>
+                    <span className="track-info">Real-time Effects</span>
+                    <div className="transport-controls">
+                      <button
+                        onClick={isPlaying === 'preview' ? stopAll : playPreview}
+                        className={`transport-btn preview ${isPlaying === 'preview' ? 'playing' : ''}`}
+                        disabled={isProcessing}
+                        title={isPlaying === 'preview' ? 'Stop' : 'Play Preview'}
+                      >
+                        {isPlaying === 'preview' ? '⏸' : '▶'}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="preview-waveform">
+                    <div className="waveform-placeholder">
+                      {isPlaying === 'preview' ? (
+                        <span className="playing-indicator">🎵 Playing with effects...</span>
+                      ) : (
+                        <span className="ready-indicator">Ready for live preview</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
               
