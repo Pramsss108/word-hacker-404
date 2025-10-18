@@ -37,6 +37,9 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   const [originalBuffer, setOriginalBuffer] = useState<AudioBuffer | null>(null)
   const [previewGraph, setPreviewGraph] = useState<PreviewGraph | null>(null)
   const [isPlaying, setIsPlaying] = useState<'none' | 'original' | 'preview'>('none')
+  
+  // Audio source tracking for proper cleanup
+  const activeSourceRef = useRef<AudioBufferSourceNode | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const originalAudioRef = useRef<HTMLAudioElement>(null)
@@ -90,14 +93,20 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   const handleFileSelect = async (file: File) => {
     if (isProcessing) return
 
+    // CRITICAL: Stop all audio first to prevent mixing
+    stopAll()
+
     if (originalUrl) URL.revokeObjectURL(originalUrl)
     if (processedUrl) URL.revokeObjectURL(processedUrl)
     
-    // Clean up previous preview graph
+    // Clean up previous preview graph completely
     if (previewGraph) {
       previewGraph.dispose()
       setPreviewGraph(null)
     }
+    
+    // Clear previous buffer
+    setOriginalBuffer(null)
 
     setOriginalFile(file)
     setOriginalUrl(URL.createObjectURL(file))
@@ -221,63 +230,22 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     setStatus(`Profile "${name}" deleted.`)
   }
 
-  // Live preview controls
-  const playOriginal = async () => {
-    if (!originalBuffer) return
-    
-    stopAll()
-    setIsPlaying('original')
-    
-    try {
-      const engine = getEngineCore()
-      await engine.ensureAudioContext()
-      
-      // Create simple source to play original
-      const ctx = (engine as any).ctx // Access private context
-      const source = ctx.createBufferSource()
-      source.buffer = originalBuffer
-      source.connect(ctx.destination)
-      source.start(0)
-      
-      source.onended = () => setIsPlaying('none')
-    } catch (error) {
-      console.error('Failed to play original:', error)
-      setIsPlaying('none')
-    }
-  }
-
-  const playPreview = async () => {
-    if (!previewGraph || !originalBuffer) return
-    
-    stopAll()
-    setIsPlaying('preview')
-    
-    try {
-      const engine = getEngineCore()
-      await engine.ensureAudioContext()
-      
-      // Update preview graph with current settings
-      previewGraph.updateParams(settings)
-      previewGraph.connect()
-      
-      if (previewGraph.sourceNode) {
-        previewGraph.sourceNode.start(0)
-        previewGraph.sourceNode.onended = () => {
-          setIsPlaying('none')
-          previewGraph.disconnect()
-          
-          // Rebuild source for next play
-          rebuildPreviewGraph()
-        }
-      }
-    } catch (error) {
-      console.error('Failed to play preview:', error)
-      setIsPlaying('none')
-    }
-  }
-
+  // Complete audio cleanup - stops all sources and disconnects everything
   const stopAll = () => {
     setIsPlaying('none')
+    
+    // Stop active source if exists
+    if (activeSourceRef.current) {
+      try {
+        activeSourceRef.current.stop()
+        activeSourceRef.current.disconnect()
+      } catch (e) {
+        // Source might already be stopped
+      }
+      activeSourceRef.current = null
+    }
+    
+    // Disconnect preview graph if active
     if (previewGraph && previewGraph.sourceNode) {
       try {
         previewGraph.sourceNode.stop()
@@ -288,17 +256,85 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }
 
+  // Live preview controls
+  const playOriginal = async () => {
+    if (!originalBuffer) return
+    
+    // CRITICAL: Stop everything first to prevent mixing
+    stopAll()
+    
+    try {
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      // Create clean source for original audio (no effects)
+      const ctx = (engine as any).ctx // Access private context
+      const source = ctx.createBufferSource()
+      source.buffer = originalBuffer
+      source.connect(ctx.destination)
+      
+      // Track this source for cleanup
+      activeSourceRef.current = source
+      setIsPlaying('original')
+      
+      source.onended = () => {
+        setIsPlaying('none')
+        activeSourceRef.current = null
+      }
+      
+      source.start(0)
+    } catch (error) {
+      console.error('Failed to play original:', error)
+      setIsPlaying('none')
+      activeSourceRef.current = null
+    }
+  }
+
+  const playPreview = async () => {
+    if (!previewGraph || !originalBuffer) return
+    
+    // CRITICAL: Stop everything first to prevent mixing
+    stopAll()
+    
+    try {
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      // Rebuild clean preview graph with current settings
+      await rebuildPreviewGraph()
+      
+      if (previewGraph && previewGraph.sourceNode) {
+        // Update and connect the effect chain
+        previewGraph.updateParams(settings)
+        previewGraph.connect()
+        
+        setIsPlaying('preview')
+        previewGraph.sourceNode.onended = () => {
+          setIsPlaying('none')
+          previewGraph.disconnect()
+        }
+        
+        previewGraph.sourceNode.start(0)
+      }
+    } catch (error) {
+      console.error('Failed to play preview:', error)
+      setIsPlaying('none')
+    }
+  }
+
   const rebuildPreviewGraph = async () => {
     if (!originalBuffer) return
     
     try {
-      // Clean up old graph
+      // Clean up old graph completely
       if (previewGraph) {
         previewGraph.dispose()
       }
       
-      // Build new graph
+      // Build fresh graph with new source
       const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
       const newGraph = engine.buildPreviewGraph(originalBuffer, settings)
       setPreviewGraph(newGraph)
       engine.setPreviewGraph(newGraph)

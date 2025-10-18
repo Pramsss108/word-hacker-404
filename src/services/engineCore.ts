@@ -347,7 +347,7 @@ export class VoiceEngineCore {
     
     nodes.push(hpf, lpf, comp, delay, reverb, limiter, meter);
     
-    // Create source
+    // Create fresh source (CRITICAL: each source can only be used once)
     const source = this.ctx.createBufferSource();
     source.buffer = audioBuffer;
     source.loop = false;
@@ -397,10 +397,23 @@ export class VoiceEngineCore {
       },
       
       disconnect: () => {
+        // Stop and disconnect source first
         if (source) {
+          try {
+            source.stop();
+          } catch (e) {
+            // Source might already be stopped
+          }
           source.disconnect();
         }
-        nodes.forEach(node => node.dispose());
+        // Disconnect all effect nodes from destination
+        nodes.forEach(node => {
+          try {
+            node.output.disconnect();
+          } catch (e) {
+            // Node might already be disconnected
+          }
+        });
       },
       
       updateParams: (newSettings: Partial<EffectSettings>) => {
@@ -414,10 +427,22 @@ export class VoiceEngineCore {
       },
       
       dispose: () => {
+        // Complete cleanup: stop source and dispose all nodes
         if (source) {
+          try {
+            source.stop();
+          } catch (e) {
+            // Source might already be stopped
+          }
           source.disconnect();
         }
-        nodes.forEach(node => node.dispose());
+        nodes.forEach(node => {
+          try {
+            node.dispose();
+          } catch (e) {
+            console.warn('Failed to dispose node:', e);
+          }
+        });
       }
     };
     
