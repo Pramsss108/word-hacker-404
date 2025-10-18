@@ -14,6 +14,20 @@ import {
 // Import the new engine core for live preview
 import { getEngineCore, PreviewGraph } from '../services/engineCore'
 
+// M7: Import export and preset services
+import { 
+  exportService, 
+  presetService, 
+  EXPORT_FORMATS, 
+  ExportOptions, 
+  AudioPreset, 
+  PresetCategory 
+} from '../services/exportService'
+
+// M8: Import quality assurance and offline processing
+import { qaSystem, QAReport } from '../services/qualityAssurance'
+import { offlineProcessor } from '../services/offlineProcessor'
+
 // M3: Import WaveSurfer for waveform visualization
 import WaveSurfer from 'wavesurfer.js'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js'
@@ -44,6 +58,30 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
   
   // Audio source tracking for proper cleanup
   const activeSourceRef = useRef<AudioBufferSourceNode | null>(null)
+
+  // M7: Export and Preset state
+  const [showExportPanel, setShowExportPanel] = useState(false)
+  const [showPresetPanel, setShowPresetPanel] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportProgress, setExportProgress] = useState(0)
+  const [exportOptions, setExportOptions] = useState<ExportOptions>({
+    format: 'wav',
+    quality: 'cd',
+    normalize: true,
+    fadeIn: 0,
+    fadeOut: 0,
+    trimSilence: false
+  })
+  const [availablePresets, setAvailablePresets] = useState<AudioPreset[]>([])
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null)
+  const [newPresetName, setNewPresetName] = useState('')
+
+  // M8: Quality Assurance state
+  const [showQAPanel, setShowQAPanel] = useState(false)
+  const [isRunningQA, setIsRunningQA] = useState(false)
+  const [qaReport, setQAReport] = useState<QAReport | null>(null)
+  const [qaProgress, setQAProgress] = useState(0)
+  const [qaCurrentTest, setQACurrentTest] = useState('')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const originalAudioRef = useRef<HTMLAudioElement>(null)
@@ -110,6 +148,190 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       initializeWaveSurfer(originalUrl)
     }
   }, [originalUrl])
+
+  // M7: Load presets on component mount
+  useEffect(() => {
+    setAvailablePresets(presetService.getPresets())
+  }, [])
+
+  // M7: Export functionality
+  const handleExport = async () => {
+    if (!originalBuffer) {
+      setError('No audio loaded for export')
+      return
+    }
+
+    setIsExporting(true)
+    setExportProgress(0)
+    setError(null)
+
+    try {
+      // Get the engine core and render with current settings
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      // Render offline with current settings
+      const processedBuffer = await engine.renderOffline(
+        originalBuffer, 
+        settings, 
+        (progress) => setExportProgress(progress * 0.8) // Reserve 20% for export encoding
+      )
+
+      setExportProgress(0.8)
+
+      // Export with selected format and options
+      const blob = await exportService.exportAudio(
+        processedBuffer,
+        exportOptions,
+        (progress) => setExportProgress(0.8 + progress * 0.2)
+      )
+
+      // Download the file
+      const format = EXPORT_FORMATS.find(f => f.id === exportOptions.format)
+      const quality = format?.quality.find(q => q.id === exportOptions.quality)
+      const filename = `${originalFile?.name?.split('.')[0] || 'processed'}_${quality?.name || 'export'}.${format?.extension || 'wav'}`
+      
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+
+      setStatus(`Successfully exported: ${filename}`)
+      setShowExportPanel(false)
+
+    } catch (error) {
+      console.error('Export failed:', error)
+      setError(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsExporting(false)
+      setExportProgress(0)
+    }
+  }
+
+  // M7: Preset management
+  const loadPreset = (presetId: string) => {
+    const preset = availablePresets.find(p => p.id === presetId)
+    if (preset) {
+      setSettings(preset.settings)
+      setSelectedPresetId(presetId)
+      setStatus(`Loaded preset: ${preset.name}`)
+      
+      // Update preview if audio is loaded
+      if (previewGraph) {
+        previewGraph.updateParams(preset.settings)
+      }
+    }
+  }
+
+  const saveCurrentAsPreset = () => {
+    if (!newPresetName.trim()) {
+      setError('Please enter a preset name')
+      return
+    }
+
+    try {
+      const newPreset = presetService.createPreset(
+        newPresetName,
+        'Custom preset created by user',
+        settings
+      )
+      setAvailablePresets(presetService.getPresets())
+      setNewPresetName('')
+      setSelectedPresetId(newPreset.id)
+      setStatus(`Saved preset: ${newPreset.name}`)
+      setShowPresetPanel(false)
+    } catch (error) {
+      setError(`Failed to save preset: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  const deletePreset = (presetId: string) => {
+    try {
+      presetService.deletePreset(presetId)
+      setAvailablePresets(presetService.getPresets())
+      if (selectedPresetId === presetId) {
+        setSelectedPresetId(null)
+      }
+      setStatus('Preset deleted')
+    } catch (error) {
+      setError(`Failed to delete preset: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  // M8: Quality Assurance functionality
+  const runQualityAssurance = async () => {
+    if (!originalBuffer) {
+      setError('No audio loaded for quality assurance')
+      return
+    }
+
+    setIsRunningQA(true)
+    setQAProgress(0)
+    setQACurrentTest('')
+    setError(null)
+    setShowQAPanel(true)
+
+    try {
+      const report = await qaSystem.runMasterQualityInvigilator(
+        originalBuffer,
+        settings,
+        (progress, testName) => {
+          setQAProgress(progress)
+          setQACurrentTest(testName)
+        }
+      )
+
+      setQAReport(report)
+      
+      if (report.nasa_grade_compliance) {
+        setStatus('🚀 NASA-grade quality assurance PASSED - Ready for deployment!')
+      } else if (report.overallStatus === 'pass') {
+        setStatus('✅ Quality assurance passed with recommendations')
+      } else if (report.overallStatus === 'warning') {
+        setStatus('⚠️ Quality assurance passed with warnings')
+      } else {
+        setStatus('❌ Quality assurance failed - Review issues before deployment')
+      }
+
+    } catch (error) {
+      setError(`Quality assurance failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsRunningQA(false)
+    }
+  }
+
+  const runOfflineProcessing = async () => {
+    if (!originalBuffer) {
+      setError('No audio loaded for offline processing')
+      return
+    }
+
+    setStatus('🔄 Queuing offline processing task...')
+
+    const taskId = offlineProcessor.queueRenderTask(
+      originalBuffer,
+      settings,
+      'high',
+      (progress, status) => {
+        setStatus(`⚡ Offline processing: ${Math.round(progress * 100)}% - ${status}`)
+      }
+    )
+
+    // Monitor task completion
+    const checkTask = setInterval(() => {
+      const task = offlineProcessor.getTaskStatus(taskId)
+      if (task?.status === 'completed') {
+        clearInterval(checkTask)
+        setStatus('✅ Offline processing completed successfully!')
+        // The result is available in task.result
+      } else if (task?.status === 'failed') {
+        clearInterval(checkTask)
+        setError(`Offline processing failed: ${task.error}`)
+      }
+    }, 500)
+  }
 
   const handleFileSelect = async (file: File) => {
     if (isProcessing) return
@@ -287,14 +509,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }
 
-  const handleDownload = () => {
-    if (!processedUrl || !originalFile) return
 
-    const a = document.createElement('a')
-    a.href = processedUrl
-    a.download = `hacker-voice-${originalFile.name}`
-    a.click()
-  }
 
   const handleSaveProfile = (name: string) => {
     if (!name.trim()) return
@@ -663,13 +878,41 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     <span className="track-info">AI Enhanced</span>
                   </div>
                   <audio ref={processedAudioRef} src={processedUrl} controls className="audio-player" />
-                  <button
-                    onClick={handleDownload}
-                    className="download-btn"
-                  >
-                    <Download size={16} />
-                    Secure Download
-                  </button>
+                  <div className="audio-actions">
+                    <button
+                      onClick={() => setShowExportPanel(true)}
+                      className="export-btn"
+                      disabled={!originalBuffer}
+                    >
+                      <Download size={16} />
+                      Professional Export
+                    </button>
+                    <button
+                      onClick={() => setShowPresetPanel(true)}
+                      className="preset-btn"
+                    >
+                      <Save size={16} />
+                      Presets
+                    </button>
+                  </div>
+                  
+                  {/* M8: Quality Assurance Actions */}
+                  <div className="qa-actions">
+                    <button
+                      onClick={runQualityAssurance}
+                      className="qa-btn"
+                      disabled={!originalBuffer || isRunningQA}
+                    >
+                      🔬 NASA Quality Check
+                    </button>
+                    <button
+                      onClick={runOfflineProcessing}
+                      className="offline-btn"
+                      disabled={!originalBuffer}
+                    >
+                      ⚡ Offline Processing
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1195,6 +1438,364 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
             ))}
           </div>
         </div>
+
+        {/* M7: Export Panel */}
+        {showExportPanel && (
+          <div className="modal-overlay" onClick={() => setShowExportPanel(false)}>
+            <div className="export-panel" onClick={e => e.stopPropagation()}>
+              <div className="panel-header">
+                <h3>🚀 Professional Export</h3>
+                <button onClick={() => setShowExportPanel(false)} className="close-btn">
+                  <X size={18} />
+                </button>
+              </div>
+              
+              <div className="export-config">
+                <div className="format-section">
+                  <label>Output Format</label>
+                  <div className="format-grid">
+                    {EXPORT_FORMATS.map(format => (
+                      <div 
+                        key={format.id}
+                        className={`format-card ${exportOptions.format === format.id ? 'selected' : ''}`}
+                        onClick={() => setExportOptions({...exportOptions, format: format.id, quality: format.quality[0].id})}
+                      >
+                        <div className="format-name">{format.name}</div>
+                        <div className="format-desc">{format.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="quality-section">
+                  <label>Quality Settings</label>
+                  <select 
+                    value={exportOptions.quality}
+                    onChange={e => setExportOptions({...exportOptions, quality: e.target.value})}
+                    className="quality-select"
+                  >
+                    {EXPORT_FORMATS.find(f => f.id === exportOptions.format)?.quality.map(quality => (
+                      <option key={quality.id} value={quality.id}>
+                        {quality.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="processing-options">
+                  <label>Processing Options</label>
+                  <div className="option-grid">
+                    <label className="option-item">
+                      <input 
+                        type="checkbox" 
+                        checked={exportOptions.normalize}
+                        onChange={e => setExportOptions({...exportOptions, normalize: e.target.checked})}
+                      />
+                      <span>Normalize Audio</span>
+                    </label>
+                    <label className="option-item">
+                      <input 
+                        type="checkbox" 
+                        checked={exportOptions.trimSilence}
+                        onChange={e => setExportOptions({...exportOptions, trimSilence: e.target.checked})}
+                      />
+                      <span>Trim Silence</span>
+                    </label>
+                  </div>
+
+                  <div className="fade-controls">
+                    <div className="fade-control">
+                      <label>Fade In: {exportOptions.fadeIn}s</label>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="5" 
+                        step="0.1"
+                        value={exportOptions.fadeIn}
+                        onChange={e => setExportOptions({...exportOptions, fadeIn: parseFloat(e.target.value)})}
+                      />
+                    </div>
+                    <div className="fade-control">
+                      <label>Fade Out: {exportOptions.fadeOut}s</label>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="5" 
+                        step="0.1"
+                        value={exportOptions.fadeOut}
+                        onChange={e => setExportOptions({...exportOptions, fadeOut: parseFloat(e.target.value)})}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {isExporting && (
+                  <div className="export-progress">
+                    <div className="progress-label">Exporting... {Math.round(exportProgress * 100)}%</div>
+                    <div className="progress-bar">
+                      <div 
+                        className="progress-fill" 
+                        style={{width: `${exportProgress * 100}%`}}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="panel-actions">
+                  <button 
+                    onClick={handleExport}
+                    className="export-confirm-btn"
+                    disabled={isExporting || !originalBuffer}
+                  >
+                    {isExporting ? 'Exporting...' : 'Export Audio'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* M7: Preset Panel */}
+        {showPresetPanel && (
+          <div className="modal-overlay" onClick={() => setShowPresetPanel(false)}>
+            <div className="preset-panel" onClick={e => e.stopPropagation()}>
+              <div className="panel-header">
+                <h3>🎛️ Audio Presets</h3>
+                <button onClick={() => setShowPresetPanel(false)} className="close-btn">
+                  <X size={18} />
+                </button>
+              </div>
+              
+              <div className="preset-config">
+                <div className="preset-categories">
+                  {Object.values(PresetCategory).map(category => (
+                    <div key={category} className="category-section">
+                      <h4 className="category-title">
+                        {category === PresetCategory.VOICE_ENHANCEMENT ? '🎯 Voice Enhancement' :
+                         category === PresetCategory.VOCAL_EFFECTS ? '🎵 Vocal Effects' :
+                         category === PresetCategory.CREATIVE ? '🎨 Creative' :
+                         category === PresetCategory.MASTERING ? '🎚️ Mastering' :
+                         category === PresetCategory.AI_GENERATED ? '🤖 AI Generated' :
+                         '⚙️ Custom'}
+                      </h4>
+                      <div className="preset-grid">
+                        {availablePresets
+                          .filter(preset => preset.category === category)
+                          .map(preset => (
+                          <div 
+                            key={preset.id}
+                            className={`preset-card ${selectedPresetId === preset.id ? 'selected' : ''}`}
+                          >
+                            <div className="preset-info">
+                              <div className="preset-name">{preset.name}</div>
+                              <div className="preset-desc">{preset.description}</div>
+                              <div className="preset-tags">
+                                {preset.tags.map(tag => (
+                                  <span key={tag} className="preset-tag">{tag}</span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="preset-actions">
+                              <button 
+                                onClick={() => loadPreset(preset.id)}
+                                className="load-preset-btn"
+                              >
+                                Load
+                              </button>
+                              {!preset.id.startsWith('voice-clarity') && 
+                               !preset.id.startsWith('podcast-master') && 
+                               !preset.id.startsWith('creative-voice') && 
+                               !preset.id.startsWith('ai-enhance') && (
+                                <button 
+                                  onClick={() => deletePreset(preset.id)}
+                                  className="delete-preset-btn"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="save-preset-section">
+                  <h4>💾 Save Current Settings</h4>
+                  <div className="save-preset-form">
+                    <input 
+                      type="text"
+                      placeholder="Enter preset name..."
+                      value={newPresetName}
+                      onChange={e => setNewPresetName(e.target.value)}
+                      className="preset-name-input"
+                    />
+                    <button 
+                      onClick={saveCurrentAsPreset}
+                      className="save-preset-btn"
+                      disabled={!newPresetName.trim()}
+                    >
+                      Save Preset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* M8: Quality Assurance Panel */}
+        {showQAPanel && (
+          <div className="modal-overlay" onClick={() => setShowQAPanel(false)}>
+            <div className="qa-panel" onClick={e => e.stopPropagation()}>
+              <div className="panel-header">
+                <h3>🔬 NASA-Grade Quality Assurance</h3>
+                <button onClick={() => setShowQAPanel(false)} className="close-btn">
+                  <X size={18} />
+                </button>
+              </div>
+              
+              <div className="qa-config">
+                {isRunningQA && (
+                  <div className="qa-progress-section">
+                    <div className="qa-progress-header">
+                      <div className="progress-label">Running Quality Invigilator... {Math.round(qaProgress * 100)}%</div>
+                      <div className="current-test">{qaCurrentTest}</div>
+                    </div>
+                    <div className="progress-bar">
+                      <div 
+                        className="progress-fill" 
+                        style={{width: `${qaProgress * 100}%`}}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                {qaReport && !isRunningQA && (
+                  <div className="qa-results">
+                    <div className={`qa-status ${qaReport.overallStatus}`}>
+                      <div className="status-header">
+                        <span className="status-icon">
+                          {qaReport.nasa_grade_compliance ? '🚀' : 
+                           qaReport.overallStatus === 'pass' ? '✅' : 
+                           qaReport.overallStatus === 'warning' ? '⚠️' : '❌'}
+                        </span>
+                        <span className="status-text">
+                          {qaReport.nasa_grade_compliance ? 'NASA-Grade Compliance Achieved' :
+                           qaReport.overallStatus === 'pass' ? 'Quality Assurance Passed' :
+                           qaReport.overallStatus === 'warning' ? 'Passed with Warnings' :
+                           'Quality Assurance Failed'}
+                        </span>
+                      </div>
+                      <div className="processing-time">
+                        Processing Time: {qaReport.processingTime}ms
+                      </div>
+                    </div>
+
+                    <div className="test-results">
+                      <h4>Test Results</h4>
+                      <div className="test-grid">
+                        {qaReport.tests.map(test => (
+                          <div key={test.id} className={`test-result ${test.status}`}>
+                            <div className="test-header">
+                              <span className="test-icon">
+                                {test.status === 'pass' ? '✅' : 
+                                 test.status === 'warning' ? '⚠️' : '❌'}
+                              </span>
+                              <span className="test-name">{test.name}</span>
+                            </div>
+                            <div className="test-message">{test.message}</div>
+                            {test.metrics && (
+                              <div className="test-metrics">
+                                <div className="metric">Peak: {test.metrics.peakLevel.toFixed(2)}dB</div>
+                                <div className="metric">RMS: {test.metrics.rmsLevel.toFixed(2)}dB</div>
+                                <div className="metric">THD: {test.metrics.thd.toFixed(3)}%</div>
+                                <div className="metric">Dynamic Range: {test.metrics.dynamicRange.toFixed(1)}dB</div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {qaReport.recommendations.length > 0 && (
+                      <div className="qa-recommendations">
+                        <h4>Recommendations</h4>
+                        <ul className="recommendation-list">
+                          {qaReport.recommendations.map((rec, index) => (
+                            <li key={index} className="recommendation-item">
+                              {rec}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="qa-summary">
+                      <div className="summary-stats">
+                        <div className="stat">
+                          <span className="stat-label">Tests Run:</span>
+                          <span className="stat-value">{qaReport.tests.length}</span>
+                        </div>
+                        <div className="stat">
+                          <span className="stat-label">Passed:</span>
+                          <span className="stat-value pass">{qaReport.tests.filter(t => t.status === 'pass').length}</span>
+                        </div>
+                        <div className="stat">
+                          <span className="stat-label">Warnings:</span>
+                          <span className="stat-value warning">{qaReport.tests.filter(t => t.status === 'warning').length}</span>
+                        </div>
+                        <div className="stat">
+                          <span className="stat-label">Failed:</span>
+                          <span className="stat-value fail">{qaReport.tests.filter(t => t.status === 'fail').length}</span>
+                        </div>
+                      </div>
+                      
+                      {qaReport.nasa_grade_compliance && (
+                        <div className="nasa-badge">
+                          <span className="badge-icon">🚀</span>
+                          <span className="badge-text">NASA-GRADE CERTIFIED</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {!qaReport && !isRunningQA && (
+                  <div className="qa-intro">
+                    <div className="intro-content">
+                      <h4>🛡️ Master Quality Invigilator</h4>
+                      <p>
+                        Run comprehensive NASA-grade quality assurance tests on your audio processing pipeline.
+                        This system validates audio integrity, processing quality, performance metrics, and compliance standards.
+                      </p>
+                      <ul className="test-list">
+                        <li>✓ Audio Buffer Integrity</li>
+                        <li>✓ Settings Validation</li>
+                        <li>✓ Engine Core Functionality</li>
+                        <li>✓ Processing Quality Analysis</li>
+                        <li>✓ Performance Benchmarking</li>
+                        <li>✓ Memory Leak Detection</li>
+                        <li>✓ Export System Validation</li>
+                        <li>✓ Preset System Validation</li>
+                        <li>✓ Browser Compatibility</li>
+                        <li>✓ NASA Compliance Validation</li>
+                      </ul>
+                      <button 
+                        onClick={runQualityAssurance}
+                        className="run-qa-btn"
+                        disabled={!originalBuffer}
+                      >
+                        🚀 Run NASA Quality Check
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
