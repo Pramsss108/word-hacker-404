@@ -9,6 +9,7 @@
 
 // Import standardized-audio-context if needed for cross-browser compatibility later
 import { getWASMProcessor, WASMAudioProcessor } from './wasmCore'
+import { createAIEnhancement } from './aiEnhancement' // M5
 import { EffectSettings } from './audioService';
 // import Meyda from 'meyda'; // M2: Will be used for advanced real-time analysis
 
@@ -702,20 +703,21 @@ export class VoiceEngineCore {
   }
   
   buildPreviewGraph(audioBuffer: AudioBuffer, settings: EffectSettings): PreviewGraph {
-    // Create effect chain: Source -> HPF -> LPF -> Comp -> Delay -> Reverb -> Limiter -> Meter -> Destination
+    // Create effect chain: Source -> HPF -> LPF -> NoiseReduction -> AIEnhancement -> Comp -> Delay -> Reverb -> Limiter -> Meter -> Destination
     const nodes: AudioEffectNode[] = [];
     
     // Create all nodes
     const hpf = createHPF(this.ctx);
     const lpf = createLPF(this.ctx);
     const noiseReduction = createNoiseReduction(this.ctx); // M2: New multiband noise reduction
+    const aiEnhancement = createAIEnhancement(this.ctx); // M5: AI Enhancement Engine
     const comp = createCompressor(this.ctx);
     const delay = createDelay(this.ctx);
     const reverb = createReverb(this.ctx);
     const limiter = createLimiter(this.ctx);
     const meter = createMeter(this.ctx);
     
-    nodes.push(hpf, lpf, noiseReduction, comp, delay, reverb, limiter, meter);
+    nodes.push(hpf, lpf, noiseReduction, aiEnhancement, comp, delay, reverb, limiter, meter);
     
     // Create fresh source (CRITICAL: each source can only be used once)
     const source = this.ctx.createBufferSource();
@@ -745,6 +747,12 @@ export class VoiceEngineCore {
         if (settings.enableNoiseReduction) {
           currentOutput.connect(noiseReduction.input);
           currentOutput = noiseReduction.output;
+        }
+        
+        // M5: AI Enhancement after noise reduction
+        if (settings.enableAIEnhancement) {
+          currentOutput.connect(aiEnhancement.input);
+          currentOutput = aiEnhancement.output;
         }
         
         // Always use compressor for basic dynamics
@@ -855,12 +863,13 @@ export class VoiceEngineCore {
       const hpf = new HPFNode(offlineCtx as any);
       const lpf = new LPFNode(offlineCtx as any);
       const noiseReduction = new MultibandNoiseReductionNode(offlineCtx as any); // M2
+      const aiEnhancement = createAIEnhancement(offlineCtx as any); // M5
       const comp = new CompressorNode(offlineCtx as any);
       const delay = new DelayEffectNode(offlineCtx as any);
       const reverb = new ReverbNode(offlineCtx as any);
       const limiter = new LimiterNode(offlineCtx as any);
       
-      const nodes = [hpf, lpf, noiseReduction, comp, delay, reverb, limiter];
+      const nodes = [hpf, lpf, noiseReduction, aiEnhancement, comp, delay, reverb, limiter];
       
       // Set parameters
       nodes.forEach(node => {

@@ -692,7 +692,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
           {/* Effects Grid */}
           <div className="effects-grid">
             
-            {/* AI Enhancement */}
+            {/* M5: AI Enhancement Engine */}
             <div className={`effect-module ${settings.enableAIEnhancement ? 'active' : 'inactive'}`}>
               <div className="effect-header">
                 <label className="effect-toggle">
@@ -702,20 +702,60 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                     onChange={(e) => updateSettings({enableAIEnhancement: e.target.checked})}
                   />
                   <span className="toggle-slider"></span>
-                  <span className="effect-name">🤖 AI Enhancement</span>
+                  <span className="effect-name">🤖 AI Enhancement (M5)</span>
                 </label>
+                <span className="effect-badge">Advanced</span>
               </div>
               {settings.enableAIEnhancement && (
-                  <div className="effect-controls">
-                    <label>Strength: {fmt(settings.aiEnhancement, 1)}</label>
+                <div className="effect-controls">
+                  <label>Master Strength: {fmt(settings.aiEnhancement, 1)}</label>
                   <input
                     type="range"
                     min="0.1"
                     max="1"
-                    step="0.1"
+                    step="0.05"
                     value={settings.aiEnhancement}
                     onChange={(e) => updateSettings({aiEnhancement: parseFloat(e.target.value)})}
                   />
+                  
+                  <div className="ai-features-grid">
+                    <div className="ai-feature">
+                      <div className="ai-feature-icon">🎯</div>
+                      <div className="ai-feature-info">
+                        <div className="ai-feature-name">Voice Clarity</div>
+                        <div className="ai-feature-desc">Adaptive frequency enhancement</div>
+                      </div>
+                    </div>
+                    
+                    <div className="ai-feature">
+                      <div className="ai-feature-icon">🔊</div>
+                      <div className="ai-feature-info">
+                        <div className="ai-feature-name">Presence Boost</div>
+                        <div className="ai-feature-desc">Intelligent vocal forward-ness</div>
+                      </div>
+                    </div>
+                    
+                    <div className="ai-feature">
+                      <div className="ai-feature-icon">🌡️</div>
+                      <div className="ai-feature-info">
+                        <div className="ai-feature-name">Warmth Control</div>
+                        <div className="ai-feature-desc">Dynamic low-frequency enhancement</div>
+                      </div>
+                    </div>
+                    
+                    <div className="ai-feature">
+                      <div className="ai-feature-icon">📢</div>
+                      <div className="ai-feature-info">
+                        <div className="ai-feature-name">Intelligibility</div>
+                        <div className="ai-feature-desc">Speech clarity optimization</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="ai-status">
+                    <span className="ai-status-label">AI Engine:</span>
+                    <span className="ai-status-value">Adaptive Voice Analysis Active</span>
+                  </div>
                 </div>
               )}
             </div>
