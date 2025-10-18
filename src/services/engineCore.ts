@@ -8,6 +8,7 @@
  */
 
 // Import standardized-audio-context if needed for cross-browser compatibility later
+import { getWASMProcessor, WASMAudioProcessor } from './wasmCore'
 import { EffectSettings } from './audioService';
 // import Meyda from 'meyda'; // M2: Will be used for advanced real-time analysis
 
@@ -670,9 +671,28 @@ export function createNoiseReduction(ctx: AudioContext): AudioEffectNode {
 export class VoiceEngineCore {
   private ctx: AudioContext;
   private previewGraph: PreviewGraph | null = null;
+  private wasmProcessor: WASMAudioProcessor | null = null; // M4: WASM acceleration
   
   constructor() {
     this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    this.initializeWASM();
+  }
+
+  // M4: Initialize WASM processor for high-performance operations
+  private async initializeWASM(): Promise<void> {
+    try {
+      this.wasmProcessor = getWASMProcessor({
+        enableWASM: true,
+        fallbackToJS: true,
+        blockSize: 2048,
+        sampleRate: this.ctx.sampleRate,
+        channels: 2
+      });
+      await this.wasmProcessor.initialize();
+      console.log('M4: WASM processor initialized for high-performance audio processing');
+    } catch (error) {
+      console.warn('M4: WASM initialization failed, using JavaScript fallback:', error);
+    }
   }
   
   async ensureAudioContext(): Promise<void> {
@@ -810,6 +830,19 @@ export class VoiceEngineCore {
     settings: EffectSettings, 
     onProgress?: (progress: number) => void
   ): Promise<AudioBuffer> {
+    // M4: Try WASM-accelerated processing for intensive operations
+    if (this.wasmProcessor && settings.enableNoiseReduction) {
+      try {
+        onProgress?.(0.1);
+        const wasmProcessed = await this.wasmProcessor.processBuffer(audioBuffer, 'fft');
+        onProgress?.(0.9);
+        console.log('M4: Used WASM acceleration for noise reduction');
+        return wasmProcessed;
+      } catch (error) {
+        console.warn('M4: WASM processing failed, falling back to standard:', error);
+      }
+    }
+
     // Create offline context that mirrors preview graph
     const offlineCtx = new OfflineAudioContext(
       audioBuffer.numberOfChannels,

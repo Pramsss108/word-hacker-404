@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { X, Upload, Download, Save, Trash2, ArrowLeft } from 'lucide-react'
 import MatrixRain from './MatrixRain'
+import PerformanceMonitor from './PerformanceMonitor' // M4: Performance monitoring
 
 // Import the audio service functions and new engine core
 import { 
@@ -459,6 +460,9 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     <div className="app voice-encrypter-page">
       {/* Matrix Rain Background - Consistent UX */}
       <MatrixRain opacity={0.06} density={20} speed={1.5} />
+      
+      {/* M4: Performance Monitor */}
+      <PerformanceMonitor />
       
       <div className="container">
         {/* Navigation Header */}
@@ -923,6 +927,47 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
 
           </div>
           
+          {/* M4: WASM Performance Settings */}
+          <div className="glass p-4 rounded-lg mb-4">
+            <h3 className="section-title">⚡ Performance Options (M4)</h3>
+            
+            <div className={`effect-module ${settings.enableWASM ? 'active' : 'inactive'}`}>
+              <div className="effect-header">
+                <label className="effect-toggle">
+                  <input
+                    type="checkbox"
+                    checked={settings.enableWASM}
+                    onChange={(e) => updateSettings({enableWASM: e.target.checked})}
+                  />
+                  <span className="toggle-switch"></span>
+                  <span className="effect-label">🚀 WASM Acceleration</span>
+                </label>
+                <span className="effect-status">
+                  {settings.enableWASM ? 'High Performance' : 'Standard JS'}
+                </span>
+              </div>
+              {settings.enableWASM && (
+                <div className="effect-controls">
+                  <label>Block Size: {settings.wasmBlockSize} samples</label>
+                  <select
+                    value={settings.wasmBlockSize}
+                    onChange={(e) => updateSettings({wasmBlockSize: parseInt(e.target.value)})}
+                    className="block-size-select"
+                  >
+                    <option value="1024">1024 (Low Latency)</option>
+                    <option value="2048">2048 (Balanced)</option>
+                    <option value="4096">4096 (High Throughput)</option>
+                    <option value="8192">8192 (Maximum Performance)</option>
+                  </select>
+                  <p className="wasm-info">
+                    WebAssembly acceleration provides up to 3x faster processing for noise reduction and FFT operations.
+                    Automatically falls back to JavaScript if WASM is unavailable.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Master Process Button */}
           <div className="master-controls">
             <button

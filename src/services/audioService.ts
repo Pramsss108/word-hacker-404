@@ -13,6 +13,10 @@ export interface EffectSettings {
     aiEnhancement: number; // AI enhancement strength 0-1
     noiseReduction: number; // Noise reduction strength 0-1
     
+    // M4: WASM Performance Options
+    enableWASM: boolean; // Use WebAssembly acceleration when available
+    wasmBlockSize: number; // Processing block size for WASM (2048, 4096, 8192)
+    
     // Individual Effect Toggles
     enablePitchShift: boolean;
     enableDistortion: boolean;
@@ -36,6 +40,10 @@ export const defaultSettings: EffectSettings = {
     highpassFreq: 100,
     aiEnhancement: 0.7,
     noiseReduction: 0.6,
+    
+    // M4: WASM Performance Defaults
+    enableWASM: true, // Enable WASM acceleration by default
+    wasmBlockSize: 2048, // Optimal block size for most operations
     
     // Default Toggles (AI Enhancement enabled by default)
     enablePitchShift: false,
