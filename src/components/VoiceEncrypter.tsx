@@ -760,6 +760,122 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
               )}
             </div>
 
+            {/* M6: Professional Mastering Chain */}
+            <div className={`effect-module ${settings.enableMastering ? 'active' : 'inactive'}`}>
+              <div className="effect-header">
+                <label className="effect-toggle">
+                  <input
+                    type="checkbox"
+                    checked={settings.enableMastering}
+                    onChange={(e) => updateSettings({enableMastering: e.target.checked})}
+                  />
+                  <span className="toggle-slider"></span>
+                  <span className="effect-name">🎚️ Professional Mastering (M6)</span>
+                </label>
+                <span className="effect-badge">Master</span>
+              </div>
+              {settings.enableMastering && (
+                <div className="effect-controls">
+                  <div className="mastering-sections">
+                    <div className="mastering-section">
+                      <div className="section-header">
+                        <span className="section-icon">🎛️</span>
+                        <span className="section-name">Multi-band EQ</span>
+                      </div>
+                      <div className="eq-bands">
+                        <div className="eq-band">
+                          <label>Low Shelf</label>
+                          <div className="eq-control">
+                            <span className="eq-freq">250Hz</span>
+                            <input type="range" min="-12" max="12" step="0.5" defaultValue="0" />
+                            <span className="eq-gain">+0dB</span>
+                          </div>
+                        </div>
+                        <div className="eq-band">
+                          <label>Mid Peak</label>
+                          <div className="eq-control">
+                            <span className="eq-freq">2kHz</span>
+                            <input type="range" min="-12" max="12" step="0.5" defaultValue="0" />
+                            <span className="eq-gain">+0dB</span>
+                          </div>
+                        </div>
+                        <div className="eq-band">
+                          <label>High Shelf</label>
+                          <div className="eq-control">
+                            <span className="eq-freq">8kHz</span>
+                            <input type="range" min="-12" max="12" step="0.5" defaultValue="0" />
+                            <span className="eq-gain">+0dB</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mastering-section">
+                      <div className="section-header">
+                        <span className="section-icon">🔊</span>
+                        <span className="section-name">Stereo Enhancement</span>
+                      </div>
+                      <div className="stereo-controls">
+                        <div className="stereo-control">
+                          <label>Stereo Width</label>
+                          <input type="range" min="0" max="200" step="5" defaultValue="100" />
+                          <span>100%</span>
+                        </div>
+                        <div className="stereo-control">
+                          <label>Bass Mono</label>
+                          <input type="range" min="20" max="200" step="10" defaultValue="80" />
+                          <span>80Hz</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mastering-section">
+                      <div className="section-header">
+                        <span className="section-icon">✨</span>
+                        <span className="section-name">Harmonic Exciter</span>
+                      </div>
+                      <div className="exciter-controls">
+                        <div className="exciter-control">
+                          <label>Exciter Amount</label>
+                          <input type="range" min="0" max="100" step="5" defaultValue="25" />
+                          <span>25%</span>
+                        </div>
+                        <div className="exciter-control">
+                          <label>Target Frequency</label>
+                          <input type="range" min="1000" max="8000" step="100" defaultValue="2000" />
+                          <span>2kHz</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mastering-section">
+                      <div className="section-header">
+                        <span className="section-icon">🧱</span>
+                        <span className="section-name">Mastering Limiter</span>
+                      </div>
+                      <div className="limiter-controls">
+                        <div className="limiter-control">
+                          <label>Ceiling</label>
+                          <input type="range" min="-6" max="0" step="0.1" defaultValue="-0.3" />
+                          <span>-0.3dB</span>
+                        </div>
+                        <div className="limiter-control">
+                          <label>Release</label>
+                          <input type="range" min="10" max="1000" step="10" defaultValue="50" />
+                          <span>50ms</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mastering-status">
+                    <span className="mastering-status-label">Mastering Chain:</span>
+                    <span className="mastering-status-value">Professional Multi-band Processing Active</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Noise Reduction */}
             <div className={`effect-module ${settings.enableNoiseReduction ? 'active' : 'inactive'}`}>
               <div className="effect-header">

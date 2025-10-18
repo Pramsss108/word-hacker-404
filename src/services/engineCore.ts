@@ -10,6 +10,7 @@
 // Import standardized-audio-context if needed for cross-browser compatibility later
 import { getWASMProcessor, WASMAudioProcessor } from './wasmCore'
 import { createAIEnhancement } from './aiEnhancement' // M5
+import { createMasteringChain } from './masteringChain' // M6
 import { EffectSettings } from './audioService';
 // import Meyda from 'meyda'; // M2: Will be used for advanced real-time analysis
 
@@ -703,7 +704,7 @@ export class VoiceEngineCore {
   }
   
   buildPreviewGraph(audioBuffer: AudioBuffer, settings: EffectSettings): PreviewGraph {
-    // Create effect chain: Source -> HPF -> LPF -> NoiseReduction -> AIEnhancement -> Comp -> Delay -> Reverb -> Limiter -> Meter -> Destination
+    // Create effect chain: Source -> HPF -> LPF -> NoiseReduction -> AIEnhancement -> Comp -> Delay -> Reverb -> Limiter -> Mastering -> Meter -> Destination
     const nodes: AudioEffectNode[] = [];
     
     // Create all nodes
@@ -715,9 +716,10 @@ export class VoiceEngineCore {
     const delay = createDelay(this.ctx);
     const reverb = createReverb(this.ctx);
     const limiter = createLimiter(this.ctx);
+    const masteringChain = createMasteringChain(this.ctx); // M6: Professional mastering
     const meter = createMeter(this.ctx);
     
-    nodes.push(hpf, lpf, noiseReduction, aiEnhancement, comp, delay, reverb, limiter, meter);
+    nodes.push(hpf, lpf, noiseReduction, aiEnhancement, comp, delay, reverb, limiter, masteringChain, meter);
     
     // Create fresh source (CRITICAL: each source can only be used once)
     const source = this.ctx.createBufferSource();
@@ -772,6 +774,10 @@ export class VoiceEngineCore {
         // Always use limiter for safety
         currentOutput.connect(limiter.input);
         currentOutput = limiter.output;
+        
+        // M6: Professional mastering chain (always enabled)
+        currentOutput.connect(masteringChain.input);
+        currentOutput = masteringChain.output;
         
         // Always connect meter last
         currentOutput.connect(meter.input);
@@ -868,8 +874,9 @@ export class VoiceEngineCore {
       const delay = new DelayEffectNode(offlineCtx as any);
       const reverb = new ReverbNode(offlineCtx as any);
       const limiter = new LimiterNode(offlineCtx as any);
+      const masteringChain = createMasteringChain(offlineCtx as any); // M6
       
-      const nodes = [hpf, lpf, noiseReduction, aiEnhancement, comp, delay, reverb, limiter];
+      const nodes = [hpf, lpf, noiseReduction, aiEnhancement, comp, delay, reverb, limiter, masteringChain];
       
       // Set parameters
       nodes.forEach(node => {
@@ -903,6 +910,12 @@ export class VoiceEngineCore {
         currentOutput = noiseReduction.output;
       }
       
+      // M5: AI Enhancement after noise reduction
+      if (settings.enableAIEnhancement) {
+        currentOutput.connect(aiEnhancement.input);
+        currentOutput = aiEnhancement.output;
+      }
+      
       currentOutput.connect(comp.input);
       currentOutput = comp.output;
       
@@ -917,7 +930,15 @@ export class VoiceEngineCore {
       }
       
       currentOutput.connect(limiter.input);
-      limiter.output.connect(offlineCtx.destination);
+      currentOutput = limiter.output;
+      
+      // M6: Mastering as final stage before destination
+      if (settings.enableMastering) {
+        currentOutput.connect(masteringChain.input);
+        currentOutput = masteringChain.output;
+      }
+      
+      currentOutput.connect(offlineCtx.destination);
       
       // Start rendering
       source.start(0);
