@@ -170,17 +170,6 @@ function App() {
                 <a className="btn" href="#" aria-disabled>Join Soon</a>
               </div>
             </section>
-
-            <section className="stats glass">
-              <div className="stat">
-                <span className="stat-label">Best Score</span>
-                <span className="stat-value">{score}</span>
-              </div>
-              <div className="stat">
-                <span className="stat-label">Games Played</span>
-                <span className="stat-value">0</span>
-              </div>
-            </section>
           </main>
 
           <footer className="footer">
