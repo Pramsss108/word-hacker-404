@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { X, Upload, Download, ArrowLeft, Zap } from 'lucide-react'
+import { X, Upload, Download, Save, Trash2, ArrowLeft, Zap } from 'lucide-react'
 import MatrixRain from './MatrixRain'
 import PerformanceMonitor from './PerformanceMonitor' // M4: Performance monitoring
 
@@ -17,17 +17,20 @@ import { getEngineCore, PreviewGraph } from '../services/engineCore'
 // M7: Import export and preset services
 import { 
   exportService, 
+  presetService, 
   EXPORT_FORMATS, 
-  ExportOptions
+  ExportOptions, 
+  AudioPreset, 
+  PresetCategory 
 } from '../services/exportService'
 
-// M8: Import quality assurance
+// M8: Import quality assurance and offline processing
 import { qaSystem, QAReport } from '../services/qualityAssurance'
+import { offlineProcessor } from '../services/offlineProcessor'
 
 // M3: Import WaveSurfer for waveform visualization
 import WaveSurfer from 'wavesurfer.js'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js'
-import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.js'
 
 type Profile = {
   name: string
@@ -58,8 +61,9 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
 
   // M7: Export and Preset state
   const [showExportPanel, setShowExportPanel] = useState(false)
+  const [showPresetPanel, setShowPresetPanel] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
-  const [_exportProgress, setExportProgress] = useState(0)
+  const [exportProgress, setExportProgress] = useState(0)
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: 'wav',
     quality: 'cd',
@@ -68,19 +72,24 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     fadeOut: 0,
     trimSilence: false
   })
-
+  const [availablePresets, setAvailablePresets] = useState<AudioPreset[]>([])
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null)
+  const [newPresetName, setNewPresetName] = useState('')
 
   // M8: Quality Assurance state
   const [showQAPanel, setShowQAPanel] = useState(false)
   const [isRunningQA, setIsRunningQA] = useState(false)
   const [qaReport, setQAReport] = useState<QAReport | null>(null)
   const [qaProgress, setQAProgress] = useState(0)
+  const [qaCurrentTest, setQACurrentTest] = useState('')
+
   // DAW Layout state
   const [mode, setMode] = useState<'enhance' | 'denoise' | 'encrypt'>('enhance')
   const [exportSelectionOnly, setExportSelectionOnly] = useState(false)
-  const [isDragOver, setIsDragOver] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const originalAudioRef = useRef<HTMLAudioElement>(null)
+  const processedAudioRef = useRef<HTMLAudioElement>(null)
   
   // M3: WaveSurfer refs and state
   const waveformContainerRef = useRef<HTMLDivElement>(null)
@@ -91,6 +100,26 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     rms: 0,
     loudness: -60
   })
+
+  // Helper function to count enabled effects
+  const getEnabledEffectsCount = (): number => {
+    return [
+      settings.enablePitchShift,
+      settings.enableDistortion,
+      settings.enableReverb,
+      settings.enableDelay,
+      settings.enableLowpass,
+      settings.enableHighpass,
+      settings.enableAIEnhancement,
+      settings.enableNoiseReduction
+    ].filter(Boolean).length;
+  };
+
+  // Safe number formatter to avoid runtime crashes on undefined/NaN
+  const fmt = (n: number | undefined | null, digits = 1) => {
+    const num = typeof n === 'number' && Number.isFinite(n) ? n : 0;
+    return num.toFixed(digits);
+  };
 
   // Load profiles from localStorage
   useEffect(() => {
@@ -124,49 +153,10 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }, [originalUrl])
 
-  // Keyboard shortcuts
+  // M7: Load presets on component mount
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Prevent default only for our shortcuts
-      if (event.code === 'Space' || event.code === 'KeyA' || event.code === 'KeyP') {
-        event.preventDefault()
-      }
-
-      // Only handle shortcuts when not typing in inputs
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-        return
-      }
-
-      if (!originalBuffer) return
-
-      switch (event.code) {
-        case 'Space':
-          if (isPlaying === 'preview') {
-            stopAll()
-          } else {
-            playPreview()
-          }
-          break
-        case 'KeyA':
-          if (isPlaying === 'original') {
-            stopAll()
-          } else {
-            playOriginal()
-          }
-          break
-        case 'KeyP':
-          if (isPlaying === 'preview') {
-            stopAll()
-          } else {
-            playPreview()
-          }
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [originalBuffer, isPlaying])
+    setAvailablePresets(presetService.getPresets())
+  }, [])
 
   // M7: Export functionality
   const handleExport = async () => {
@@ -224,7 +214,55 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }
 
+  // M7: Preset management
+  const loadPreset = (presetId: string) => {
+    const preset = availablePresets.find(p => p.id === presetId)
+    if (preset) {
+      setSettings(preset.settings)
+      setSelectedPresetId(presetId)
+      setStatus(`Loaded preset: ${preset.name}`)
+      
+      // Update preview if audio is loaded
+      if (previewGraph) {
+        previewGraph.updateParams(preset.settings)
+      }
+    }
+  }
 
+  const saveCurrentAsPreset = () => {
+    if (!newPresetName.trim()) {
+      setError('Please enter a preset name')
+      return
+    }
+
+    try {
+      const newPreset = presetService.createPreset(
+        newPresetName,
+        'Custom preset created by user',
+        settings
+      )
+      setAvailablePresets(presetService.getPresets())
+      setNewPresetName('')
+      setSelectedPresetId(newPreset.id)
+      setStatus(`Saved preset: ${newPreset.name}`)
+      setShowPresetPanel(false)
+    } catch (error) {
+      setError(`Failed to save preset: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  const deletePreset = (presetId: string) => {
+    try {
+      presetService.deletePreset(presetId)
+      setAvailablePresets(presetService.getPresets())
+      if (selectedPresetId === presetId) {
+        setSelectedPresetId(null)
+      }
+      setStatus('Preset deleted')
+    } catch (error) {
+      setError(`Failed to delete preset: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
 
   // M8: Quality Assurance functionality
   const runQualityAssurance = async () => {
@@ -235,6 +273,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
 
     setIsRunningQA(true)
     setQAProgress(0)
+    setQACurrentTest('')
     setError(null)
     setShowQAPanel(true)
 
@@ -242,8 +281,9 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       const report = await qaSystem.runMasterQualityInvigilator(
         originalBuffer,
         settings,
-        (progress) => {
+        (progress, testName) => {
           setQAProgress(progress)
+          setQACurrentTest(testName)
         }
       )
 
@@ -266,7 +306,36 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     }
   }
 
+  const runOfflineProcessing = async () => {
+    if (!originalBuffer) {
+      setError('No audio loaded for offline processing')
+      return
+    }
 
+    setStatus('🔄 Queuing offline processing task...')
+
+    const taskId = offlineProcessor.queueRenderTask(
+      originalBuffer,
+      settings,
+      'high',
+      (progress, status) => {
+        setStatus(`⚡ Offline processing: ${Math.round(progress * 100)}% - ${status}`)
+      }
+    )
+
+    // Monitor task completion
+    const checkTask = setInterval(() => {
+      const task = offlineProcessor.getTaskStatus(taskId)
+      if (task?.status === 'completed') {
+        clearInterval(checkTask)
+        setStatus('✅ Offline processing completed successfully!')
+        // The result is available in task.result
+      } else if (task?.status === 'failed') {
+        clearInterval(checkTask)
+        setError(`Offline processing failed: ${task.error}`)
+      }
+    }, 500)
+  }
 
   const handleFileSelect = async (file: File) => {
     if (isProcessing) return
@@ -341,19 +410,6 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       height: 100,
       normalize: true
     })
-
-    // Register timeline plugin for ruler
-    wavesurfer.registerPlugin(TimelinePlugin.create({
-      height: 20,
-      insertPosition: 'beforebegin',
-      timeInterval: 0.5,
-      primaryLabelInterval: 2,
-      secondaryLabelInterval: 1,
-      style: {
-        fontSize: '10px',
-        color: '#9aa3b2'
-      }
-    }))
 
     // Register regions plugin
     const regions = wavesurfer.registerPlugin(RegionsPlugin.create())
@@ -459,7 +515,30 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
 
 
 
+  const handleSaveProfile = (name: string) => {
+    if (!name.trim()) return
+    const newProfile: Profile = { name: name.trim(), settings }
+    const existingIndex = profiles.findIndex(p => p.name === newProfile.name)
+    
+    if (existingIndex > -1) {
+      const updatedProfiles = [...profiles]
+      updatedProfiles[existingIndex] = newProfile
+      setProfiles(updatedProfiles)
+    } else {
+      setProfiles([...profiles, newProfile])
+    }
+    setStatus(`Profile "${name}" saved.`)
+  }
 
+  const handleLoadProfile = (profile: Profile) => {
+    setSettings(profile.settings)
+    setStatus(`Profile "${profile.name}" loaded.`)
+  }
+
+  const handleDeleteProfile = (name: string) => {
+    setProfiles(profiles.filter(p => p.name !== name))
+    setStatus(`Profile "${name}" deleted.`)
+  }
 
   // Complete audio cleanup - stops all sources and disconnects everything
   const stopAll = () => {
@@ -467,11 +546,6 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     
     // Stop live metering
     stopLiveMetering()
-    
-    // Stop WaveSurfer if playing
-    if (waveSurferRef.current) {
-      waveSurferRef.current.pause()
-    }
     
     // Stop active source if exists
     if (activeSourceRef.current) {
@@ -503,13 +577,14 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     stopAll()
     
     try {
-      // Use a simple audio context for original playback
-      const audioContext = new AudioContext()
-      await audioContext.resume()
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
       
-      const source = audioContext.createBufferSource()
+      // Create clean source for original audio (no effects)
+      const ctx = (engine as any).ctx // Access private context
+      const source = ctx.createBufferSource()
       source.buffer = originalBuffer
-      source.connect(audioContext.destination)
+      source.connect(ctx.destination)
       
       // Track this source for cleanup
       activeSourceRef.current = source
@@ -518,15 +593,9 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
       source.onended = () => {
         setIsPlaying('none')
         activeSourceRef.current = null
-        audioContext.close()
       }
       
       source.start(0)
-      
-      // Also sync with WaveSurfer if available
-      if (waveSurferRef.current) {
-        waveSurferRef.current.play()
-      }
     } catch (error) {
       console.error('Failed to play original:', error)
       setIsPlaying('none')
@@ -541,41 +610,57 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     stopAll()
     
     try {
-      // Use WaveSurfer for preview playback for now (simpler and more reliable)
-      if (waveSurferRef.current) {
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      // Rebuild clean preview graph with current settings
+      await rebuildPreviewGraph()
+      
+      // Get the updated graph state
+      const currentGraph = engine.getPreviewGraph()
+      
+      if (currentGraph && currentGraph.sourceNode) {
+        // Update and connect the effect chain
+        currentGraph.updateParams(settings)
+        currentGraph.connect()
+        
         setIsPlaying('preview')
-        waveSurferRef.current.play()
         
-        // Listen for when it ends
-        waveSurferRef.current.on('finish', () => {
-          setIsPlaying('none')
-        })
-        
-        // Start live metering
+        // Start live metering for preview
         startLiveMetering()
-      } else {
-        // Fallback to direct audio playback
-        const audioContext = new AudioContext()
-        await audioContext.resume()
         
-        const source = audioContext.createBufferSource()
-        source.buffer = originalBuffer
-        source.connect(audioContext.destination)
-        
-        activeSourceRef.current = source
-        setIsPlaying('preview')
-        
-        source.onended = () => {
+        currentGraph.sourceNode.onended = () => {
           setIsPlaying('none')
-          activeSourceRef.current = null
-          audioContext.close()
+          stopLiveMetering()
+          currentGraph.disconnect()
         }
         
-        source.start(0)
+        currentGraph.sourceNode.start(0)
       }
     } catch (error) {
       console.error('Failed to play preview:', error)
       setIsPlaying('none')
+    }
+  }
+
+  const rebuildPreviewGraph = async () => {
+    if (!originalBuffer) return
+    
+    try {
+      // Clean up old graph completely
+      if (previewGraph) {
+        previewGraph.dispose()
+      }
+      
+      // Build fresh graph with new source
+      const engine = getEngineCore()
+      await engine.ensureAudioContext()
+      
+      const newGraph = engine.buildPreviewGraph(originalBuffer, settings)
+      setPreviewGraph(newGraph)
+      engine.setPreviewGraph(newGraph)
+    } catch (error) {
+      console.error('Failed to rebuild preview graph:', error)
     }
   }
 
@@ -587,33 +672,6 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     // Update live preview if available
     if (previewGraph) {
       previewGraph.updateParams(updated)
-    }
-  }
-
-  // Drag and Drop handlers
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(true)
-  }
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
-    
-    const files = Array.from(e.dataTransfer.files)
-    const audioFile = files.find(file => 
-      file.type.startsWith('audio/') || file.type.startsWith('video/')
-    )
-    
-    if (audioFile) {
-      handleFileSelect(audioFile)
-    } else {
-      setError('Please drop an audio or video file')
     }
   }
 
@@ -658,10 +716,7 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
               />
               <button 
                 onClick={() => fileInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`daw-upload-btn ${isDragOver ? 'drag-over' : ''}`}
+                className="daw-upload-btn"
                 disabled={isProcessing}
               >
                 <Upload size={20} />
@@ -710,35 +765,12 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
               <div className="daw-timeline">
                 <div className="timeline-header">
                   <span className="timeline-title">Waveform & Selection</span>
-                  <div className="timeline-controls">
-                    <button 
-                      className="timeline-btn"
-                      onClick={() => {
-                        if (waveSurferRef.current) {
-                          const duration = waveSurferRef.current.getDuration()
-                          setSelectedRegion({ start: 0, end: duration })
-                        }
-                      }}
-                      title="Select All"
-                    >
-                      All
-                    </button>
-                    {selectedRegion && (
-                      <>
-                        <div className="selection-info">
-                          <span>{selectedRegion.start.toFixed(2)}s - {selectedRegion.end.toFixed(2)}s</span>
-                          <span className="selection-duration">({(selectedRegion.end - selectedRegion.start).toFixed(2)}s)</span>
-                        </div>
-                        <button 
-                          className="timeline-btn clear"
-                          onClick={() => setSelectedRegion(null)}
-                          title="Clear Selection"
-                        >
-                          Clear
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  {selectedRegion && (
+                    <div className="selection-info">
+                      <span>{selectedRegion.start.toFixed(2)}s - {selectedRegion.end.toFixed(2)}s</span>
+                      <span className="selection-duration">({(selectedRegion.end - selectedRegion.start).toFixed(2)}s)</span>
+                    </div>
+                  )}
                 </div>
                 <div className="timeline-content">
                   <div 
@@ -794,8 +826,24 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
 
           {/* Right: Effects Panel */}
           <aside className="daw-right">
-            {/* Mode-specific Effects - Scrollable Container */}
-            <div className="effects-section scrollable-effects">
+            {/* Mastering Section - Separated as requested */}
+            <div className="effects-section">
+              <h3 className="section-title">Mastering</h3>
+              <div className={`effect-module ${settings.enableMastering ? 'active' : 'inactive'}`}>
+                <label className="effect-toggle">
+                  <input
+                    type="checkbox"
+                    checked={settings.enableMastering}
+                    onChange={(e) => updateSettings({enableMastering: e.target.checked})}
+                  />
+                  <span className="toggle-slider"></span>
+                  <span className="effect-name">Professional Mastering</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Mode-specific Effects */}
+            <div className="effects-section">
               <h3 className="section-title">
                 {mode === 'enhance' ? 'Enhancement' : mode === 'denoise' ? 'Noise Reduction' : 'Voice Effects'}
               </h3>
@@ -907,25 +955,6 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                   </div>
                 </>
               )}
-
-              {/* Mastering Section - Final Step for All Modes */}
-              <div className="mastering-divider">
-                <span className="divider-text">Final Mix & Master</span>
-              </div>
-              <div className={`effect-module mastering-module ${settings.enableMastering ? 'active' : 'inactive'}`}>
-                <label className="effect-toggle">
-                  <input
-                    type="checkbox"
-                    checked={settings.enableMastering}
-                    onChange={(e) => updateSettings({enableMastering: e.target.checked})}
-                  />
-                  <span className="toggle-slider"></span>
-                  <span className="effect-name">Professional Mastering</span>
-                </label>
-                <div className="effect-description">
-                  Mix all effects and apply professional mastering
-                </div>
-              </div>
             </div>
           </aside>
         </div>
@@ -1093,3 +1122,4 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
     </div>
   )
 }
+        <div className="glass vocal-shield-panel mb-6">

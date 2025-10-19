@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Search, Zap, Brain, Sparkles, ChevronRight, Waves, Wand2, Music4, Lock, Shield } from 'lucide-react'
+import { Search, Zap, Brain, ChevronRight, Waves, Wand2, Music4, Lock, Sparkles } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
 import VoiceEncrypter from './components/VoiceEncrypter'
-import { VoiceEncrypterV2 } from './components/VoiceEncrypterV2'
-import VoiceEncrypterProfessional from './components/VoiceEncrypterProfessional'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -21,7 +19,7 @@ const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: st
 ]
 
 function App() {
-  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'voice-encrypter-v2' | 'voice-encrypter-professional'>('menu')
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter'>('menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -39,10 +37,6 @@ function App() {
 
       {gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
-      ) : gameMode === 'voice-encrypter-v2' ? (
-        <VoiceEncrypterV2 onBackToHome={() => setGameMode('menu')} />
-      ) : gameMode === 'voice-encrypter-professional' ? (
-        <VoiceEncrypterProfessional onBackToHome={() => setGameMode('menu')} />
       ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}
@@ -102,18 +96,7 @@ function App() {
                 >
                   <Music4 size={18} /> Voice Encryptor
                 </button>
-                <button 
-                  className="tool glass professional-grade"
-                  onClick={() => setGameMode('voice-encrypter-v2')}
-                >
-                  <Sparkles size={18} /> Voice Encrypter V2.0
-                </button>
-                <button 
-                  className="tool glass aerospace-grade"
-                  onClick={() => setGameMode('voice-encrypter-professional')}
-                >
-                  <Shield size={18} /> Professional Edition
-                </button>
+                {/* Consolidated to a single enhanced Voice Encrypter as requested */}
                 <button className="tool glass"><Lock size={18} /> Private Drops</button>
               </div>
             </section>
@@ -201,7 +184,7 @@ function App() {
           </main>
 
           <footer className="footer">
-            <p>Built like NASA. React + TypeScript + Vite. Optimized for touch.</p>
+            <p>Built like a pro. React + TypeScript + Vite. Optimized for touch.</p>
             <small className="mono" aria-label="terminal-log">terminal-log: ready</small>
           </footer>
         </>
