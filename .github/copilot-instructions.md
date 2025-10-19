@@ -103,12 +103,22 @@ Word Hacker 404/
 
 ### **Key Configuration Files**
 
-**vite.config.ts - CRITICAL SETTINGS:**
+**vite.config.ts — CRITICAL SETTINGS (choose ONE):**
 ```typescript
-base: '/word-hacker-404/',  # GitHub Pages path - NEVER CHANGE
-server: { port: 3000 },     # Development port
-build: { outDir: 'dist' }   # Build output directory
+// Project Pages (served at https://pramsss108.github.io/word-hacker-404/)
+// Use this when NO custom domain is attached
+base: '/word-hacker-404/',
+
+// Custom Domain (served at https://wordhacker404.me)
+// Use this when a custom domain is active
+base: '/',
+
+server: { port: 3000 },
+build: { outDir: 'dist' }
 ```
+Notes:
+- Current production uses a custom domain → base MUST be '/'.
+- If you ever disable the custom domain and fall back to the project URL, switch base back to '/word-hacker-404/'.
 
 **package.json - ESSENTIAL SCRIPTS:**
 - `dev`: Development server
@@ -120,7 +130,7 @@ build: { outDir: 'dist' }   # Build output directory
 ### **How Deployment Works**
 1. **Push to main branch** → **GitHub Actions triggers**
 2. **Runs build process** → **Deploys to GitHub Pages**
-3. **Live site updates** → **Available at https://pramsss108.github.io/word-hacker-404/**
+3. **Live site updates** → **Available at https://wordhacker404.me/**
 
 ### **Deployment Workflow (.github/workflows/deploy.yml)**
 - **Trigger**: Every push to main
@@ -129,10 +139,42 @@ build: { outDir: 'dist' }   # Build output directory
 - **Time**: 2-3 minutes for deployment completion
 
 ### **Live Site Management**
-- **URL**: `https://pramsss108.github.io/word-hacker-404/`
+- **URL**: `https://wordhacker404.me/`
 - **Privacy**: Repository private, site public via link
 - **Updates**: Automatic on every push
 - **Status**: Check GitHub Actions tab for deployment status
+
+### Custom Domain Playbook — Namecheap + GitHub Pages (Authoritative)
+
+Use this when pointing `wordhacker404.me` to this repo.
+
+1) DNS (Namecheap)
+- A records (Host `@`) to GitHub Pages IPs:
+	- 185.199.108.153
+	- 185.199.109.153
+	- 185.199.110.153
+	- 185.199.111.153
+- CNAME record: Host `www` → `pramsss108.github.io`
+
+2) Repository (this project)
+- Pages Source: `gh-pages` branch, root
+- CNAME file: Create in the PUBLISHED branch (gh-pages), content:
+	- `wordhacker404.me`
+- Vite base: `/` (custom domain)
+
+3) GitHub Settings → Pages
+- Custom domain: `wordhacker404.me`
+- Wait for DNS check successful → then enable "Enforce HTTPS"
+
+4) Verification
+- Test both: `https://wordhacker404.me` and `https://www.wordhacker404.me`
+- If you see a white screen or missing assets, confirm Vite `base: '/'` and that `index.html` references `/assets/...` correctly.
+
+Guardrails (Do NOT do these):
+- Do NOT create or keep a `Pramsss108.github.io` repo unless intentionally migrating to a user site. It will compete for the custom domain and cause the "domain already taken" error.
+- Do NOT point a CNAME `www → wordhacker404.me` and ALSO `www → pramsss108.github.io` at the same time. Keep only one `www` CNAME.
+- Do NOT put the CNAME only on the `main` branch; it must exist on the published branch (`gh-pages`).
+- Do NOT set `base: '/word-hacker-404/'` while serving from a custom domain; it will cause a blank page due to broken asset paths.
 
 ## 🎮 **Game Features & Architecture**
 
@@ -238,6 +280,17 @@ build: { outDir: 'dist' }   # Build output directory
 3. **Build errors**: Fix TypeScript/build issues first
 4. **Repository settings**: Ensure GitHub Pages points to gh-pages branch
 
+### Troubleshooting Custom Domains (Fast Reference)
+- Error: "custom domain is already taken by another repository"
+	- Cause: Another repo (commonly `Pramsss108.github.io`) has the same domain set
+	- Fix: Remove the domain from the other repo (Settings → Pages → clear custom domain) or delete that repo if unused
+- Blank white page after enabling domain
+	- Cause: Vite base mismatch
+	- Fix: Set `base: '/'`, rebuild, redeploy; ensure gh-pages has CNAME
+- 404 at root but subpath works
+	- Cause: Domain not bound to current published branch or caching
+	- Fix: Ensure CNAME exists on `gh-pages`; wait a few minutes; hard refresh (Ctrl+F5)
+
 ## 🎯 **Future (Client-Only) Roadmap**
 
 - Glitch headline loop toggle and haptic tap (Vibration API)
@@ -266,7 +319,7 @@ build: { outDir: 'dist' }   # Build output directory
 
 **Last Updated**: October 17, 2025 — Branding v1 + homepage revamp + MatrixRain
 **Status**: Production ready with auto-deployment active (client-only)
-**Live Site**: https://pramsss108.github.io/word-hacker-404/
+**Live Site**: https://wordhacker404.me/
 
 **Constraints**: GitHub Pages only, no backend/DB, client-side features only, keep dependencies light.
 
