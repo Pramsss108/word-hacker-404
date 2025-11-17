@@ -72,7 +72,8 @@ jobs:
                   handle->params.output_bps = 16;       // 16-bit output
                   handle->params.use_camera_wb = 1;     // Use camera white balance
                   handle->params.no_auto_bright = 0;    // Enable auto-brightness
-                  handle->params.gamma_16bit = 1;       // Apply gamma for 16-bit
+                  handle->params.gamm[0] = 1.0;         // Linear gamma for 16-bit
+                  handle->params.gamm[1] = 1.0;         // Linear gamma slope
               }
               return handle;
           }
