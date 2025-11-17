@@ -67,13 +67,18 @@ jobs:
           void* lr_init() { 
               libraw_data_t* handle = libraw_init(0);
               if (handle) {
-                  // Configure output parameters for color processing
-                  handle->params.output_color = 1;      // 1 = sRGB
-                  handle->params.output_bps = 16;       // 16-bit output
-                  handle->params.use_camera_wb = 1;     // Use camera white balance
-                  handle->params.no_auto_bright = 0;    // Enable auto-brightness
-                  handle->params.gamm[0] = 1.0;         // Linear gamma for 16-bit
-                  handle->params.gamm[1] = 1.0;         // Linear gamma slope
+                  // Configure output parameters for FULL COLOR processing
+                  handle->params.output_color = 1;           // 1 = sRGB color space
+                  handle->params.output_bps = 16;            // 16-bit output
+                  handle->params.use_camera_wb = 1;          // Use camera white balance
+                  handle->params.use_auto_wb = 0;            // Don't override camera WB
+                  handle->params.no_auto_bright = 0;         // Enable auto-brightness
+                  handle->params.gamm[0] = 2.222;            // sRGB gamma (not linear!)
+                  handle->params.gamm[1] = 4.5;              // sRGB toe slope
+                  handle->params.user_qual = 3;              // 3 = AHD demosaic (high quality)
+                  handle->params.half_size = 0;              // Full resolution
+                  handle->params.four_color_rgb = 0;         // Normal RGB (not 4-color)
+                  handle->params.highlight = 0;              // Clip highlights (no reconstruction)
               }
               return handle;
           }
