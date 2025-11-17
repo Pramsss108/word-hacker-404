@@ -1,5 +1,5 @@
-
-import { aiEngine, MasteringSettings } from './aiVocalEngine';
+import type { MasteringSettings } from './aiVocalEngine';
+import { getAiEngine, type AIModelSize } from './aiModelLoader';
 
 export interface EffectSettings {
     // Effect Values
@@ -12,6 +12,7 @@ export interface EffectSettings {
     highpassFreq: number; // Hz
     aiEnhancement: number; // AI enhancement strength 0-1
     noiseReduction: number; // Noise reduction strength 0-1
+    aiModelSize: AIModelSize; // Lazy-loaded TF model size
     
     // M4: WASM Performance Options
     enableWASM: boolean; // Use WebAssembly acceleration when available
@@ -40,6 +41,7 @@ export const defaultSettings: EffectSettings = {
     highpassFreq: 100,
     aiEnhancement: 0.7,
     noiseReduction: 0.6,
+    aiModelSize: 'tiny',
     
     // M4: WASM Performance Defaults
     enableWASM: true, // Enable WASM acceleration by default
@@ -106,7 +108,11 @@ export const applyEffects = async (
             switch (effect) {
                 case 'aienhancement':
                     onProgress?.('🤖 AI Voice Enhancement...', progress);
-                    processedBuffer = await applyAIEnhancement(processedBuffer, settings.aiEnhancement);
+                    processedBuffer = await applyAIEnhancement(
+                        processedBuffer,
+                        settings.aiEnhancement,
+                        settings.aiModelSize
+                    );
                     break;
                 case 'noisereduction':
                     onProgress?.('🔇 Noise Reduction...', progress);
@@ -146,7 +152,10 @@ export const applyEffects = async (
                         stereoWidth: 0.2,
                         targetLUFS: -23
                     };
-                    processedBuffer = await aiEngine.masterAudio(processedBuffer, masteringSettings);
+                    {
+                        const engine = await getAiEngine(settings.aiModelSize)
+                        processedBuffer = await engine.masterAudio(processedBuffer, masteringSettings);
+                    }
                     break;
             }
         } catch (e) {
@@ -180,10 +189,10 @@ function getEnabledEffects(settings: EffectSettings): string[] {
 }
 
 // Individual Effect Functions
-async function applyAIEnhancement(audioBuffer: AudioBuffer, strength: number): Promise<AudioBuffer> {
+async function applyAIEnhancement(audioBuffer: AudioBuffer, strength: number, modelSize: AIModelSize): Promise<AudioBuffer> {
     try {
-        await aiEngine.initialize();
-        return await aiEngine.enhanceVoice(audioBuffer);
+        const engine = await getAiEngine(modelSize)
+        return await engine.enhanceVoice(audioBuffer);
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         console.warn('🤖 AI Enhancement unavailable, using optimized audio enhancement:', errorMsg);

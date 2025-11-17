@@ -112,6 +112,7 @@ export const BUILT_IN_PRESETS: AudioPreset[] = [
       highpassFreq: 80,
       aiEnhancement: 0.8,
       noiseReduction: 0.7,
+  aiModelSize: 'tiny',
       
       // WASM Performance
       enableWASM: true,
@@ -149,6 +150,7 @@ export const BUILT_IN_PRESETS: AudioPreset[] = [
       highpassFreq: 100,
       aiEnhancement: 0.6,
       noiseReduction: 0.8,
+  aiModelSize: 'tiny',
       
       // WASM Performance
       enableWASM: true,
@@ -186,6 +188,7 @@ export const BUILT_IN_PRESETS: AudioPreset[] = [
       highpassFreq: 150,
       aiEnhancement: 0.4,
       noiseReduction: 0.5,
+  aiModelSize: 'medium',
       
       // WASM Performance
       enableWASM: true,
@@ -223,6 +226,7 @@ export const BUILT_IN_PRESETS: AudioPreset[] = [
       highpassFreq: 60,
       aiEnhancement: 1.0,
       noiseReduction: 0.9,
+  aiModelSize: 'large',
       
       // WASM Performance
       enableWASM: true,

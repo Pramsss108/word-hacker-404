@@ -822,6 +822,17 @@ export default function VoiceEncrypter({ onBackToHome }: VoiceEncrypterProps) {
                         onChange={(e) => updateSettings({aiEnhancement: parseFloat(e.target.value)})}
                       />
                       <span className="control-value">{settings.aiEnhancement.toFixed(1)}</span>
+                      <label className="effect-subcontrol">
+                        <span>Model size</span>
+                        <select
+                          value={settings.aiModelSize}
+                          onChange={(e) => updateSettings({ aiModelSize: e.target.value as EffectSettings['aiModelSize'] })}
+                        >
+                          <option value="tiny">Tiny • 3MB</option>
+                          <option value="medium">Medium • 12MB</option>
+                          <option value="large">Large • 48MB</option>
+                        </select>
+                      </label>
                     </div>
                   )}
                 </div>

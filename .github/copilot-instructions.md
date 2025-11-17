@@ -40,7 +40,7 @@
 **📁 Navigate to Project:**
 ```powershell
 cd "D:\A scret project\Word hacker 404"
-```
+
 
 **🔧 Install Dependencies (if needed):**
 ```powershell

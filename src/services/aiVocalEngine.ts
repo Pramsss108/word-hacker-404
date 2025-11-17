@@ -418,4 +418,3 @@ export interface ProcessingStats {
 }
 
 // Export singleton instance
-export const aiEngine = new AIVocalShieldEngine();

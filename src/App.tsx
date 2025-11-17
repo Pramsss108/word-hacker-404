@@ -3,6 +3,7 @@ import { Search, Zap, Brain, ChevronRight, Waves, Wand2, Music4, Lock, Sparkles 
 import './App.css'
 import MatrixRain from './components/MatrixRain'
 import VoiceEncrypter from './components/VoiceEncrypter'
+import ToolsPage from './components/ToolsPage'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -19,7 +20,7 @@ const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: st
 ]
 
 function App() {
-  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter'>('menu')
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools'>('menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -37,6 +38,8 @@ function App() {
 
       {gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
+      ) : gameMode === 'tools' ? (
+        <ToolsPage onBackToHome={() => setGameMode('menu')} />
       ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}
@@ -89,7 +92,12 @@ function App() {
             <section className="tools-strip" aria-label="Tools">
               <div className="tools-row">
                 <button className="tool glass"><Waves size={18} /> Sound Lab</button>
-                <button className="tool glass"><Wand2 size={18} /> Slang Scanner</button>
+                <button 
+                  className="tool glass"
+                  onClick={() => setGameMode('tools')}
+                >
+                  <Wand2 size={18} /> Useful Tools
+                </button>
                 <button 
                   className="tool glass"
                   onClick={() => setGameMode('voice-encrypter')}

@@ -293,7 +293,7 @@ Live System Metrics:
 
 **Project:** Word Hacker 404 - Voice Encrypter Professional V4.0 Adobe Quality Edition  
 **Status:** V3.0 DAW Complete → V4.0 Adobe Parity Development Phase  
-**Live Application:** https://pramsss108.github.io/word-hacker-404/  
+**Live Application:** https://wordhacker404.me 
 **Development Focus:** RNNoise integration, AudioWorklet implementation, streaming processing
 
 ---

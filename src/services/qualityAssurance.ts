@@ -594,6 +594,7 @@ export class QualityAssuranceSystem {
           highpassFreq: 20,
           aiEnhancement: 0.5,
           noiseReduction: 0.5,
+          aiModelSize: 'tiny',
           enableWASM: true,
           wasmBlockSize: 2048,
           enablePitchShift: false,

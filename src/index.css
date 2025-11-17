@@ -194,3 +194,43 @@ body::after {
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
+
+/* Force dark dropdown for select (Webkit/Blink/Edge/Firefox) */
+.setting-group select,
+.setting-group select:active,
+.setting-group select:focus,
+.setting-group select:focus-visible {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--accent);
+}
+.setting-group select option {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
+
+/* Chrome/Edge force dark dropdown background */
+.setting-group select::-webkit-dropdown-list,
+.setting-group select::-webkit-list-box,
+.setting-group select:active,
+.setting-group select:focus,
+.setting-group select:focus-visible {
+  background-color: var(--panel) !important;
+  color: var(--text) !important;
+}
+
+.setting-group select option {
+  background-color: var(--panel) !important;
+  color: var(--text) !important;
+}
+
+/* Remove default Chrome white border on open */
+.setting-group select {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Firefox dropdown arrow */
+.setting-group select:-moz-focusring {
+  color: var(--text);
+  text-shadow: 0 0 2px var(--accent);
+}
