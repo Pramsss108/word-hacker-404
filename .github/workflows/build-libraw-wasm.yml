@@ -64,7 +64,18 @@ jobs:
           #include <string.h>
 
           EMSCRIPTEN_KEEPALIVE
-          void* lr_init() { return libraw_init(0); }
+          void* lr_init() { 
+              libraw_data_t* handle = libraw_init(0);
+              if (handle) {
+                  // Configure output parameters for color processing
+                  handle->params.output_color = 1;      // 1 = sRGB
+                  handle->params.output_bps = 16;       // 16-bit output
+                  handle->params.use_camera_wb = 1;     // Use camera white balance
+                  handle->params.no_auto_bright = 0;    // Enable auto-brightness
+                  handle->params.gamma_16bit = 1;       // Apply gamma for 16-bit
+              }
+              return handle;
+          }
 
           EMSCRIPTEN_KEEPALIVE
           int lr_open_buffer(void* h, void* buf, size_t size) { return libraw_open_buffer((libraw_data_t*)h, buf, size); }
@@ -79,7 +90,7 @@ jobs:
           void* lr_make_image(void* h, int* w, int* hgt, int* type) {
             libraw_processed_image_t* img = libraw_dcraw_make_mem_image((libraw_data_t*)h, NULL);
             if (!img) return NULL;
-            *w = img->width; *hgt = img->height; *type = img->type; // type 1 = RGB
+            *w = img->width; *hgt = img->height; *type = img->type; // type 1=8bit, 2=16bit RGB
             return img->data;
           }
 
