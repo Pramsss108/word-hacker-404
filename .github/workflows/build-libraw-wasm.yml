@@ -39,15 +39,19 @@ jobs:
           export CXX=em++
           export AR=emar
           export RANLIB=emranlib
+          export CFLAGS="-O3 -pthread -matomics -mbulk-memory -s USE_PTHREADS=1"
+          export CXXFLAGS="-O3 -pthread -matomics -mbulk-memory -s USE_PTHREADS=1"
+          export LDFLAGS="-pthread -matomics -mbulk-memory -s USE_PTHREADS=1"
           ./configure \
             --host=wasm32-unknown-emscripten \
             --build=$(gcc -dumpmachine) \
             --disable-shared --enable-static \
-            CFLAGS="-O3" CXXFLAGS="-O3"
+            --disable-openmp || true
 
       - name: Build static lib
         working-directory: libraw-src
         run: |
+          make clean || true
           make -j2
           echo "Built files:" && ls -la . src/*.o *.a || true
 
@@ -92,6 +96,8 @@ jobs:
           emcc -O3 \
             -s WASM=1 -s MODULARIZE=1 -s EXPORT_NAME='LibRawModule' \
             -s ALLOW_MEMORY_GROWTH=1 \
+            -s USE_PTHREADS=1 \
+            -pthread -matomics -mbulk-memory \
             -I libraw-src \
             libraw_wrapper.c "${LIBRAW_A}" \
             -o libraw.js \
