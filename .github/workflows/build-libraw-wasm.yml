@@ -31,7 +31,15 @@ jobs:
         env:
           EMSDK: /emsdk_portable
         run: |
-          emconfigure ./configure --disable-shared --enable-static CFLAGS="-O3" CXXFLAGS="-O3"
+          echo "Configuring for cross-compile (Emscripten)"
+          echo "Build triplet: $(gcc -dumpmachine)"
+          # Force cross-compile so configure does not try to run a.out
+          CC=emcc CXX=em++ AR=emar RANLIB=emranlib \
+          emconfigure ./configure \
+            --host=wasm32-unknown-emscripten \
+            --build=$(gcc -dumpmachine) \
+            --disable-shared --enable-static \
+            CFLAGS="-O3" CXXFLAGS="-O3"
 
       - name: Build static lib
         working-directory: libraw-src
@@ -73,11 +81,15 @@ jobs:
 
       - name: Link to wasm
         run: |
+          set -e
+          # Locate the produced static library (path differs by autotools setup)
+          LIBRAW_A=$(find libraw-src -name 'libraw.a' -print -quit)
+          echo "Using static lib at: ${LIBRAW_A}"
           emcc -O3 \
             -s WASM=1 -s MODULARIZE=1 -s EXPORT_NAME='LibRawModule' \
             -s ALLOW_MEMORY_GROWTH=1 \
             -I libraw-src \
-            libraw_wrapper.c libraw-src/.libs/libraw.a \
+            libraw_wrapper.c "${LIBRAW_A}" \
             -o libraw.js \
             -s EXPORTED_FUNCTIONS="['_malloc','_free']" \
             -s EXPORTED_RUNTIME_METHODS="['ccall','cwrap']"
