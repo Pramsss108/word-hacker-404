@@ -31,11 +31,15 @@ jobs:
         env:
           EMSDK: /emsdk_portable
         run: |
+          set -e
           echo "Configuring for cross-compile (Emscripten)"
           echo "Build triplet: $(gcc -dumpmachine)"
           # Force cross-compile so configure does not try to run a.out
-          CC=emcc CXX=em++ AR=emar RANLIB=emranlib \
-          emconfigure ./configure \
+          export CC=emcc
+          export CXX=em++
+          export AR=emar
+          export RANLIB=emranlib
+          ./configure \
             --host=wasm32-unknown-emscripten \
             --build=$(gcc -dumpmachine) \
             --disable-shared --enable-static \
@@ -44,7 +48,7 @@ jobs:
       - name: Build static lib
         working-directory: libraw-src
         run: |
-          emmake make -j2
+          make -j2
           echo "Built files:" && ls -la . src/*.o *.a || true
 
       - name: Add wrapper
