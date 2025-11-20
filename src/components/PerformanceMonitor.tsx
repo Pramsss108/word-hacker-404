@@ -79,8 +79,9 @@ export default function PerformanceMonitor() {
         <button
           onClick={() => setIsVisible(false)}
           className="performance-close"
+          aria-label="Close performance monitor"
         >
-          ✕
+          <span className="close-cross" aria-hidden>✕</span>
         </button>
       </div>
       
