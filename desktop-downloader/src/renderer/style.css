@@ -1,0 +1,17 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Inter', 'Segoe UI', system-ui; background-color: #05070a; color: #f5f7fb; }
+main.app-shell { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 3rem; display: flex; flex-direction: column; gap: 1.5rem; }
+header .eyebrow { text-transform: uppercase; letter-spacing: 0.25em; color: #7bfbbb; font-size: 0.72rem; margin: 0 0 0.35rem; }
+header h1 { margin: 0 0 0.35rem; font-size: 2rem; }
+header .lead { margin: 0; color: #9ba6ba; line-height: 1.5; }
+.panel { background: rgba(9,14,22,0.9); border: 1px solid rgba(123,251,187,0.18); border-radius: 20px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 25px 60px rgba(0,0,0,0.45); }
+label { font-weight: 600; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.08em; color: #9ba6ba; }
+textarea { width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); background: rgba(4,7,11,0.95); color: #f5f7fb; padding: 0.9rem; font-size: 0.9rem; resize: vertical; min-height: 120px; }
+textarea:focus { outline: 2px solid rgba(123,251,187,0.4); }
+.format-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; }
+.format-btn { border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #f5f7fb; padding: 0.8rem; font-weight: 600; cursor: pointer; }
+.format-btn.active { border-color: #7bfbbb; color: #05070a; background: #7bfbbb; }
+.primary { border: none; border-radius: 16px; background: linear-gradient(135deg, #0aff6a, #07c06b); color: #05070a; font-size: 1rem; font-weight: 700; padding: 0.9rem; cursor: pointer; }
+.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.hint { margin: 0; font-size: 0.78rem; color: #7c859a; }
+.status-log { font-family: 'JetBrains Mono', 'SFMono-Regular', monospace; font-size: 0.8rem; color: #c9d3eb; background: rgba(4,7,11,0.92); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); padding: 0.85rem; min-height: 90px; max-height: 220px; overflow-y: auto; white-space: pre-wrap; }

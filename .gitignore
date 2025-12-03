@@ -12,3 +12,5 @@ yarn-error.log*
 Thumbs.db
 *.tsbuildinfo
 .vscode/settings.json
+tools/internet-downloader/.venv/
+tools/internet-downloader/downloads/

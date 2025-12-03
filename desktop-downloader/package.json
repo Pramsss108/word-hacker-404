@@ -1,0 +1,49 @@
+{
+  "name": "word-hacker-desktop-downloader",
+  "version": "0.1.0",
+  "description": "Desktop helper that bundles yt-dlp and FFmpeg so non-coders can download drops locally.",
+  "main": "src/main.js",
+  "author": "Word Hacker 404",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electronmon .",
+    "package:win": "electron-builder --win portable",
+    "package:mac": "electron-builder --mac dmg",
+    "package:linux": "electron-builder --linux AppImage",
+    "package": "electron-builder -mwl"
+  },
+  "dependencies": {
+    "electron": "^30.0.6",
+    "ffmpeg-static": "^5.2.0",
+    "sanitize-filename": "^1.6.3",
+    "yt-dlp-exec": "^3.3.2"
+  },
+  "devDependencies": {
+    "electron-builder": "^25.0.5",
+    "electronmon": "^2.0.2"
+  },
+  "build": {
+    "appId": "com.wordhacker.downloader",
+    "productName": "Word Hacker Downloader",
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}

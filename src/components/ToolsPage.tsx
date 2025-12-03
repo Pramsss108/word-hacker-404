@@ -1,9 +1,10 @@
-import { type ReactNode, useCallback, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Cpu,
+  Download,
   ShieldCheck,
   Shuffle,
   Sparkles,
@@ -22,6 +23,7 @@ interface ToolBannerMeta {
   status: 'open' | 'soon'
   badge: string
   motionClass: string
+  openId?: 'raw' | 'downloader'
 }
 
 interface RawProcessStep {
@@ -30,6 +32,8 @@ interface RawProcessStep {
   detail: string
   notes: string[]
 }
+
+type DownloaderFormat = 'mp4-1080' | 'mp4-720' | 'mp3'
 
 const rawSteps: RawProcessStep[] = [
   {
@@ -61,6 +65,19 @@ const rawSteps: RawProcessStep[] = [
   },
 ]
 
+const formatOptions: Array<{ id: DownloaderFormat; label: string; detail: string }> = [
+  { id: 'mp4-1080', label: '1080p MP4', detail: 'Full HD video + audio.' },
+  { id: 'mp4-720', label: '720p MP4', detail: 'Smaller drop, still HD.' },
+  { id: 'mp3', label: 'MP3 Audio', detail: '192 kbps audio-only.' },
+]
+
+function parseUrlInput(rawValue: string): string[] {
+  return rawValue
+    .split(/[\s,\n]+/)
+    .map((item) => item.trim())
+    .filter((item) => /^https?:\/\//i.test(item))
+}
+
 function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
   const toolList = useMemo<ToolBannerMeta[]>(() => ([
@@ -72,6 +89,17 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
       status: 'open',
       badge: 'ACTIVE',
       motionClass: 'raw-grid',
+      openId: 'raw',
+    },
+    {
+      id: 'internet-downloader',
+      name: 'Internet Downloader',
+      summary: 'Client-side helper for the yt-dlp PowerShell runner.',
+      icon: <Download size={22} aria-hidden />,
+      status: 'open',
+      badge: 'NEW',
+      motionClass: 'downloader-stream',
+      openId: 'downloader',
     },
     {
       id: 'voice-encrypter',
@@ -129,8 +157,120 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
     },
   ]), [])
 
-  const [rawOverlayOpen, setRawOverlayOpen] = useState(false)
+  const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | null>(null)
   const [rawStepIndex, setRawStepIndex] = useState(0)
+
+  const [downloaderUrls, setDownloaderUrls] = useState('')
+  const [downloaderFormat, setDownloaderFormat] = useState<DownloaderFormat>('mp4-1080')
+  const [downloaderSlide, setDownloaderSlide] = useState(0)
+  const [autoAdvancePending, setAutoAdvancePending] = useState(false)
+  const [autoAdvanceDone, setAutoAdvanceDone] = useState(false)
+  const [clipboardPrimed, setClipboardPrimed] = useState(false)
+  const [isDesktopDevice, setIsDesktopDevice] = useState(true)
+
+  const parsedUrls = useMemo(() => parseUrlInput(downloaderUrls), [downloaderUrls])
+  const deckStatus = parsedUrls.length === 0
+    ? { label: 'Paste link', tone: 'idle' as const }
+    : { label: `Ready · ${parsedUrls.length} job${parsedUrls.length === 1 ? '' : 's'}`, tone: 'ready' as const }
+  const downloaderSlideLabels = ['Paste queue', 'Select format', 'Run helper']
+  const totalDownloaderSlides = downloaderSlideLabels.length
+
+  const handleUrlChange = useCallback((value: string) => {
+    setDownloaderUrls(value)
+    if (!value.trim()) {
+      setDownloaderSlide(0)
+      setAutoAdvancePending(false)
+      setAutoAdvanceDone(false)
+    } else {
+      setAutoAdvanceDone(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (activeTool !== 'downloader' || clipboardPrimed) {
+      return
+    }
+    if (typeof navigator === 'undefined' || !navigator.clipboard) {
+      return
+    }
+    navigator.clipboard.readText().then((text) => {
+      if (text && parseUrlInput(text).length > 0) {
+        handleUrlChange(text.trim())
+      }
+      setClipboardPrimed(true)
+    }).catch(() => {
+      setClipboardPrimed(true)
+    })
+  }, [activeTool, clipboardPrimed, handleUrlChange])
+
+  const handlePaste = useCallback(async () => {
+    if (typeof navigator === 'undefined' || !navigator.clipboard) {
+      return
+    }
+    try {
+      const text = await navigator.clipboard.readText()
+      handleUrlChange(text.trim())
+      setClipboardPrimed(true)
+    } catch (error) {
+      console.warn('Clipboard read failed', error)
+    }
+  }, [handleUrlChange])
+
+  const handleClear = useCallback(() => {
+    handleUrlChange('')
+    setClipboardPrimed(false)
+  }, [handleUrlChange])
+
+  const cycleDownloaderSlide = useCallback((direction: 'prev' | 'next') => {
+    setDownloaderSlide((prev) => {
+      if (direction === 'next') {
+        return Math.min(totalDownloaderSlides - 1, prev + 1)
+      }
+      return Math.max(0, prev - 1)
+    })
+    if (direction === 'prev') {
+      setAutoAdvancePending(false)
+    }
+  }, [totalDownloaderSlides])
+
+  useEffect(() => {
+    if (!downloaderUrls.trim()) {
+      setAutoAdvancePending(false)
+      setAutoAdvanceDone(false)
+      return
+    }
+    if (autoAdvanceDone) {
+      return
+    }
+    if (downloaderSlide === 0 && !autoAdvancePending) {
+      setDownloaderSlide(1)
+      setAutoAdvancePending(true)
+    }
+  }, [downloaderUrls, downloaderSlide, autoAdvancePending, autoAdvanceDone])
+
+  useEffect(() => {
+    if (!autoAdvancePending || downloaderSlide !== 1 || typeof window === 'undefined') {
+      return
+    }
+    const timer = window.setTimeout(() => {
+      setDownloaderSlide(2)
+      setAutoAdvancePending(false)
+      setAutoAdvanceDone(true)
+    }, 1000)
+    return () => window.clearTimeout(timer)
+  }, [autoAdvancePending, downloaderSlide])
+
+  useEffect(() => {
+    if (typeof navigator === 'undefined') {
+      return
+    }
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '')
+    setIsDesktopDevice(!isMobile)
+  }, [])
+
+  const openDesktopAppDocs = useCallback(() => {
+    window.open('https://github.com/Pramsss108/word-hacker-404/tree/main/desktop-downloader#desktop-downloader-app-alpha', '_blank')
+  }, [])
 
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {
     setRawStepIndex((prev) => {
@@ -148,7 +288,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
       <div className="sysbar">
         <div className="sys-item"><span className="dot" /> ACCESS: OPEN</div>
         <div className="sys-item mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-        <div className="sys-item mono">TOOLS · MATRIX-{Math.abs((Date.now()/1000|0)%999)}</div>
+        <div className="sys-item mono">TOOLS · MATRIX-{Math.abs(((Date.now() / 1000) | 0) % 999)}</div>
         <div className={`sys-item mono sab-pill ${sabReport.available ? 'ok' : 'warn'}`}>
           {sabReport.available ? 'SAB LOCK' : 'SAB FALLBACK'}
         </div>
@@ -182,7 +322,11 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                 <button
                   className={`btn ${tool.status === 'open' ? 'cta-open' : ''}`}
                   disabled={tool.status !== 'open'}
-                  onClick={() => setRawOverlayOpen(true)}
+                  onClick={() => {
+                    if (tool.openId) {
+                      setActiveTool(tool.openId)
+                    }
+                  }}
                 >
                   {tool.status === 'open' ? 'Open Tool' : 'Coming Soon'}
                 </button>
@@ -198,7 +342,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         <small className="mono" aria-label="terminal-log">terminal-log: tools deck primed</small>
       </footer>
 
-      {rawOverlayOpen && (
+      {activeTool === 'raw' && (
         <div className="tools-overlay" role="dialog" aria-modal="true">
           <div className="raw-holo">
             <div className="raw-anim-grid" aria-hidden />
@@ -207,7 +351,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                 <h3 className="raw-head-title">RAW Decoder Lab</h3>
                 <p className="raw-head-note">RAW image converter · from any RAW to any format.</p>
               </div>
-              <button className="btn ghost" onClick={() => setRawOverlayOpen(false)}>
+              <button className="btn ghost" onClick={() => setActiveTool(null)}>
                 Close <span className="close-cross" aria-hidden>✕</span>
               </button>
             </header>
@@ -257,6 +401,188 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                 <button className="slider-btn" aria-label="Next stage" onClick={() => cycleRawStep('next')}>
                   <ChevronRight size={20} aria-hidden />
                 </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      )}
+
+      {activeTool === 'downloader' && (
+        <div className="tools-overlay" role="dialog" aria-modal="true">
+          <div className="raw-holo">
+            <div className="raw-anim-grid downloader-grid" aria-hidden />
+            <header className="raw-holo-head">
+              <div>
+                <h3 className="raw-head-title">Internet Downloader</h3>
+                <p className="raw-head-note">Paste, pick format, fire the helper. One slide. Fast.</p>
+              </div>
+              <button className="btn ghost" onClick={() => setActiveTool(null)}>
+                Close <span className="close-cross" aria-hidden>✕</span>
+              </button>
+            </header>
+
+            <section className="downloader-box">
+              <div className="downloader-box-head">
+                <div>
+                  <p className="downloader-title">Deck 02 · Internet Downloader</p>
+                  <span className="downloader-sub">{clipboardPrimed ? 'Clipboard linked' : 'Autopaste armed once'} · {parsedUrls.length || 'No'} job{parsedUrls.length === 1 ? '' : 's'}</span>
+                </div>
+                <div className="downloader-head-actions">
+                  <span className={`engine-chip ${deckStatus.tone}`}>{deckStatus.label}</span>
+                  <button className="btn ghost tiny" type="button" onClick={handlePaste}>
+                    Paste link
+                  </button>
+                </div>
+              </div>
+
+              <div className="downloader-slider" aria-roledescription="carousel">
+                <button
+                  className="slider-btn"
+                  type="button"
+                  aria-label="Previous step"
+                  onClick={() => cycleDownloaderSlide('prev')}
+                  disabled={downloaderSlide === 0}
+                >
+                  <ChevronLeft size={20} aria-hidden />
+                </button>
+
+                <div className="downloader-stage">
+                  <div className="downloader-track" style={{ transform: `translateX(-${downloaderSlide * 100}%)` }}>
+                    <article className="downloader-slide">
+                      <div className="downloader-panel">
+                        <div className="panel-head">
+                          <span className="step-label">Step 01</span>
+                          <h4>Paste queue</h4>
+                        </div>
+                        {isDesktopDevice && (
+                          <div className="desktop-callout">
+                            <p>Desktop detected. Install the Word Hacker Downloader app for one-click pulls.</p>
+                            <button className="btn ghost tiny" type="button" onClick={openDesktopAppDocs}>Download desktop app</button>
+                          </div>
+                        )}
+                        <textarea
+                          id="downloader-input"
+                          className="downloader-textarea compact"
+                          value={downloaderUrls}
+                          onChange={(event) => handleUrlChange(event.target.value)}
+                          placeholder="Drop YouTube links here."
+                        />
+                        <div className="downloader-row tight">
+                          <button className="btn" type="button" onClick={handlePaste}>
+                            Paste
+                          </button>
+                          <button className="btn ghost" type="button" onClick={handleClear} disabled={!downloaderUrls.trim()}>
+                            Clear
+                          </button>
+                          <span className="downloader-hint">Spaces, commas, or new lines all work.</span>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article className="downloader-slide">
+                      <div className="downloader-panel">
+                        <div className="panel-head">
+                          <span className="step-label">Step 02</span>
+                          <h4>Select format</h4>
+                        </div>
+                        <p className="downloader-hint">Pick the drop style.</p>
+                        <div className="format-grid">
+                          {formatOptions.map((option) => (
+                            <button
+                              key={option.id}
+                              className={`format-card ${downloaderFormat === option.id ? 'active' : ''}`}
+                              type="button"
+                              onClick={() => setDownloaderFormat(option.id)}
+                            >
+                              <strong>{option.label}</strong>
+                              <small>{option.detail}</small>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+
+                    <article className="downloader-slide">
+                      <div className="downloader-panel">
+                        <div className="panel-head">
+                          <span className="step-label">Step 03</span>
+                          <h4>{isDesktopDevice ? 'Install helper app' : 'Telegram bot'}</h4>
+                        </div>
+                        {isDesktopDevice ? (
+                          <>
+                            <p className="downloader-hint intense">Install the Word Hacker Downloader desktop app once. After that every paste/download lives inside the app.</p>
+                            <div className="cta-stack">
+                              <button className="btn" type="button" onClick={openDesktopAppDocs}>
+                                Download desktop app
+                              </button>
+                              <button
+                                className="btn ghost"
+                                type="button"
+                                onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/tree/main/tools/internet-downloader', '_blank')}
+                              >
+                                Advanced PowerShell helper
+                              </button>
+                            </div>
+                            <div className="helper-status-grid">
+                              <div>
+                                <p className="helper-label">Formats wired</p>
+                                <p className="helper-value">MP4 1080 · 720 · MP3</p>
+                              </div>
+                              <div>
+                                <p className="helper-label">Output path</p>
+                                <p className="helper-value">Downloads/WordHackerDownloads</p>
+                              </div>
+                              <div>
+                                <p className="helper-label">Status</p>
+                                <p className="helper-value">Alpha build · auto updates soon</p>
+                              </div>
+                            </div>
+                            <ul className="helper-checklist">
+                              <li><strong>1.</strong> Click <span className="mono-chip">Download desktop app</span> to open the installer instructions.</li>
+                              <li><strong>2.</strong> Run the provided installer/script once. Pin the app to taskbar.</li>
+                              <li><strong>3.</strong> Open the app, paste links, and download directly—no terminal.</li>
+                            </ul>
+                            <p className="downloader-hint">Signed installers ship next. For now the repo build script creates the EXE locally.</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="downloader-hint intense">You’re on mobile. The Telegram bot handles downloads with zero setup.</p>
+                            <div className="cta-stack">
+                              <button className="btn" type="button" onClick={() => window.open('https://t.me/wordhacker_downloader_bot', '_blank')} disabled>
+                                Telegram bot (coming soon)
+                              </button>
+                            </div>
+                            <p className="downloader-hint">Bot notifications + auto-uploads are shipping soon. We’ll drop the invite link here.</p>
+                          </>
+                        )}
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
+                <button
+                  className="slider-btn"
+                  type="button"
+                  aria-label="Next step"
+                  onClick={() => cycleDownloaderSlide('next')}
+                  disabled={downloaderSlide >= totalDownloaderSlides - 1}
+                >
+                  <ChevronRight size={20} aria-hidden />
+                </button>
+              </div>
+
+              <div className="downloader-pips">
+                {downloaderSlideLabels.map((label, index) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={downloaderSlide === index ? 'active' : ''}
+                    onClick={() => setDownloaderSlide(index)}
+                    aria-label={label}
+                  >
+                    0{index + 1}
+                  </button>
+                ))}
               </div>
             </section>
           </div>

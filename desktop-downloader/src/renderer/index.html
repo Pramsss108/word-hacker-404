@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word Hacker Downloader</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header>
+        <p class="eyebrow">Deck 02 · Internet Downloader</p>
+        <h1>Word Hacker Downloader</h1>
+        <p class="lead">Paste YouTube links, pick the format, tap download. yt-dlp + FFmpeg run locally so nothing hits our servers.</p>
+      </header>
+
+      <section class="panel">
+        <label for="url-input">Links</label>
+        <textarea id="url-input" placeholder="https://youtu.be/..." rows="5"></textarea>
+        <p class="hint">Spaces, commas, or new lines are all ok. Multiple jobs run sequentially.</p>
+
+        <label>Format</label>
+        <div class="format-row">
+          <button data-format="mp4-1080" class="format-btn active">MP4 · 1080p</button>
+          <button data-format="mp4-720" class="format-btn">MP4 · 720p</button>
+          <button data-format="mp3" class="format-btn">MP3 · Audio</button>
+        </div>
+
+        <button id="download-btn" class="primary">Download</button>
+        <p class="hint">Files land in your system Downloads/WordHackerDownloads folder.</p>
+      </section>
+
+      <section class="panel" id="status-panel" hidden>
+        <h2>Status</h2>
+        <div id="status-output" class="status-log"></div>
+      </section>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

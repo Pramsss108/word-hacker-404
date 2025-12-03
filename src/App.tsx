@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Zap, Brain, ChevronRight, Waves, Wand2, Music4, Lock, Sparkles } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
 import VoiceEncrypter from './components/VoiceEncrypter'
 import ToolsPage from './components/ToolsPage'
+import RawWatchdogIndicator from './components/RawWatchdogIndicator'
+import RawDiagnosticsPanel from './components/RawDiagnosticsPanel'
+import { getSharedArrayBufferWatchdogReport } from './raw'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -25,6 +28,7 @@ function App() {
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
   const heroRef = useRef<HTMLDivElement | null>(null)
+  const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
 
   useEffect(() => {
     const t = setTimeout(() => setShowIntro(false), 2400)
@@ -35,6 +39,7 @@ function App() {
     <div className="app">
       {/* Background effect */}
       <MatrixRain opacity={0.08} density={24} speed={2} />
+      <RawWatchdogIndicator />
 
       {gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
@@ -47,6 +52,9 @@ function App() {
             <div className="sys-item"><span className="dot" /> ACCESS: OPEN</div>
             <div className="sys-item mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
             <div className="sys-item mono">BETA · MATRIX-{Math.abs((Date.now()/1000|0)%999)}</div>
+            <div className={`sys-item mono sab-pill ${sabReport.available ? 'ok' : 'warn'}`}>
+              {sabReport.available ? 'SAB LOCK' : 'SAB FALLBACK'}
+            </div>
           </div>
 
           <header className="header hero" ref={heroRef}>
@@ -162,6 +170,10 @@ function App() {
                   </article>
                 ))}
               </div>
+            </section>
+
+            <section id="raw-lab" className="raw-lab-section" aria-label="RAW Diagnostics">
+              <RawDiagnosticsPanel />
             </section>
 
             {/* How it works + callout */}

@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    {
+      "id": "libraw-js",
+      "package": "libraw-wasm@1.1.2",
+      "source": "node_modules/libraw-wasm/dist/libraw.js",
+      "target": "public/wasm/libraw.js",
+      "sha256": "b150ac263c64a9f869f3f50135b0271c3cecdaad74384657a9197e4881d96546"
+    },
+    {
+      "id": "libraw-wasm",
+      "package": "libraw-wasm@1.1.2",
+      "source": "node_modules/libraw-wasm/dist/libraw.wasm",
+      "target": "public/wasm/libraw.wasm",
+      "sha256": "6a84756ec28d2a42049b5675f581487dafd6fea3c7dcc24aca3b3f86600f0119"
+    },
+    {
+      "id": "libraw-worker",
+      "package": "libraw-wasm@1.1.2",
+      "source": "node_modules/libraw-wasm/dist/worker.js",
+      "target": "public/wasm/worker.js",
+      "sha256": "f7b55183f3327a746b62f21d5adb49d55d0160d56d580fd4c7483e616d790a45"
+    },
+    {
+      "id": "vips-esm",
+      "package": "wasm-vips@0.0.16",
+      "source": "node_modules/wasm-vips/lib/vips-es6.js",
+      "target": "public/wasm/vips-es6.js",
+      "sha256": "5f7d564012bd8f061382add80a1859bf38f5800adbada416d55adc61c484b4b8"
+    },
+    {
+      "id": "vips-core",
+      "package": "wasm-vips@0.0.16",
+      "source": "node_modules/wasm-vips/lib/vips.wasm",
+      "target": "public/wasm/vips.wasm",
+      "sha256": "5be99a8d7fc86edf9b76766c2cf3d7cf1964dc79da400b3bd3142b95788a880f"
+    },
+    {
+      "id": "vips-heif",
+      "package": "wasm-vips@0.0.16",
+      "source": "node_modules/wasm-vips/lib/vips-heif.wasm",
+      "target": "public/wasm/vips-heif.wasm",
+      "sha256": "bb93ea921fd57da009f930dc62048b4548e18116a4af60d2db5a25d8868d42c9"
+    },
+    {
+      "id": "vips-jxl",
+      "package": "wasm-vips@0.0.16",
+      "source": "node_modules/wasm-vips/lib/vips-jxl.wasm",
+      "target": "public/wasm/vips-jxl.wasm",
+      "sha256": "a2d8fbb8f68d7df672169fb181a6cc3986bcdfb930eadfc1143f748b08adf46b"
+    },
+    {
+      "id": "vips-resvg",
+      "package": "wasm-vips@0.0.16",
+      "source": "node_modules/wasm-vips/lib/vips-resvg.wasm",
+      "target": "public/wasm/vips-resvg.wasm",
+      "sha256": "c39e711edd0ad5897c2e978f9866a168297c960e1c7b2f088dcd3333871f8fa6"
+    }
+  ]
+}
