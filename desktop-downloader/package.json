@@ -28,6 +28,10 @@
     "directories": {
       "output": "release"
     },
+    "asarUnpack": [
+      "node_modules/yt-dlp-exec/bin/**",
+      "node_modules/ffmpeg-static/**"
+    ],
     "win": {
       "target": [
         "portable",

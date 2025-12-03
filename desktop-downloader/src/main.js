@@ -3,8 +3,22 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const ytdlp = require('yt-dlp-exec')
-const ffmpegPath = require('ffmpeg-static')
 const sanitize = require('sanitize-filename')
+
+// Fix paths for packed app (binaries are in app.asar.unpacked)
+let ytdlpBinaryPath
+let ffmpegPath
+
+if (app.isPackaged) {
+  // In production, binaries are unpacked to app.asar.unpacked
+  const unpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules')
+  ytdlpBinaryPath = path.join(unpackedPath, 'yt-dlp-exec', 'bin', 'yt-dlp.exe')
+  ffmpegPath = path.join(unpackedPath, 'ffmpeg-static', 'ffmpeg.exe')
+} else {
+  // In development, use normal paths
+  ytdlpBinaryPath = require('yt-dlp-exec').path
+  ffmpegPath = require('ffmpeg-static')
+}
 
 /**
  * Map UI format ids to yt-dlp format selectors.
@@ -104,7 +118,12 @@ async function runJob(url, label, formatSelector, outputDir) {
     args.audioQuality = '3'
   }
 
-  await ytdlp(url, args)
+  // Use custom binary path when packaged
+  if (app.isPackaged) {
+    await ytdlp(url, { ...args, binaryPath: ytdlpBinaryPath })
+  } else {
+    await ytdlp(url, args)
+  }
 
   const producedFiles = fs.readdirSync(tmpDir)
   const moved = []
