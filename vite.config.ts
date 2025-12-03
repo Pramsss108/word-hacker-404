@@ -23,6 +23,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
+      external: ['wasm-vips'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -30,5 +31,11 @@ export default defineConfig({
         }
       }
     }
+  },
+  optimizeDeps: {
+    exclude: ['wasm-vips']
+  },
+  worker: {
+    format: 'es'
   }
 })
