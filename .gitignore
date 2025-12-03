@@ -14,3 +14,7 @@ Thumbs.db
 .vscode/settings.json
 tools/internet-downloader/.venv/
 tools/internet-downloader/downloads/
+
+# Desktop downloader build artifacts (too large for GitHub)
+desktop-downloader/release/
+desktop-downloader/dist/
