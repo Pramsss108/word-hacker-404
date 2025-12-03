@@ -510,39 +510,39 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                         </div>
                         {isDesktopDevice ? (
                           <>
-                            <p className="downloader-hint intense">Install the Word Hacker Downloader desktop app once. After that every paste/download lives inside the app.</p>
+                            <p className="downloader-hint intense">Desktop installer coming soon. For now, download links are processed via PowerShell helper or upcoming Telegram bot.</p>
                             <div className="cta-stack">
-                              <button className="btn" type="button" onClick={openDesktopAppDocs}>
-                                Download desktop app
+                              <button className="btn" type="button" disabled>
+                                Desktop Installer (Coming Soon)
                               </button>
                               <button
                                 className="btn ghost"
                                 type="button"
                                 onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/tree/main/tools/internet-downloader', '_blank')}
                               >
-                                Advanced PowerShell helper
+                                PowerShell helper (available now)
                               </button>
                             </div>
                             <div className="helper-status-grid">
                               <div>
-                                <p className="helper-label">Formats wired</p>
-                                <p className="helper-value">MP4 1080 · 720 · MP3</p>
+                                <p className="helper-label">Installer Status</p>
+                                <p className="helper-value">Building .exe/.dmg/.AppImage</p>
+                              </div>
+                              <div>
+                                <p className="helper-label">What to expect</p>
+                                <p className="helper-value">Double-click installer → Install → Launch → Paste links → Download</p>
                               </div>
                               <div>
                                 <p className="helper-label">Output path</p>
                                 <p className="helper-value">Downloads/WordHackerDownloads</p>
                               </div>
-                              <div>
-                                <p className="helper-label">Status</p>
-                                <p className="helper-value">Alpha build · auto updates soon</p>
-                              </div>
                             </div>
                             <ul className="helper-checklist">
-                              <li><strong>1.</strong> Click <span className="mono-chip">Download desktop app</span> to open the installer instructions.</li>
-                              <li><strong>2.</strong> Run the provided installer/script once. Pin the app to taskbar.</li>
-                              <li><strong>3.</strong> Open the app, paste links, and download directly—no terminal.</li>
+                              <li><strong>Installer will include:</strong> Signed .exe (Windows), .dmg (Mac), .AppImage (Linux)</li>
+                              <li><strong>One-click install:</strong> No Node.js, no terminal—just install and run</li>
+                              <li><strong>Auto-updates:</strong> New versions install automatically</li>
                             </ul>
-                            <p className="downloader-hint">Signed installers ship next. For now the repo build script creates the EXE locally.</p>
+                            <p className="downloader-hint">Meanwhile, use the PowerShell helper or wait for Telegram bot (mobile-friendly).</p>
                           </>
                         ) : (
                           <>
