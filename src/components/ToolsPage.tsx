@@ -269,7 +269,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   }, [])
 
   const openDesktopAppDocs = useCallback(() => {
-    window.open('https://github.com/Pramsss108/word-hacker-404/blob/main/desktop-downloader/QUICK_START.md', '_blank')
+    window.open('https://github.com/Pramsss108/word-hacker-404/releases/download/desktop-v1.0.0/Word.Hacker.Downloader.0.1.0.exe', '_blank')
   }, [])
 
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {
@@ -510,23 +510,23 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                         </div>
                         {isDesktopDevice ? (
                           <>
-                            <p className="downloader-hint intense">Desktop installer coming soon. For now, download links are processed via PowerShell helper or upcoming Telegram bot.</p>
+                            <p className="downloader-hint intense">Windows installer ready! Download the .exe, install like any software, then paste YouTube URLs to download.</p>
                             <div className="cta-stack">
-                              <button className="btn" type="button" disabled>
-                                Desktop Installer (Coming Soon)
+                              <button className="btn" type="button" onClick={openDesktopAppDocs}>
+                                Download Windows Installer (103 MB)
                               </button>
                               <button
                                 className="btn ghost"
                                 type="button"
-                                onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/tree/main/tools/internet-downloader', '_blank')}
+                                onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases/tag/desktop-v1.0.0', '_blank')}
                               >
-                                PowerShell helper (available now)
+                                View all platforms (Windows/Mac/Linux)
                               </button>
                             </div>
                             <div className="helper-status-grid">
                               <div>
                                 <p className="helper-label">Installer Status</p>
-                                <p className="helper-value">Building .exe/.dmg/.AppImage</p>
+                                <p className="helper-value">✅ Ready (v1.0.0)</p>
                               </div>
                               <div>
                                 <p className="helper-label">What to expect</p>
