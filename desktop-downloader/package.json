@@ -13,13 +13,13 @@
     "package": "electron-builder -mwl"
   },
   "dependencies": {
-    "electron": "^30.0.6",
     "ffmpeg-static": "^5.2.0",
     "sanitize-filename": "^1.6.3",
-    "yt-dlp-exec": "^3.3.2"
+    "yt-dlp-exec": "^1.0.2"
   },
   "devDependencies": {
-    "electron-builder": "^25.0.5",
+    "electron": "^30.0.6",
+    "electron-builder": "^25.1.8",
     "electronmon": "^2.0.2"
   },
   "build": {
