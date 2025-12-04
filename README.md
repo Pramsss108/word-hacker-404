@@ -60,6 +60,8 @@ The downloader uses `yt-dlp` + FFmpeg to fetch videos, playlists, channels, or M
 
 This creates a native window for non-technical teammates: paste links, pick MP4/MP3, click **Download**. Files drop into `~/Downloads/WordHackerDownloads`. Installers (electron-builder) will be wired up next so QA can double-click an `.exe`/`.dmg` without Node.
 
+**GPU cache error on Windows?** Electron sometimes logs `cache_util_win.cc(20) Unable to move the cache (0x5)` when a previous preview crashed or antivirus locks the GPU cache folder. Fix: close the downloader, delete `%LOCALAPPDATA%/word-hacker-desktop-downloader/GPUCache` (or run `rd /s %LOCALAPPDATA%\word-hacker-desktop-downloader\GPUCache` from PowerShell), then relaunch. Running PowerShell as Administrator avoids permission locks.
+
 ## 🏗️ Project Structure
 
 The current build focuses on lightweight, HTML-first utilities (dictionary, tone badges, and touch-friendly mini tools). Advanced RAW workflows have been removed to keep the experience approachable for non-technical teammates. Future media tooling will be documented separately in the new strategy guide.

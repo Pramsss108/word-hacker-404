@@ -150,6 +150,7 @@ build: { outDir: 'dist' }   # Build output directory
 - Matrix micro-accent: `#07c06b` (tiny details, labels)
 - Glitch red: `#d92e2e` (alerts, quick flash)
 - Text primary: `#e9eef6` | Muted: `#9aa3b2`
+- **Palette lock rule**: Never hardcode alternate blues or grays. All UI (web + desktop downloader) must source color from the shared CSS token sets in `src/index.css` and `desktop-downloader/src/renderer/style.css`. Only update those tokens with explicit approval.
 
 ### Typography
 - Headlines/Body: Inter (400/600/800)

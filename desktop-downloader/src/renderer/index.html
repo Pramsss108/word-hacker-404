@@ -5,37 +5,198 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Word Hacker Downloader</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <header>
-        <p class="eyebrow">Deck 02 · Internet Downloader</p>
-        <h1>Word Hacker Downloader</h1>
-        <p class="lead">Paste YouTube links, pick the format, tap download. yt-dlp + FFmpeg run locally so nothing hits our servers.</p>
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-content">
+        <div class="loading-logo">
+          <span class="glitch-text" data-text="WORD HACKER">WORD HACKER</span>
+          <span class="loading-subtitle">404 PROJECT</span>
+        </div>
+        <div class="loading-bar">
+          <div class="loading-progress"></div>
+        </div>
+        <div class="loading-logs">
+          <div class="log-line">> Initializing system...</div>
+          <div class="log-line">> Loading engine modules...</div>
+          <div class="log-line">> Connecting to yt-dlp...</div>
+          <div class="log-line">> Checking dependencies...</div>
+          <div class="log-line">> Ready.</div>
+        </div>
+      </div>
+    </div>
+    <div class="window" style="opacity:0;">
+      <header class="menu-bar" data-window-region">
+        <div class="menu-left">
+          <div class="menu-group">
+            <button class="menu-btn" data-menu-trigger="file">File ▾</button>
+            <div class="menu-dropdown" id="file-menu" role="menu" aria-label="File menu">
+              <button class="menu-item" data-menu-action="set-destination">Set destination…</button>
+              <button class="menu-item" data-menu-action="open-destination">Open destination</button>
+            </div>
+          </div>
+          <button class="menu-btn" data-menu-trigger="about">About</button>
+          <div class="menu-dropdown" id="about-menu" role="menu" aria-label="About menu">
+            <div class="about-content">
+              <h3>Word Hacker 404</h3>
+              <p class="version">Desktop Downloader v1.0.0</p>
+              <p class="description">A secure YouTube downloader built with privacy in mind. Part of the Word Hacker 404 project.</p>
+              <div class="security-note">
+                <p><strong>🔒 Security & Updates</strong></p>
+                <p>Auto-updates enabled. Check for updates regularly to get the latest features and security patches.</p>
+              </div>
+              <div class="pricing-note">
+                <p><strong>💰 Pricing Notice</strong></p>
+                <p>This software is currently FREE. Future versions may require a license or subscription.</p>
+              </div>
+              <p class="copyright">© 2025 Word Hacker 404</p>
+            </div>
+          </div>
+          <button class="menu-btn" data-menu-trigger="help">Help</button>
+          <div class="menu-dropdown" id="help-menu" role="menu" aria-label="Help menu">
+            <div class="help-content">
+              <p class="help-item">📧 <strong>Contact Support</strong></p>
+              <p class="help-email">team@bongbari.com</p>
+              <div class="menu-divider"></div>
+              <button class="menu-item" data-menu-action="check-updates">Check for updates</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-title">WH404 · YT Downloader</div>
+        <div class="window-controls" aria-label="window controls">
+          <button class="ghost" data-pin title="Always on top">📌</button>
+          <button class="ghost" data-window="minimize" title="Minimize">–</button>
+          <button class="ghost" data-window="maximize" title="Maximize">▢</button>
+          <button class="ghost danger" data-window="close" title="Close">✕</button>
+        </div>
       </header>
 
-      <section class="panel">
-        <label for="url-input">Links</label>
-        <textarea id="url-input" placeholder="https://youtu.be/..." rows="5"></textarea>
-        <p class="hint">Spaces, commas, or new lines are all ok. Multiple jobs run sequentially.</p>
+      <div class="workspace">
+        <section class="pane preview-pane">
+          <header>
+            <div>
+              <p class="eyebrow">Review</p>
+              <h2>Preview & trim</h2>
+            </div>
+            <div class="preview-header-actions">
+              <span class="mono video-info-badge" id="video-format-badge"></span>
+              <span class="mono" id="preview-info">No media loaded</span>
+            </div>
+          </header>
+          <div class="preview-card" id="preview-card">
+            <video id="preview-video" preload="metadata"></video>
+            <div id="preview-empty" class="preview-empty">Finish a download to load preview.</div>
+          </div>
+          <div class="trim-panel">
+            <div class="trim-controls">
+              <button id="preview-play" class="trim-btn" title="Play/Pause (Space)">▶</button>
+              <button id="preview-stop" class="trim-btn" title="Stop">⏹</button>
+              <button id="preview-restart" class="trim-btn" title="Restart">⟲</button>
+              <div class="trim-readout">
+                <span><strong id="trim-start-label">00:00</strong> In</span>
+                <span><strong id="trim-end-label">00:00</strong> Out</span>
+                <span><strong id="trim-duration">00:00</strong> Duration</span>
+              </div>
+            </div>
+            <div class="trim-timeline">
+              <div class="trim-track">
+                <div id="trim-fill" class="trim-range-fill"></div>
+              </div>
+              <input id="trim-start" class="trim-handle trim-handle-start" type="range" min="0" value="0" step="0.1" aria-label="Trim start" />
+              <input id="trim-end" class="trim-handle trim-handle-end" type="range" min="0" value="0" step="0.1" aria-label="Trim end" />
+            </div>
+          </div>
+        </section>
 
-        <label>Format</label>
-        <div class="format-row">
-          <button data-format="mp4-1080" class="format-btn active">MP4 · 1080p</button>
-          <button data-format="mp4-720" class="format-btn">MP4 · 720p</button>
-          <button data-format="mp3" class="format-btn">MP3 · Audio</button>
+        <div class="stack">
+          <section class="pane control-pane">
+            <header>
+              <div>
+                <p class="eyebrow">Input</p>
+                <h2>Paste YT links</h2>
+              </div>
+            </header>
+            <label class="field-label" for="url-input">Link(s)</label>
+            <textarea id="url-input" rows="3" placeholder="https://youtu.be/..."></textarea>
+            <p class="hint">Paste one or more links. Queue handles the rest.</p>
+          </section>
+
+          <section class="pane queue-pane">
+            <header>
+              <div>
+                <p class="eyebrow">Queue</p>
+                <h2>Batch Processing</h2>
+              </div>
+              <div class="queue-actions">
+                <span id="queue-counter">0 items</span>
+                <span id="selection-counter" class="selection-counter">0 selected</span>
+                <button id="queue-export-selected" class="ghost">Export selected</button>
+                <button id="queue-export-all" class="ghost">Export all</button>
+                <button id="clear-queue" class="ghost">Clear</button>
+              </div>
+            </header>
+            <div class="queue-toolbar">
+              <label class="queue-select">
+                <input type="checkbox" id="queue-select-all" />
+                <span>Select all</span>
+              </label>
+              <button id="selection-clear" class="ghost ghost-icon" title="Clear selection">✕</button>
+            </div>
+            <div id="queue-list" class="queue-list" aria-live="polite">
+              <p class="empty">Queue is empty. Add links on the right.</p>
+            </div>
+          </section>
         </div>
+      </div>
 
-        <button id="download-btn" class="primary">Download</button>
-        <p class="hint">Files land in your system Downloads/WordHackerDownloads folder.</p>
-      </section>
+      <footer class="status-strip" aria-live="polite">
+        <div class="status-left">
+          <span class="mono" id="status-line">Ready</span>
+        </div>
+        <div class="status-right">
+          <span class="status-chip" id="status-queue">Queue: 0</span>
+          <span class="status-chip" id="status-preset">Preset: 1080p Pro</span>
+          <span class="status-chip" id="status-destination">Destination: Downloads/WordHackerDownloads</span>
+          <span class="status-chip" id="status-engine">Engine: idle</span>
+        </div>
+      </footer>
+    </div>
 
-      <section class="panel" id="status-panel" hidden>
-        <h2>Status</h2>
-        <div id="status-output" class="status-log"></div>
-      </section>
-    </main>
+    <div id="export-pop" class="export-pop" aria-hidden="true">
+      <div class="export-card">
+        <header>
+          <div>
+            <p class="eyebrow">Export</p>
+            <h3 id="export-target">Select slot</h3>
+          </div>
+          <button id="export-cancel" class="ghost ghost-icon" title="Close">✕</button>
+        </header>
+        <p id="export-message" class="hint">Choose resolution and format for export.</p>
+        <div class="export-form">
+          <label for="export-type">Type</label>
+          <select id="export-type">
+            <option value="video">Video</option>
+            <option value="audio">Audio</option>
+          </select>
+          <label for="export-resolution">Resolution / Quality</label>
+          <select id="export-resolution"></select>
+          <label for="export-format">Output format</label>
+          <select id="export-format"></select>
+          <label for="export-path">Destination</label>
+          <div class="path-row">
+            <input id="export-path" type="text" placeholder="Downloads/WordHackerDownloads" readonly />
+            <button id="export-browse" class="ghost">Browse</button>
+          </div>
+        </div>
+        <div class="export-actions">
+          <button id="export-confirm" class="primary full">Export selection</button>
+        </div>
+      </div>
+    </div>
 
     <script src="renderer.js"></script>
   </body>
