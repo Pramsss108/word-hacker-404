@@ -117,6 +117,25 @@ function App() {
               </div>
             </section>
 
+            {/* Desktop App Download Banner */}
+            <section className="download-banner glass" aria-label="Desktop App">
+              <div className="download-content">
+                <div className="download-icon">
+                  <Zap size={32} />
+                </div>
+                <div className="download-text">
+                  <h3>WH404 · YT Downloader Desktop App</h3>
+                  <p>Download YouTube videos + audio offline. Windows installer ready (103 MB).</p>
+                </div>
+                <button 
+                  className="btn full"
+                  onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases/download/desktop-v1.0.1/Word.Hacker.Downloader.0.1.0.exe', '_blank')}
+                >
+                  <Sparkles size={18} /> Download for Windows
+                </button>
+              </div>
+            </section>
+
             {/* Featured decode carousel */}
             <section id="featured" className="featured">
               <h2 className="section-title">Featured Decodes</h2>
