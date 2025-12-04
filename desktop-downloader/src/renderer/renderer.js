@@ -918,16 +918,27 @@ const handleMenuAction = (action) => {
 }
 
 const checkForUpdates = async () => {
+  const currentVersion = 'v1.0.0'
+  const appName = 'WH404 - YT Downloader 1.0'
+  
   pushLog('Checking for updates...')
+  window.alert(`${appName}\n\nCurrent version: 1.0.0\n\nChecking GitHub for updates...`)
+  
   try {
     const response = await fetch('https://api.github.com/repos/Pramsss108/word-hacker-404/releases/latest')
     const data = await response.json()
-    const latestVersion = data.tag_name || data.name
+    const latestVersion = data.tag_name || data.name || 'v1.0.0'
+    
     pushLog(`Latest version: ${latestVersion}`)
-    window.alert(`Latest version: ${latestVersion}\n\nCheck GitHub for updates: https://github.com/Pramsss108/word-hacker-404/releases`)
+    
+    if (latestVersion === currentVersion) {
+      window.alert(`${appName}\n\n✅ You're up to date!\n\nCurrent: ${currentVersion}\nLatest: ${latestVersion}`)
+    } else {
+      window.alert(`${appName}\n\n🆕 Update available!\n\nCurrent: ${currentVersion}\nLatest: ${latestVersion}\n\nDownload: https://github.com/Pramsss108/word-hacker-404/releases`)
+    }
   } catch (error) {
     pushLog('Failed to check for updates. Please visit GitHub manually.')
-    window.alert('Failed to check for updates.\n\nPlease visit: https://github.com/Pramsss108/word-hacker-404/releases')
+    window.alert(`${appName}\n\nCurrent version: 1.0.0\n\n⚠️ Could not check for updates.\n\nVisit: https://github.com/Pramsss108/word-hacker-404/releases`)
   }
 }
 
