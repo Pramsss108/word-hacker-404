@@ -269,7 +269,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   }, [])
 
   const openDesktopAppDocs = useCallback(() => {
-    window.open('https://github.com/Pramsss108/word-hacker-404/releases/download/desktop-v1.0.1/Word.Hacker.Downloader.0.1.0.exe', '_blank')
+    window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v1.0.1/Word.Hacker.Downloader.0.1.0.exe', '_blank')
   }, [])
 
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {

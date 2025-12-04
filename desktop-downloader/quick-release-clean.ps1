@@ -8,6 +8,7 @@ param(
 )
 
 $ErrorActionPreference = "Continue"
+$releaseRepo = "Pramsss108/wh404-desktop-builds"
 
 function Write-Step {
     param([string]$Message)
@@ -95,7 +96,7 @@ if ($LASTEXITCODE -ne 0) {
 Write-Success "Tag pushed to GitHub"
 
 # Create GitHub release
-Write-Step "Creating GitHub release..."
+Write-Step "Creating GitHub release in $releaseRepo..."
 
 # Build release notes
 $releaseTitle = "WH404 Desktop Downloader v$Version"
@@ -122,10 +123,10 @@ $releaseBody += "Email: team@bongbari.com"
 
 try {
     # Delete existing release if it exists
-    gh release delete $tagName --yes 2>$null
+    gh release delete $tagName --repo $releaseRepo --yes 2>$null
     
     # Create new release with file
-    gh release create $tagName $installerPath --title $releaseTitle --notes $releaseBody --repo Pramsss108/word-hacker-404
+    gh release create $tagName $installerPath --title $releaseTitle --notes $releaseBody --target main --repo $releaseRepo
     
     Write-Success "Release created and installer uploaded"
 } catch {
@@ -134,14 +135,14 @@ try {
 }
 
 # Generate download URL based on uploaded asset name
-$exeAssetName = (gh api repos/Pramsss108/word-hacker-404/releases/tags/$tagName --jq ".assets[] | select(.name | endswith(\".exe\")) | .name" 2>$null | Select-Object -First 1)
+$exeAssetName = (gh api repos/$releaseRepo/releases/tags/$tagName --jq ".assets[] | select(.name | endswith(\".exe\")) | .name" 2>$null | Select-Object -First 1)
 if ([string]::IsNullOrWhiteSpace($exeAssetName)) {
     Write-ErrorMsg "Could not locate .exe asset in release. Check GitHub release assets manually."
     exit 1
 }
 $exeAssetName = $exeAssetName.Trim()
 $encodedName = [System.Uri]::EscapeDataString($exeAssetName)
-$downloadUrl = "https://github.com/Pramsss108/word-hacker-404/releases/download/$tagName/$encodedName"
+$downloadUrl = "https://github.com/$releaseRepo/releases/download/$tagName/$encodedName"
 
 Write-Step "Updating website download URLs..."
 
@@ -149,7 +150,7 @@ Write-Step "Updating website download URLs..."
 $appFile = "..\src\App.tsx"
 if (Test-Path $appFile) {
     $appContent = Get-Content $appFile -Raw
-    $appContent = $appContent -replace "https://github\.com/Pramsss108/word-hacker-404/releases/download/desktop-v[\d\.]+/[^'""]+", $downloadUrl
+    $appContent = $appContent -replace "https://github\.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v[\d\.]+/[^'\""]+", $downloadUrl
     Set-Content $appFile -Value $appContent -NoNewline
     Write-Success "Updated App.tsx"
 }
@@ -158,7 +159,7 @@ if (Test-Path $appFile) {
 $toolsFile = "..\src\components\ToolsPage.tsx"
 if (Test-Path $toolsFile) {
     $toolsContent = Get-Content $toolsFile -Raw
-    $toolsContent = $toolsContent -replace "https://github\.com/Pramsss108/word-hacker-404/releases/download/desktop-v[\d\.]+/[^'""]+", $downloadUrl
+    $toolsContent = $toolsContent -replace "https://github\.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v[\d\.]+/[^'\""]+", $downloadUrl
     Set-Content $toolsFile -Value $toolsContent -NoNewline
     Write-Success "Updated ToolsPage.tsx"
 }
@@ -182,7 +183,7 @@ Write-Host "Tag:          $tagName" -ForegroundColor Cyan
 Write-Host "Installer:    $installerName" -ForegroundColor Cyan
 Write-Host "Size:         $fileSize MB" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Release:      https://github.com/Pramsss108/word-hacker-404/releases/tag/$tagName" -ForegroundColor Yellow
+Write-Host "Release:      https://github.com/$releaseRepo/releases/tag/$tagName" -ForegroundColor Yellow
 Write-Host "Download:     $downloadUrl" -ForegroundColor Yellow
 Write-Host "Website:      https://wordhacker404.me (updating...)" -ForegroundColor Yellow
 Write-Host ""

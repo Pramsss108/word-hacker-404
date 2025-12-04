@@ -1,5 +1,7 @@
 # Desktop App Release Guide
 
+> Public build repo: **Pramsss108/wh404-desktop-builds** (stores installers)
+
 ## 🚀 How to Release a New Version
 
 ### Prerequisites
@@ -19,15 +21,15 @@ cd "d:\A scret project\Word hacker 404\desktop-downloader"
 npm run package:win
 
 # 4. Run release automation (installs GitHub CLI if needed)
-.\quick-release.ps1 -Version "1.0.1"
+.\quick-release-clean.ps1 -Version "1.0.1"
 ```
 
 ### What the Script Does
 1. ✅ Builds Windows installer
-2. ✅ Creates git tag
-3. ✅ Pushes to GitHub
-4. ✅ Creates GitHub release
-5. ✅ Uploads installer file
+2. ✅ Creates git tag in main repo
+3. ✅ Pushes source tag to GitHub
+4. ✅ Creates release in **wh404-desktop-builds**
+5. ✅ Uploads installer to the public repo
 6. ✅ Updates website download URLs
 7. ✅ Commits and pushes website changes
 
@@ -46,7 +48,7 @@ Get-ChildItem release\*.exe
 ```
 
 #### Step 3: Create GitHub Release
-1. Go to: https://github.com/Pramsss108/word-hacker-404/releases/new
+1. Go to: https://github.com/Pramsss108/wh404-desktop-builds/releases/new
 2. Create new tag: `desktop-v1.0.1`
 3. Title: `WH404 Desktop Downloader v1.0.1`
 4. Upload the .exe file from `release/` folder
