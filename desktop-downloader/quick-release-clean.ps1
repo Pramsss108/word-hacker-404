@@ -1,13 +1,13 @@
 #!/usr/bin/env pwsh
 # Quick Release Script with Full Automation
-# Usage: .\quick-release.ps1 -Version "1.0.1"
+# Usage: .\quick-release-clean.ps1 -Version "1.0.1"
 
 param(
     [Parameter(Mandatory=$true)]
     [string]$Version
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 function Write-Step {
     param([string]$Message)
@@ -16,12 +16,12 @@ function Write-Step {
 
 function Write-Success {
     param([string]$Message)
-    Write-Host "✅ $Message" -ForegroundColor Green
+    Write-Host "[OK] $Message" -ForegroundColor Green
 }
 
-function Write-Error {
+function Write-ErrorMsg {
     param([string]$Message)
-    Write-Host "❌ $Message" -ForegroundColor Red
+    Write-Host "[ERROR] $Message" -ForegroundColor Red
 }
 
 # Check if GitHub CLI is installed
@@ -32,10 +32,10 @@ if (-not $ghInstalled) {
     try {
         winget install GitHub.cli
         Write-Success "GitHub CLI installed"
-        Write-Host "⚠️  Please run 'gh auth login' to authenticate, then run this script again" -ForegroundColor Yellow
+        Write-Host "Please run 'gh auth login' to authenticate, then run this script again" -ForegroundColor Yellow
         exit 0
     } catch {
-        Write-Error "Failed to install GitHub CLI. Please install manually from https://cli.github.com/"
+        Write-ErrorMsg "Failed to install GitHub CLI. Please install manually from https://cli.github.com/"
         exit 1
     }
 }
@@ -46,24 +46,24 @@ try {
     gh auth status | Out-Null
     Write-Success "Authenticated"
 } catch {
-    Write-Error "Not authenticated. Please run: gh auth login"
+    Write-ErrorMsg "Not authenticated. Please run: gh auth login"
     exit 1
 }
 
 # Build the app
-Write-Step "🔨 Building desktop app..."
+Write-Step "Building desktop app..."
 npm run package:win
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Build failed!"
+    Write-ErrorMsg "Build failed!"
     exit 1
 }
 Write-Success "Build completed"
 
 # Find installer
-Write-Step "🔍 Finding installer..."
+Write-Step "Finding installer..."
 $installer = Get-ChildItem -Path "release" -Filter "*.exe" -File | Select-Object -First 1
 if (-not $installer) {
-    Write-Error "No .exe file found in release/ directory"
+    Write-ErrorMsg "No .exe file found in release/ directory"
     exit 1
 }
 
@@ -74,27 +74,28 @@ Write-Success "Found: $installerName ($fileSize MB)"
 
 # Create git tag
 $tagName = "desktop-v$Version"
-Write-Step "🏷️  Creating git tag: $tagName"
+Write-Step "Creating git tag: $tagName"
 
-# Delete existing tag if it exists
-git tag -d $tagName 2>$null
-git push origin --delete $tagName 2>$null
+# Delete existing tag if it exists (suppress all output)
+$null = git tag -d $tagName 2>&1
+$null = git push origin --delete $tagName 2>&1
 
-git tag -a $tagName -m "Desktop App v$Version - $installerName ($fileSize MB)"
+$tagMessage = "Desktop App v$Version - $installerName"
+git tag -a $tagName -m $tagMessage
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to create tag"
+    Write-ErrorMsg "Failed to create tag"
     exit 1
 }
 
 git push origin $tagName
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to push tag"
+    Write-ErrorMsg "Failed to push tag"
     exit 1
 }
 Write-Success "Tag pushed to GitHub"
 
 # Create GitHub release
-Write-Step "📦 Creating GitHub release..."
+Write-Step "Creating GitHub release..."
 
 # Build release notes
 $releaseTitle = "WH404 Desktop Downloader v$Version"
@@ -124,23 +125,25 @@ try {
     gh release delete $tagName --yes 2>$null
     
     # Create new release with file
-    gh release create $tagName `
-        $installerPath `
-        --title $releaseTitle `
-        --notes $releaseBody `
-        --repo Pramsss108/word-hacker-404
+    gh release create $tagName $installerPath --title $releaseTitle --notes $releaseBody --repo Pramsss108/word-hacker-404
     
     Write-Success "Release created and installer uploaded"
 } catch {
-    Write-Error "Failed to create GitHub release: $_"
+    Write-ErrorMsg "Failed to create GitHub release: $_"
     exit 1
 }
 
-# Generate download URL
-$encodedName = [System.Uri]::EscapeDataString($installerName)
+# Generate download URL based on uploaded asset name
+$exeAssetName = (gh api repos/Pramsss108/word-hacker-404/releases/tags/$tagName --jq ".assets[] | select(.name | endswith(\".exe\")) | .name" 2>$null | Select-Object -First 1)
+if ([string]::IsNullOrWhiteSpace($exeAssetName)) {
+    Write-ErrorMsg "Could not locate .exe asset in release. Check GitHub release assets manually."
+    exit 1
+}
+$exeAssetName = $exeAssetName.Trim()
+$encodedName = [System.Uri]::EscapeDataString($exeAssetName)
 $downloadUrl = "https://github.com/Pramsss108/word-hacker-404/releases/download/$tagName/$encodedName"
 
-Write-Step "🔗 Updating website download URLs..."
+Write-Step "Updating website download URLs..."
 
 # Update App.tsx
 $appFile = "..\src\App.tsx"
@@ -161,28 +164,27 @@ if (Test-Path $toolsFile) {
 }
 
 # Commit and push website changes
-Write-Step "📤 Deploying website updates..."
+Write-Step "Deploying website updates..."
 cd ..
-$commitMsg = "chore: update desktop download URL to v$Version`n`nAuto-generated release`nInstaller: $installerName`nSize: $fileSize MB`nTag: $tagName"
+$commitMsg = "chore: update desktop download URL to v$Version"
 git add src/App.tsx src/components/ToolsPage.tsx
 git commit -m $commitMsg
 git push origin main
 Write-Success "Website deployed"
 
 # Summary
-Write-Host "`n" -NoNewline
-Write-Host "═══════════════════════════════════════════" -ForegroundColor Green
-Write-Host "🎉 RELEASE COMPLETE!" -ForegroundColor Green
-Write-Host "═══════════════════════════════════════════" -ForegroundColor Green
+Write-Host "`n==========================================" -ForegroundColor Green
+Write-Host "RELEASE COMPLETE" -ForegroundColor Green
+Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "Version:      " -NoNewline; Write-Host "v$Version" -ForegroundColor Cyan
-Write-Host "Tag:          " -NoNewline; Write-Host $tagName -ForegroundColor Cyan
-Write-Host "Installer:    " -NoNewline; Write-Host $installerName -ForegroundColor Cyan
-Write-Host "Size:         " -NoNewline; Write-Host "$fileSize MB" -ForegroundColor Cyan
+Write-Host "Version:      v$Version" -ForegroundColor Cyan
+Write-Host "Tag:          $tagName" -ForegroundColor Cyan
+Write-Host "Installer:    $installerName" -ForegroundColor Cyan
+Write-Host "Size:         $fileSize MB" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Release URL:  " -NoNewline; Write-Host "https://github.com/Pramsss108/word-hacker-404/releases/tag/$tagName" -ForegroundColor Yellow
-Write-Host "Download URL: " -NoNewline; Write-Host $downloadUrl -ForegroundColor Yellow
-Write-Host "Website:      " -NoNewline; Write-Host "https://wordhacker404.me (updating...)" -ForegroundColor Yellow
+Write-Host "Release:      https://github.com/Pramsss108/word-hacker-404/releases/tag/$tagName" -ForegroundColor Yellow
+Write-Host "Download:     $downloadUrl" -ForegroundColor Yellow
+Write-Host "Website:      https://wordhacker404.me (updating...)" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Users can now download v$Version from your website!" -ForegroundColor Green
 Write-Host ""
