@@ -129,7 +129,7 @@ function App() {
                 </div>
                 <button 
                   className="btn full"
-                  onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases/download/desktop-v1.0.1/Word.Hacker.Downloader.0.1.0.exe', '_blank')}
+                  onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases/download/desktop-v1.0.1/Word%20Hacker%20Downloader%200.1.0.exe', '_blank')}
                 >
                   <Sparkles size={18} /> Download for Windows
                 </button>
