@@ -1,0 +1,48 @@
+{
+  "name": "replica-studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "preview": "remotion preview"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.19.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.2",
+    "@react-three/postprocessing": "^3.0.4",
+    "@remotion/bundler": "^4.0.382",
+    "@remotion/player": "^4.0.382",
+    "@remotion/renderer": "^4.0.382",
+    "@remotion/three": "^4.0.382",
+    "@types/three": "^0.181.0",
+    "camera-controls": "^3.1.2",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.555.0",
+    "next": "16.0.7",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-resizable-panels": "^3.0.6",
+    "remotion": "^4.0.382",
+    "three": "^0.181.2",
+    "xterm": "^5.3.0",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

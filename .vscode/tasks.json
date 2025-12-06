@@ -62,6 +62,20 @@
 			"isBackground": false,
 			"problemMatcher": [],
 			"group": "build"
+		},
+		{
+			"label": "Word Hacker 404 - Type Check 4",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"type-check"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
 		}
 	]
 }

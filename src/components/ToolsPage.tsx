@@ -8,11 +8,11 @@ import {
   ShieldCheck,
   Shuffle,
   Sparkles,
-  Waves,
   Wand2,
   Workflow,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
+import VectorCommandCenter from './VectorCommandCenter'
 import { getSharedArrayBufferWatchdogReport } from '../raw'
 
 interface ToolBannerMeta {
@@ -23,7 +23,7 @@ interface ToolBannerMeta {
   status: 'open' | 'soon'
   badge: string
   motionClass: string
-  openId?: 'raw' | 'downloader'
+  openId?: 'raw' | 'downloader' | 'vector'
 }
 
 interface RawProcessStep {
@@ -82,6 +82,16 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
   const toolList = useMemo<ToolBannerMeta[]>(() => ([
     {
+      id: 'vector-command',
+      name: 'Vector Command Center',
+      summary: 'Prompt Architect & Image-to-SVG Vectorizer.',
+      icon: <Cpu size={22} aria-hidden />,
+      status: 'open',
+      badge: 'NEW',
+      motionClass: 'vector-grid',
+      openId: 'vector',
+    },
+    {
       id: 'raw-decoder',
       name: 'RAW Decoder Lab',
       summary: 'Lossless demosaic + LibRaw arbitration. Active build.',
@@ -105,15 +115,6 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
       id: 'voice-encrypter',
       name: 'Voice Encryptor FX',
       summary: 'FX toggles + mastering queue for drops.',
-      icon: <Waves size={22} aria-hidden />,
-      status: 'soon',
-      badge: 'COMING SOON',
-      motionClass: 'voice-waves',
-    },
-    {
-      id: 'cipher-strip',
-      name: 'Cipher Strip',
-      summary: 'Encode/Decode utilities with audit logs.',
       icon: <Wand2 size={22} aria-hidden />,
       status: 'soon',
       badge: 'COMING SOON',
@@ -157,7 +158,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
     },
   ]), [])
 
-  const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | null>(null)
+  const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | 'vector' | null>(null)
   const [rawStepIndex, setRawStepIndex] = useState(0)
 
   const [downloaderUrls, setDownloaderUrls] = useState('')
@@ -323,6 +324,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                   className={`btn ${tool.status === 'open' ? 'cta-open' : ''}`}
                   disabled={tool.status !== 'open'}
                   onClick={() => {
+                    if (tool.status !== 'open') return
                     if (tool.openId) {
                       setActiveTool(tool.openId)
                     }
@@ -341,6 +343,27 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         <p>Built like a pro. React + TypeScript + Vite. Optimized for touch.</p>
         <small className="mono" aria-label="terminal-log">terminal-log: tools deck primed</small>
       </footer>
+
+      {activeTool === 'vector' && (
+        <div className="tools-overlay" role="dialog" aria-modal="true">
+          <div className="raw-holo" style={{ width: '95vw', maxWidth: 'none', height: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="raw-anim-grid vector-grid" aria-hidden />
+            <header className="raw-holo-head">
+              <div>
+                <h3 className="raw-head-title">Vector Command Center</h3>
+                <p className="raw-head-note">Prompt Architect & Image-to-SVG Vectorizer.</p>
+              </div>
+              <button className="btn ghost" onClick={() => setActiveTool(null)}>
+                Close <span className="close-cross" aria-hidden>✕</span>
+              </button>
+            </header>
+
+            <div style={{ flex: 1, overflow: 'hidden', padding: '0' }}>
+              <VectorCommandCenter />
+            </div>
+          </div>
+        </div>
+      )}
 
       {activeTool === 'raw' && (
         <div className="tools-overlay" role="dialog" aria-modal="true">

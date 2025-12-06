@@ -677,6 +677,8 @@
 .tool-motion.raw-grid::after { background-image: linear-gradient(90deg, rgba(10,255,106,0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(10,255,106,0.05) 1px, transparent 1px); background-size: 60px 60px; animation: raw-grid-pan 8s linear infinite; opacity: 0.7; }
 .tool-motion.voice-waves::before { background: radial-gradient(circle at 20% 50%, rgba(74,158,255,0.22), transparent 55%), radial-gradient(circle at 80% 50%, rgba(10,255,106,0.18), transparent 60%); }
 .tool-motion.voice-waves::after { background-image: repeating-linear-gradient(120deg, rgba(74,158,255,0.15) 0 2px, transparent 2px 12px); animation: voice-wave-flow 5s linear infinite; opacity: 0.5; }
+.tool-motion.animator-spectrum::before { background: radial-gradient(circle at 25% 40%, rgba(74,158,255,0.25), transparent 55%), radial-gradient(circle at 80% 70%, rgba(217,46,46,0.22), transparent 60%); filter: blur(20px); }
+.tool-motion.animator-spectrum::after { background: conic-gradient(from 0deg, rgba(10,255,106,0.12), rgba(74,158,255,0.12), rgba(233,238,246,0.08), rgba(217,46,46,0.15)); animation: prompt-rotor 14s linear infinite; opacity: 0.55; }
 .tool-motion.cipher-glyphs::before { background: linear-gradient(90deg, rgba(233,238,246,0.05) 1px, transparent 1px); background-size: 14px; opacity: 0.6; }
 .tool-motion.cipher-glyphs::after { background-image: radial-gradient(circle, rgba(217,46,46,0.18) 25%, transparent 60%); animation: cipher-blip 3s steps(1) infinite; mix-blend-mode: screen; }
 .tool-motion.prompt-plasma::before { background: conic-gradient(from 45deg, rgba(10,255,106,0.25), rgba(54,194,255,0.2), rgba(10,255,106,0.25)); animation: prompt-rotor 10s linear infinite; filter: blur(40px); opacity: 0.55; }
@@ -686,6 +688,10 @@
 .tool-motion.anagram-matrix::after { background-image: linear-gradient(90deg, rgba(7,192,107,0.15) 1px, transparent 1px); background-size: 20px; opacity: 0.4; }
 .tool-motion.ai-circuits::before { background-image: linear-gradient(135deg, rgba(74,158,255,0.18) 25%, transparent 25% 50%, rgba(74,158,255,0.08) 50% 75%, transparent 75%); background-size: 30px 30px; opacity: 0.7; }
 .tool-motion.ai-circuits::after { background: radial-gradient(circle at 30% 30%, rgba(10,255,106,0.3), transparent 50%), radial-gradient(circle at 70% 70%, rgba(74,158,255,0.25), transparent 45%); animation: circuits-pulse 5s ease-in-out infinite; }
+.tool-motion.downloader-stream::before { background: linear-gradient(180deg, rgba(74,158,255,0.15), transparent); }
+.tool-motion.downloader-stream::after { background-image: repeating-linear-gradient(0deg, rgba(74,158,255,0.1) 0 1px, transparent 1px 8px); animation: matrix-fall 2s linear infinite; opacity: 0.5; }
+.tool-motion.vector-grid::before { background: radial-gradient(circle at 50% 50%, rgba(255,51,88,0.2), transparent 60%); filter: blur(25px); }
+.tool-motion.vector-grid::after { background-image: linear-gradient(45deg, rgba(255,51,88,0.1) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.6; }
 .raw-holo-head { display: flex; justify-content: space-between; gap: 0.35rem; align-items: flex-start; padding-bottom: 0.2rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .raw-head-title { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(233,238,246,0.95); }
 .raw-head-note { margin: 0.05rem 0 0; font-size: 0.78rem; color: rgba(233,238,246,0.7); font-family: var(--font-mono); letter-spacing: 0.09em; text-transform: uppercase; }
@@ -697,6 +703,7 @@
 .raw-holo { position: relative; width: min(1020px, 96%); border-radius: 26px; padding: clamp(0.85rem, 1.5vw, 1.6rem); background: rgba(4,9,14,0.95); border: 1px solid rgba(10,255,106,0.2); box-shadow: 0 35px 90px rgba(0,0,0,0.6); max-height: min(660px, 94vh); display: flex; flex-direction: column; gap: 0.55rem; }
 .raw-anim-grid { position: absolute; inset: 0; background-image: linear-gradient(90deg, rgba(10,255,106,0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(10,255,106,0.05) 1px, transparent 1px); background-size: 120px 120px, 120px 120px; opacity: 0.4; animation: grid-pan 12s linear infinite; }
 .downloader-grid { background-image: linear-gradient(90deg, rgba(74,158,255,0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(74,158,255,0.05) 1px, transparent 1px); }
+.vector-grid { background-image: linear-gradient(90deg, rgba(255,51,88,0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(255,51,88,0.05) 1px, transparent 1px); }
 .raw-holo > * { position: relative; }
 @keyframes grid-pan { 0% { transform: translateY(0); } 100% { transform: translateY(-120px); } }
 @keyframes raw-grid-pan { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(60px, -60px, 0); } }
@@ -707,6 +714,7 @@
 @keyframes matrix-fall { 0% { background-position-y: 0; } 100% { background-position-y: 22px; } }
 @keyframes circuits-pulse { 0% { opacity: 0.4; } 50% { opacity: 0.9; } 100% { opacity: 0.4; } }
 .tools-note { text-align: center; padding: 1rem; border-radius: var(--radius); border: 1px dashed rgba(10,255,106,0.4); color: var(--muted); margin-top: 1rem; }
+
 
 .tools-pips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
 .tools-pips button { border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.4); color: var(--muted); border-radius: 999px; padding: 0.3rem 0.9rem; font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer; }
@@ -3556,6 +3564,63 @@
   border-color: var(--accent);
   transform: scale(1.02);
   box-shadow: 0 0 20px rgba(10, 255, 106, 0.3);
+}
+
+/* Animator Studio */
+.animator-page { min-height: 100vh; position: relative; background: radial-gradient(circle at top left, rgba(43,15,74,0.65), rgba(11,11,13,0.96)); color: var(--text); overflow: hidden; }
+.animator-page .MatrixRainCanvas { opacity: 0.5; }
+.animator-nav { position: fixed; top: 0; left: 0; right: 0; padding: 1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; z-index: 3; backdrop-filter: blur(16px); background: rgba(5,6,12,0.6); border-bottom: 1px solid rgba(255,255,255,0.06); }
+.back-button { display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: var(--text); padding: 0.45rem 0.85rem; border-radius: 999px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; }
+.animator-brand { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); font-family: var(--font-mono); }
+.status-chip { border-radius: 999px; padding: 0.35rem 0.9rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; border: 1px solid rgba(255,255,255,0.12); }
+.status-chip.live { color: var(--accent); border-color: rgba(10,255,106,0.5); }
+
+.animator-grid { padding: 5.5rem 3.5rem 3rem; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr); gap: 1.5rem; position: relative; z-index: 2; }
+.animator-stage { border-radius: 32px; border: 1px solid rgba(255,255,255,0.08); background: rgba(4,6,12,0.85); box-shadow: 0 40px 80px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; gap: 1.25rem; }
+.stage-player { position: relative; padding: 1.5rem 1.5rem 2.5rem; background: radial-gradient(circle at 20% 10%, rgba(74,158,255,0.08), rgba(5,7,11,0.95)); }
+.stage-player::after { content: "Capcut Relay"; position: absolute; right: 2.2rem; bottom: 2.8rem; font-family: var(--font-mono); letter-spacing: 0.35em; font-size: 0.65rem; text-transform: uppercase; color: rgba(233,238,246,0.45); }
+.timeline-stack { position: absolute; left: 50%; bottom: 1rem; transform: translateX(-50%); width: calc(100% - 3rem); background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 0.6rem 0.85rem; backdrop-filter: blur(12px); }
+.timeline-stack label { display: flex; justify-content: space-between; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(233,238,246,0.65); margin-bottom: 0.25rem; }
+.timeline-stack input[type="range"] { width: 100%; accent-color: var(--accent); }
+.animator-overlay { display: flex; justify-content: flex-end; align-items: flex-start; padding: 2rem 2.5rem; box-sizing: border-box; }
+.overlay-card { border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(5,7,12,0.8); padding: 1rem 1.25rem; max-width: 280px; box-shadow: 0 25px 60px rgba(0,0,0,0.45); }
+.overlay-label { margin: 0; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(233,238,246,0.55); }
+.overlay-card h3 { margin: 0.35rem 0 0.8rem; font-size: 1.15rem; letter-spacing: 0.08em; }
+.overlay-pips { display: flex; flex-wrap: wrap; gap: 0.35rem; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; }
+.overlay-pips span { padding: 0.25rem 0.6rem; border-radius: 999px; border: 1px dashed rgba(233,238,246,0.25); color: rgba(233,238,246,0.75); }
+.overlay-pips span.active { border-color: rgba(10,255,106,0.55); color: var(--accent); box-shadow: 0 0 18px rgba(10,255,106,0.35); }
+
+.animator-sidebar { display: flex; flex-direction: column; gap: 1rem; }
+.sidebar-card { border-radius: 28px; border: 1px solid rgba(255,255,255,0.12); background: rgba(6,8,16,0.9); padding: 1.35rem; box-shadow: 0 20px 45px rgba(0,0,0,0.45); }
+.card-head { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem; }
+.card-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(233,238,246,0.55); margin: 0; }
+.card-head h4 { margin: 0.15rem 0 0; letter-spacing: 0.08em; }
+.shot-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.shot-list li { display: flex; align-items: center; gap: 0.65rem; padding: 0.75rem; border-radius: 18px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
+.shot-list li span { width: 32px; height: 32px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2); display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.85rem; }
+.shot-list li.active { border-color: rgba(10,255,106,0.45); box-shadow: 0 15px 35px rgba(10,255,106,0.25); }
+.shot-list li strong { display: block; font-size: 0.95rem; }
+.shot-list li small { color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.65rem; }
+
+.sidebar-card label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(233,238,246,0.7); margin-bottom: 0.6rem; }
+.sidebar-card input,
+.sidebar-card select,
+.sidebar-card textarea { border-radius: 16px; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.4); color: var(--text); padding: 0.65rem 0.9rem; font-size: 0.9rem; font-family: inherit; }
+.sidebar-card textarea { min-height: 120px; resize: vertical; }
+
+.agent-actions { display: flex; gap: 0.65rem; }
+.agent-actions .btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 16px; padding: 0.65rem 0.8rem; text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.75rem; font-weight: 600; }
+.agent-actions .btn.full { border: 1px solid rgba(10,255,106,0.5); background: rgba(10,255,106,0.12); color: var(--accent); box-shadow: 0 20px 45px rgba(10,255,106,0.2); }
+.agent-actions .btn.ghost { border: 1px dashed rgba(255,255,255,0.25); color: rgba(233,238,246,0.7); background: transparent; }
+
+@media (max-width: 1100px) {
+  .animator-grid { grid-template-columns: 1fr; padding: 5rem 2rem 2rem; }
+}
+
+@media (max-width: 720px) {
+  .animator-nav { padding: 0.85rem 1.25rem; flex-wrap: wrap; }
+  .animator-grid { padding: 4.5rem 1rem 1.5rem; }
+  .agent-actions { flex-direction: column; }
 }
 
 

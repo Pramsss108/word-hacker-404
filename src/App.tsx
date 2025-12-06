@@ -7,6 +7,7 @@ import ToolsPage from './components/ToolsPage'
 import RawWatchdogIndicator from './components/RawWatchdogIndicator'
 import RawDiagnosticsPanel from './components/RawDiagnosticsPanel'
 import { getSharedArrayBufferWatchdogReport } from './raw'
+import { useGlobalAIWorker } from './services/GlobalAIWorker'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -29,8 +30,12 @@ function App() {
   const [showIntro, setShowIntro] = useState(true)
   const heroRef = useRef<HTMLDivElement | null>(null)
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
+  const { initWorker } = useGlobalAIWorker();
 
   useEffect(() => {
+    // Start AI loading in background immediately when app opens
+    initWorker();
+    
     const t = setTimeout(() => setShowIntro(false), 2400)
     return () => clearTimeout(t)
   }, [])
@@ -44,7 +49,9 @@ function App() {
       {gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
       ) : gameMode === 'tools' ? (
-        <ToolsPage onBackToHome={() => setGameMode('menu')} />
+        <ToolsPage
+          onBackToHome={() => setGameMode('menu')}
+        />
       ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}

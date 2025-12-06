@@ -1,9 +1,39 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['vite.svg'],
+      manifest: {
+        name: 'Word Hacker 404',
+        short_name: 'WH404',
+        description: 'AI-Powered Word Game & Vector Tools',
+        theme_color: '#0b0b0d',
+        background_color: '#0b0b0d',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'vite.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml'
+          },
+          {
+            src: 'vite.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml'
+          }
+        ]
+      },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024 // 10MB
+      }
+    })
+  ],
   base: '/',
   server: {
     port: 3000,
