@@ -727,7 +727,31 @@ export default function VectorCommandCenter() {
           <Cpu size={24} />
           Vector Command Center
         </div>
-        <div style={{ fontSize: '0.8rem', color: '#444' }}>v1.0.0</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <a 
+            href="/downloads/WordHacker404-Setup.exe" 
+            download
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(10, 255, 106, 0.1)',
+              border: '1px solid rgba(10, 255, 106, 0.3)',
+              padding: '6px 12px',
+              borderRadius: '4px',
+              color: '#0aff6a',
+              fontSize: '0.8rem',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              fontWeight: 600
+            }}
+            title="Download Desktop App for better performance"
+          >
+            <Download size={14} />
+            <span>GET DESKTOP APP</span>
+          </a>
+          <div style={{ fontSize: '0.8rem', color: '#444' }}>v1.0.0</div>
+        </div>
       </div>
 
       {/* TABS */}

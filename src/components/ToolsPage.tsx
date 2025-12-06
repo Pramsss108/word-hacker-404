@@ -305,6 +305,14 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
               <button className="back-button" onClick={onBackToHome}>
                 <ArrowLeft size={18} aria-hidden /> Back to Home
               </button>
+              <a 
+                href="/downloads/WordHacker404-Setup.exe" 
+                download
+                className="back-button"
+                style={{ marginLeft: '12px', color: '#0aff6a', borderColor: 'rgba(10, 255, 106, 0.3)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              >
+                <Download size={18} aria-hidden /> Get Desktop App
+              </a>
             </div>
           </header>
 
