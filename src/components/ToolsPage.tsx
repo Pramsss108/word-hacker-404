@@ -466,6 +466,12 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                   <br />
                   Secure, fast, and ad-free.
                 </p>
+
+                <div className="trust-badge" style={{ fontSize: '0.8rem', color: '#9aa3b2', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  ⚠️ <strong>Windows Warning?</strong> Click "More Info" → "Run Anyway".
+                  <br/>
+                  (Normal for new open-source tools!)
+                </div>
                 
                 <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
                   <button className="btn full" type="button" onClick={openDesktopAppDocs}>
