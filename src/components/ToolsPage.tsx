@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import {
   ArrowLeft,
   ChevronLeft,
@@ -10,6 +10,7 @@ import {
   Sparkles,
   Wand2,
   Workflow,
+  Zap,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
 import VectorCommandCenter from './VectorCommandCenter'
@@ -32,8 +33,6 @@ interface RawProcessStep {
   detail: string
   notes: string[]
 }
-
-type DownloaderFormat = 'mp4-1080' | 'mp4-720' | 'mp3'
 
 const rawSteps: RawProcessStep[] = [
   {
@@ -65,18 +64,7 @@ const rawSteps: RawProcessStep[] = [
   },
 ]
 
-const formatOptions: Array<{ id: DownloaderFormat; label: string; detail: string }> = [
-  { id: 'mp4-1080', label: '1080p MP4', detail: 'Full HD video + audio.' },
-  { id: 'mp4-720', label: '720p MP4', detail: 'Smaller drop, still HD.' },
-  { id: 'mp3', label: 'MP3 Audio', detail: '192 kbps audio-only.' },
-]
 
-function parseUrlInput(rawValue: string): string[] {
-  return rawValue
-    .split(/[\s,\n]+/)
-    .map((item) => item.trim())
-    .filter((item) => /^https?:\/\//i.test(item))
-}
 
 function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
@@ -103,7 +91,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
     },
     {
       id: 'internet-downloader',
-      name: 'Internet Downloader',
+      name: '404 Social Media Downloader',
       summary: 'Client-side helper for the yt-dlp PowerShell runner.',
       icon: <Download size={22} aria-hidden />,
       status: 'open',
@@ -161,18 +149,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | 'vector' | null>(null)
   const [rawStepIndex, setRawStepIndex] = useState(0)
 
-  // Downloader state simplified - no more slider logic needed
-  const [isDesktopDevice, setIsDesktopDevice] = useState(true)
 
-
-
-  useEffect(() => {
-    if (typeof navigator === 'undefined') {
-      return
-    }
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '')
-    setIsDesktopDevice(!isMobile)
-  }, [])
 
   const openDesktopAppDocs = useCallback(() => {
     window.open('https://github.com/Pramsss108/word-hacker-404/releases/latest/download/WH404%20Downloader.exe', '_blank')
@@ -349,7 +326,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
             <div className="raw-anim-grid downloader-grid" aria-hidden />
             <header className="raw-holo-head">
               <div>
-                <h3 className="raw-head-title">Internet Downloader</h3>
+                <h3 className="raw-head-title">404 Social Media Downloader</h3>
                 <p className="raw-head-note">Desktop App Required</p>
               </div>
               <button className="btn ghost" onClick={() => setActiveTool(null)}>
