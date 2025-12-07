@@ -30,16 +30,7 @@ fn main() -> Result<()> {
 
     // 2. Fetch Latest Version Info
     println!("🌐 Checking for updates...");
-    // In a real scenario, uncomment this. For dev, we mock it.
-    // let release = fetch_latest_release()?;
-    
-    // MOCK DATA for Development
-    let release = ReleaseInfo {
-        version: "1.0.0".to_string(),
-        url: "https://github.com/Pramsss108/wh404-desktop-builds/releases/download/v1.0.0/app-release.zip".to_string(),
-        hash: "mock-hash".to_string(),
-    };
-
+    let release = fetch_latest_release()?;
     println!("✨ Found Version: {}", release.version);
 
     // 3. Download Core Package
@@ -49,11 +40,11 @@ fn main() -> Result<()> {
     }
 
     println!("⬇️ Downloading Core Package...");
-    // download_file(&release.url, &zip_path)?; // Uncomment in prod
+    download_file(&release.url, &zip_path)?;
     
     // 4. Extract Package
     println!("📦 Extracting...");
-    // extract_zip(&zip_path, &install_dir)?; // Uncomment in prod
+    extract_zip(&zip_path, &install_dir)?;
 
     // 5. Create Shortcut (Windows)
     println!("🔗 Creating Shortcuts...");
