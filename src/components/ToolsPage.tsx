@@ -151,10 +151,6 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
 
 
 
-  const openDesktopAppDocs = useCallback(() => {
-    window.open('https://github.com/Pramsss108/word-hacker-404/releases/latest/download/WH404%20Downloader.exe', '_blank')
-  }, [])
-
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {
     setRawStepIndex((prev) => {
       if (direction === 'next') {
@@ -348,9 +344,14 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
               </div>
               
               <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
-                <button className="btn full" type="button" onClick={openDesktopAppDocs}>
+                <a 
+                  href="/downloads/WordHacker404-Setup.exe" 
+                  download
+                  className="btn full"
+                  style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
                   <Zap size={20} /> Download for Windows (PC)
-                </button>
+                </a>
                 
                 <button 
                   className="btn ghost full" 
