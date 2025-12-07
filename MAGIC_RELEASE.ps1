@@ -19,8 +19,13 @@ gh release view $Tag >$null 2>&1
 if ($LASTEXITCODE -eq 0) {
     Write-Host "  Release $Tag exists. Deleting old one..." -ForegroundColor Yellow
     gh release delete $Tag --yes
-    gh api "repos/:owner/:repo/git/refs/tags/$Tag" -X DELETE
+    # Try to delete remote tag via API
+    gh api "repos/:owner/:repo/git/refs/tags/$Tag" -X DELETE >$null 2>&1
 }
+
+# Force clean local and remote tags to prevent conflicts
+git tag -d $Tag >$null 2>&1
+git push --delete origin $Tag >$null 2>&1
 
 # Create new release and upload files
 Write-Host " Uploading files (this might take a minute)..." -ForegroundColor Cyan
@@ -30,6 +35,7 @@ gh release create $Tag `
     "dist/latest.json" `
     --title $Title `
     --notes $Notes `
+    --target main `
     --latest
 
 if ($LASTEXITCODE -eq 0) {
