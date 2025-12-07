@@ -19,3 +19,5 @@ tools/internet-downloader/downloads/
 desktop-downloader/release/
 desktop-downloader/dist/
 desktop-app/release/
+
+**/target/

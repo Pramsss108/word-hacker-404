@@ -12,27 +12,55 @@ An AI-powered word game application built with React, TypeScript, and Vite.
 
 ### Prerequisites
 - Node.js (version 18 or higher)
-- npm or yarn
+- npm (ships with Node)
+- PowerShell 5+ (already on Windows)
 
-### Installation
+### Option A — One-Click Setup For Non-Coders
+If VS Code or the dev server ever crashes, just run the bundled automation script. It stops old processes, reinstalls dependencies, and launches the desktop downloader for you.
 
-1. Clone the repository:
+1. Open File Explorer → navigate to `D:\A scret project\Word hacker 404`.
+2. Right-click `master-run.ps1` → choose **Run with PowerShell**.
+3. Accept the execution-policy prompt if Windows asks.
+4. Wait for the script to show all four steps:
+	- Stop old dev servers.
+	- Install root web-app dependencies.
+	- Install desktop-app dependencies.
+	- Launch the Electron downloader (`npm start`).
+
+> 💡 First run may take a few minutes because npm downloads everything again. Subsequent runs are fast.
+
+### Need a totally fresh install (new-user test)?
+Use `desktop-fresh-start.ps1`. This script:
+- Stops Electron/Vite/Node processes
+- Deletes `node_modules` for both the web app and desktop app
+- Reinstalls every dependency from scratch
+- Wipes the Electron user-data folders (so the tutorial + first-time popup appear again)
+- Launches the downloader when everything is ready
+
+Right-click `desktop-fresh-start.ps1` → **Run with PowerShell**. Pass `-SkipWebSetup` if you only want to refresh the desktop app.
+
+### Option B — Manual Steps
+
+#### 1. Web App (`word-hacker-404`)
 ```bash
-git clone <your-repository-url>
-cd word-hacker-404
+cd "D:/A scret project/Word hacker 404"
+npm install        # install/update website deps
+npm run dev        # starts Vite on http://localhost:3001 (auto-picks a free port)
 ```
 
-2. Install dependencies:
+#### 2. Desktop Downloader (`desktop-downloader`)
 ```bash
-npm install
+cd "D:/A scret project/Word hacker 404/desktop-downloader"
+npm install        # install/update Electron deps
+npm start          # launches the WH404 Social Media Downloader window
 ```
 
-3. Start the development server:
-```bash
-npm run dev
-```
+Keep both terminals open while you work. If the desktop window doesn’t open after a crash, re-run `master-run.ps1` or the manual commands above.
 
-The application will be available at `http://localhost:3000`
+### Verification Checklist
+- Web: open `http://localhost:3001` (or whatever port Vite prints).
+- Desktop: green “Add to Queue” button visible, tutorial popup appears for first-time installs.
+- Console: no red errors in the PowerShell window. If you see GPU cache warnings, close the app and delete `%LOCALAPPDATA%/word-hacker-desktop-downloader/GPUCache`, then relaunch.
 
 ## 🛠️ Development Scripts
 

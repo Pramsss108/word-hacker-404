@@ -1,0 +1,21 @@
+[package]
+name = "word-hacker-tool"
+version = "0.1.0"
+description = "Word Hacker Tool"
+authors = ["Word Hacker 404"]
+edition = "2021"
+rust-version = "1.70"
+
+[build-dependencies]
+tauri-build = { version = "1", features = [] }
+
+[dependencies]
+tauri = { version = "1", features = ["shell-open", "shell-sidecar", "fs-all", "dialog-all", "http-all"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.11", features = ["json"] }
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

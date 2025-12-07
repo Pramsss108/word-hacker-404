@@ -1,0 +1,61 @@
+{
+  "build": {
+    "beforeDevCommand": "npm start",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:3000",
+    "distDir": "../build",
+    "withGlobalTauri": true
+  },
+  "package": {
+    "productName": "Word Hacker Tool",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true,
+        "sidecar": true,
+        "scope": [
+            { "name": "bin/yt-dlp", "sidecar": true },
+            { "name": "bin/ffmpeg", "sidecar": true }
+        ]
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$DOWNLOAD/*", "$TEMP/*", "$APP/*"]
+      },
+      "dialog": {
+        "all": true
+      },
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": ["https://*"]
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.wordhacker.downloader",
+      "externalBin": [
+        "bin/yt-dlp",
+        "bin/ffmpeg"
+      ],
+      "icon": [
+        "icons/icon.ico"
+      ]
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "Word Hacker 404 Downloader",
+        "width": 800,
+        "height": 600
+      }
+    ]
+  }
+}

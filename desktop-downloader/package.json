@@ -1,31 +1,37 @@
 {
   "name": "word-hacker-desktop-downloader",
   "version": "0.1.0",
-  "description": "Desktop helper that bundles yt-dlp and FFmpeg so non-coders can download drops locally.",
+  "description": "The official desktop companion for Word Hacker 404. Download, trim, and master audio/video from the underground.",
   "main": "src/main.js",
   "author": "Word Hacker 404",
+  "license": "MIT",
+  "homepage": "https://wordhacker404.me",
   "scripts": {
     "start": "electron .",
     "dev": "electronmon .",
     "package:win": "electron-builder --win portable",
     "package:mac": "electron-builder --mac dmg",
     "package:linux": "electron-builder --linux AppImage",
-    "package": "electron-builder -mwl"
+    "package": "electron-builder -mwl",
+    "build": "react-scripts build",
+    "tauri": "tauri"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0",
     "os-utils": "0.0.14",
+    "react-scripts": "^5.0.1",
     "sanitize-filename": "^1.6.3",
     "yt-dlp-exec": "^1.0.2"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^1.6.3",
     "electron": "^30.0.6",
     "electron-builder": "^25.1.8",
     "electronmon": "^2.0.2"
   },
   "build": {
     "appId": "com.wordhacker.downloader",
-    "productName": "Word Hacker Downloader",
+    "productName": "Word Hacker 404",
     "directories": {
       "output": "release"
     },
@@ -50,5 +56,17 @@
         "AppImage"
       ]
     }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

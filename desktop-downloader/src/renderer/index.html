@@ -4,13 +4,16 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WH404 - YT Downloader 1.0</title>
+    <title>WH404 - Social Media Downloader</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css?v=14" />
+    <link rel="stylesheet" href="tutorial.css?v=15" />
   </head>
   <body>
+    <!-- Bridge must load before renderer -->
+    <script src="bridge.js"></script>
     <div id="loading-screen" class="loading-screen">
       <div class="loading-content">
         <div class="loading-logo">
@@ -22,14 +25,14 @@
         </div>
         <div class="loading-logs">
           <div class="log-line">> Initializing system...</div>
-          <div class="log-line">> Loading engine modules...</div>
-          <div class="log-line">> Connecting to yt-dlp...</div>
-          <div class="log-line">> Checking dependencies...</div>
+          <div class="log-line">> Loading extraction engines...</div>
+          <div class="log-line">> Establishing secure connections...</div>
+          <div class="log-line">> Optimizing performance...</div>
           <div class="log-line">> Ready.</div>
         </div>
       </div>
     </div>
-    <div class="window" style="opacity:0;">
+    <div class="window">
       <header class="menu-bar" data-window-region">
         <div class="menu-left">
           <div class="menu-group">
@@ -40,20 +43,50 @@
             </div>
           </div>
           <div class="menu-group">
+            <button class="menu-btn" data-menu-trigger="platforms">Supported Platforms ▾</button>
+            <div class="menu-dropdown platforms-dropdown" id="platforms-menu" role="menu" aria-label="Supported platforms">
+              <div class="platforms-content">
+                <p class="platforms-title">📥 Supported Platforms</p>
+                <div class="platforms-grid">
+                  <div class="platform-category">
+                    <p class="category-label">✅ Video Platforms</p>
+                    <div class="platform-list">
+                      <span class="platform-badge">▶️ YouTube</span>
+                      <span class="platform-badge">🎵 TikTok</span>
+                      <span class="platform-badge">🐦 Twitter/X</span>
+                      <span class="platform-badge">🤖 Reddit</span>
+                      <span class="platform-badge">🎬 Vimeo</span>
+                      <span class="platform-badge">📺 Dailymotion</span>
+                      <span class="platform-badge">🔴 Twitch</span>
+                    </div>
+                  </div>
+                  <div class="platform-category">
+                    <p class="category-label">🎧 Audio Platforms</p>
+                    <div class="platform-list">
+                      <span class="platform-badge">SoundCloud</span>
+                      <span class="platform-badge">Mixcloud</span>
+                      <span class="platform-badge">YouTube Music</span>
+                    </div>
+                  </div>
+                  <div class="platform-category">
+                    <p class="category-label">📚 Educational</p>
+                    <div class="platform-list">
+                      <span class="platform-badge">Khan Academy</span>
+                      <span class="platform-badge">Coursera</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="platforms-note">Paste any link from these platforms to start downloading</p>
+              </div>
+            </div>
+          </div>
+          <div class="menu-group">
             <button class="menu-btn" data-menu-trigger="about">About ▾</button>
             <div class="menu-dropdown" id="about-menu" role="menu" aria-label="About menu">
               <div class="about-content">
-                <h3>WH404 - YT Downloader 1.0</h3>
-                <p class="version">Desktop Downloader v1.0.0</p>
-                <p class="description">A secure YouTube downloader built with privacy in mind. Part of the Word Hacker 404 project.</p>
-                <div class="security-note">
-                  <p><strong>🔒 Security & Updates</strong></p>
-                  <p>Auto-updates enabled. Check for updates regularly to get the latest features and security patches.</p>
-                </div>
-                <div class="pricing-note">
-                  <p><strong>💰 Pricing Notice</strong></p>
-                  <p>This software is currently FREE. Future versions may require a license or subscription.</p>
-                </div>
+                <h3>WH404 - Social Media Downloader</h3>
+                <p class="version">v1.0.0</p>
+                <p class="description">A professional desktop tool for downloading and editing media from popular platforms including YouTube, TikTok, Twitter, Reddit, Vimeo, SoundCloud, and more. Features advanced trimming controls, metadata toolkit, and high-quality export options.</p>
                 <p class="copyright">© 2025 Word Hacker 404</p>
               </div>
             </div>
@@ -70,7 +103,7 @@
             </div>
           </div>
         </div>
-        <div class="menu-title">WH404 · YT Downloader 1.0</div>
+        <div class="menu-title">WH404 · Social Media Downloader</div>
         <div class="window-controls" aria-label="window controls">
           <button class="ghost" data-pin title="Always on top">📌</button>
           <button class="ghost" data-window="minimize" title="Minimize">–</button>
@@ -80,7 +113,7 @@
       </header>
 
       <div class="workspace">
-        <section class="pane preview-pane">
+        <section class="pane preview-pane" data-mode="video">
           <header>
             <div>
               <p class="eyebrow">Review</p>
@@ -91,27 +124,158 @@
               <span class="mono" id="preview-info">No media loaded</span>
             </div>
           </header>
+          <div class="metadata-summary" id="metadata-summary">
+            <button class="summary-chip" data-summary-chip="thumbnail" data-open-panel="thumbnail" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
+              <span class="chip-label">Thumbnail</span>
+              <span class="chip-value" id="summary-thumbnail">Waiting</span>
+            </button>
+            <button class="summary-chip" data-summary-chip="title" data-open-panel="title" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
+              <span class="chip-label">Title</span>
+              <span class="chip-value" id="summary-title">Title not ready</span>
+            </button>
+            <button class="summary-chip" data-summary-chip="keywords" data-open-panel="keywords" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
+              <span class="chip-label">Keywords</span>
+              <span class="chip-value" id="summary-keywords">Waiting</span>
+            </button>
+            <button class="summary-chip" data-summary-chip="description" data-open-panel="description" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
+              <span class="chip-label">Description</span>
+              <span class="chip-value" id="summary-description">Waiting</span>
+            </button>
+          </div>
           <div class="preview-card" id="preview-card">
             <video id="preview-video" preload="metadata"></video>
-            <div id="preview-empty" class="preview-empty">Finish a download to load preview.</div>
+            <div id="preview-empty" class="preview-empty">
+              <div class="hacker-loading">
+                <div class="hacker-logo">
+                  <span class="glitch-text" data-text="WH404">WH404</span>
+                  <span class="hacker-subtitle">WORD HACKER</span>
+                </div>
+                <div class="hacker-logs">
+                  <div class="log-line">▸ Initializing video preview system...</div>
+                  <div class="log-line">▸ Awaiting media source...</div>
+                  <div class="log-line">▸ Ready to analyze content</div>
+                  <div class="log-line">▸ <span class="log-highlight">Download a video to begin</span></div>
+                </div>
+                <div class="progress-dots">
+                  <span>.</span><span>.</span><span>.</span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="trim-panel">
             <div class="trim-controls">
-              <button id="preview-play" class="trim-btn" title="Play/Pause (Space)">▶</button>
-              <button id="preview-stop" class="trim-btn" title="Stop">⏹</button>
-              <button id="preview-restart" class="trim-btn" title="Restart">⟲</button>
+              <div class="playback-controls">
+                <button id="preview-play" class="trim-btn" title="Play/Pause (Space)">▶</button>
+                <button id="preview-stop" class="trim-btn" title="Stop">⏹</button>
+                <button id="preview-restart" class="trim-btn" title="Restart">⟲</button>
+                <span class="playback-time">
+                  <strong id="current-time">00:00</strong> / <span id="total-time">00:00</span>
+                </span>
+              </div>
               <div class="trim-readout">
-                <span><strong id="trim-start-label">00:00</strong> In</span>
-                <span><strong id="trim-end-label">00:00</strong> Out</span>
-                <span><strong id="trim-duration">00:00</strong> Duration</span>
+                <span class="trim-marker"><strong id="trim-start-label">00:00</strong> <small>Start</small></span>
+                <span class="trim-marker"><strong id="trim-end-label">00:00</strong> <small>End</small></span>
+                <span class="trim-marker"><strong id="trim-duration">00:00</strong> <small>Duration</small></span>
               </div>
             </div>
-            <div class="trim-timeline">
-              <div class="trim-track">
-                <div id="trim-fill" class="trim-range-fill"></div>
+            <div class="trim-timeline-container">
+              <div class="timeline-hover-preview" id="timeline-hover">
+                <span class="hover-time">00:00</span>
               </div>
-              <input id="trim-start" class="trim-handle trim-handle-start" type="range" min="0" value="0" step="0.1" aria-label="Trim start" />
-              <input id="trim-end" class="trim-handle trim-handle-end" type="range" min="0" value="0" step="0.1" aria-label="Trim end" />
+              <div class="trim-timeline" id="trim-timeline-track">
+                <div class="trim-track">
+                  <div id="trim-fill" class="trim-range-fill"></div>
+                  <div id="playhead-indicator" class="playhead"></div>
+                </div>
+                <input id="trim-start" class="trim-handle trim-handle-start" type="range" min="0" value="0" step="0.1" aria-label="Trim start" />
+                <input id="trim-end" class="trim-handle trim-handle-end" type="range" min="0" value="0" step="0.1" aria-label="Trim end" />
+              </div>
+              <div class="timeline-time-markers" id="timeline-markers"></div>
+            </div>
+          </div>
+
+          <div id="metadata-pane" class="metadata-pane">
+            <div class="metadata-backdrop" id="metadata-backdrop"></div>
+            <div class="metadata-popover" id="metadata-popover" aria-hidden="true" role="dialog" aria-labelledby="metadata-popover-title">
+              <div class="metadata-popover-shell">
+                <div class="metadata-popover-header">
+                  <h3 id="metadata-popover-title">Smart thumbnail</h3>
+                  <button id="metadata-close" class="ghost ghost-icon" title="Close">✕</button>
+                </div>
+                <div class="metadata-popover-body">
+                  <article class="premium-card premium-card-thumbnail active" data-premium-card="thumbnail" data-popover-panel="thumbnail">
+                    <header>
+                      <div>
+                        <p class="premium-card-title">🖼 Smart thumbnail</p>
+                        <p class="premium-card-hint">Best frame captured automatically</p>
+                      </div>
+                    </header>
+                    <div class="premium-card-body thumbnail-body">
+                      <div class="thumbnail-frame" id="premium-thumbnail">
+                        <p>Thumbnail not ready</p>
+                      </div>
+                      <div class="thumbnail-meta">
+                        <span class="thumbnail-ratio" id="premium-thumbnail-ratio">Aspect: --</span>
+                        <div class="premium-actions">
+                          <button class="ghost-mini" data-premium-download="thumbnail">Download</button>
+                          <button class="ghost-mini" data-premium-copy="thumbnail">Copy link</button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                  <article class="premium-card premium-card-keywords" data-premium-card="seo" data-popover-panel="keywords">
+                    <header>
+                      <div>
+                        <p class="premium-card-title">🔑 SEO keywords</p>
+                        <p class="premium-card-hint">Comma separated for quick paste</p>
+                      </div>
+                    </header>
+                    <div class="premium-card-body">
+                      <div class="premium-field">
+                        <p class="premium-field-label">Keywords</p>
+                        <div class="premium-field-box" id="premium-keywords-string">Keywords will appear here</div>
+                      </div>
+                      <div class="premium-actions">
+                        <button class="ghost-mini" data-premium-copy="keywords">Copy keywords</button>
+                      </div>
+                    </div>
+                  </article>
+                  <article class="premium-card premium-card-title" data-premium-card="story-title" data-popover-panel="title">
+                    <header>
+                      <div>
+                        <p class="premium-card-title">📝 Title</p>
+                        <p class="premium-card-hint">One-line hook</p>
+                      </div>
+                    </header>
+                    <div class="premium-card-body">
+                      <div class="premium-field">
+                        <p class="premium-field-label">Title</p>
+                        <div class="premium-field-box single-line" id="premium-title">Title not ready</div>
+                      </div>
+                      <div class="premium-actions">
+                        <button class="ghost-mini" data-premium-copy="title">Copy title</button>
+                      </div>
+                    </div>
+                  </article>
+                  <article class="premium-card premium-card-description" data-premium-card="story" data-popover-panel="description">
+                    <header>
+                      <div>
+                        <p class="premium-card-title">🧾 Description</p>
+                        <p class="premium-card-hint">Drop-in caption draft</p>
+                      </div>
+                    </header>
+                    <div class="premium-card-body">
+                      <div class="premium-field">
+                        <p class="premium-field-label">Description</p>
+                        <div class="premium-field-box" id="premium-description">Description will appear here when a clip is selected.</div>
+                      </div>
+                      <div class="premium-actions">
+                        <button class="ghost-mini" data-premium-copy="description">Copy description</button>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -121,12 +285,27 @@
             <header>
               <div>
                 <p class="eyebrow">Input</p>
-                <h2>Paste YT links</h2>
+                <h2>Paste media links</h2>
+              </div>
+              <div class="history-dropdown-container">
+                <button id="history-toggle" class="ghost ghost-icon history-toggle" title="Download History">
+                  🕐
+                </button>
+                <div id="history-dropdown" class="history-dropdown">
+                  <div class="history-header">
+                    <span class="history-title">Download History</span>
+                    <button id="history-clear-all" class="ghost-mini">Clear All</button>
+                  </div>
+                  <div id="history-list" class="history-list">
+                    <p class="history-empty">No download history yet</p>
+                  </div>
+                </div>
               </div>
             </header>
             <label class="field-label" for="url-input">Link(s)</label>
             <textarea id="url-input" rows="3" placeholder="https://youtu.be/..."></textarea>
-            <p class="hint">Paste one or more links. Queue handles the rest.</p>
+            <button id="add-to-queue-btn" class="primary" style="margin-top: 0.5rem; width: 100%;">Add to Queue</button>
+            <p class="hint">Paste links from any platform, then click "Add to Queue" (or press Enter).</p>
           </section>
 
           <section class="pane queue-pane">
@@ -163,6 +342,7 @@
         </div>
         <div class="status-right">
           <span class="status-chip" id="status-queue">Queue: 0</span>
+          <span class="status-chip status-chip-speed">⚡ Multi-connection: Active</span>
           <span class="status-chip" id="status-preset">Preset: 1080p Pro</span>
           <span class="status-chip" id="status-destination">Destination: Downloads/WordHackerDownloads</span>
           <span class="status-chip" id="status-engine">Engine: idle</span>
@@ -179,7 +359,13 @@
           </div>
           <button id="export-cancel" class="ghost ghost-icon" title="Close">✕</button>
         </header>
-        <p id="export-message" class="hint">Choose resolution and format for export.</p>
+        <div class="export-status">
+          <div id="export-loader" class="export-loader" aria-hidden="true"></div>
+          <p id="export-message" class="hint">
+            <span id="export-message-text">Choose resolution and format for export.</span>
+            <span id="export-message-dots" aria-hidden="true"></span>
+          </p>
+        </div>
         <div class="export-form">
           <label for="export-type">Type</label>
           <select id="export-type">
@@ -196,12 +382,36 @@
             <button id="export-browse" class="ghost">Browse</button>
           </div>
         </div>
+        <div class="export-insights" id="export-meta">
+          <div class="export-insight" data-export-meta="thumbnail">
+            <div>
+              <p class="export-insight-label">Thumbnail</p>
+              <p class="export-insight-value" id="export-meta-thumbnail">Not attached</p>
+            </div>
+            <button class="ghost-mini" data-export-copy="thumbnail">Copy link</button>
+          </div>
+          <div class="export-insight" data-export-meta="keywords">
+            <div>
+              <p class="export-insight-label">SEO keywords</p>
+              <p class="export-insight-value" id="export-meta-keywords">Disabled</p>
+            </div>
+            <button class="ghost-mini" data-export-copy="keywords">Copy</button>
+          </div>
+          <div class="export-insight" data-export-meta="story">
+            <div>
+              <p class="export-insight-label">Title & description</p>
+              <p class="export-insight-value" id="export-meta-title">Disabled</p>
+            </div>
+            <button class="ghost-mini" data-export-copy="story">Copy</button>
+          </div>
+        </div>
         <div class="export-actions">
           <button id="export-confirm" class="primary full">Export selection</button>
         </div>
       </div>
     </div>
 
-    <script src="renderer.js"></script>
+    <script src="renderer.js?v=7"></script>
+    <script src="tutorial.js?v=16"></script>
   </body>
 </html>

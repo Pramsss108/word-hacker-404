@@ -1,0 +1,11 @@
+name = "wh404-api"
+main = "src/worker.js"
+compatibility_date = "2023-10-30"
+
+[vars]
+ENVIRONMENT = "production"
+
+# [env.production]
+# kv_namespaces = [
+#   { binding = "LICENSES", id = "..." }
+# ]
