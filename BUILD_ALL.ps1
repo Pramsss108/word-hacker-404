@@ -132,26 +132,24 @@ Remove-Item $StagingDir -Recurse -Force
 Write-Success "Core App Packaged: $AppReleaseZip"
 
 # ----------------------------------------------------------------
-# 3️⃣ Build Stub Installer
+# 3️⃣ Locate Professional Installer (NSIS)
 # ----------------------------------------------------------------
-Write-Step "Phase 3: Building Smart Stub Installer..."
+Write-Step "Phase 3: Locating Professional Installer..."
 
-$InstallerDir = Join-Path $ScriptRoot "installer-stub"
-Set-Location $InstallerDir
+# Tauri outputs the NSIS installer in target/release/bundle/nsis/
+$NsisDir = Join-Path $AppDir "src-tauri\target\release\bundle\nsis"
+$NsisInstaller = Get-ChildItem $NsisDir -Filter "*.exe" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 
-Write-Host "   Compiling Installer (Release Mode)..." -ForegroundColor Gray
-cargo build --release
-
-if ($LASTEXITCODE -ne 0) {
-    Write-ErrorMsg "Installer Build Failed."
+if (-not $NsisInstaller) {
+    Write-ErrorMsg "Could not find NSIS installer in: $NsisDir"
+    Write-Host "Listing contents of bundle dir:"
+    Get-ChildItem (Join-Path $AppDir "src-tauri\target\release\bundle") -Recurse | Select-Object FullName
     exit 1
 }
 
-$InstallerExe = Join-Path $InstallerDir "target\release\wh404-installer.exe"
 $FinalInstaller = Join-Path $DistDir "WH404 Downloader.exe"
-
-Copy-Item $InstallerExe -Destination $FinalInstaller
-Write-Success "Installer Built: $FinalInstaller"
+Copy-Item $NsisInstaller.FullName -Destination $FinalInstaller
+Write-Success "Professional Installer Found: $FinalInstaller"
 
 # Copy to Public Downloads for Website
 $PublicDownloads = Join-Path $ScriptRoot "public\downloads"

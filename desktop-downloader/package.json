@@ -14,7 +14,9 @@
     "package:linux": "electron-builder --linux AppImage",
     "package": "electron-builder -mwl",
     "build": "react-scripts build",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0",

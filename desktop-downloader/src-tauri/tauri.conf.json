@@ -37,7 +37,7 @@
     },
     "bundle": {
       "active": true,
-      "targets": "all",
+      "targets": ["nsis"],
       "identifier": "com.wordhacker.downloader",
       "externalBin": [
         "bin/yt-dlp",
@@ -45,7 +45,20 @@
       ],
       "icon": [
         "icons/icon.ico"
-      ]
+      ],
+      "windows": {
+        "wix": {
+          "language": "en-US"
+        },
+        "nsis": {
+          "installMode": "currentUser",
+          "installerIcon": "icons/icon.ico",
+          "headerImage": "icons/icon.ico",
+          "sidebarImage": "icons/icon.ico",
+          "displayLanguageSelector": false,
+          "languages": ["English"]
+        }
+      }
     },
     "security": {
       "csp": null
@@ -53,8 +66,11 @@
     "windows": [
       {
         "title": "WH404 Downloader",
-        "width": 800,
-        "height": 600
+        "width": 1000,
+        "height": 700,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true
       }
     ]
   }
