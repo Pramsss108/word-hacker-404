@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "Word Hacker Tool",
+    "productName": "WH404 Downloader",
     "version": "0.1.0"
   },
   "tauri": {
@@ -52,7 +52,7 @@
     },
     "windows": [
       {
-        "title": "Word Hacker Tool",
+        "title": "WH404 Downloader",
         "width": 800,
         "height": 600
       }

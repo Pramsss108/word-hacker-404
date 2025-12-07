@@ -9,8 +9,8 @@ use std::process::Command;
 // ----------------------------------------------------------------
 // 🔧 CONFIGURATION
 // ----------------------------------------------------------------
-const APP_NAME: &str = "Word Hacker Tool";
-const EXECUTABLE_NAME: &str = "Word Hacker Tool.exe";
+const APP_NAME: &str = "WH404 Downloader";
+const EXECUTABLE_NAME: &str = "WH404 Downloader.exe";
 // Replace with your actual GitHub Releases URL or S3 bucket
 const UPDATE_URL: &str = "https://github.com/Pramsss108/word-hacker-404/releases/latest/download/latest.json";
 

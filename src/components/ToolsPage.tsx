@@ -270,7 +270,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   }, [])
 
   const openDesktopAppDocs = useCallback(() => {
-    window.open('https://github.com/Pramsss108/word-hacker-404/releases/latest/download/WordHackerTool-Setup.exe', '_blank')
+    window.open('https://github.com/Pramsss108/word-hacker-404/releases/latest/download/WH404%20Downloader.exe', '_blank')
   }, [])
 
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {

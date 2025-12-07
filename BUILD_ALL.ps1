@@ -100,7 +100,7 @@ New-Item -ItemType Directory -Path $DistDir | Out-Null
 # Sidecars might be in release/ or release/bin depending on config.
 # We will grab the main exe and any .exe sidecars.
 
-$MainExe = Join-Path $TauriTargetDir "Word Hacker Tool.exe"
+$MainExe = Join-Path $TauriTargetDir "WH404 Downloader.exe"
 
 if (-not (Test-Path $MainExe)) {
     Write-ErrorMsg "Could not find built executable at: $MainExe"
@@ -148,7 +148,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $InstallerExe = Join-Path $InstallerDir "target\release\wh404-installer.exe"
-$FinalInstaller = Join-Path $DistDir "WordHackerTool-Setup.exe"
+$FinalInstaller = Join-Path $DistDir "WH404 Downloader.exe"
 
 Copy-Item $InstallerExe -Destination $FinalInstaller
 Write-Success "Installer Built: $FinalInstaller"
@@ -178,7 +178,7 @@ Write-Host "Output Directory: $DistDir" -ForegroundColor Magenta
 Write-Host "---------------------------------------------------"
 Write-Host "1. Upload 'app-release.zip' to GitHub Releases."
 Write-Host "2. Upload 'latest.json' to GitHub Releases."
-Write-Host "3. Distribute 'WordHackerTool-Setup.exe' to users."
+Write-Host "3. Distribute 'WH404 Downloader.exe' to users."
 Write-Host "---------------------------------------------------"
 
 # Return to root
