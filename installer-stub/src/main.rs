@@ -12,7 +12,7 @@ use std::process::Command;
 const APP_NAME: &str = "Word Hacker Tool";
 const EXECUTABLE_NAME: &str = "Word Hacker Tool.exe";
 // Replace with your actual GitHub Releases URL or S3 bucket
-const UPDATE_URL: &str = "https://github.com/Pramsss108/wh404-desktop-builds/releases/latest/download/latest.json";
+const UPDATE_URL: &str = "https://github.com/Pramsss108/word-hacker-404/releases/latest/download/latest.json";
 
 #[derive(Deserialize, Debug)]
 struct ReleaseInfo {
