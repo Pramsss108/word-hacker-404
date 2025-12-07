@@ -153,6 +153,12 @@ $FinalInstaller = Join-Path $DistDir "WH404 Downloader.exe"
 Copy-Item $InstallerExe -Destination $FinalInstaller
 Write-Success "Installer Built: $FinalInstaller"
 
+# Copy to Public Downloads for Website
+$PublicDownloads = Join-Path $ScriptRoot "public\downloads"
+if (-not (Test-Path $PublicDownloads)) { New-Item -ItemType Directory -Path $PublicDownloads | Out-Null }
+Copy-Item $FinalInstaller -Destination (Join-Path $PublicDownloads "WordHacker404-Setup.exe") -Force
+Write-Success "Installer Copied to Website: public/downloads/WordHacker404-Setup.exe"
+
 # ----------------------------------------------------------------
 # 4️⃣ Generate Metadata (latest.json)
 # ----------------------------------------------------------------
