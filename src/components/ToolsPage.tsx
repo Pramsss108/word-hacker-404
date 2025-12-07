@@ -456,164 +456,34 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
               <div className="downloader-box-head">
                 <div>
                   <p className="downloader-title">Deck 02 · Internet Downloader</p>
-                  <span className="downloader-sub">{clipboardPrimed ? 'Clipboard linked' : 'Autopaste armed once'} · {parsedUrls.length || 'No'} job{parsedUrls.length === 1 ? '' : 's'}</span>
+                  <span className="downloader-sub">Desktop App Required</span>
                 </div>
-                <div className="downloader-head-actions">
-                  <span className={`engine-chip ${deckStatus.tone}`}>{deckStatus.label}</span>
-                  <button className="btn ghost tiny" type="button" onClick={handlePaste}>
-                    Paste link
+              </div>
+
+              <div className="downloader-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center' }}>
+                <p className="downloader-hint intense">
+                  For the best experience, use our dedicated desktop application.
+                  <br />
+                  Secure, fast, and ad-free.
+                </p>
+                
+                <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
+                  <button className="btn full" type="button" onClick={openDesktopAppDocs}>
+                    <Zap size={20} /> Download for Windows (PC)
                   </button>
-                </div>
-              </div>
-
-              <div className="downloader-slider" aria-roledescription="carousel">
-                <button
-                  className="slider-btn"
-                  type="button"
-                  aria-label="Previous step"
-                  onClick={() => cycleDownloaderSlide('prev')}
-                  disabled={downloaderSlide === 0}
-                >
-                  <ChevronLeft size={20} aria-hidden />
-                </button>
-
-                <div className="downloader-stage">
-                  <div className="downloader-track" style={{ transform: `translateX(-${downloaderSlide * 100}%)` }}>
-                    <article className="downloader-slide">
-                      <div className="downloader-panel">
-                        <div className="panel-head">
-                          <span className="step-label">Step 01</span>
-                          <h4>Paste queue</h4>
-                        </div>
-                        {isDesktopDevice && (
-                          <div className="desktop-callout">
-                            <p>Desktop detected. Install the Word Hacker Downloader app for one-click pulls.</p>
-                            <button className="btn ghost tiny" type="button" onClick={openDesktopAppDocs}>Download desktop app</button>
-                          </div>
-                        )}
-                        <textarea
-                          id="downloader-input"
-                          className="downloader-textarea compact"
-                          value={downloaderUrls}
-                          onChange={(event) => handleUrlChange(event.target.value)}
-                          placeholder="Drop YouTube links here."
-                        />
-                        <div className="downloader-row tight">
-                          <button className="btn" type="button" onClick={handlePaste}>
-                            Paste
-                          </button>
-                          <button className="btn ghost" type="button" onClick={handleClear} disabled={!downloaderUrls.trim()}>
-                            Clear
-                          </button>
-                          <span className="downloader-hint">Spaces, commas, or new lines all work.</span>
-                        </div>
-                      </div>
-                    </article>
-
-                    <article className="downloader-slide">
-                      <div className="downloader-panel">
-                        <div className="panel-head">
-                          <span className="step-label">Step 02</span>
-                          <h4>Select format</h4>
-                        </div>
-                        <p className="downloader-hint">Pick the drop style.</p>
-                        <div className="format-grid">
-                          {formatOptions.map((option) => (
-                            <button
-                              key={option.id}
-                              className={`format-card ${downloaderFormat === option.id ? 'active' : ''}`}
-                              type="button"
-                              onClick={() => setDownloaderFormat(option.id)}
-                            >
-                              <strong>{option.label}</strong>
-                              <small>{option.detail}</small>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </article>
-
-                    <article className="downloader-slide">
-                      <div className="downloader-panel">
-                        <div className="panel-head">
-                          <span className="step-label">Step 03</span>
-                          <h4>{isDesktopDevice ? 'Install helper app' : 'Telegram bot'}</h4>
-                        </div>
-                        {isDesktopDevice ? (
-                          <>
-                            <p className="downloader-hint intense">Windows installer ready! Download the .exe, install like any software, then paste YouTube URLs to download.</p>
-                            <div className="cta-stack">
-                              <button className="btn" type="button" onClick={openDesktopAppDocs}>
-                                Download Windows Installer (103 MB)
-                              </button>
-                              <button
-                                className="btn ghost"
-                                type="button"
-                                onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases/tag/desktop-v1.0.0', '_blank')}
-                              >
-                                View all platforms (Windows/Mac/Linux)
-                              </button>
-                            </div>
-                            <div className="helper-status-grid">
-                              <div>
-                                <p className="helper-label">Installer Status</p>
-                                <p className="helper-value">✅ Ready (v1.0.0)</p>
-                              </div>
-                              <div>
-                                <p className="helper-label">What to expect</p>
-                                <p className="helper-value">Double-click installer → Install → Launch → Paste links → Download</p>
-                              </div>
-                              <div>
-                                <p className="helper-label">Output path</p>
-                                <p className="helper-value">Downloads/WordHackerDownloads</p>
-                              </div>
-                            </div>
-                            <ul className="helper-checklist">
-                              <li><strong>Installer will include:</strong> Signed .exe (Windows), .dmg (Mac), .AppImage (Linux)</li>
-                              <li><strong>One-click install:</strong> No Node.js, no terminal—just install and run</li>
-                              <li><strong>Auto-updates:</strong> New versions install automatically</li>
-                            </ul>
-                            <p className="downloader-hint">Meanwhile, use the PowerShell helper or wait for Telegram bot (mobile-friendly).</p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="downloader-hint intense">You’re on mobile. The Telegram bot handles downloads with zero setup.</p>
-                            <div className="cta-stack">
-                              <button className="btn" type="button" onClick={() => window.open('https://t.me/wordhacker_downloader_bot', '_blank')} disabled>
-                                Telegram bot (coming soon)
-                              </button>
-                            </div>
-                            <p className="downloader-hint">Bot notifications + auto-uploads are shipping soon. We’ll drop the invite link here.</p>
-                          </>
-                        )}
-                      </div>
-                    </article>
-                  </div>
-                </div>
-
-                <button
-                  className="slider-btn"
-                  type="button"
-                  aria-label="Next step"
-                  onClick={() => cycleDownloaderSlide('next')}
-                  disabled={downloaderSlide >= totalDownloaderSlides - 1}
-                >
-                  <ChevronRight size={20} aria-hidden />
-                </button>
-              </div>
-
-              <div className="downloader-pips">
-                {downloaderSlideLabels.map((label, index) => (
-                  <button
-                    key={label}
-                    type="button"
-                    className={downloaderSlide === index ? 'active' : ''}
-                    onClick={() => setDownloaderSlide(index)}
-                    aria-label={label}
+                  
+                  <button 
+                    className="btn ghost full" 
+                    type="button" 
+                    onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases', '_blank')}
                   >
-                    0{index + 1}
+                    <Sparkles size={20} /> Download for Mac
                   </button>
-                ))}
+                </div>
+
+                <p className="downloader-hint">
+                  Mac version coming soon. Check releases for updates.
+                </p>
               </div>
             </section>
           </div>

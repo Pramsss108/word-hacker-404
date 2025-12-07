@@ -161,7 +161,7 @@ Write-Step "Phase 4: Generating Update Metadata..."
 $Hash = Get-FileHash $AppReleaseZip -Algorithm SHA256
 $JsonContent = @{
     version = "1.0.0" # TODO: Read from package.json
-    url = "https://github.com/Pramsss108/wh404-desktop-builds/releases/download/v1.0.0/app-release.zip"
+    url = "https://github.com/Pramsss108/word-hacker-404/releases/download/v1.0.0/app-release.zip"
     hash = $Hash.Hash
 } | ConvertTo-Json
 
