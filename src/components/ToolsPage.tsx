@@ -161,105 +161,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | 'vector' | null>(null)
   const [rawStepIndex, setRawStepIndex] = useState(0)
 
-  const [downloaderUrls, setDownloaderUrls] = useState('')
-  const [downloaderFormat, setDownloaderFormat] = useState<DownloaderFormat>('mp4-1080')
-  const [downloaderSlide, setDownloaderSlide] = useState(0)
-  const [autoAdvancePending, setAutoAdvancePending] = useState(false)
-  const [autoAdvanceDone, setAutoAdvanceDone] = useState(false)
-  const [clipboardPrimed, setClipboardPrimed] = useState(false)
+  // Downloader state simplified - no more slider logic needed
   const [isDesktopDevice, setIsDesktopDevice] = useState(true)
 
-  const parsedUrls = useMemo(() => parseUrlInput(downloaderUrls), [downloaderUrls])
-  const deckStatus = parsedUrls.length === 0
-    ? { label: 'Paste link', tone: 'idle' as const }
-    : { label: `Ready · ${parsedUrls.length} job${parsedUrls.length === 1 ? '' : 's'}`, tone: 'ready' as const }
-  const downloaderSlideLabels = ['Paste queue', 'Select format', 'Run helper']
-  const totalDownloaderSlides = downloaderSlideLabels.length
 
-  const handleUrlChange = useCallback((value: string) => {
-    setDownloaderUrls(value)
-    if (!value.trim()) {
-      setDownloaderSlide(0)
-      setAutoAdvancePending(false)
-      setAutoAdvanceDone(false)
-    } else {
-      setAutoAdvanceDone(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (activeTool !== 'downloader' || clipboardPrimed) {
-      return
-    }
-    if (typeof navigator === 'undefined' || !navigator.clipboard) {
-      return
-    }
-    navigator.clipboard.readText().then((text) => {
-      if (text && parseUrlInput(text).length > 0) {
-        handleUrlChange(text.trim())
-      }
-      setClipboardPrimed(true)
-    }).catch(() => {
-      setClipboardPrimed(true)
-    })
-  }, [activeTool, clipboardPrimed, handleUrlChange])
-
-  const handlePaste = useCallback(async () => {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) {
-      return
-    }
-    try {
-      const text = await navigator.clipboard.readText()
-      handleUrlChange(text.trim())
-      setClipboardPrimed(true)
-    } catch (error) {
-      console.warn('Clipboard read failed', error)
-    }
-  }, [handleUrlChange])
-
-  const handleClear = useCallback(() => {
-    handleUrlChange('')
-    setClipboardPrimed(false)
-  }, [handleUrlChange])
-
-  const cycleDownloaderSlide = useCallback((direction: 'prev' | 'next') => {
-    setDownloaderSlide((prev) => {
-      if (direction === 'next') {
-        return Math.min(totalDownloaderSlides - 1, prev + 1)
-      }
-      return Math.max(0, prev - 1)
-    })
-    if (direction === 'prev') {
-      setAutoAdvancePending(false)
-    }
-  }, [totalDownloaderSlides])
-
-  useEffect(() => {
-    if (!downloaderUrls.trim()) {
-      setAutoAdvancePending(false)
-      setAutoAdvanceDone(false)
-      return
-    }
-    if (autoAdvanceDone) {
-      return
-    }
-    if (downloaderSlide === 0 && !autoAdvancePending) {
-      setDownloaderSlide(1)
-      setAutoAdvancePending(true)
-    }
-  }, [downloaderUrls, downloaderSlide, autoAdvancePending, autoAdvanceDone])
-
-  useEffect(() => {
-    if (!autoAdvancePending || downloaderSlide !== 1 || typeof window === 'undefined') {
-      return
-    }
-    const timer = window.setTimeout(() => {
-      setDownloaderSlide(2)
-      setAutoAdvancePending(false)
-      setAutoAdvanceDone(true)
-    }, 1000)
-    return () => window.clearTimeout(timer)
-  }, [autoAdvancePending, downloaderSlide])
 
   useEffect(() => {
     if (typeof navigator === 'undefined') {
@@ -440,57 +345,48 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
 
       {activeTool === 'downloader' && (
         <div className="tools-overlay" role="dialog" aria-modal="true">
-          <div className="raw-holo">
+          <div className="raw-holo" style={{ maxWidth: '500px' }}>
             <div className="raw-anim-grid downloader-grid" aria-hidden />
             <header className="raw-holo-head">
               <div>
                 <h3 className="raw-head-title">Internet Downloader</h3>
-                <p className="raw-head-note">Paste, pick format, fire the helper. One slide. Fast.</p>
+                <p className="raw-head-note">Desktop App Required</p>
               </div>
               <button className="btn ghost" onClick={() => setActiveTool(null)}>
                 Close <span className="close-cross" aria-hidden>✕</span>
               </button>
             </header>
 
-            <section className="downloader-box">
-              <div className="downloader-box-head">
-                <div>
-                  <p className="downloader-title">Deck 02 · Internet Downloader</p>
-                  <span className="downloader-sub">Desktop App Required</span>
-                </div>
+            <section className="downloader-box" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center' }}>
+              <p className="downloader-hint intense">
+                For the best experience, use our dedicated desktop application.
+                <br />
+                Secure, fast, and ad-free.
+              </p>
+
+              <div className="trust-badge" style={{ fontSize: '0.8rem', color: '#9aa3b2', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                ⚠️ <strong>Windows Warning?</strong> Click "More Info" → "Run Anyway".
+                <br/>
+                (Normal for new open-source tools!)
               </div>
-
-              <div className="downloader-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center' }}>
-                <p className="downloader-hint intense">
-                  For the best experience, use our dedicated desktop application.
-                  <br />
-                  Secure, fast, and ad-free.
-                </p>
-
-                <div className="trust-badge" style={{ fontSize: '0.8rem', color: '#9aa3b2', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  ⚠️ <strong>Windows Warning?</strong> Click "More Info" → "Run Anyway".
-                  <br/>
-                  (Normal for new open-source tools!)
-                </div>
+              
+              <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
+                <button className="btn full" type="button" onClick={openDesktopAppDocs}>
+                  <Zap size={20} /> Download for Windows (PC)
+                </button>
                 
-                <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
-                  <button className="btn full" type="button" onClick={openDesktopAppDocs}>
-                    <Zap size={20} /> Download for Windows (PC)
-                  </button>
-                  
-                  <button 
-                    className="btn ghost full" 
-                    type="button" 
-                    onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases', '_blank')}
-                  >
-                    <Sparkles size={20} /> Download for Mac
-                  </button>
-                </div>
-
-                <p className="downloader-hint">
-                  Mac version coming soon. Check releases for updates.
-                </p>
+                <button 
+                  className="btn ghost full" 
+                  type="button" 
+                  onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases', '_blank')}
+                >
+                  <Sparkles size={20} /> Download for Mac
+                </button>
               </div>
+
+              <p className="downloader-hint">
+                Mac version coming soon. Check releases for updates.
+              </p>
             </section>
           </div>
         </div>
