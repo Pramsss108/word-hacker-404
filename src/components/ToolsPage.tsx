@@ -339,7 +339,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                 <button 
                   className="btn full"
                   type="button"
-                  onClick={() => window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v1.0.0/WH404%20Downloader_1.0.0_x64-setup.exe', '_blank')}
+                  onClick={() => window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v1.0.0/WH404.Downloader_1.0.0_x64-setup.exe', '_blank')}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
                   <Zap size={20} /> Download Installer
