@@ -1,11 +1,4 @@
 /* eslint-disable */
-const PRESET_LABELS = {
-  'mp4-1080': '1080p Pro',
-  'mp4-720': '720p HD',
-  mp3: 'Audio only',
-  social: 'Social'
-}
-
 const textarea = document.getElementById('url-input')
 const addToQueueBtn = document.getElementById('add-to-queue-btn')
 const queueList = document.getElementById('queue-list')
@@ -20,7 +13,6 @@ const fileMenu = document.getElementById('file-menu')
 const statusDestination = document.getElementById('status-destination')
 const statusLine = document.getElementById('status-line')
 const statusQueue = document.getElementById('status-queue')
-const statusPreset = document.getElementById('status-preset')
 const statusEngine = document.getElementById('status-engine')
 const menuTriggers = document.querySelectorAll('[data-menu-trigger]')
 
@@ -1601,7 +1593,7 @@ const onDownload = async () => {
   try {
     setBusy(true)
     updateEngineChip()
-    pushLog(`🚀 Starting ${urls.length} job(s) in preset ${PRESET_LABELS[state.format]}.`)
+    pushLog(`🚀 Starting ${urls.length} job(s).`)
     console.log('[Download] Calling window.downloader.startDownload with:', { urls, format: state.format, destination: state.destination })
     const result = await window.downloader.startDownload({ urls, format: state.format, destination: state.destination || undefined })
     console.log('[Download] Result:', result)
@@ -1637,14 +1629,6 @@ const closeExportDrawer = () => {
   exportConfirm.disabled = false
   exportConfirm.textContent = exportConfirmDefaultLabel
   exportConfirm.style.background = ''
-}
-
-const describePreset = (preset) => {
-  const resolution = preset.height ? `${preset.height}p` : 'Adaptive'
-  const fps = preset.fps ? `${preset.fps}fps` : ''
-  const audio = preset.acodec === 'none' ? 'No audio' : 'Audio embedded'
-  const size = preset.filesize ? `${(preset.filesize / (1024 * 1024)).toFixed(1)}MB` : 'Size dynamic'
-  return `${resolution} ${fps}`.trim() + ` · ${size} · ${audio}`
 }
 
 const extractResolutionsFromFormats = (formats) => {
@@ -2806,13 +2790,6 @@ try {
   console.log('[Startup] Queue rendered')
 } catch (err) {
   console.error('[Startup] renderQueue failed:', err)
-}
-
-try {
-  updatePresetChip()
-  console.log('[Startup] Preset chip updated')
-} catch (err) {
-  console.error('[Startup] updatePresetChip failed:', err)
 }
 
 try {
