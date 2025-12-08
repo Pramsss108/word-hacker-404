@@ -336,26 +336,26 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
               </div>
               
               <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
-                <a 
-                  href="/downloads/WordHacker404-Setup.exe" 
-                  download
+                <button 
                   className="btn full"
-                  style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  type="button"
+                  onClick={() => window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v1.0.0/WH404%20Downloader_1.0.0_x64-setup.exe', '_blank')}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                  <Zap size={20} /> Download for Windows (PC)
-                </a>
+                  <Zap size={20} /> Download Installer
+                </button>
                 
                 <button 
                   className="btn ghost full" 
                   type="button" 
-                  onClick={() => window.open('https://github.com/Pramsss108/word-hacker-404/releases', '_blank')}
+                  onClick={() => window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases', '_blank')}
                 >
-                  <Sparkles size={20} /> Download for Mac
+                  <Sparkles size={20} /> View All Releases
                 </button>
               </div>
 
               <p className="downloader-hint">
-                Mac version coming soon. Check releases for updates.
+                Windows 10/11 (64-bit) • 40 MB • No admin required
               </p>
             </section>
           </div>

@@ -73,11 +73,13 @@
     "windows": [
       {
         "title": "WH404 Downloader",
-        "width": 1000,
-        "height": 700,
+        "width": 1200,
+        "height": 800,
         "resizable": true,
         "fullscreen": false,
-        "decorations": false
+        "maximized": true,
+        "decorations": true,
+        "transparent": false
       }
     ]
   }

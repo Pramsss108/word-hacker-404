@@ -53,7 +53,7 @@ try {
 
 # Build the app
 Write-Step "🔨 Building desktop app..."
-npm run package:win
+npm run tauri:build
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Build failed!"
     exit 1
@@ -62,7 +62,7 @@ Write-Success "Build completed"
 
 # Find installer
 Write-Step "🔍 Finding installer..."
-$installer = Get-ChildItem -Path "release" -Filter "*.exe" -File | Select-Object -First 1
+$installer = Get-ChildItem -Path "src-tauri\target\release\bundle\nsis" -Filter "*.exe" -File | Select-Object -First 1
 if (-not $installer) {
     Write-Error "No .exe file found in release/ directory"
     exit 1
