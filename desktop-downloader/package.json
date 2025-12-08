@@ -1,6 +1,6 @@
 {
   "name": "word-hacker-desktop-downloader",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "The official desktop companion for Word Hacker 404. Download, trim, and master audio/video from the underground.",
   "main": "src/main.js",
   "author": "Word Hacker 404",
