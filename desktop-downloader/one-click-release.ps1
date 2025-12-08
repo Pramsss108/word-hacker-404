@@ -69,12 +69,21 @@ Write-Success "Found: $installerName ($fileSize MB)"
 $tagName = "desktop-v$Version"
 Write-Step "Creating git tag: $tagName"
 
-# Delete existing tag if exists
-git tag -d $tagName 2>$null
-git push origin --delete $tagName 2>$null
+# Delete existing tag if exists (suppress errors if tag doesn't exist)
+git tag -d $tagName 2>&1 | Out-Null
+git push origin --delete $tagName 2>&1 | Out-Null
 
 git tag -a $tagName -m "Desktop App v$Version"
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to create tag"
+    exit 1
+}
+
 git push origin $tagName
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to push tag"
+    exit 1
+}
 Write-Success "Tag pushed"
 
 # Create GitHub release
