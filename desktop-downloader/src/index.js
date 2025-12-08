@@ -2178,13 +2178,57 @@ const wireEvents = () => {
   })
 
   document.querySelectorAll('[data-premium-download]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (!state.preview.metadata.thumbnail) {
         setPremiumStatus('Thumbnail not ready yet.', 'error')
         return
       }
-      triggerDownloadFromUrl(state.preview.metadata.thumbnail, 'wh404-thumbnail.jpg')
-      setPremiumStatus('Downloading thumbnail...', 'success')
+      
+      // Disable button during download
+      btn.disabled = true
+      btn.textContent = 'Downloading...'
+      
+      try {
+        const result = await window.downloader.downloadThumbnail(
+          state.preview.metadata.thumbnail,
+          'wh404-thumbnail.jpg'
+        )
+        
+        if (result.cancelled) {
+          setPremiumStatus('Download cancelled.', 'info')
+          btn.textContent = 'Download'
+          btn.disabled = false
+          return
+        }
+        
+        if (!result.success) {
+          setPremiumStatus(`Download failed: ${result.error}`, 'error')
+          btn.textContent = 'Download'
+          btn.disabled = false
+          return
+        }
+        
+        // Success! Change button to "Open Location"
+        btn.textContent = 'Open Location'
+        btn.classList.add('success-state')
+        btn.disabled = false
+        
+        // Replace click handler with open location
+        btn.onclick = async () => {
+          const openResult = await window.downloader.openFolderLocation(result.path)
+          if (!openResult.success) {
+            setPremiumStatus(`Could not open folder: ${openResult.error}`, 'error')
+          }
+        }
+        
+        setPremiumStatus('Thumbnail saved! Click "Open Location" to view.', 'success')
+        
+      } catch (err) {
+        console.error('[Premium] Thumbnail download failed:', err)
+        setPremiumStatus(`Unexpected error: ${err.message}`, 'error')
+        btn.textContent = 'Download'
+        btn.disabled = false
+      }
     })
   })
 
