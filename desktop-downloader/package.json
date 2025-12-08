@@ -10,11 +10,10 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "package:win": "electron-builder --win portable",
+    "package:win": "electron-builder --win",
     "package:mac": "electron-builder --mac dmg",
     "package:linux": "electron-builder --linux AppImage",
     "package": "electron-builder -mwl",
-    "build": "react-scripts build",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"
@@ -22,7 +21,6 @@
   "dependencies": {
     "ffmpeg-static": "^5.2.0",
     "os-utils": "0.0.14",
-    "react-scripts": "^5.0.1",
     "sanitize-filename": "^1.6.3",
     "yt-dlp-exec": "^1.0.2"
   },
@@ -30,7 +28,8 @@
     "@tauri-apps/cli": "^1.6.3",
     "electron": "^30.0.6",
     "electron-builder": "^25.1.8",
-    "electronmon": "^2.0.2"
+    "electronmon": "^2.0.2",
+    "vite": "^5.2.0"
   },
   "build": {
     "appId": "com.wordhacker.downloader",

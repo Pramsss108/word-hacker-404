@@ -1016,6 +1016,13 @@ const pushLog = (text) => {
 
 const toFileUrl = (filePath = '') => {
   if (!filePath) return ''
+
+  // Try Bridge/Tauri conversion first (fixes Asset Protocol errors)
+  if (window.downloader && window.downloader.convertPath) {
+    const converted = window.downloader.convertPath(filePath)
+    if (converted) return converted
+  }
+
   if (filePath.startsWith('file://')) return filePath
   // Properly handle Windows paths and special characters
   const normalized = filePath.replace(/\\/g, '/')
@@ -1025,7 +1032,7 @@ const toFileUrl = (filePath = '') => {
   return `file://${encoded.startsWith('/') ? '' : '/'}${encoded}`
 }
 
-const loadPreviewFromItem = (item) => {
+const loadPreviewFromItem = async (item) => {
   if (!item.files || !item.files.length) {
     setStatus('Preview not ready yet. Finish the download first.')
     return
@@ -1043,17 +1050,74 @@ const loadPreviewFromItem = (item) => {
   previewVideo.removeAttribute('poster')
   previewEmpty.classList.add('hidden')
   
-  // Set source with proper encoding (toFileUrl now handles encoding)
-  const fileUrl = toFileUrl(source)
   console.log('[Preview] Loading:', source)
-  console.log('[Preview] File URL:', fileUrl)
+  console.log('[Preview] CODE VERSION: BLOB_FIX_FINAL')
+  
+  // CRITICAL FIX: Normalize double spaces in filename (YouTube metadata issue)
+  // The queue stores paths with double spaces, but files may have single spaces
+  let normalizedSource = source.replace(/  +/g, ' ');
+  console.log('[Preview] Normalized path:', normalizedSource);
+  
+  // Double-check if file exists, if not try without the normalization
+  if (window.downloader && window.downloader.checkFileExists) {
+    const exists = await window.downloader.checkFileExists(normalizedSource);
+    if (!exists) {
+      console.warn('[Preview] Normalized path not found, trying original...');
+      const originalExists = await window.downloader.checkFileExists(source);
+      if (originalExists) {
+        normalizedSource = source;
+        console.log('[Preview] Using original path');
+      } else {
+        // Neither path exists - try to find the actual file in the directory
+        console.warn('[Preview] Exact path not found, searching directory...');
+        const dirPath = source.substring(0, source.lastIndexOf('\\'));
+        const expectedFilename = source.substring(source.lastIndexOf('\\') + 1);
+        
+        if (window.downloader.readDir) {
+          const files = await window.downloader.readDir(dirPath);
+          console.log('[Preview] Files in directory:', files);
+          
+          // Find the best match - normalize by removing ALL non-alphanumeric characters
+          // This handles spaces, pipes (|), fullwidth pipes (｜), dashes, etc.
+          // Keep the full filename INCLUDING format codes like .f140 before the extension
+          const normalizeForMatch = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const expectedNormalized = normalizeForMatch(expectedFilename);
+          console.log('[Preview] Searching for normalized:', expectedNormalized);
+          
+          const match = files.find(f => {
+            const fileNormalized = normalizeForMatch(f);
+            console.log(`[Preview] Comparing: "${fileNormalized}" === "${expectedNormalized}"`);
+            return fileNormalized === expectedNormalized;
+          });
+          
+          if (match) {
+            normalizedSource = `${dirPath}\\${match}`;
+            console.log('[Preview] Found matching file:', match);
+          } else {
+            console.error('[Preview] No matching file found in directory');
+            setStatus(`File not found: ${expectedFilename}`);
+            return;
+          }
+        } else {
+          console.error('[Preview] File does not exist at either path!');
+          setStatus(`File not found: ${source}`);
+          return;
+        }
+      }
+    }
+  }
+  
+  // Skip Blob loading for now - causes memory issues with large files
+  // Try asset protocol directly
+  let fileUrl = toFileUrl(normalizedSource);
+  console.log('[Preview] Using Asset URL:', fileUrl);
   
   previewVideo.src = fileUrl
   previewVideo.load()
   previewInfo.textContent = item.url
   updateGuideProgress('preview')
   fetchPremiumMetadata(item)
-  
+}
 
 syncPreviewWithSelection = (selectedItems = getSelectedQueueItems()) => {
   if (!previewEmpty) return
@@ -1084,9 +1148,6 @@ syncPreviewWithSelection = (selectedItems = getSelectedQueueItems()) => {
   }
   previewEmpty.classList.remove('hidden')
   previewEmpty.innerHTML = buildBatchSummaryMarkup(selectedItems)
-}
-  // Show loading state
-  setStatus('Loading preview...')
 }
 
 const detectVideoFormat = () => {
@@ -1610,22 +1671,19 @@ const extractResolutionsFromFormats = (formats) => {
 
 const extractAudioFormatsFromFormats = (formats) => {
   const audioFormats = formats.filter(fmt => fmt.acodec && fmt.acodec !== 'none' && (!fmt.vcodec || fmt.vcodec === 'none'))
-  const qualities = new Map()
   
-  audioFormats.forEach(fmt => {
-    const key = Math.floor(fmt.abr || 128)
-    if (!qualities.has(key) || (qualities.get(key).abr || 0) < (fmt.abr || 0)) {
-      qualities.set(key, {
-        id: fmt.id,
-        label: `${Math.floor(fmt.abr || 128)}kbps`,
-        container: fmt.container || 'mp3',
-        acodec: fmt.acodec,
-        abr: fmt.abr
-      })
-    }
-  })
+  // Map all audio formats with their details, using tbr as fallback for abr
+  const formattedAudio = audioFormats.map(fmt => ({
+    id: fmt.id,
+    label: `${Math.floor(fmt.abr || fmt.tbr || 128)}kbps - ${(fmt.acodec || 'audio').toUpperCase()} (${(fmt.ext || 'unknown').toUpperCase()})`,
+    container: fmt.container || fmt.ext || 'mp3',
+    acodec: fmt.acodec,
+    abr: fmt.abr || fmt.tbr || 128,
+    ext: fmt.ext
+  }))
   
-  return Array.from(qualities.values()).sort((a, b) => (b.abr || 0) - (a.abr || 0))
+  // Sort by bitrate descending (highest quality first)
+  return formattedAudio.sort((a, b) => (b.abr || 0) - (a.abr || 0))
 }
 
 const updateExportResolutionSelect = () => {
@@ -2132,6 +2190,17 @@ const wireEvents = () => {
 
   document.querySelectorAll('[data-export-copy]').forEach((btn) => {
     btn.addEventListener('click', () => handleExportCopy(btn.dataset.exportCopy))
+  })
+
+  document.querySelectorAll('[data-export-download]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!state.preview.metadata.thumbnail) {
+        updateExportMessage('Thumbnail not ready yet.', { variant: 'error' })
+        return
+      }
+      triggerDownloadFromUrl(state.preview.metadata.thumbnail, 'wh404-thumbnail.jpg')
+      updateExportMessage('Downloading thumbnail...', { variant: 'success' })
+    })
   })
 
   exportBrowse.addEventListener('click', async () => {

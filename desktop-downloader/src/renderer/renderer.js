@@ -205,6 +205,7 @@ const state = {
   preview: {
     file: '',
     url: '',
+    activeId: null,
     duration: 0,
     start: 0,
     end: 0,
@@ -434,7 +435,17 @@ const renderExportMetadata = () => {
     if (!state.preview.premium.thumbnail) {
       exportMetaThumbnail.textContent = 'Disabled'
     } else if (state.preview.metadata.thumbnail) {
-      exportMetaThumbnail.textContent = 'Attached'
+      // Changed to Download button as requested
+      exportMetaThumbnail.innerHTML = ''
+      const btn = document.createElement('button')
+      btn.className = 'ghost ghost-sm'
+      btn.textContent = 'Download'
+      btn.title = 'Save thumbnail'
+      btn.onclick = (e) => {
+        e.stopPropagation()
+        triggerDownloadFromUrl(state.preview.metadata.thumbnail, 'thumbnail.jpg')
+      }
+      exportMetaThumbnail.appendChild(btn)
     } else {
       exportMetaThumbnail.textContent = 'Waiting for clip'
     }
@@ -1015,6 +1026,10 @@ const pushLog = (text) => {
 
 const toFileUrl = (filePath = '') => {
   if (!filePath) return ''
+
+  // DO NOT use convertPath here - we want Blob loading to be tried first
+  // This function is now only a fallback for non-Tauri environments
+  
   if (filePath.startsWith('file://')) return filePath
   // Properly handle Windows paths and special characters
   const normalized = filePath.replace(/\\/g, '/')
@@ -1024,7 +1039,7 @@ const toFileUrl = (filePath = '') => {
   return `file://${encoded.startsWith('/') ? '' : '/'}${encoded}`
 }
 
-const loadPreviewFromItem = (item) => {
+const loadPreviewFromItem = async (item) => {
   if (!item.files || !item.files.length) {
     setStatus('Preview not ready yet. Finish the download first.')
     return
@@ -1038,23 +1053,77 @@ const loadPreviewFromItem = (item) => {
   state.preview.file = source
   state.preview.url = item.url
   
+  // Detect audio mode
+  const isAudio = source.endsWith('.mp3') || source.endsWith('.m4a') || source.endsWith('.wav') || source.endsWith('.aac');
+  if (isAudio) {
+    previewCard.classList.add('audio-mode');
+    if (item.thumbnail) {
+      previewVideo.poster = item.thumbnail;
+    }
+  } else {
+    previewCard.classList.remove('audio-mode');
+    previewVideo.removeAttribute('poster');
+  }
+
   // Clear any previous errors
-  previewVideo.removeAttribute('poster')
   previewEmpty.classList.add('hidden')
   
-  // Set source with proper encoding (toFileUrl now handles encoding)
-  const fileUrl = toFileUrl(source)
+  // FORCE RESET: Pause and clear src to ensure clean state
+  // Remove error listener during reset to avoid false positives
+  previewVideo.onerror = null
+  
+  try {
+    previewVideo.pause()
+    previewVideo.removeAttribute('src')
+    previewVideo.load()
+  } catch (e) { console.warn('Video reset warning:', e) }
+  
   console.log('[Preview] Loading:', source)
-  console.log('[Preview] File URL:', fileUrl)
+  console.log('[Preview] CODE VERSION: BLOB_FIX_v3')
   
-  previewVideo.src = fileUrl
-  previewVideo.load()
-  previewInfo.textContent = item.url
-  updateGuideProgress('preview')
-  fetchPremiumMetadata(item)
+  // Try Blob loading first (Bypasses asset protocol issues)
+  let fileUrl = null;
+  try {
+    if (window.downloader && window.downloader.readVideoFile) {
+        fileUrl = await window.downloader.readVideoFile(source);
+        if (fileUrl) console.log('[Preview] Using Blob URL:', fileUrl);
+    }
+  } catch (e) {
+    console.error('[Preview] Blob load failed:', e);
+  }
   
+  // Fallback to asset URL if Blob failed
+  if (!fileUrl) {
+      fileUrl = toFileUrl(source);
+      console.log('[Preview] Using Asset URL (Fallback):', fileUrl);
+  }
+  
+  // Delay setting src slightly to allow reset to take effect
+  setTimeout(() => {
+    // Attach error listener only when we are ready to load
+    previewVideo.onerror = (e) => {
+      console.error('[Preview] Video Error:', previewVideo.error, e)
+      // Only show error if we actually have a src
+      if (previewVideo.src) {
+        const errCode = previewVideo.error ? previewVideo.error.code : 'Unknown';
+        const errMsg = previewVideo.error ? previewVideo.error.message : 'No message';
+        setStatus(`Video error: ${errMsg} (Code: ${errCode}) - ${previewVideo.src}`);
+      }
+    }
 
-syncPreviewWithSelection = (selectedItems = getSelectedQueueItems()) => {
+    previewVideo.src = fileUrl
+    previewVideo.load()
+    
+    previewInfo.textContent = item.url
+    updateGuideProgress('preview')
+    fetchPremiumMetadata(item)
+    
+    // Ensure we stay on this video even if others complete
+    state.preview.activeId = item.id
+  }, 100)
+}
+
+const syncPreviewWithSelection = (selectedItems = getSelectedQueueItems()) => {
   if (!previewEmpty) return
   if (!selectedItems.length) {
     previewCard.classList.remove('batch-mode')
@@ -1336,6 +1405,8 @@ const renderQueue = () => {
     const selected = state.queueSelection.has(item.id)
     const platformBadge = item.platform ? `<span class="platform-badge" style="--platform-color: ${item.platform.color}">${item.platform.icon} ${item.platform.name}</span>` : ''
     const showCancel = item.status === 'downloading'
+    const isReady = item.status === 'complete'
+    
     slot.innerHTML = `
       <div class="slot-head">
         <div>
@@ -1348,6 +1419,7 @@ const renderQueue = () => {
               <div class="slot-url-row">
                 <p class="slot-url">${item.url}</p>
                 ${platformBadge}
+                ${isReady ? '<span class="ready-badge">Ready</span>' : ''}
               </div>
               <p class="slot-status">${item.status === 'pending' ? 'Waiting' : item.status === 'downloading' ? 'Processing' : item.status === 'complete' ? 'Done' : item.status === 'cancelled' ? 'Cancelled' : 'Error'}</p>
             </div>
@@ -1608,18 +1680,39 @@ const extractResolutionsFromFormats = (formats) => {
 }
 
 const extractAudioFormatsFromFormats = (formats) => {
-  const audioFormats = formats.filter(fmt => fmt.acodec && fmt.acodec !== 'none' && (!fmt.vcodec || fmt.vcodec === 'none'))
+  // Relaxed filter: Accept any format with audio codec
+  const audioFormats = formats.filter(fmt => fmt.acodec && fmt.acodec !== 'none')
   const qualities = new Map()
   
   audioFormats.forEach(fmt => {
-    const key = Math.floor(fmt.abr || 128)
-    if (!qualities.has(key) || (qualities.get(key).abr || 0) < (fmt.abr || 0)) {
+    // Use ABR (Audio Bitrate) or fallback to TBR (Total Bitrate) or estimate from filesize
+    let bitrate = fmt.abr || fmt.tbr || 0
+    
+    // If bitrate is missing, try to guess from format ID (often contains bitrate)
+    if (!bitrate && fmt.id) {
+      const match = fmt.id.match(/-(\d+)/)
+      if (match) bitrate = parseInt(match[1])
+    }
+    
+    // If still 0, use a unique key based on ID to ensure it shows up
+    const key = bitrate > 0 ? Math.floor(bitrate) : `unknown-${fmt.id}`
+    
+    // If we already have this bitrate, prefer audio-only source over video+audio source
+    const existing = qualities.get(key)
+    const isAudioOnly = !fmt.vcodec || fmt.vcodec === 'none'
+    
+    // Always overwrite if:
+    // 1. New one is audio-only and existing is not
+    // 2. We don't have this bitrate yet
+    // 3. It's a "better" container (m4a/mp3 > webm for audio usually)
+    if (!existing || (isAudioOnly && existing.vcodec !== 'none')) {
       qualities.set(key, {
         id: fmt.id,
-        label: `${Math.floor(fmt.abr || 128)}kbps`,
+        label: bitrate > 0 ? `${Math.floor(bitrate)}kbps (${fmt.ext || 'audio'})` : `Audio (${fmt.ext || 'm4a'})`,
         container: fmt.container || 'mp3',
         acodec: fmt.acodec,
-        abr: fmt.abr
+        abr: bitrate,
+        vcodec: fmt.vcodec
       })
     }
   })
@@ -1788,11 +1881,17 @@ const bindPreviewEvents = () => {
   previewVideo.addEventListener('error', (e) => {
     console.error('[Preview] Error loading video:', e)
     console.error('[Preview] Error details:', previewVideo.error)
+    
+    // Get the source that failed
+    const failedSrc = previewVideo.src || previewVideo.currentSrc || 'unknown';
+    
     const errorMsg = previewVideo.error ? 
-      `Video error: ${previewVideo.error.message || 'Could not load file'}` : 
-      'Failed to load video'
+      `Video error: ${previewVideo.error.message || 'Format error'} (URL: ${failedSrc})` : 
+      `Failed to load video (URL: ${failedSrc})`
+      
     setStatus(errorMsg)
-    resetPreviewPlayer('Video reset. Load another link to keep going.')
+    // Don't reset immediately so we can see the error
+    // resetPreviewPlayer('Video reset. Load another link to keep going.')
   })
   
   previewVideo.addEventListener('canplay', () => {
@@ -2522,8 +2621,9 @@ const bindIpc = () => {
       
       console.log('[Download Complete]', { url, files, tempDir })
       
-      // Auto-load preview for the first completed item
-      if (state.queue.filter(i => i.status === 'complete').length === 1) {
+      // Auto-load preview for the first completed item ONLY if nothing is currently loaded
+      // This prevents switching away from what the user is currently watching
+      if (!state.preview.file && state.queue.filter(i => i.status === 'complete').length === 1) {
         setTimeout(() => loadPreviewFromItem(item), 500)
       }
 

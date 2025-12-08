@@ -10,7 +10,7 @@ rust-version = "1.70"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = ["shell-open", "shell-sidecar", "fs-all", "dialog-all", "http-all"] }
+tauri = { version = "1", features = [ "protocol-asset", "window-all", "shell-open", "shell-sidecar", "fs-all", "dialog-all", "http-all"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 reqwest = { version = "0.11", features = ["json"] }

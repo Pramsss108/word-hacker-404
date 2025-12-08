@@ -17,15 +17,15 @@ cd "d:\A scret project\Word hacker 404\desktop-downloader"
 # 2. Update version in package.json if needed
 # Edit: "version": "0.1.1"  (or your new version)
 
-# 3. Build the app
-npm run package:win
+# 3. Build the app (Tauri + Vite)
+npm run tauri:build
 
 # 4. Run release automation (installs GitHub CLI if needed)
-.\quick-release-clean.ps1 -Version "1.0.1"
+.\quick-release.ps1 -Version "1.0.1"
 ```
 
 ### What the Script Does
-1. ✅ Builds Windows installer
+1. ✅ Builds Windows installer (NSIS)
 2. ✅ Creates git tag in main repo
 3. ✅ Pushes source tag to GitHub
 4. ✅ Creates release in **wh404-desktop-builds**
@@ -38,13 +38,13 @@ npm run package:win
 #### Step 1: Build
 ```powershell
 cd desktop-downloader
-npm run package:win
+npm run tauri:build
 ```
 
 #### Step 2: Find Installer
 ```powershell
-Get-ChildItem release\*.exe
-# Example output: Word Hacker Downloader 0.1.0.exe
+Get-ChildItem src-tauri\target\release\bundle\nsis\*.exe
+# Example output: WH404 Downloader_0.1.0_x64-setup.exe
 ```
 
 #### Step 3: Create GitHub Release

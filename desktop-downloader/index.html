@@ -8,12 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/public/style.css" />
-    <link rel="stylesheet" href="/public/tutorial.css" />
+    <link rel="stylesheet" href="/src/renderer/style.css" />
+    <link rel="stylesheet" href="/src/renderer/tutorial.css" />
   </head>
   <body>
     <!-- Bridge must load before renderer -->
-    <script src="/src/renderer/bridge.js"></script>
+    <script type="module" src="/src/renderer/bridge.js"></script>
     <div id="loading-screen" class="loading-screen">
       <div class="loading-content">
         <div class="loading-logo">
@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="window">
-      <header class="menu-bar" data-window-region>
+      <header class="menu-bar" data-window-region data-tauri-drag-region>
         <div class="menu-left">
           <div class="menu-group">
             <button class="menu-btn" data-menu-trigger="file">File ▾</button>
@@ -412,6 +412,6 @@
     </div>
 
     <script type="module" src="/src/index.js"></script>
-    <script src="/src/renderer/tutorial.js"></script>
+    <script type="module" src="/src/renderer/tutorial.js"></script>
   </body>
 </html>

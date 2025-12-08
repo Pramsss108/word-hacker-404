@@ -18,21 +18,28 @@
         "open": true,
         "sidecar": true,
         "scope": [
-            { "name": "bin/yt-dlp", "sidecar": true },
-            { "name": "bin/ffmpeg", "sidecar": true }
+            { "name": "yt-dlp", "sidecar": true },
+            { "name": "ffmpeg", "sidecar": true }
         ]
       },
       "fs": {
         "all": true,
-        "scope": ["$DOWNLOAD/*", "$TEMP/*", "$APP/*"]
+        "scope": ["$DOWNLOAD/**", "$TEMP/*", "$APP/*"]
       },
       "dialog": {
+        "all": true
+      },
+      "window": {
         "all": true
       },
       "http": {
         "all": true,
         "request": true,
         "scope": ["https://*"]
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["**"]
       }
     },
     "bundle": {
@@ -40,8 +47,8 @@
       "targets": ["nsis"],
       "identifier": "com.wordhacker.downloader",
       "externalBin": [
-        "bin/yt-dlp",
-        "bin/ffmpeg"
+        "yt-dlp",
+        "ffmpeg"
       ],
       "icon": [
         "icons/icon.ico"
@@ -53,8 +60,8 @@
         "nsis": {
           "installMode": "currentUser",
           "installerIcon": "icons/icon.ico",
-          "headerImage": "icons/icon.ico",
-          "sidebarImage": "icons/icon.ico",
+          "headerImage": "icons/Header.bmp",
+          "sidebarImage": "icons/Sidebar.bmp",
           "displayLanguageSelector": false,
           "languages": ["English"]
         }
@@ -70,7 +77,7 @@
         "height": 700,
         "resizable": true,
         "fullscreen": false,
-        "decorations": true
+        "decorations": false
       }
     ]
   }

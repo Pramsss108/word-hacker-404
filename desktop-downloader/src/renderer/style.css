@@ -5,6 +5,30 @@
 	z-index: 2;
 }
 
+/* Ready Badge for Queue Items */
+.ready-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: rgba(10, 255, 106, 0.15);
+  border: 1px solid rgba(10, 255, 106, 0.4);
+  color: #0aff6a;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 8px;
+  box-shadow: 0 0 8px rgba(10, 255, 106, 0.2);
+  animation: pulse-ready 2s infinite;
+}
+
+@keyframes pulse-ready {
+  0% { box-shadow: 0 0 0 0 rgba(10, 255, 106, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(10, 255, 106, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(10, 255, 106, 0); }
+}
+
 .metadata-summary {
 	display: flex;
 	flex-wrap: wrap;
@@ -672,6 +696,32 @@ h3 {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex: 1; /* Fill available space */
+	min-height: 0; /* Allow flex to work properly */
+	height: 100%; /* Ensure it takes height */
+}
+
+.preview-card.audio-mode video {
+	object-fit: cover;
+	opacity: 0.6;
+}
+
+.preview-card.audio-mode::after {
+	content: 'AUDIO PREVIEW';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(4px);
+	padding: 0.8rem 1.5rem;
+	border-radius: 8px;
+	border: 1px solid var(--highlight);
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 1rem;
+	color: var(--highlight);
+	pointer-events: none;
+	text-shadow: 0 0 10px rgba(10, 255, 106, 0.5);
 }
 
 #preview-video {

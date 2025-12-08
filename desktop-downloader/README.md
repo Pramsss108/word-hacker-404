@@ -23,7 +23,7 @@ cd "d:\A scret project\Word hacker 404\desktop-downloader"
 npm install
 
 # Launch app (dev mode)
-npm start
+npm run tauri:dev
 ```
 
 **That's it!** App opens → Paste URL → Download → Preview/Trim → Export 🎉
@@ -36,6 +36,7 @@ npm start
 
 | Document | Purpose | Read When... |
 |----------|---------|-------------|
+| **[🚀 NON_CODER_GUIDE.md](NON_CODER_GUIDE.md)** | **START HERE** | You want simple instructions to run/build |
 | **[📖 FEATURES.md](FEATURES.md)** | Complete feature list | You want to know what the app can do |
 | **[🔧 WORKFLOW.md](WORKFLOW.md)** | Technical deep-dive | You're developing or debugging |
 | **[💰 MONETIZATION_ROADMAP.md](MONETIZATION_ROADMAP.md)** | Premium features & security | You're planning business/monetization |
@@ -45,7 +46,7 @@ npm start
 
 ### Quick Navigation
 
-**👤 New User?** Start with [FEATURES.md](FEATURES.md)  
+**👤 New User?** Start with [NON_CODER_GUIDE.md](NON_CODER_GUIDE.md)  
 **👨‍💻 New Developer?** Read [WORKFLOW.md](WORKFLOW.md)  
 **💼 Business Planning?** Check [MONETIZATION_ROADMAP.md](MONETIZATION_ROADMAP.md)  
 **🐛 Having Issues?** See "Common Issues" in [WORKFLOW.md](WORKFLOW.md)
