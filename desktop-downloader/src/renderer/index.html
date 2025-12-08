@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css?v=14" />
     <link rel="stylesheet" href="tutorial.css?v=15" />
+    <link rel="stylesheet" href="upgradeModal.css?v=1" />
   </head>
   <body>
     <!-- Bridge must load before renderer -->
@@ -103,7 +104,10 @@
             </div>
           </div>
         </div>
-        <div class="menu-title">WH404 · Social Media Downloader</div>
+        <div class="menu-title">
+          WH404 · Social Media Downloader
+          <span id="license-badge" class="license-badge">FREE</span>
+        </div>
         <div class="window-controls" aria-label="window controls">
           <button class="ghost" data-pin title="Always on top">📌</button>
           <button class="ghost" data-window="minimize" title="Minimize">–</button>
@@ -411,6 +415,10 @@
       </div>
     </div>
 
+    <!-- Security & Monetization System -->
+    <script src="licenseManager.js?v=1"></script>
+    <script src="freeTierManager.js?v=1"></script>
+    <script src="upgradeModal.js?v=1"></script>
     <script src="renderer.js?v=7"></script>
     <script src="tutorial.js?v=16"></script>
   </body>

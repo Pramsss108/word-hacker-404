@@ -5,6 +5,83 @@ const PRESET_LABELS = {
   social: 'Social'
 }
 
+// ============================================
+// FREE TIER & LICENSE SYSTEM INITIALIZATION
+// ============================================
+function initializeSecuritySystem() {
+  console.log('[Security] Initializing free tier and license system...');
+  
+  // Update license badge in header
+  updateLicenseBadge();
+  
+  // Show remaining downloads for free users
+  if (!window.licenseManager.isPremium()) {
+    const remaining = window.freeTierManager.getRemainingDownloads();
+    console.log('[FreeTier] Downloads remaining today:', remaining);
+    
+    if (remaining === 0) {
+      // Show upgrade modal immediately if limit reached
+      setTimeout(() => {
+        window.upgradeModal.show({
+          current: 3,
+          max: 3
+        });
+      }, 2000);
+    }
+  }
+}
+
+function updateLicenseBadge() {
+  const badge = document.getElementById('license-badge');
+  if (!badge) return;
+  
+  const status = window.licenseManager.getStatus();
+  
+  if (status.active && status.type === 'premium') {
+    badge.textContent = '✓ PREMIUM';
+    badge.className = 'license-badge license-badge-premium';
+    badge.title = 'Premium Active - Unlimited downloads';
+  } else {
+    const remaining = window.freeTierManager.getRemainingDownloads();
+    badge.textContent = `FREE (${remaining}/3)`;
+    badge.className = 'license-badge license-badge-free';
+    badge.title = `${remaining} free downloads remaining today`;
+  }
+}
+
+// Add CSS for license badge
+const badgeStyles = document.createElement('style');
+badgeStyles.textContent = `
+  .license-badge {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  
+  .license-badge-free {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+  
+  .license-badge-premium {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    animation: premium-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes premium-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(74, 222, 128, 0.6); }
+  }
+`;
+document.head.appendChild(badgeStyles);
+
 const textarea = document.getElementById('url-input')
 const addToQueueBtn = document.getElementById('add-to-queue-btn')
 const queueList = document.getElementById('queue-list')
@@ -994,21 +1071,53 @@ const ensureQueueItem = (url) => {
 
 const addToQueue = (urls) => {
   console.log('[Queue] addToQueue called with:', urls)
-  let added = 0
+  
+  // Check free tier limit before allowing download
+  const checkResult = window.freeTierManager.canDownload();
+  if (!checkResult.allowed) {
+    console.log('[FreeTier] Download blocked:', checkResult);
+    
+    // Show upgrade modal
+    window.upgradeModal.show({
+      current: checkResult.count,
+      max: checkResult.max
+    });
+    
+    // Show status message
+    pushLog(`⚠️ Daily limit reached (${checkResult.count}/${checkResult.max}). Upgrade to Premium for unlimited downloads!`);
+    return 0;
+  }
+  
+  let added = 0;
   urls.forEach((url) => {
-    if (!url) return
+    if (!url) return;
     if (!state.queue.some((entry) => entry.url === url)) {
-      console.log('[Queue] Adding new item:', url)
-      state.queue.push(createQueueItem(url))
-      added += 1
+      console.log('[Queue] Adding new item:', url);
+      state.queue.push(createQueueItem(url));
+      added += 1;
+      
+      // Increment download counter for free users
+      if (!window.licenseManager.isPremium()) {
+        const newCount = window.freeTierManager.incrementCount();
+        const remaining = window.freeTierManager.getRemainingDownloads();
+        console.log('[FreeTier] Downloads today:', newCount, '/ Remaining:', remaining);
+        
+        // Show warning when approaching limit
+        if (remaining === 1) {
+          pushLog(`⚠️ Warning: Only 1 free download remaining today. Upgrade to Premium for unlimited!`);
+        } else if (remaining === 0) {
+          pushLog(`✓ Download added (last free download for today). Upgrade to Premium!`);
+        }
+      }
     } else {
-      console.log('[Queue] Duplicate URL skipped:', url)
+      console.log('[Queue] Duplicate URL skipped:', url);
     }
-  })
-  console.log('[Queue] Calling renderQueue, total items:', state.queue.length)
-  renderQueue()
-  console.log('[Queue] renderQueue completed')
-  return added
+  });
+  
+  console.log('[Queue] Calling renderQueue, total items:', state.queue.length);
+  renderQueue();
+  console.log('[Queue] renderQueue completed');
+  return added;
 }
 
 const pruneSelection = () => {
@@ -2767,6 +2876,14 @@ try {
   console.log('[Startup] History dropdown initialized')
 } catch (err) {
   console.error('[Startup] History init failed:', err)
+}
+
+// Initialize security system (free tier & license)
+try {
+  initializeSecuritySystem()
+  console.log('[Startup] Security system initialized')
+} catch (err) {
+  console.error('[Startup] Security init failed:', err)
 }
 
 // Hide loading screen after a brief moment - FORCE IT
