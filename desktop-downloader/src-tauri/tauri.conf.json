@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "WH404 Downloader",
+    "productName": "WH404.Downloader",
     "version": "1.0.0"
   },
   "tauri": {
