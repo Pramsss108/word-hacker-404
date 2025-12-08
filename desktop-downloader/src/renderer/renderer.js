@@ -14,8 +14,18 @@ function initializeSecuritySystem() {
   // Update license badge in header
   updateLicenseBadge();
   
-  // Show remaining downloads for free users
-  if (!window.licenseManager.isPremium()) {
+  // Check if user is premium and activate effects
+  if (window.licenseManager && window.licenseManager.isPremium()) {
+    console.log('[Security] Premium user detected!');
+    
+    // Activate premium visual effects
+    if (window.premiumEffects) {
+      setTimeout(() => {
+        window.premiumEffects.activate();
+      }, 1000); // Small delay for smooth transition
+    }
+  } else {
+    // Show remaining downloads for free users
     const remaining = window.freeTierManager.getRemainingDownloads();
     console.log('[FreeTier] Downloads remaining today:', remaining);
     

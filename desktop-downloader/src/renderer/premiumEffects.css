@@ -1,0 +1,496 @@
+/**
+ * PREMIUM VISUAL EFFECTS SYSTEM
+ * Stunning animations that activate when user has premium license
+ * All effects are CSS-only (no JavaScript interference with app logic)
+ */
+
+/* ============================================
+   PREMIUM PARTICLE EFFECTS
+   ============================================ */
+
+/* Floating particles in background (premium only) */
+.premium-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+body.premium-active .premium-particles {
+  opacity: 1;
+}
+
+/* Individual particle */
+.premium-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float-particle 15s infinite ease-in-out;
+  filter: blur(1px);
+}
+
+/* Staggered particle animations */
+.premium-particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 12s; }
+.premium-particle:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 15s; }
+.premium-particle:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 13s; }
+.premium-particle:nth-child(4) { left: 40%; animation-delay: 1s; animation-duration: 14s; }
+.premium-particle:nth-child(5) { left: 50%; animation-delay: 3s; animation-duration: 16s; }
+.premium-particle:nth-child(6) { left: 60%; animation-delay: 5s; animation-duration: 12s; }
+.premium-particle:nth-child(7) { left: 70%; animation-delay: 2s; animation-duration: 15s; }
+.premium-particle:nth-child(8) { left: 80%; animation-delay: 4s; animation-duration: 13s; }
+.premium-particle:nth-child(9) { left: 90%; animation-delay: 1s; animation-duration: 14s; }
+.premium-particle:nth-child(10) { left: 15%; animation-delay: 3s; animation-duration: 16s; }
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   PREMIUM GLOW EFFECTS
+   ============================================ */
+
+/* Glowing borders on premium UI elements */
+body.premium-active .pane {
+  box-shadow: 
+    0 0 20px rgba(74, 222, 128, 0.1),
+    inset 0 0 20px rgba(74, 222, 128, 0.05);
+  animation: premium-pulse 4s ease-in-out infinite;
+}
+
+@keyframes premium-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(74, 222, 128, 0.1),
+      inset 0 0 20px rgba(74, 222, 128, 0.05);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(74, 222, 128, 0.2),
+      inset 0 0 30px rgba(74, 222, 128, 0.1);
+  }
+}
+
+/* Premium gradient border animation */
+body.premium-active .menu-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(74, 222, 128, 0.5) 25%,
+    rgba(34, 197, 94, 0.8) 50%,
+    rgba(74, 222, 128, 0.5) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: premium-gradient-flow 3s linear infinite;
+}
+
+@keyframes premium-gradient-flow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* ============================================
+   PREMIUM BUTTON EFFECTS
+   ============================================ */
+
+/* Enhanced button hover for premium users */
+body.premium-active .primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 24px rgba(74, 222, 128, 0.4),
+    0 0 40px rgba(74, 222, 128, 0.2);
+  animation: premium-button-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes premium-button-glow {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Ripple effect on button click (premium only) */
+body.premium-active .primary {
+  position: relative;
+  overflow: hidden;
+}
+
+body.premium-active .primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+body.premium-active .primary:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* ============================================
+   PREMIUM QUEUE ITEM EFFECTS
+   ============================================ */
+
+/* Smooth entrance animation for queue items */
+body.premium-active .queue-entry {
+  animation: premium-slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes premium-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Glowing progress bars */
+body.premium-active .queue-progress-fill {
+  background: linear-gradient(
+    90deg,
+    rgba(74, 222, 128, 0.8) 0%,
+    rgba(34, 197, 94, 1) 50%,
+    rgba(74, 222, 128, 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: premium-progress-shine 2s linear infinite;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+@keyframes premium-progress-shine {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* ============================================
+   PREMIUM PREVIEW EFFECTS
+   ============================================ */
+
+/* Enhanced video preview border */
+body.premium-active .preview-card {
+  border: 2px solid transparent;
+  background-image: 
+    linear-gradient(var(--bg-primary), var(--bg-primary)),
+    linear-gradient(45deg, rgba(74, 222, 128, 0.5), rgba(34, 197, 94, 0.5), rgba(74, 222, 128, 0.5));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  animation: premium-border-rotate 3s linear infinite;
+}
+
+@keyframes premium-border-rotate {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Glowing playback controls */
+body.premium-active .trim-btn:hover {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+  transform: scale(1.1);
+}
+
+/* ============================================
+   PREMIUM SPARKLE EFFECTS
+   ============================================ */
+
+/* Sparkles that appear randomly */
+.premium-sparkle {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  animation: premium-sparkle-twinkle 1.5s ease-in-out;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.8);
+}
+
+@keyframes premium-sparkle-twinkle {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(360deg);
+  }
+}
+
+/* ============================================
+   PREMIUM STATUS BAR EFFECTS
+   ============================================ */
+
+/* Animated status bar for premium */
+body.premium-active .status-strip {
+  background: linear-gradient(
+    90deg,
+    rgba(26, 26, 46, 1) 0%,
+    rgba(74, 222, 128, 0.05) 50%,
+    rgba(26, 26, 46, 1) 100%
+  );
+  background-size: 200% 100%;
+  animation: premium-status-flow 5s linear infinite;
+  border-top: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+@keyframes premium-status-flow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* ============================================
+   PREMIUM MENU EFFECTS
+   ============================================ */
+
+/* Glowing menu items */
+body.premium-active .menu-btn:hover {
+  background: rgba(74, 222, 128, 0.1);
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Smooth dropdown animations */
+body.premium-active .menu-dropdown {
+  animation: premium-dropdown-slide 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes premium-dropdown-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================
+   PREMIUM BADGE EFFECTS
+   ============================================ */
+
+/* Enhanced premium badge animation */
+body.premium-active .license-badge-premium {
+  background: linear-gradient(
+    135deg,
+    rgba(74, 222, 128, 0.3) 0%,
+    rgba(34, 197, 94, 0.3) 50%,
+    rgba(74, 222, 128, 0.3) 100%
+  );
+  background-size: 200% 200%;
+  animation: 
+    premium-badge-gradient 3s ease infinite,
+    premium-badge-float 2s ease-in-out infinite;
+  box-shadow: 
+    0 0 20px rgba(74, 222, 128, 0.6),
+    inset 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+@keyframes premium-badge-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes premium-badge-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+}
+
+/* ============================================
+   PREMIUM CONFETTI EFFECT (Activation)
+   ============================================ */
+
+/* Confetti particles that fall when premium is activated */
+.premium-confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: #4ade80;
+  top: -10px;
+  pointer-events: none;
+  z-index: 10000;
+  animation: premium-confetti-fall 3s ease-out forwards;
+}
+
+.premium-confetti:nth-child(2n) { background: #22c55e; }
+.premium-confetti:nth-child(3n) { background: #10b981; }
+.premium-confetti:nth-child(4n) { width: 8px; height: 8px; }
+.premium-confetti:nth-child(5n) { width: 6px; height: 6px; }
+
+@keyframes premium-confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   PREMIUM SHIMMER EFFECT
+   ============================================ */
+
+/* Shimmer overlay on premium elements */
+body.premium-active .pane::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(74, 222, 128, 0.1) 50%,
+    transparent 100%
+  );
+  animation: premium-shimmer 3s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes premium-shimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* ============================================
+   PREMIUM GLOW TRAILS
+   ============================================ */
+
+/* Glowing trail effect on mouse move (premium only) */
+.premium-cursor-trail {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.6) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  animation: premium-trail-fade 1s ease-out forwards;
+  mix-blend-mode: screen;
+}
+
+@keyframes premium-trail-fade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+/* ============================================
+   PREMIUM TEXT EFFECTS
+   ============================================ */
+
+/* Glowing text for premium status */
+body.premium-active .mono,
+body.premium-active .status-chip {
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+  transition: text-shadow 0.3s ease;
+}
+
+body.premium-active .mono:hover,
+body.premium-active .status-chip:hover {
+  text-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+}
+
+/* ============================================
+   PREMIUM SUCCESS ANIMATIONS
+   ============================================ */
+
+/* Success checkmark animation */
+.premium-success-icon {
+  display: inline-block;
+  animation: premium-success-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes premium-success-bounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* Use GPU acceleration for all premium animations */
+body.premium-active * {
+  will-change: transform;
+}
+
+/* Reduce animations if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body.premium-active *,
+  body.premium-active *::before,
+  body.premium-active *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .premium-particles,
+  .premium-sparkle,
+  .premium-confetti,
+  .premium-cursor-trail {
+    display: none !important;
+  }
+}

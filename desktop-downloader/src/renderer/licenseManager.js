@@ -51,6 +51,19 @@ class LicenseManager {
       // Generate activation (for device binding in Phase 3)
       await this.generateActivation(licenseKey);
 
+      // 🎉 ACTIVATE PREMIUM VISUAL EFFECTS
+      if (window.premiumEffects) {
+        console.log('[License] Activating premium visual effects...');
+        window.premiumEffects.activate();
+        window.premiumEffects.showActivationToast();
+        window.premiumEffects.showConfetti();
+      }
+
+      // Update license badge
+      if (window.updateLicenseBadge) {
+        window.updateLicenseBadge();
+      }
+
       return { success: true, message: 'License activated successfully!' };
     } catch (error) {
       console.error('Failed to save license:', error);
@@ -65,6 +78,18 @@ class LicenseManager {
     try {
       localStorage.removeItem(this.storageKey);
       localStorage.removeItem(this.activationKey);
+
+      // Deactivate premium effects
+      if (window.premiumEffects) {
+        console.log('[License] Deactivating premium effects...');
+        window.premiumEffects.deactivate();
+      }
+
+      // Update license badge
+      if (window.updateLicenseBadge) {
+        window.updateLicenseBadge();
+      }
+
       return { success: true, message: 'License removed' };
     } catch (error) {
       console.error('Failed to remove license:', error);
