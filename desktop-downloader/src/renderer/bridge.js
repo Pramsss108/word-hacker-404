@@ -126,6 +126,101 @@ const bridge = {
     return null;
   },
 
+  // Download thumbnail with native Save As dialog
+  downloadThumbnail: async (thumbnailUrl, defaultFilename = 'thumbnail.jpg') => {
+    if (isTauri) {
+      try {
+        const { save } = window.__TAURI__.dialog;
+        const { fetch } = window.__TAURI__.http;
+        const { writeBinaryFile } = window.__TAURI__.fs;
+        
+        console.log('[Bridge] Starting thumbnail download:', thumbnailUrl);
+        
+        // Show Save As dialog
+        const savePath = await save({
+          defaultPath: defaultFilename,
+          filters: [{
+            name: 'Images',
+            extensions: ['jpg', 'jpeg', 'png', 'webp']
+          }]
+        });
+        
+        // User cancelled
+        if (!savePath) {
+          console.log('[Bridge] Download cancelled by user');
+          return { success: false, cancelled: true };
+        }
+        
+        console.log('[Bridge] Downloading to:', savePath);
+        
+        // Download image
+        const response = await fetch(thumbnailUrl, {
+          method: 'GET',
+          responseType: 2 // ResponseType.Binary
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.data}`);
+        }
+        
+        // Write to chosen location
+        await writeBinaryFile(savePath, response.data);
+        
+        console.log('[Bridge] Thumbnail saved successfully');
+        return {
+          success: true,
+          path: savePath,
+          cancelled: false
+        };
+        
+      } catch (e) {
+        console.error('[Bridge] downloadThumbnail failed:', e);
+        return {
+          success: false,
+          error: e.message || 'Download failed',
+          cancelled: false
+        };
+      }
+    }
+    
+    // Fallback for Electron (if needed)
+    console.warn('[Bridge] downloadThumbnail not implemented for Electron');
+    return { success: false, error: 'Not implemented for this platform' };
+  },
+
+  // Open folder location in file explorer
+  openFolderLocation: async (filePath) => {
+    if (isTauri) {
+      try {
+        const { Command } = window.__TAURI__.shell;
+        
+        // Extract directory from full path
+        const directory = filePath.replace(/\\/g, '/').split('/').slice(0, -1).join('/');
+        
+        console.log('[Bridge] Opening folder:', directory);
+        
+        // Windows: Use explorer to select the file
+        if (navigator.platform.includes('Win')) {
+          const command = new Command('explorer', ['/select,', filePath.replace(/\//g, '\\')]);
+          await command.execute();
+        } else if (navigator.platform.includes('Mac')) {
+          const command = new Command('open', ['-R', filePath]);
+          await command.execute();
+        } else {
+          // Linux: Just open the directory
+          const command = new Command('xdg-open', [directory]);
+          await command.execute();
+        }
+        
+        return { success: true };
+      } catch (e) {
+        console.error('[Bridge] openFolderLocation failed:', e);
+        return { success: false, error: e.message };
+      }
+    }
+    return { success: false, error: 'Not implemented for this platform' };
+  },
+
   startDownload: async ({ urls, format, destination }) => {
     if (isTauri) {
       const { invoke } = window.__TAURI__.tauri;

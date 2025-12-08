@@ -219,14 +219,78 @@ return formattedAudio.sort((a, b) => (b.abr || 0) - (a.abr || 0));
 
 ## Thumbnail Download Fix (December 8, 2025)
 
-### Changes
-- **Export panel**: Changed "Copy link" → "Download" button
-- **Handler**: `data-export-download="thumbnail"` triggers `triggerDownloadFromUrl()`
-- **Location**: Downloads to browser's default download folder (will add custom location picker)
+### Problem
+Download button was opening thumbnail URL in browser instead of downloading file.
 
-### Files Modified
-- `src/renderer/index.html` - Button HTML (line 391)
-- `src/index.js` - Event handler (line 2196-2203)
+### Root Cause
+Used browser `<a>` tag with `download` attribute, which opens external URLs instead of downloading.
+
+### Solution
+Implemented native download using Tauri APIs:
+1. **Dialog API**: Show native "Save As" dialog
+2. **HTTP Client**: Download image from URL
+3. **File System**: Write binary data to chosen location
+4. **Shell API**: Open folder location after download
+
+### Implementation Pattern
+```javascript
+// bridge.js - Proper Tauri download
+downloadThumbnail: async (url, defaultFilename) => {
+  // 1. Show Save As dialog
+  const savePath = await save({ defaultPath: defaultFilename })
+  if (!savePath) return { cancelled: true }
+  
+  // 2. Download via HTTP
+  const response = await fetch(url, { responseType: 2 })
+  
+  // 3. Write to disk
+  await writeBinaryFile(savePath, response.data)
+  
+  return { success: true, path: savePath }
+}
+
+// index.js - UI handler with state management
+btn.addEventListener('click', async () => {
+  btn.disabled = true
+  btn.textContent = 'Downloading...'
+  
+  const result = await window.downloader.downloadThumbnail(url, filename)
+  
+  if (result.success) {
+    btn.textContent = 'Open Location'
+    btn.onclick = () => window.downloader.openFolderLocation(result.path)
+  }
+})
+```
+
+### Critical Gotcha: TWO HTML Files!
+**⚠️ IMPORTANT**: Vite serves the **ROOT** `index.html`, NOT `src/renderer/index.html`
+
+When updating HTML, you MUST modify BOTH files:
+- `desktop-downloader/index.html` ← **This is what Vite serves**
+- `desktop-downloader/src/renderer/index.html` ← Template only
+
+**How to verify**:
+```powershell
+# Check which file Vite is using
+Get-Content "desktop-downloader/vite.config.js"
+# Look for "root" or "input" pointing to index.html
+```
+
+### Button State Machine
+```
+Initial State: "Download" (enabled)
+  ↓ (user clicks)
+"Downloading..." (disabled)
+  ↓ (success)
+"Open Location" (enabled, new onclick handler)
+  ↓ (user clicks again)
+Opens file explorer
+
+Error States:
+- Cancelled: Reset to "Download"
+- Failed: Reset to "Download" + show error
+```
 - `src-tauri/tauri.conf.json` - Filesystem permissions
 
 ## Date Fixed

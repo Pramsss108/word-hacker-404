@@ -120,16 +120,39 @@ abr: fmt.abr || fmt.tbr || 128
 **Files Modified**:
 - `src/index.js` (line 1672: `extractAudioFormatsFromFormats`)
 
-### Thumbnail Download
-**Change**: Export panel now has "Download" button for thumbnail
+### Thumbnail Download (December 8, 2025)
 
-**Behavior**: Downloads thumbnail to browser's default download folder
+**Changes**:
+- Export panel now has "Download" button for thumbnail
+- Uses native "Save As" dialog to choose download location
+- Downloads thumbnail via Tauri HTTP client
+- Button changes to "Open Location" after successful download
+- Clicking "Open Location" opens file explorer with file selected
 
-**Status**: ✅ COMPLETE
+**Implementation**:
+- `bridge.js`: Added `downloadThumbnail()` using Tauri dialog + HTTP APIs
+- `bridge.js`: Added `openFolderLocation()` using Tauri shell API
+- `index.js`: Async download handler with proper error handling
+
+**User Experience**:
+1. User clicks "Download" button
+2. Native Save As dialog appears
+3. User chooses location and filename
+4. Thumbnail downloads from URL
+5. Button changes to "Open Location"
+6. Clicking opens folder with file selected
+
+**Critical Implementation Details**:
+- **TWO HTML files**: Must update BOTH `index.html` (root, used by Vite) AND `src/renderer/index.html`
+- **Button state management**: Disable during download, re-enable after
+- **Error handling**: User cancellation, network errors, write permissions
+- **Cross-platform**: Works on Windows (explorer), macOS (open -R), Linux (xdg-open)
 
 **Files Modified**:
-- `src/renderer/index.html` (line 391)
-- `src/index.js` (lines 2196-2203)
+- `src/renderer/bridge.js` (lines 133-235: downloadThumbnail, openFolderLocation)
+- `src/index.js` (lines 2195-2253: async download handler)
+- `index.html` (line 391: button HTML) ⚠️ ROOT FILE
+- `src/renderer/index.html` (line 391: button HTML)
 
 ---
 

@@ -117,6 +117,75 @@ I have created several automation scripts to save you time. You can run these fr
 
 ---
 
+## 🖼️ How to Download Thumbnails (User Guide)
+
+### Step-by-Step Process
+1. **Download a video** from YouTube or any supported platform
+2. **Click the downloaded item** in the queue to open export panel
+3. **Scroll to bottom** of export panel
+4. **Find "Thumbnail" section** with "Attached" status
+5. **Click "Download" button**
+6. **Native "Save As" dialog appears** (like saving a Word doc)
+7. **Choose your location** and filename
+8. **Click Save** in the dialog
+9. **Button changes to "Open Location"** after successful download
+10. **Click "Open Location"** to see your file in file explorer
+
+### What Happens Behind the Scenes
+- App uses native system dialog (Windows file picker)
+- Downloads thumbnail from YouTube's servers via HTTP
+- Saves to your exact chosen location
+- Opens file explorer with your file highlighted
+
+### Common Issues & Fixes
+
+**"Thumbnail not ready yet" error**
+- Video metadata hasn't loaded
+- Wait 2-3 seconds after download completes
+- Check that thumbnail shows "Attached" status
+
+**"Download failed: Network error"**
+- Check internet connection
+- YouTube might be temporarily blocking
+- Try again after a moment
+
+**"Could not open folder" message**
+- File saved successfully
+- File explorer just couldn't auto-open
+- Manually navigate to where you saved it
+
+**Button still shows "Copy link" instead of "Download"**
+- You're running old cached version
+- **Fix**: Close app completely and restart
+- Or clear Vite cache: Delete `node_modules/.vite` folder
+- Restart: `npm run tauri:dev`
+
+### ⚠️ Developer Note: The TWO HTML Files Gotcha
+
+**CRITICAL for developers**: When modifying HTML, you MUST update BOTH:
+1. `desktop-downloader/index.html` ← **ROOT file, Vite serves THIS**
+2. `desktop-downloader/src/renderer/index.html` ← Template only
+
+**Why this matters**:
+- Vite's dev server reads from ROOT `index.html`
+- Many devs mistakenly edit only `src/renderer/index.html`
+- Changes won't appear until ROOT file is updated
+- This caused the "Copy link" → "Download" button confusion
+
+**How to verify which file is active**:
+```powershell
+# Check Vite config
+Get-Content "desktop-downloader/vite.config.js"
+# Look for "root" or "input" settings
+```
+
+**Best practice**:
+- Always make HTML changes in BOTH files
+- Or use a build script to copy from one to the other
+- Clear Vite cache after major HTML changes
+
+---
+
 ## 🆘 Troubleshooting
 
 **"The build failed!"**

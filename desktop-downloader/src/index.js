@@ -2193,13 +2193,60 @@ const wireEvents = () => {
   })
 
   document.querySelectorAll('[data-export-download]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (!state.preview.metadata.thumbnail) {
         updateExportMessage('Thumbnail not ready yet.', { variant: 'error' })
         return
       }
-      triggerDownloadFromUrl(state.preview.metadata.thumbnail, 'wh404-thumbnail.jpg')
-      updateExportMessage('Downloading thumbnail...', { variant: 'success' })
+      
+      // Disable button during download
+      btn.disabled = true
+      btn.textContent = 'Downloading...'
+      
+      try {
+        const result = await window.downloader.downloadThumbnail(
+          state.preview.metadata.thumbnail,
+          'wh404-thumbnail.jpg'
+        )
+        
+        if (result.cancelled) {
+          updateExportMessage('Download cancelled.', { variant: 'info' })
+          btn.textContent = 'Download'
+          btn.disabled = false
+          return
+        }
+        
+        if (!result.success) {
+          updateExportMessage(`Download failed: ${result.error}`, { variant: 'error' })
+          btn.textContent = 'Download'
+          btn.disabled = false
+          return
+        }
+        
+        // Success! Change button to "Open Location"
+        btn.textContent = 'Open Location'
+        btn.classList.add('success-state')
+        btn.disabled = false
+        
+        // Replace click handler with open location
+        btn.onclick = async () => {
+          const openResult = await window.downloader.openFolderLocation(result.path)
+          if (!openResult.success) {
+            updateExportMessage(`Could not open folder: ${openResult.error}`, { variant: 'error' })
+          }
+        }
+        
+        updateExportMessage(
+          `Thumbnail saved! Click "Open Location" to view.`,
+          { variant: 'success' }
+        )
+        
+      } catch (err) {
+        console.error('[Download] Thumbnail download failed:', err)
+        updateExportMessage(`Unexpected error: ${err.message}`, { variant: 'error' })
+        btn.textContent = 'Download'
+        btn.disabled = false
+      }
     })
   })
 
