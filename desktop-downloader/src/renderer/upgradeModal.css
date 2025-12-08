@@ -2,6 +2,162 @@
    UPGRADE MODAL STYLES
    ============================================ */
 
+/* Premium Toggle Button (Testing/Activation) */
+.premium-toggle-btn {
+  margin-left: 12px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #333;
+  border-radius: 20px;
+  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.premium-toggle-btn:hover::before {
+  left: 100%;
+}
+
+.premium-toggle-btn:hover {
+  border-color: #4ade80;
+  color: #4ade80;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
+}
+
+.premium-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.premium-toggle-btn .premium-icon {
+  font-size: 14px;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.premium-toggle-btn:hover .premium-icon {
+  filter: grayscale(0%);
+}
+
+/* Active state (when premium is ON) */
+.premium-toggle-btn.active {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  border-color: #4ade80;
+  color: white;
+  box-shadow: 0 4px 16px rgba(74, 222, 128, 0.4);
+  animation: premium-pulse 2s ease-in-out infinite;
+}
+
+.premium-toggle-btn.active .premium-icon {
+  filter: grayscale(0%);
+  animation: sparkle-rotate 3s ease-in-out infinite;
+}
+
+@keyframes premium-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(74, 222, 128, 0.6);
+  }
+}
+
+@keyframes sparkle-rotate {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(10deg) scale(1.1);
+  }
+}
+
+/* Premium Toast Notifications */
+.premium-toast {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  border: 2px solid #4ade80;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10000;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(74, 222, 128, 0.3);
+  max-width: 320px;
+}
+
+.premium-toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.premium-toast.deactivate {
+  border-color: #888;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.premium-toast-icon {
+  font-size: 32px;
+  line-height: 1;
+  animation: toast-bounce 0.5s ease;
+}
+
+.premium-toast-content {
+  flex: 1;
+}
+
+.premium-toast-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4ade80;
+  margin-bottom: 4px;
+}
+
+.premium-toast.deactivate .premium-toast-title {
+  color: #888;
+}
+
+.premium-toast-message {
+  font-size: 12px;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+@keyframes toast-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
 /* Backdrop */
 .upgrade-modal-backdrop {
   position: fixed;
