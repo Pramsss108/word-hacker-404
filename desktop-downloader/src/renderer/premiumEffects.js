@@ -1,328 +1,209 @@
 /**
- * PREMIUM EFFECTS CONTROLLER
- * Manages stunning visual effects for premium users
- * All animations are CSS-based, this file just triggers/controls them
+ * Premium Effects Controller - Apple + Tesla Aesthetic
+ * Minimal elegance with confident power
  */
 
 class PremiumEffects {
   constructor() {
     this.isActive = false;
-    this.particles = [];
-    this.sparkleInterval = null;
-    this.trailElements = [];
+    this.cursorTrailTimeout = null;
+    this.lastCursorMove = 0;
   }
 
   /**
-   * Activate premium visual effects
+   * Activate premium effects with elegant sequence
    */
   activate() {
     if (this.isActive) return;
     
-    console.log('[PremiumFX] Activating premium visual effects...');
     this.isActive = true;
-    
-    // Add premium class to body
+    console.log('✨ Premium activating...');
+
+    // Step 1: Add premium class to body
     document.body.classList.add('premium-active');
-    
-    // Create background particles
-    this.createParticles();
-    
-    // Start sparkle effects
-    this.startSparkles();
-    
-    // Add cursor trail (optional, can be performance-heavy)
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      this.enableCursorTrail();
-    }
-    
-    // Show celebration confetti
-    this.showConfetti();
-    
-    // Enhance existing UI elements
-    this.enhanceUI();
-    
-    console.log('[PremiumFX] Premium effects activated ✨');
+
+    // Step 2: Activation flash (600ms)
+    this.showActivationFlash();
+
+    // Step 3: Ripple from badge (1200ms, starts at 200ms)
+    setTimeout(() => this.showActivationRipple(), 200);
+
+    // Step 4: Toast notification (appears at 800ms)
+    setTimeout(() => this.showActivationToast(), 800);
+
+    // Step 5: Enable subtle cursor trail
+    setTimeout(() => this.enableCursorTrail(), 1000);
+
+    console.log('✨ Premium activated (Apple+Tesla mode)');
   }
 
   /**
-   * Deactivate premium effects (when license removed)
+   * Deactivate premium effects cleanly
    */
   deactivate() {
     if (!this.isActive) return;
-    
-    console.log('[PremiumFX] Deactivating premium effects...');
+
     this.isActive = false;
-    
-    // Remove premium class
     document.body.classList.remove('premium-active');
-    
-    // Clean up particles
-    this.cleanupParticles();
-    
-    // Stop sparkles
-    this.stopSparkles();
-    
-    // Disable cursor trail
     this.disableCursorTrail();
-    
-    console.log('[PremiumFX] Premium effects deactivated');
+
+    console.log('💤 Premium deactivated');
   }
 
   /**
-   * Create floating particles in background
+   * Show activation flash - Subtle screen power-up
    */
-  createParticles() {
-    const container = document.createElement('div');
-    container.className = 'premium-particles';
-    
-    // Create 10 floating particles
-    for (let i = 0; i < 10; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'premium-particle';
-      
-      // Random starting position
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.animationDelay = `${Math.random() * 5}s`;
-      particle.style.animationDuration = `${12 + Math.random() * 6}s`;
-      
-      container.appendChild(particle);
-      this.particles.push(particle);
-    }
-    
-    document.body.appendChild(container);
-    this.particleContainer = container;
+  showActivationFlash() {
+    const flash = document.createElement('div');
+    flash.className = 'premium-activation-flash';
+    document.body.appendChild(flash);
+
+    setTimeout(() => flash.remove(), 600);
   }
 
   /**
-   * Clean up particles
+   * Show activation ripple from badge position
    */
-  cleanupParticles() {
-    if (this.particleContainer) {
-      this.particleContainer.remove();
-      this.particleContainer = null;
-      this.particles = [];
-    }
-  }
+  showActivationRipple() {
+    const badge = document.getElementById('license-badge');
+    if (!badge) return;
 
-  /**
-   * Start random sparkle effects
-   */
-  startSparkles() {
-    // Create sparkles every 2-4 seconds
-    const createSparkle = () => {
-      if (!this.isActive) return;
-      
-      const sparkle = document.createElement('div');
-      sparkle.className = 'premium-sparkle';
-      
-      // Random position
-      sparkle.style.left = `${Math.random() * window.innerWidth}px`;
-      sparkle.style.top = `${Math.random() * window.innerHeight}px`;
-      
-      document.body.appendChild(sparkle);
-      
-      // Remove after animation
-      setTimeout(() => sparkle.remove(), 1500);
-    };
+    const rect = badge.getBoundingClientRect();
+    const ripple = document.createElement('div');
+    ripple.className = 'premium-activation-ripple';
     
-    // Create initial sparkle
-    createSparkle();
+    // Position ripple at badge center
+    ripple.style.left = `${rect.left + rect.width / 2 - 100}px`;
+    ripple.style.top = `${rect.top + rect.height / 2 - 100}px`;
     
-    // Schedule random sparkles
-    this.sparkleInterval = setInterval(() => {
-      if (Math.random() > 0.5) { // 50% chance each interval
-        createSparkle();
-      }
-    }, 2000);
+    document.body.appendChild(ripple);
+
+    setTimeout(() => ripple.remove(), 1200);
   }
 
   /**
-   * Stop sparkles
+   * Show elegant activation toast
    */
-  stopSparkles() {
-    if (this.sparkleInterval) {
-      clearInterval(this.sparkleInterval);
-      this.sparkleInterval = null;
-    }
+  showActivationToast() {
+    const toast = document.createElement('div');
+    toast.className = 'premium-toast';
+    toast.innerHTML = `
+      <div class="premium-toast-icon">✨</div>
+      <div class="premium-toast-content">
+        <div class="premium-toast-title">Premium Activated</div>
+        <div class="premium-toast-message">Enjoy unlimited downloads & enhanced experience</div>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+
+    // Fade in
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Remove after 4 seconds
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
   }
 
   /**
-   * Enable glowing cursor trail
+   * Enable minimal cursor trail (only on click)
    */
   enableCursorTrail() {
+    if (this.cursorTrailEnabled) return;
+    
+    this.cursorTrailEnabled = true;
     this.cursorTrailHandler = (e) => {
-      if (!this.isActive) return;
+      // Only on click, not constant movement
+      if (e.type !== 'click') return;
       
-      // Throttle trail creation
-      if (this.trailElements.length > 10) {
-        return; // Max 10 trails at once
-      }
-      
-      const trail = document.createElement('div');
-      trail.className = 'premium-cursor-trail';
-      trail.style.left = `${e.clientX - 10}px`;
-      trail.style.top = `${e.clientY - 10}px`;
-      
-      document.body.appendChild(trail);
-      this.trailElements.push(trail);
-      
-      // Remove after animation
-      setTimeout(() => {
-        trail.remove();
-        const index = this.trailElements.indexOf(trail);
-        if (index > -1) {
-          this.trailElements.splice(index, 1);
-        }
-      }, 1000);
+      // Throttle to max 5 trails per second
+      const now = Date.now();
+      if (now - this.lastCursorMove < 200) return;
+      this.lastCursorMove = now;
+
+      this.createCursorTrail(e.clientX, e.clientY);
     };
-    
-    // Only create trail on every 5th mouse move (performance)
-    let moveCount = 0;
-    this.throttledTrailHandler = (e) => {
-      moveCount++;
-      if (moveCount % 5 === 0) {
-        this.cursorTrailHandler(e);
-      }
-    };
-    
-    document.addEventListener('mousemove', this.throttledTrailHandler);
+
+    document.addEventListener('click', this.cursorTrailHandler);
   }
 
   /**
    * Disable cursor trail
    */
   disableCursorTrail() {
-    if (this.throttledTrailHandler) {
-      document.removeEventListener('mousemove', this.throttledTrailHandler);
-      this.throttledTrailHandler = null;
-    }
+    if (!this.cursorTrailEnabled) return;
     
-    // Clean up existing trails
-    this.trailElements.forEach(trail => trail.remove());
-    this.trailElements = [];
+    this.cursorTrailEnabled = false;
+    document.removeEventListener('click', this.cursorTrailHandler);
   }
 
   /**
-   * Show confetti celebration when premium is first activated
+   * Create single cursor trail particle
    */
-  showConfetti() {
-    const confettiCount = 50;
+  createCursorTrail(x, y) {
+    const trail = document.createElement('div');
+    trail.className = 'premium-cursor-trail';
+    trail.style.left = `${x}px`;
+    trail.style.top = `${y}px`;
     
-    for (let i = 0; i < confettiCount; i++) {
-      setTimeout(() => {
-        const confetti = document.createElement('div');
-        confetti.className = 'premium-confetti';
-        
-        // Random horizontal position
-        confetti.style.left = `${Math.random() * 100}%`;
-        
-        // Random animation duration
-        confetti.style.animationDuration = `${2 + Math.random() * 2}s`;
-        confetti.style.animationDelay = `${Math.random() * 0.5}s`;
-        
-        document.body.appendChild(confetti);
-        
-        // Remove after animation
-        setTimeout(() => confetti.remove(), 4000);
-      }, i * 30); // Stagger creation
-    }
+    document.body.appendChild(trail);
+
+    setTimeout(() => trail.remove(), 600);
   }
 
   /**
-   * Enhance existing UI elements with premium effects
+   * Add success ripple to button click
    */
-  enhanceUI() {
-    // Add success icon animation to premium badge
-    const badge = document.querySelector('.license-badge-premium');
-    if (badge) {
-      const icon = badge.textContent.includes('✓') 
-        ? badge.textContent.split(' ')[0] 
-        : '✓';
-      
-      const iconSpan = document.createElement('span');
-      iconSpan.className = 'premium-success-icon';
-      iconSpan.textContent = icon + ' ';
-      
-      badge.textContent = badge.textContent.replace('✓ ', '');
-      badge.insertBefore(iconSpan, badge.firstChild);
-    }
+  addSuccessRipple(button) {
+    const rect = button.getBoundingClientRect();
+    const ripple = document.createElement('div');
+    ripple.className = 'premium-success-ripple';
     
-    // Add subtle glow to primary buttons
-    const primaryButtons = document.querySelectorAll('.primary');
-    primaryButtons.forEach(btn => {
-      btn.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-    });
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = `${size}px`;
+    ripple.style.height = `${size}px`;
+    ripple.style.left = `${rect.left + rect.width / 2 - size / 2}px`;
+    ripple.style.top = `${rect.top + rect.height / 2 - size / 2}px`;
     
-    // Add smooth animations to queue entries
-    const queueEntries = document.querySelectorAll('.queue-entry');
-    queueEntries.forEach((entry, index) => {
-      entry.style.animationDelay = `${index * 0.1}s`;
+    document.body.appendChild(ripple);
+
+    setTimeout(() => ripple.remove(), 600);
+  }
+
+  /**
+   * Enhance button with ripple on click
+   */
+  enhanceButton(selector) {
+    const buttons = document.querySelectorAll(selector);
+    buttons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        if (this.isActive) {
+          this.addSuccessRipple(button);
+        }
+      });
     });
   }
 
   /**
-   * Get current status
+   * Check if premium is currently active
    */
-  getStatus() {
-    return {
-      active: this.isActive,
-      particles: this.particles.length,
-      effects: {
-        particles: !!this.particleContainer,
-        sparkles: !!this.sparkleInterval,
-        cursorTrail: !!this.throttledTrailHandler
-      }
-    };
-  }
-
-  /**
-   * Performance-friendly pulse effect on element
-   */
-  pulseElement(element) {
-    if (!element) return;
-    
-    element.style.animation = 'premium-success-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-    
-    setTimeout(() => {
-      element.style.animation = '';
-    }, 600);
-  }
-
-  /**
-   * Show premium activation toast with effects
-   */
-  showActivationToast() {
-    const toast = document.createElement('div');
-    toast.className = 'upgrade-toast';
-    toast.style.background = 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)';
-    toast.innerHTML = `
-      <div class="toast-content">
-        <span class="toast-icon premium-success-icon">✨</span>
-        <span><strong>Premium Activated!</strong> Enjoy unlimited downloads and all features.</span>
-      </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.classList.add('active'), 10);
-    
-    setTimeout(() => {
-      toast.classList.remove('active');
-      setTimeout(() => toast.remove(), 300);
-    }, 5000);
+  isPremiumActive() {
+    return this.isActive;
   }
 }
 
 // Create global instance
 window.premiumEffects = new PremiumEffects();
 
-// Auto-activate if user is already premium on page load
-window.addEventListener('DOMContentLoaded', () => {
-  // Small delay to ensure license manager is initialized
-  setTimeout(() => {
-    if (window.licenseManager && window.licenseManager.isPremium()) {
-      console.log('[PremiumFX] Premium user detected, activating effects...');
-      window.premiumEffects.activate();
-    }
-  }, 500);
-});
+// Auto-enhance primary buttons when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.premiumEffects.enhanceButton('button.primary, button[class*="primary"], #add-to-queue, #export-confirm');
+  });
+} else {
+  window.premiumEffects.enhanceButton('button.primary, button[class*="primary"], #add-to-queue, #export-confirm');
+}
+
+console.log('✨ Premium Effects Controller loaded (Apple+Tesla mode)');

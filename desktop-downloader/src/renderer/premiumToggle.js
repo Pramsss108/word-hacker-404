@@ -1,6 +1,6 @@
 /**
  * Premium Toggle Button Controller
- * Handles premium activation/deactivation for testing and real license activation
+ * Handles premium activation/deactivation with Apple+Tesla elegance
  */
 
 class PremiumToggle {
@@ -15,13 +15,13 @@ class PremiumToggle {
   init() {
     this.button = document.getElementById('premium-toggle');
     if (!this.button) {
-      console.warn('Premium toggle button not found');
+      console.warn('⚠️ Premium toggle button not found');
       return;
     }
 
     // Check current premium status
     if (window.licenseManager && window.licenseManager.isPremium()) {
-      this.activate(false); // Silent activation (no confetti on page load)
+      this.activate(false); // Silent activation (no effects on page load)
     }
 
     // Add click handler
@@ -35,49 +35,48 @@ class PremiumToggle {
    */
   async handleToggle() {
     if (this.isActive) {
-      // Deactivate premium
-      this.deactivate();
+      await this.deactivate();
     } else {
-      // Activate premium
-      this.activate(true); // With celebration
+      await this.activate(true); // With effects
     }
   }
 
   /**
    * Activate premium mode
-   * @param {boolean} showCelebration - Whether to show confetti/toast
+   * @param {boolean} showEffects - Whether to show activation effects
    */
-  async activate(showCelebration = true) {
+  async activate(showEffects = true) {
     this.isActive = true;
 
-    // Update button UI
+    // Update button UI immediately
     this.button.classList.add('active');
     this.button.title = 'Premium Active - Click to deactivate';
-
-    // Update license badge
-    if (window.updateLicenseBadge) {
-      window.updateLicenseBadge();
-    }
 
     // Save test license (for testing mode)
     if (window.licenseManager && !window.licenseManager.isPremium()) {
       await window.licenseManager.saveLicense('WH404-PREMIUM-TOGGLE-TEST');
     }
 
-    // Activate premium effects
-    if (window.premiumEffects) {
-      window.premiumEffects.activate();
-      
-      if (showCelebration) {
-        // Show celebration effects
-        window.premiumEffects.showConfetti();
-        this.showActivationToast();
-      }
+    // Update license badge
+    if (window.updateLicenseBadge) {
+      window.updateLicenseBadge();
     }
 
     // Update free tier manager
     if (window.freeTierManager) {
       window.freeTierManager.isPremiumUser = true;
+    }
+
+    // Activate premium effects (with or without animation)
+    if (window.premiumEffects) {
+      if (showEffects) {
+        // Full activation sequence with effects
+        window.premiumEffects.activate();
+      } else {
+        // Silent activation (just enable permanent state)
+        window.premiumEffects.isActive = true;
+        document.body.classList.add('premium-active');
+      }
     }
 
     console.log('✨ Premium activated via toggle');
@@ -113,52 +112,28 @@ class PremiumToggle {
       window.freeTierManager.isPremiumUser = false;
     }
 
+    // Show simple toast
     this.showDeactivationToast();
 
     console.log('💤 Premium deactivated via toggle');
   }
 
   /**
-   * Show activation toast notification
-   */
-  showActivationToast() {
-    const toast = document.createElement('div');
-    toast.className = 'premium-toast';
-    toast.innerHTML = `
-      <div class="premium-toast-icon">✨</div>
-      <div class="premium-toast-content">
-        <div class="premium-toast-title">Premium Activated!</div>
-        <div class="premium-toast-message">Enjoy unlimited downloads & all features</div>
-      </div>
-    `;
-    document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remove after 4 seconds
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
-  }
-
-  /**
-   * Show deactivation toast notification
+   * Show deactivation toast (simple, no effects)
    */
   showDeactivationToast() {
     const toast = document.createElement('div');
-    toast.className = 'premium-toast deactivate';
+    toast.className = 'premium-toast';
     toast.innerHTML = `
       <div class="premium-toast-icon">💤</div>
       <div class="premium-toast-content">
-        <div class="premium-toast-title">Premium Deactivated</div>
+        <div class="premium-toast-title" style="color: #888;">Premium Deactivated</div>
         <div class="premium-toast-message">Back to free tier (3 downloads/day)</div>
       </div>
     `;
     document.body.appendChild(toast);
 
-    // Animate in
+    // Fade in
     setTimeout(() => toast.classList.add('show'), 10);
 
     // Remove after 3 seconds
@@ -178,11 +153,11 @@ class PremiumToggle {
   /**
    * Programmatically set state (for future license activation)
    * @param {boolean} active - Whether premium should be active
-   * @param {boolean} showCelebration - Whether to show celebration
+   * @param {boolean} showEffects - Whether to show effects
    */
-  async setState(active, showCelebration = false) {
+  async setState(active, showEffects = false) {
     if (active && !this.isActive) {
-      await this.activate(showCelebration);
+      await this.activate(showEffects);
     } else if (!active && this.isActive) {
       await this.deactivate();
     }
@@ -200,3 +175,5 @@ if (document.readyState === 'loading') {
 } else {
   window.premiumToggle.init();
 }
+
+console.log('✨ Premium Toggle Controller loaded');
