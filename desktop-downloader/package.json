@@ -9,6 +9,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "electron:dev": "electron .",
     "build": "vite build",
     "package:win": "electron-builder --win",
     "package:mac": "electron-builder --mac dmg",
