@@ -113,15 +113,19 @@ class MatrixRain {
   animate() {
     if (!this.running) return;
 
-    // Translucent black for trail effect
-    this.ctx.fillStyle = 'rgba(11, 11, 13, 0.05)';
+    // Translucent black for trail effect - slightly darker for cleaner look
+    this.ctx.fillStyle = 'rgba(11, 11, 13, 0.1)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.ctx.fillStyle = '#0aff6a'; // Neon Green
-    this.ctx.font = ${this.fontSize}px 'JetBrains Mono', monospace;
+    this.ctx.font = `${this.fontSize}px 'JetBrains Mono', monospace`;
 
     for (let i = 0; i < this.drops.length; i++) {
       const text = this.chars.charAt(Math.floor(Math.random() * this.chars.length));
+      
+      // Randomly highlight some characters
+      const isHighlight = Math.random() > 0.95;
+      this.ctx.fillStyle = isHighlight ? '#ffffff' : '#0aff6a';
+      
       this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
 
       if (this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
