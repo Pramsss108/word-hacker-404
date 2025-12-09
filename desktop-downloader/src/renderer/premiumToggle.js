@@ -7,6 +7,7 @@ class PremiumToggle {
   constructor() {
     this.button = null;
     this.isActive = false;
+    this.isToggling = false; // Prevent rapid clicks
   }
 
   /**
@@ -34,10 +35,25 @@ class PremiumToggle {
    * Handle toggle button click
    */
   async handleToggle() {
-    if (this.isActive) {
-      await this.deactivate();
-    } else {
-      await this.activate(true); // With effects
+    // Prevent rapid clicking
+    if (this.isToggling) {
+      console.log('⚠️ Toggle in progress, please wait');
+      return;
+    }
+    
+    this.isToggling = true;
+    
+    try {
+      if (this.isActive) {
+        await this.deactivate();
+      } else {
+        await this.activate(true); // With effects
+      }
+    } finally {
+      // Allow next toggle after 1 second
+      setTimeout(() => {
+        this.isToggling = false;
+      }, 1000);
     }
   }
 

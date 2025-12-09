@@ -23,10 +23,16 @@ class DigitalAurora {
         this.canvas.style.left = '0';
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
-        this.canvas.style.pointerEvents = 'none';
-        this.canvas.style.zIndex = '1'; // Just above background
+        this.canvas.style.pointerEvents = 'none'; // CRITICAL: Never capture clicks
+        this.canvas.style.zIndex = '1'; // Behind all UI elements
         this.canvas.style.opacity = '0';
         this.canvas.style.transition = 'opacity 1s ease';
+        
+        // Force pointer-events to stay none (prevent CSS overrides)
+        Object.defineProperty(this.canvas.style, 'pointerEvents', {
+            value: 'none',
+            writable: false
+        });
         
         document.body.appendChild(this.canvas);
         
@@ -63,9 +69,13 @@ class DigitalAurora {
     }
 
     start() {
-        if (this.isActive) return;
+        if (this.isActive) {
+            console.log('⚠️ Digital Aurora already active, skipping');
+            return;
+        }
         this.isActive = true;
         this.canvas.style.opacity = '1';
+        this.canvas.style.pointerEvents = 'none'; // Re-enforce
         this.animate();
         console.log('✨ Digital Aurora Activated');
     }
