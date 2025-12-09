@@ -1070,9 +1070,14 @@ const loadPreviewFromItem = async (item) => {
           console.log('[Preview] Files in directory:', files);
           
           // Find the best match - normalize by removing ALL non-alphanumeric characters
-          // This handles spaces, pipes (|), fullwidth pipes (｜), dashes, etc.
-          // Keep the full filename INCLUDING format codes like .f140 before the extension
-          const normalizeForMatch = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+          // Also remove format codes like .f140, .f399 that are temp file markers
+          const normalizeForMatch = (str) => {
+            // Remove format codes (f followed by 2-3 digits before extension)
+            let normalized = str.replace(/\.f\d{2,3}(?=\.\w+$)/gi, '');
+            // Remove all non-alphanumeric
+            return normalized.toLowerCase().replace(/[^a-z0-9]/g, '');
+          };
+          
           const expectedNormalized = normalizeForMatch(expectedFilename);
           console.log('[Preview] Searching for normalized:', expectedNormalized);
           
