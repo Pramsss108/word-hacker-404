@@ -1,398 +1,160 @@
 /* ============================================
-   PREMIUM EFFECTS - APPLE + TESLA AESTHETIC
-   Minimal elegance with confident power
+   PREMIUM EFFECTS - CYBERPUNK / HACKER THEME
+   "Coding should fall" - Matrix Rain & Glitch
    ============================================ */
 
-/* ============================================
-   DESIGN TOKENS
-   ============================================ */
 :root {
-  /* Colors */
-  --premium-glow: rgba(74, 222, 128, 0.12);
-  --premium-glow-strong: rgba(74, 222, 128, 0.2);
-  --premium-accent: #4ade80;
-  --activation-flash: rgba(255, 255, 255, 0.02);
-  
-  /* Timing Functions - Natural physics */
-  --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
-  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --ease-soft: cubic-bezier(0.25, 0.1, 0.25, 1);
-  
-  /* Durations */
-  --instant: 100ms;
-  --fast: 200ms;
-  --normal: 300ms;
-  --slow: 500ms;
-  --very-slow: 800ms;
-  
-  /* Glow Sizes */
-  --glow-subtle: 6px;
-  --glow-medium: 12px;
-  --glow-strong: 20px;
+  --neon-green: #0aff6a;
+  --hacker-bg: #0b0b0d;
+  --glitch-red: #ff003c;
+  --glitch-blue: #00f0ff;
 }
 
-/* ============================================
-   ACTIVATION SEQUENCE
-   ============================================ */
-
-/* Activation Flash - Subtle screen power-up */
-@keyframes activation-flash {
-  0% {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-
-.premium-activation-flash {
+/* Matrix Canvas (Background) */
+.matrix-canvas {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at center, 
-    rgba(74, 222, 128, 0.03) 0%,
-    rgba(74, 222, 128, 0.01) 40%,
-    transparent 70%
-  );
+  width: 100%;
+  height: 100%;
+  z-index: -1;
   pointer-events: none;
-  z-index: 9999;
-  animation: activation-flash 600ms var(--ease-smooth) forwards;
+  opacity: 0;
+  transition: opacity 1s ease;
 }
 
-/* Activation Ripple - Originates from badge */
-@keyframes activation-ripple {
-  0% {
-    transform: scale(0);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(4);
+/* Global Slide-Up Animation */
+@keyframes slideUpFade {
+  from {
     opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.premium-activation-ripple {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border: 2px solid var(--premium-accent);
-  pointer-events: none;
-  animation: activation-ripple 1200ms var(--ease-smooth) forwards;
+/* Glitch Effect Keyframes */
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+  100% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
 }
 
-/* ============================================
-   PERMANENT PREMIUM STATE
-   ============================================ */
-
-/* Premium Badge - Subtle breathing glow */
-.premium-active .license-badge-premium {
-  animation: badge-breathe 3s var(--ease-soft) infinite;
+/* Neon Pulse */
+@keyframes neon-pulse {
+  0% { box-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green); }
+  50% { box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green); }
+  100% { box-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green); }
 }
 
-@keyframes badge-breathe {
-  0%, 100% {
-    box-shadow: 0 0 var(--glow-subtle) rgba(74, 222, 128, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 var(--glow-medium) rgba(74, 222, 128, 0.5);
-  }
+/* Premium Active State Overrides */
+.premium-active .panel,
+.premium-active .card,
+.premium-active .input-group {
+  border: 1px solid rgba(10, 255, 106, 0.1);
+  background: rgba(11, 11, 13, 0.8); /* Glassy dark */
+  backdrop-filter: blur(5px);
 }
 
-/* Menu Bar - Very subtle gradient shift */
-.premium-active .menu-bar {
-  background: linear-gradient(135deg, 
-    rgba(74, 222, 128, 0.02) 0%,
-    rgba(74, 222, 128, 0.01) 50%,
-    rgba(74, 222, 128, 0.02) 100%
-  );
-  background-size: 200% 200%;
-  animation: menu-gradient-shift 8s var(--ease-soft) infinite alternate;
+.premium-active .panel:hover,
+.premium-active .card:hover {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 15px rgba(10, 255, 106, 0.2);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
 }
 
-@keyframes menu-gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
-/* ============================================
-   PANEL ENHANCEMENTS (Preview, Queue, Export)
-   ============================================ */
-
-/* Border glow on hover - Shows interactivity */
-/* IMPORTANT: Only add border effect, DO NOT change background */
-.premium-active .preview-panel:hover,
-.premium-active .queue-panel:hover,
-.premium-active .export-panel:hover {
-  box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.15);
-  transition: box-shadow var(--normal) var(--ease-smooth);
-}
-
-.premium-active .preview-panel,
-.premium-active .queue-panel,
-.premium-active .export-panel {
-  /* DO NOT set background here - it will override the video preview */
-  transition: box-shadow var(--normal) var(--ease-smooth);
-}
-
-/* ============================================
-   BUTTON ENHANCEMENTS
-   ============================================ */
-
-/* Primary buttons - Smooth gradient animation */
-.premium-active button.primary,
-.premium-active button[class*="primary"],
-.premium-active #add-to-queue,
-.premium-active #export-confirm {
-  background: linear-gradient(135deg, 
-    #4ade80 0%,
-    #22c55e 50%,
-    #4ade80 100%
-  );
-  background-size: 200% 100%;
-  animation: button-gradient-slide 3s var(--ease-smooth) infinite;
+/* Button Enhancements */
+.premium-active button.primary {
   position: relative;
   overflow: hidden;
+  animation: neon-pulse 2s infinite;
 }
 
-@keyframes button-gradient-slide {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Button hover - Subtle lift */
-.premium-active button.primary:hover,
-.premium-active button[class*="primary"]:hover,
-.premium-active #add-to-queue:hover,
-.premium-active #export-confirm:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
-  transition: all var(--fast) var(--ease-smooth);
-}
-
-.premium-active button.primary:active,
-.premium-active button[class*="primary"]:active,
-.premium-active #add-to-queue:active,
-.premium-active #export-confirm:active {
-  transform: translateY(0);
-  transition: all var(--instant) var(--ease-smooth);
-}
-
-/* ============================================
-   PROGRESS BAR ENHANCEMENT
-   ============================================ */
-
-/* Shimmer effect - Shows smooth progress */
-.premium-active .queue-progress::after,
-.premium-active [class*="progress"]::after {
+.premium-active button.primary::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -30%;
-  width: 30%;
-  height: 100%;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(255, 255, 255, 0.08),
-    transparent
-  );
-  animation: progress-shimmer 3s var(--ease-smooth) infinite;
-  pointer-events: none;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg) translateY(-100%);
+  animation: shimmer 3s infinite;
 }
 
-@keyframes progress-shimmer {
-  0% {
-    left: -30%;
-  }
-  100% {
-    left: 100%;
-  }
+@keyframes shimmer {
+  0% { transform: rotate(45deg) translateY(-100%); }
+  100% { transform: rotate(45deg) translateY(100%); }
 }
 
-/* ============================================
-   QUEUE ITEM ENHANCEMENTS
-   ============================================ */
-
-/* Smooth entry animation */
-.premium-active .queue-item {
-  animation: queue-item-enter 400ms var(--ease-smooth);
-}
-
-@keyframes queue-item-enter {
-  0% {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Active download - Subtle glow */
-.premium-active .queue-item[data-status="downloading"],
-.premium-active .queue-item.downloading {
-  box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.2);
-  animation: downloading-pulse 2s var(--ease-soft) infinite;
-}
-
-@keyframes downloading-pulse {
-  0%, 100% {
-    box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.15);
-  }
-  50% {
-    box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.25);
-  }
-}
-
-/* ============================================
-   MICRO-INTERACTIONS
-   ============================================ */
-
-/* Success ripple on button click */
-@keyframes success-ripple {
-  0% {
-    transform: scale(0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-.premium-success-ripple {
-  position: absolute;
-  border-radius: 50%;
-  border: 2px solid var(--premium-accent);
-  pointer-events: none;
-  animation: success-ripple 600ms var(--ease-smooth) forwards;
-}
-
-/* ============================================
-   TOAST NOTIFICATION (Redesigned)
-   ============================================ */
-
+/* Toast Notification */
 .premium-toast {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(74, 222, 128, 0.2);
-  border-radius: 12px;
-  padding: 16px 20px;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(11, 11, 13, 0.95);
+  border: 1px solid var(--neon-green);
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(10, 255, 106, 0.3);
+  z-index: 9999;
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
   gap: 12px;
-  z-index: 10000;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all var(--normal) var(--ease-smooth);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.premium-toast.show {
-  opacity: 1;
-  transform: translateY(0);
+.premium-toast .toast-icon {
+  font-size: 24px;
+  animation: pulse 2s infinite;
 }
 
-.premium-toast-icon {
-  font-size: 20px;
-  line-height: 1;
+.premium-toast .toast-title {
+  color: var(--neon-green);
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.premium-toast-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.premium-toast-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--premium-accent);
-  letter-spacing: 0.3px;
-}
-
-.premium-toast-message {
+.premium-toast .toast-desc {
+  color: #fff;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.4;
+  opacity: 0.8;
 }
 
-/* ============================================
-   CURSOR ENHANCEMENT (Minimal)
-   ============================================ */
-
-.premium-cursor-trail {
-  position: fixed;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--premium-accent);
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0;
-  animation: cursor-trail-fade 600ms var(--ease-smooth) forwards;
+/* Glitch Text Effect (Optional usage) */
+.premium-active .glitch-text {
+  position: relative;
 }
 
-@keyframes cursor-trail-fade {
-  0% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
+.premium-active .glitch-text::before,
+.premium-active .glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--hacker-bg);
 }
 
-/* ============================================
-   ACCESSIBILITY & PERFORMANCE
-   ============================================ */
-
-/* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .premium-cursor-trail,
-  .premium-activation-flash,
-  .premium-activation-ripple {
-    display: none;
-  }
+.premium-active .glitch-text::before {
+  left: 2px;
+  text-shadow: -1px 0 var(--glitch-red);
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim-1 3s infinite linear alternate-reverse;
 }
 
-/* GPU acceleration for smooth 60 FPS */
-/* IMPORTANT: Only transform properties, no background changes */
-.premium-active .queue-panel,
-.premium-active .export-panel,
-.premium-active button.primary,
-.premium-active .queue-item,
-.premium-toast {
-  will-change: transform, opacity, box-shadow;
-  transform: translateZ(0);
+.premium-active .glitch-text::after {
+  left: -2px;
+  text-shadow: -1px 0 var(--glitch-blue);
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
 }
-
-/* DO NOT add .preview-panel here - it breaks video preview background */

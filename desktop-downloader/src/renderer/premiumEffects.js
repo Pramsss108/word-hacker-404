@@ -1,40 +1,113 @@
 /**
- * Premium Effects Controller - Apple + Tesla Aesthetic
- * Minimal elegance with confident power
+ * Premium Effects Controller - Cyberpunk / Hacker Aesthetic
+ * "Coding should fall" - Matrix Rain & Dynamic Animations
  */
+
+class MatrixRain {
+  constructor() {
+    this.canvas = document.createElement('canvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.canvas.className = 'matrix-canvas';
+    this.canvas.style.position = 'fixed';
+    this.canvas.style.top = '0';
+    this.canvas.style.left = '0';
+    this.canvas.style.width = '100%';
+    this.canvas.style.height = '100%';
+    this.canvas.style.zIndex = '-1'; // Behind everything
+    this.canvas.style.pointerEvents = 'none';
+    this.canvas.style.opacity = '0';
+    this.canvas.style.transition = 'opacity 1s ease';
+    
+    this.drops = [];
+    this.running = false;
+    this.rafId = null;
+    
+    // Config
+    this.fontSize = 14;
+    this.columns = 0;
+    this.chars = '01'; // Binary rain
+    this.speed = 2;
+  }
+
+  init() {
+    document.body.appendChild(this.canvas);
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+  }
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.columns = Math.floor(this.canvas.width / this.fontSize);
+    this.drops = Array(this.columns).fill(1);
+  }
+
+  start() {
+    if (this.running) return;
+    this.running = true;
+    this.canvas.style.opacity = '0.15'; // Visible but subtle
+    this.animate();
+  }
+
+  stop() {
+    this.running = false;
+    this.canvas.style.opacity = '0';
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+  }
+
+  animate() {
+    if (!this.running) return;
+
+    // Translucent black for trail effect
+    this.ctx.fillStyle = 'rgba(11, 11, 13, 0.05)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.fillStyle = '#0aff6a'; // Neon Green
+    this.ctx.font = ${this.fontSize}px 'JetBrains Mono', monospace;
+
+    for (let i = 0; i < this.drops.length; i++) {
+      const text = this.chars.charAt(Math.floor(Math.random() * this.chars.length));
+      this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
+
+      if (this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
+        this.drops[i] = 0;
+      }
+      this.drops[i]++;
+    }
+
+    this.rafId = requestAnimationFrame(() => this.animate());
+  }
+}
 
 class PremiumEffects {
   constructor() {
     this.isActive = false;
-    this.cursorTrailTimeout = null;
-    this.lastCursorMove = 0;
+    this.matrixRain = new MatrixRain();
+    this.matrixRain.init();
   }
 
   /**
-   * Activate premium effects with elegant sequence
+   * Activate premium effects with Hacker sequence
    */
   activate() {
     if (this.isActive) return;
     
     this.isActive = true;
-    console.log('✨ Premium activating...');
+    console.log(' Premium activating (Hacker Mode)...');
 
     // Step 1: Add premium class to body
     document.body.classList.add('premium-active');
 
-    // Step 2: Activation flash (600ms)
-    this.showActivationFlash();
+    // Step 2: Start Matrix Rain
+    this.matrixRain.start();
 
-    // Step 3: Ripple from badge (1200ms, starts at 200ms)
-    setTimeout(() => this.showActivationRipple(), 200);
+    // Step 3: Trigger global UI animations
+    this.animateUIElements();
 
-    // Step 4: Toast notification (appears at 800ms)
-    setTimeout(() => this.showActivationToast(), 800);
+    // Step 4: Show activation toast
+    this.showActivationToast();
 
-    // Step 5: Enable subtle cursor trail
-    setTimeout(() => this.enableCursorTrail(), 1000);
-
-    console.log('✨ Premium activated (Apple+Tesla mode)');
+    console.log(' Premium activated (Hacker Mode)');
   }
 
   /**
@@ -45,165 +118,44 @@ class PremiumEffects {
 
     this.isActive = false;
     document.body.classList.remove('premium-active');
-    this.disableCursorTrail();
+    this.matrixRain.stop();
 
-    console.log('💤 Premium deactivated');
+    console.log(' Premium deactivated');
   }
 
-  /**
-   * Show activation flash - Subtle screen power-up
-   */
-  showActivationFlash() {
-    const flash = document.createElement('div');
-    flash.className = 'premium-activation-flash';
-    document.body.appendChild(flash);
-
-    setTimeout(() => flash.remove(), 600);
-  }
-
-  /**
-   * Show activation ripple from badge position
-   */
-  showActivationRipple() {
-    const badge = document.getElementById('license-badge');
-    if (!badge) return;
-
-    const rect = badge.getBoundingClientRect();
-    const ripple = document.createElement('div');
-    ripple.className = 'premium-activation-ripple';
-    
-    // Position ripple at badge center
-    ripple.style.left = `${rect.left + rect.width / 2 - 100}px`;
-    ripple.style.top = `${rect.top + rect.height / 2 - 100}px`;
-    
-    document.body.appendChild(ripple);
-
-    setTimeout(() => ripple.remove(), 1200);
-  }
-
-  /**
-   * Show elegant activation toast
-   */
-  showActivationToast() {
-    const toast = document.createElement('div');
-    toast.className = 'premium-toast';
-    toast.innerHTML = `
-      <div class="premium-toast-icon">✨</div>
-      <div class="premium-toast-content">
-        <div class="premium-toast-title">Premium Activated</div>
-        <div class="premium-toast-message">Enjoy unlimited downloads & enhanced experience</div>
-      </div>
-    `;
-    
-    document.body.appendChild(toast);
-
-    // Fade in
-    setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remove after 4 seconds
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
-  }
-
-  /**
-   * Enable minimal cursor trail (only on click)
-   */
-  enableCursorTrail() {
-    if (this.cursorTrailEnabled) return;
-    
-    this.cursorTrailEnabled = true;
-    this.cursorTrailHandler = (e) => {
-      // Only on click, not constant movement
-      if (e.type !== 'click') return;
-      
-      // Throttle to max 5 trails per second
-      const now = Date.now();
-      if (now - this.lastCursorMove < 200) return;
-      this.lastCursorMove = now;
-
-      this.createCursorTrail(e.clientX, e.clientY);
-    };
-
-    document.addEventListener('click', this.cursorTrailHandler);
-  }
-
-  /**
-   * Disable cursor trail
-   */
-  disableCursorTrail() {
-    if (!this.cursorTrailEnabled) return;
-    
-    this.cursorTrailEnabled = false;
-    document.removeEventListener('click', this.cursorTrailHandler);
-  }
-
-  /**
-   * Create single cursor trail particle
-   */
-  createCursorTrail(x, y) {
-    const trail = document.createElement('div');
-    trail.className = 'premium-cursor-trail';
-    trail.style.left = `${x}px`;
-    trail.style.top = `${y}px`;
-    
-    document.body.appendChild(trail);
-
-    setTimeout(() => trail.remove(), 600);
-  }
-
-  /**
-   * Add success ripple to button click
-   */
-  addSuccessRipple(button) {
-    const rect = button.getBoundingClientRect();
-    const ripple = document.createElement('div');
-    ripple.className = 'premium-success-ripple';
-    
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = `${size}px`;
-    ripple.style.height = `${size}px`;
-    ripple.style.left = `${rect.left + rect.width / 2 - size / 2}px`;
-    ripple.style.top = `${rect.top + rect.height / 2 - size / 2}px`;
-    
-    document.body.appendChild(ripple);
-
-    setTimeout(() => ripple.remove(), 600);
-  }
-
-  /**
-   * Enhance button with ripple on click
-   */
-  enhanceButton(selector) {
-    const buttons = document.querySelectorAll(selector);
-    buttons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        if (this.isActive) {
-          this.addSuccessRipple(button);
-        }
-      });
+  animateUIElements() {
+    // Re-trigger animations on key elements
+    const elements = document.querySelectorAll('.panel, .card, .input-group, button');
+    elements.forEach((el, index) => {
+      el.style.animation = 'none';
+      el.offsetHeight; /* trigger reflow */
+      el.style.animation = slideUpFade 0.5s ease-out s forwards;
     });
   }
 
-  /**
-   * Check if premium is currently active
-   */
-  isPremiumActive() {
-    return this.isActive;
+  showActivationToast() {
+    const toast = document.createElement('div');
+    toast.className = 'premium-toast';
+    toast.innerHTML = 
+      <div class="toast-content">
+        <span class="toast-icon"></span>
+        <div class="toast-text">
+          <div class="toast-title">SYSTEM UNLOCKED</div>
+          <div class="toast-desc">Premium features active</div>
+        </div>
+      </div>
+    ;
+    
+    document.body.appendChild(toast);
+    
+    // Remove after 3s
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(20px)';
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
   }
 }
 
-// Create global instance
+// Initialize
 window.premiumEffects = new PremiumEffects();
-
-// Auto-enhance primary buttons when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.premiumEffects.enhanceButton('button.primary, button[class*="primary"], #add-to-queue, #export-confirm');
-  });
-} else {
-  window.premiumEffects.enhanceButton('button.primary, button[class*="primary"], #add-to-queue, #export-confirm');
-}
-
-console.log('✨ Premium Effects Controller loaded (Apple+Tesla mode)');
