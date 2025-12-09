@@ -277,11 +277,12 @@ const createWindow = () => {
     console.error('[Main] Page failed to load:', errorCode, errorDescription)
   })
   
-  const htmlPath = app.isPackaged
-    ? path.join(__dirname, 'renderer', 'index.html')
-    : path.join(__dirname, '..', 'index.html')
+  // Load the HTML file - use correct path for dev mode
+  const htmlPath = path.join(__dirname, '..', 'index.html')
   
   console.log('[Main] Loading HTML from:', htmlPath)
+  console.log('[Main] HTML exists:', fs.existsSync(htmlPath))
+  
   mainWindow.loadFile(htmlPath)
   mainWindow.on('closed', () => {
     mainWindow = null
