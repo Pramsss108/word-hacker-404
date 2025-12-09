@@ -2159,6 +2159,12 @@ const wireEvents = () => {
   
   // Close metadata modal - X button click (use capture phase)
   if (metadataCloseBtn) {
+    // Force button to be clickable (override any CSS)
+    metadataCloseBtn.style.pointerEvents = 'auto'
+    metadataCloseBtn.style.cursor = 'pointer'
+    metadataCloseBtn.style.zIndex = '9999'
+    metadataCloseBtn.style.position = 'relative'
+    
     metadataCloseBtn.addEventListener('click', (e) => {
       console.log('[Metadata] Close button clicked!')
       e.preventDefault()
@@ -2172,6 +2178,14 @@ const wireEvents = () => {
       e.preventDefault()
       setPreviewMode('video')
     }, true)
+    
+    // Test if button is reachable
+    console.log('[Init] Close button found and listeners attached', {
+      element: metadataCloseBtn,
+      computedStyle: window.getComputedStyle(metadataCloseBtn).pointerEvents
+    })
+  } else {
+    console.error('[Init] Close button NOT FOUND!')
   }
   
   // Emergency fallback: ESC key to close
