@@ -2139,11 +2139,16 @@ const wireEvents = () => {
   })
 
   summaryOpenTriggers.forEach((chip) => {
-    chip.addEventListener('click', () => {
+    chip.addEventListener('click', (e) => {
+      console.log('[Chip] Clicked:', chip.dataset.openPanel)
       const panel = chip.dataset.openPanel
       setActiveMetadataPanel(panel, chip)
       setPreviewMode('insights')
     })
+    
+    // Ensure chips are clickable
+    chip.style.cursor = 'pointer'
+    chip.style.pointerEvents = 'auto'
   })
 
   // Close metadata modal - backdrop click
@@ -2152,13 +2157,22 @@ const wireEvents = () => {
     setPreviewMode('video')
   })
   
-  // Close metadata modal - X button click
-  metadataCloseBtn?.addEventListener('click', (e) => {
-    console.log('[Metadata] Close button clicked')
-    e.preventDefault()
-    e.stopPropagation()
-    setPreviewMode('video')
-  })
+  // Close metadata modal - X button click (use capture phase)
+  if (metadataCloseBtn) {
+    metadataCloseBtn.addEventListener('click', (e) => {
+      console.log('[Metadata] Close button clicked!')
+      e.preventDefault()
+      e.stopPropagation()
+      setPreviewMode('video')
+    }, true) // Use capture phase to catch it early
+    
+    // Also add mousedown as backup
+    metadataCloseBtn.addEventListener('mousedown', (e) => {
+      console.log('[Metadata] Close button mousedown!')
+      e.preventDefault()
+      setPreviewMode('video')
+    }, true)
+  }
   
   // Emergency fallback: ESC key to close
   document.addEventListener('keydown', (e) => {

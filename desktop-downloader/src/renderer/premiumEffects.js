@@ -24,7 +24,7 @@ class DigitalAurora {
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
         this.canvas.style.pointerEvents = 'none'; // CRITICAL: Never capture clicks
-        this.canvas.style.zIndex = '1'; // Behind all UI elements
+        this.canvas.style.zIndex = '-1'; // BEHIND everything
         this.canvas.style.opacity = '0';
         this.canvas.style.transition = 'opacity 1s ease';
         
