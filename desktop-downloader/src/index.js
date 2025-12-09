@@ -2164,11 +2164,26 @@ const wireEvents = () => {
   
   // Close metadata modal - X button click (use capture phase)
   if (metadataCloseBtn) {
-    // Force button to be clickable (override any CSS)
-    metadataCloseBtn.style.pointerEvents = 'auto'
-    metadataCloseBtn.style.cursor = 'pointer'
-    metadataCloseBtn.style.zIndex = '9999'
-    metadataCloseBtn.style.position = 'relative'
+    // NUCLEAR OPTION: Force ALL styles via setAttribute and cssText
+    metadataCloseBtn.style.cssText += `
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      z-index: 99999 !important;
+      position: relative !important;
+      display: inline-block !important;
+    `;
+    
+    // Also ensure parent header doesn't block
+    const header = metadataCloseBtn.parentElement;
+    if (header) {
+      header.style.cssText += `
+        pointer-events: auto !important;
+        z-index: 9999 !important;
+      `;
+    }
+    
+    // Triple-check: Add class for CSS targeting
+    metadataCloseBtn.classList.add('force-clickable');
     
     metadataCloseBtn.addEventListener('click', (e) => {
       console.log('[Metadata] Close button clicked!')
@@ -2184,10 +2199,16 @@ const wireEvents = () => {
       setPreviewMode('video')
     }, true)
     
+    // Add hover test
+    metadataCloseBtn.addEventListener('mouseenter', () => {
+      console.log('[Metadata] Mouse ENTERED close button!')
+    })
+    
     // Test if button is reachable
     console.log('[Init] Close button found and listeners attached', {
       element: metadataCloseBtn,
-      computedStyle: window.getComputedStyle(metadataCloseBtn).pointerEvents
+      computedStyle: window.getComputedStyle(metadataCloseBtn).pointerEvents,
+      boundingBox: metadataCloseBtn.getBoundingClientRect()
     })
   } else {
     console.error('[Init] Close button NOT FOUND!')

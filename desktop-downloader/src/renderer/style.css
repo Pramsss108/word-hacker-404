@@ -952,11 +952,18 @@ h3 {
 }
 
 /* Make close button always clickable */
-#metadata-close {
+#metadata-close,
+.force-clickable {
 	pointer-events: auto !important;
-	z-index: 999 !important;
-	position: relative;
-	cursor: pointer;
+	z-index: 999999 !important;
+	position: relative !important;
+	cursor: pointer !important;
+	display: inline-block !important;
+}
+
+#metadata-close:hover,
+.force-clickable:hover {
+	opacity: 0.8 !important;
 }
 
 .premium-header {
