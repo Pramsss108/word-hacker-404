@@ -35,19 +35,19 @@ if exist "%LOCALAPPDATA%\com.tauri.dev" (
 echo [4/5] Clearing npm cache...
 call npm cache clean --force
 
-echo [5/5] Starting ELECTRON dev server...
+echo [5/5] Starting dev server...
 echo.
 echo ========================================
-echo   ELECTRON Dev Server Starting...
-echo   Downloader engine ACTIVE!
+echo   Dev server starting...
+echo   Premium toggle will be visible!
 echo ========================================
 echo.
 
-call npm run electron:dev
+call npm run tauri:dev
 
 if errorlevel 1 (
     echo.
-    echo ERROR! Electron dev server failed to start.
+    echo ERROR! Dev server failed to start.
     echo Check the error messages above.
     pause
     exit /b 1
