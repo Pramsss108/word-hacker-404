@@ -37,6 +37,7 @@
 	margin: 0.6rem 0 0.9rem;
 	position: relative;
 	z-index: 3;
+	pointer-events: auto; /* Ensure chips are always clickable */
 }
 
 .summary-chip {
@@ -938,6 +939,9 @@ h3 {
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 1rem;
+	pointer-events: auto; /* Ensure header is clickable */
+	z-index: 10; /* Above everything else in popover */
+	position: relative;
 }
 
 .metadata-popover-header h3 {
@@ -945,6 +949,14 @@ h3 {
 	font-size: 1.05rem;
 	font-weight: 600;
 	color: var(--text);
+}
+
+/* Make close button always clickable */
+#metadata-close {
+	pointer-events: auto !important;
+	z-index: 999 !important;
+	position: relative;
+	cursor: pointer;
 }
 
 .premium-header {
