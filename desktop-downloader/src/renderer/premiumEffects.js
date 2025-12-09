@@ -131,22 +131,22 @@ class PremiumEffects {
     elements.forEach((el, index) => {
       el.style.animation = 'none';
       el.offsetHeight; /* trigger reflow */
-      el.style.animation = slideUpFade 0.5s ease-out s forwards;
+      el.style.animation = `slideUpFade 0.5s ease-out ${index * 0.05}s forwards`;
     });
   }
 
   showActivationToast() {
     const toast = document.createElement('div');
     toast.className = 'premium-toast';
-    toast.innerHTML = 
+    toast.innerHTML = `
       <div class="toast-content">
-        <span class="toast-icon"></span>
+        <span class="toast-icon">⚡</span>
         <div class="toast-text">
           <div class="toast-title">SYSTEM UNLOCKED</div>
           <div class="toast-desc">Premium features active</div>
         </div>
       </div>
-    ;
+    `;
     
     document.body.appendChild(toast);
     
