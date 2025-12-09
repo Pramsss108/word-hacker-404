@@ -24,10 +24,9 @@ class DigitalAurora {
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
         this.canvas.style.pointerEvents = 'none';
-        this.canvas.style.zIndex = '9999'; // Force on top for now to verify visibility
+        this.canvas.style.zIndex = '1'; // Just above background
         this.canvas.style.opacity = '0';
         this.canvas.style.transition = 'opacity 1s ease';
-        this.canvas.style.mixBlendMode = 'screen'; // Add blend mode for cool effect
         
         document.body.appendChild(this.canvas);
         

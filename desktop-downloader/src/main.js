@@ -421,40 +421,6 @@ app.whenReady().then(() => {
     }
   })
 
-  // 🛡️ PRIVACY BRIDGE HANDLER
-  ipcMain.handle('downloader:retry-with-browser', async (_event, { url, browser }) => {
-    console.log(`[PrivacyBridge] Retrying ${url} with ${browser} cookies...`)
-    try {
-      // Map browser name to yt-dlp argument
-      const browserArg = browser.toLowerCase() // 'chrome', 'firefox', 'edge'
-      
-      // Use ytdlpRunner directly with the cookie arg
-      const payload = await ytdlpRunner(url, {
-        dumpSingleJson: true,
-        skipDownload: true,
-        noCheckCertificates: true,
-        noWarnings: true,
-        preferFreeFormats: true,
-        cookiesFromBrowser: browserArg
-      })
-
-      const summary = {
-        title: payload.title,
-        duration: payload.duration || 0,
-        thumbnails: payload.thumbnails || [],
-        formats: (payload.formats || []).map(summarizeFormat)
-      }
-
-      // Update cache
-      FORMAT_CACHE.set(url, summary)
-      
-      return { success: true, data: summary }
-    } catch (error) {
-      console.error(`[PrivacyBridge] Failed with ${browser}:`, error)
-      return { success: false, error: error.message }
-    }
-  })
-
   ipcMain.handle('metadata:fetch', async (_event, url) => {
     if (!url) {
       throw new Error('Missing URL for metadata request')

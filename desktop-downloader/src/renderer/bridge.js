@@ -378,50 +378,16 @@ const bridge = {
           try {
             return await window.downloader.probeFormats(url);
           } catch (error) {
-            console.error('[Bridge] Probe error details:', error);
+            console.error('[Bridge] Probe failed:', error);
             const errorMsg = (error.message || error.toString()).toLowerCase();
             
-            // 🛡️ INTERCEPT AUTH ERRORS
-            // Catches: "Sign in to confirm your age", "Private video", "Login required", etc.
+            // Show user-friendly message for private content
             if (errorMsg.includes('inappropriate') || 
-                errorMsg.includes('login') || 
                 errorMsg.includes('private') ||
                 errorMsg.includes('sign in') ||
                 errorMsg.includes('confirm your age') ||
-                errorMsg.includes('bot') ||
-                errorMsg.includes('checkpoint')) {
-              
-              console.log('[Bridge] 🛡️ Triggering Privacy Bridge for:', url);
-              
-              return new Promise((resolve, reject) => {
-                  // Show the modal
-                  if (window.privacyBridge) {
-                      window.privacyBridge.show(url);
-                      
-                      // Handle Success
-                      const successHandler = (e) => {
-                          cleanup();
-                          resolve(e.detail);
-                      };
-                      
-                      // Handle Cancel
-                      const cancelHandler = () => {
-                          cleanup();
-                          reject(new Error('User cancelled privacy verification'));
-                      };
-                      
-                      const cleanup = () => {
-                          window.removeEventListener('privacy-bridge-success', successHandler);
-                          window.removeEventListener('privacy-bridge-cancel', cancelHandler);
-                      };
-                      
-                      window.addEventListener('privacy-bridge-success', successHandler);
-                      window.addEventListener('privacy-bridge-cancel', cancelHandler);
-                  } else {
-                      console.error('PrivacyBridge not found!');
-                      reject(error);
-                  }
-              });
+                errorMsg.includes('unavailable')) {
+                throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
             }
             throw error;
           }
@@ -537,117 +503,5 @@ if (isTauri) {
 
 } else {
   // In Electron, window.downloader is already defined by preload.js
-  // We wrap it to intercept errors for the Privacy Bridge
   console.log('⚡ WH404 Bridge: Electron Mode Detected');
-  
-  // Helper to install the interceptor
-  const installInterceptor = () => {
-      if (!window.downloader) {
-          console.warn('⏳ window.downloader not ready yet, will retry...');
-          return false;
-      }
-      if (window.downloader._isIntercepted) {
-          console.log('✅ Privacy Bridge already installed');
-          return true;
-      }
-      
-      console.log('🛡️ Installing Privacy Bridge Interceptor...');
-      const originalProbe = window.downloader.probeFormats;
-      
-      window.downloader.probeFormats = async (url) => {
-          console.log('[Bridge] Probing:', url);
-          try {
-              return await originalProbe(url);
-          } catch (error) {
-              console.error('[Bridge] Probe error details:', error);
-              const errorMsg = (error.message || error.toString()).toLowerCase();
-              
-              // 🛡️ INTERCEPT AUTH ERRORS
-              // Expanded keywords and logic
-              if (errorMsg.includes('inappropriate') || 
-                  errorMsg.includes('login') || 
-                  errorMsg.includes('private') ||
-                  errorMsg.includes('sign in') ||
-                  errorMsg.includes('confirm your age') ||
-                  errorMsg.includes('bot') ||
-                  errorMsg.includes('checkpoint') ||
-                  errorMsg.includes('401') || // Unauthorized
-                  errorMsg.includes('403') || // Forbidden
-                  errorMsg.includes('unavailable') || // Generic unavailable
-                  (url.includes('instagram.com') && errorMsg.includes('metadata'))) { // Catch-all for IG metadata failures
-                
-                console.log('[Bridge] 🛡️ Triggering Privacy Bridge for:', url);
-                
-                return new Promise((resolve, reject) => {
-                    if (window.privacyBridge) {
-                        window.privacyBridge.show(url);
-                        
-                        const successHandler = (e) => {
-                            cleanup();
-                            resolve(e.detail);
-                        };
-                        
-                        const cancelHandler = () => {
-                            cleanup();
-                            reject(new Error('User cancelled privacy verification'));
-                        };
-                        
-                        const cleanup = () => {
-                            window.removeEventListener('privacy-bridge-success', successHandler);
-                            window.removeEventListener('privacy-bridge-cancel', cancelHandler);
-                        };
-                        
-                        window.addEventListener('privacy-bridge-success', successHandler);
-                        window.addEventListener('privacy-bridge-cancel', cancelHandler);
-                    } else {
-                        console.error('PrivacyBridge UI not found!');
-                        reject(error);
-                    }
-                });
-              }
-              throw error;
-          }
-      };
-      window.downloader._isIntercepted = true;
-      console.log('🛡️ Privacy Bridge Interceptor Active');
-      return true;
-  };
-
-  // Try immediately
-  if (installInterceptor()) {
-      console.log('✅ Interceptor installed on first try');
-  }
-
-  // Also watch for it appearing (if preload is slow)
-  let attempts = 0;
-  const checkInterval = setInterval(() => {
-      if (window.downloader) {
-          installInterceptor();
-          clearInterval(checkInterval);
-      }
-      attempts++;
-      if (attempts > 20) clearInterval(checkInterval); // Stop after 2s
-  }, 100);
-}
-
-// Debug helper
-window.debugBridge = () => {
-    if (window.privacyBridge) {
-        window.privacyBridge.show('https://instagram.com/debug-test');
-    } else {
-        console.error('PrivacyBridge not loaded');
-    }
-};
-
-// Force check for downloader availability
-if (!isTauri) {
-    setTimeout(() => {
-        if (!window.downloader) {
-            console.error('CRITICAL: window.downloader is missing after 1s!');
-        } else if (!window.downloader._isIntercepted) {
-            console.warn('WARNING: Interceptor was not installed correctly. Retrying...');
-            // Re-run the installation logic if needed (copy-paste logic or refactor)
-            // For now, just log it.
-        }
-    }, 1000);
 }
