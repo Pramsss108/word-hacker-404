@@ -45,7 +45,7 @@ class MatrixRain {
   start() {
     if (this.running) return;
     this.running = true;
-    this.canvas.style.opacity = '0.15'; // Visible but subtle
+    this.canvas.style.opacity = '0.4'; // Increased visibility for Hacker feel
     this.animate();
   }
 
@@ -95,8 +95,9 @@ class PremiumEffects {
     this.isActive = true;
     console.log(' Premium activating (Hacker Mode)...');
 
-    // Step 1: Add premium class to body
+    // Step 1: Add premium class to body and html
     document.body.classList.add('premium-active');
+    document.documentElement.classList.add('premium-active');
 
     // Step 2: Start Matrix Rain
     this.matrixRain.start();
@@ -118,9 +119,10 @@ class PremiumEffects {
 
     this.isActive = false;
     document.body.classList.remove('premium-active');
+    document.documentElement.classList.remove('premium-active');
     this.matrixRain.stop();
 
-    console.log(' Premium deactivated');
+    console.log('💤 Premium deactivated');
   }
 
   animateUIElements() {
