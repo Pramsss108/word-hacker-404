@@ -2146,8 +2146,27 @@ const wireEvents = () => {
     })
   })
 
-  metadataBackdrop?.addEventListener('click', () => setPreviewMode('video'))
-  metadataCloseBtn?.addEventListener('click', () => setPreviewMode('video'))
+  // Close metadata modal - backdrop click
+  metadataBackdrop?.addEventListener('click', (e) => {
+    console.log('[Metadata] Backdrop clicked')
+    setPreviewMode('video')
+  })
+  
+  // Close metadata modal - X button click
+  metadataCloseBtn?.addEventListener('click', (e) => {
+    console.log('[Metadata] Close button clicked')
+    e.preventDefault()
+    e.stopPropagation()
+    setPreviewMode('video')
+  })
+  
+  // Emergency fallback: ESC key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.previewMode === 'insights') {
+      console.log('[Metadata] ESC pressed - closing')
+      setPreviewMode('video')
+    }
+  })
 
   window.addEventListener('resize', () => {
     if (state.previewMode !== 'insights') return
@@ -2608,6 +2627,12 @@ const formatHistoryDate = (timestamp) => {
 
 const bindIpc = () => {
   console.log('[IPC] Binding IPC handlers...')
+  
+  // Check if window.downloader exists (Electron mode only)
+  if (!window.downloader) {
+    console.log('[IPC] Running in Tauri mode - using bridge event system')
+    return
+  }
   
   window.downloader.onStatus((payload = {}) => {
     engineOffline = payload.network === 'offline'
