@@ -131,6 +131,7 @@
    ============================================ */
 
 /* Border glow on hover - Shows interactivity */
+/* IMPORTANT: Only add border effect, DO NOT change background */
 .premium-active .preview-panel:hover,
 .premium-active .queue-panel:hover,
 .premium-active .export-panel:hover {
@@ -141,6 +142,7 @@
 .premium-active .preview-panel,
 .premium-active .queue-panel,
 .premium-active .export-panel {
+  /* DO NOT set background here - it will override the video preview */
   transition: box-shadow var(--normal) var(--ease-smooth);
 }
 
@@ -383,12 +385,14 @@
 }
 
 /* GPU acceleration for smooth 60 FPS */
-.premium-active .preview-panel,
+/* IMPORTANT: Only transform properties, no background changes */
 .premium-active .queue-panel,
 .premium-active .export-panel,
 .premium-active button.primary,
 .premium-active .queue-item,
 .premium-toast {
-  will-change: transform, opacity;
+  will-change: transform, opacity, box-shadow;
   transform: translateZ(0);
 }
+
+/* DO NOT add .preview-panel here - it breaks video preview background */
