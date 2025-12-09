@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/renderer/style.css" />
     <link rel="stylesheet" href="/src/renderer/tutorial.css" />
+    <link rel="stylesheet" href="/src/renderer/upgradeModal.css?v=2" />
+    <link rel="stylesheet" href="/src/renderer/premiumEffects.css?v=2" />
   </head>
   <body>
     <!-- Bridge must load before renderer -->
@@ -103,7 +105,14 @@
             </div>
           </div>
         </div>
-        <div class="menu-title">WH404 · Social Media Downloader</div>
+        <div class="menu-title">
+          WH404 · Social Media Downloader
+          <span id="license-badge" class="license-badge">FREE</span>
+          <button id="premium-toggle" class="premium-toggle-btn" title="Toggle Premium (Testing)">
+            <span class="premium-icon">✨</span>
+            <span class="premium-text">Premium</span>
+          </button>
+        </div>
         <div class="window-controls" aria-label="window controls">
           <button class="ghost" data-pin title="Always on top">📌</button>
           <button class="ghost" data-window="minimize" title="Minimize">–</button>
@@ -410,6 +419,12 @@
       </div>
     </div>
 
+    <!-- Security & Monetization System -->
+    <script type="module" src="/src/renderer/licenseManager.js?v=2"></script>
+    <script type="module" src="/src/renderer/freeTierManager.js?v=2"></script>
+    <script type="module" src="/src/renderer/premiumEffects.js?v=2"></script>
+    <script type="module" src="/src/renderer/premiumToggle.js?v=2"></script>
+    <script type="module" src="/src/renderer/upgradeModal.js?v=2"></script>
     <script type="module" src="/src/index.js"></script>
     <script type="module" src="/src/renderer/tutorial.js"></script>
   </body>
