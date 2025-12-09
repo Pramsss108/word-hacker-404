@@ -112,12 +112,14 @@
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.25s ease;
+	z-index: 1;
 }
 
 .metadata-popover {
 	--popover-x: 60%;
 	--popover-y: 140px;
 	position: absolute;
+	z-index: 10;
 	left: var(--popover-x);
 	top: var(--popover-y);
 	transform: translate(-50%, 0) scale(0.98);
@@ -956,6 +958,7 @@ h3 {
 	font-size: 1.05rem;
 	font-weight: 600;
 	color: var(--text);
+	pointer-events: none !important;
 }
 
 /* Make close button always clickable */
@@ -965,8 +968,12 @@ h3 {
 	z-index: 100001 !important;
 	position: relative !important;
 	cursor: pointer !important;
-	cursor: pointer !important;
 	display: inline-block !important;
+}
+
+/* Ensure modal body doesn't block header clicks */
+.metadata-popover-body {
+	pointer-events: auto !important;
 }
 
 #metadata-close:hover,
