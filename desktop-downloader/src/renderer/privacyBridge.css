@@ -1,0 +1,135 @@
+/* Privacy Bridge - Apple-Grade Access Verification Modal */
+
+.privacy-bridge-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: bridgeFadeIn 0.3s ease forwards;
+}
+
+.privacy-bridge-modal {
+  background: rgba(20, 20, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  padding: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  transform: scale(0.95);
+  animation: bridgeScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle top highlight */
+.privacy-bridge-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.bridge-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 20px rgba(10, 255, 106, 0.3));
+}
+
+.bridge-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.bridge-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #9aa3b2;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.bridge-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.bridge-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bridge-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bridge-btn.active {
+  background: rgba(10, 255, 106, 0.1);
+  border-color: #0aff6a;
+}
+
+.bridge-btn-icon {
+  font-size: 24px;
+}
+
+.bridge-btn-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e9eef6;
+}
+
+.bridge-footer {
+  font-size: 12px;
+  color: #64748b;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+}
+
+.bridge-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 4px;
+  line-height: 1;
+}
+
+.bridge-close:hover {
+  color: #fff;
+}
+
+@keyframes bridgeFadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes bridgeScaleIn {
+  to { transform: scale(1); }
+}

@@ -55,8 +55,6 @@ class LicenseManager {
       if (window.premiumEffects) {
         console.log('[License] Activating premium visual effects...');
         window.premiumEffects.activate();
-        window.premiumEffects.showActivationToast();
-        window.premiumEffects.showConfetti();
       }
 
       // Update license badge

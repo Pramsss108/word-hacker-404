@@ -11,6 +11,16 @@ const FORMAT_CACHE = new Map()
 const METADATA_CACHE_TTL = 1000 * 60 * 10 // 10 minutes
 const METADATA_CACHE = new Map()
 
+// 🛡️ ELITE BYPASS STRATEGIES (Pro Developer Engine)
+const RETRY_STRATEGIES = [
+  { name: 'Standard', args: {} },
+  { name: 'Chrome Auth', args: { cookiesFromBrowser: 'chrome' } },
+  { name: 'Edge Auth', args: { cookiesFromBrowser: 'edge' } },
+  { name: 'Firefox Auth', args: { cookiesFromBrowser: 'firefox' } },
+  { name: 'Mobile Mode', args: { cookiesFromBrowser: 'chrome', userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1' } },
+  { name: 'In-App Session', args: { cookies: path.join(app.getPath('userData'), 'instagram-cookies.txt') } }
+]
+
 // Platform detection and configuration
 // ⚠️ ONLY INCLUDES PLATFORMS THAT WORK WITHOUT COOKIES
 const SUPPORTED_PLATFORMS = {
@@ -62,6 +72,14 @@ const SUPPORTED_PLATFORMS = {
     patterns: ['dailymotion.com', 'dai.ly'],
     extraArgs: [],
     requiresCookies: false
+  },
+  instagram: {
+    name: 'Instagram',
+    icon: '📸',
+    patterns: ['instagram.com', 'instagr.am'],
+    extraArgs: ['--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'],
+    fallbackArgs: ['--cookies-from-browser', 'chrome'],
+    requiresCookies: true
   },
   generic: {
     name: 'Generic',
@@ -227,6 +245,10 @@ const resolveOutputDir = (customPath) => {
 }
 
 const createWindow = () => {
+  const preloadPath = path.join(__dirname, 'preload.js')
+  console.log('[Main] Preload path:', preloadPath)
+  console.log('[Main] Preload exists:', fs.existsSync(preloadPath))
+  
   mainWindow = new BrowserWindow({
     width: 1120,
     height: 720,
@@ -236,7 +258,7 @@ const createWindow = () => {
     backgroundColor: '#05070a',
     titleBarStyle: 'hidden',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: preloadPath,
       contextIsolation: true,
       nodeIntegration: false
     }
@@ -244,6 +266,12 @@ const createWindow = () => {
 
   mainWindow.removeMenu()
   mainWindow.maximize() // Open maximized to device width
+  
+  // Add error handler
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('[Main] Page failed to load:', errorCode, errorDescription)
+  })
+  
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'))
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -299,13 +327,34 @@ app.whenReady().then(() => {
       sendToRenderer('download:job-start', { url, index, total: cleaned.length })
       const jobLabel = sanitize(url.replace(/https?:\/\//, '').slice(0, 40)) || 'job'
       
-      try {
-        summary.push(await runJob(url, jobLabel, formatSelector, outputDir, index, cleaned.length))
-      } catch (error) {
-        if (error.message?.includes('cancelled')) {
-          console.log('[Download] Job cancelled:', url)
-        } else {
-          throw error
+      let success = false
+      let lastError = null
+
+      // 🔄 SMART RETRY LOOP (Pro Engine Logic)
+      for (const strategy of RETRY_STRATEGIES) {
+        try {
+          if (strategy.name !== 'Standard') {
+            console.log(`[Download] Attempting strategy: ${strategy.name} for ${url}`)
+          }
+          
+          summary.push(await runJob(url, jobLabel, formatSelector, outputDir, index, cleaned.length, strategy.args))
+          success = true
+          break // Stop if successful
+        } catch (error) {
+          lastError = error
+          if (error.message?.includes('cancelled')) {
+            console.log('[Download] Job cancelled:', url)
+            break // Don't retry if cancelled
+          }
+          console.warn(`[Download] Strategy ${strategy.name} failed:`, error.message)
+        }
+      }
+
+      if (!success && lastError) {
+        // If all strategies fail, throw the last error
+        if (!lastError.message?.includes('cancelled')) {
+           console.error('[Download] All strategies exhausted. Download failed.')
+           throw lastError
         }
       }
     }
@@ -372,6 +421,40 @@ app.whenReady().then(() => {
     }
   })
 
+  // 🛡️ PRIVACY BRIDGE HANDLER
+  ipcMain.handle('downloader:retry-with-browser', async (_event, { url, browser }) => {
+    console.log(`[PrivacyBridge] Retrying ${url} with ${browser} cookies...`)
+    try {
+      // Map browser name to yt-dlp argument
+      const browserArg = browser.toLowerCase() // 'chrome', 'firefox', 'edge'
+      
+      // Use ytdlpRunner directly with the cookie arg
+      const payload = await ytdlpRunner(url, {
+        dumpSingleJson: true,
+        skipDownload: true,
+        noCheckCertificates: true,
+        noWarnings: true,
+        preferFreeFormats: true,
+        cookiesFromBrowser: browserArg
+      })
+
+      const summary = {
+        title: payload.title,
+        duration: payload.duration || 0,
+        thumbnails: payload.thumbnails || [],
+        formats: (payload.formats || []).map(summarizeFormat)
+      }
+
+      // Update cache
+      FORMAT_CACHE.set(url, summary)
+      
+      return { success: true, data: summary }
+    } catch (error) {
+      console.error(`[PrivacyBridge] Failed with ${browser}:`, error)
+      return { success: false, error: error.message }
+    }
+  })
+
   ipcMain.handle('metadata:fetch', async (_event, url) => {
     if (!url) {
       throw new Error('Missing URL for metadata request')
@@ -383,14 +466,41 @@ app.whenReady().then(() => {
     }
 
     try {
-      const raw = await ytdlpRunner(normalizedUrl, {
+      const baseOptions = {
         dumpSingleJson: true,
         skipDownload: true,
         flatPlaylist: true,
         noWarnings: true,
         noCheckCertificates: true,
-        simulate: true
-      })
+        simulate: true,
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+
+      let raw
+      let success = false
+      let lastError = null
+
+      // 🔄 SMART RETRY LOOP (Pro Engine Logic)
+      for (const strategy of RETRY_STRATEGIES) {
+        try {
+          if (strategy.name !== 'Standard') {
+            console.log(`[Metadata] Attempting strategy: ${strategy.name} for ${normalizedUrl}`)
+          }
+          
+          const options = { ...baseOptions, ...strategy.args }
+          raw = await ytdlpRunner(normalizedUrl, options)
+          success = true
+          break // Stop if successful
+        } catch (err) {
+          lastError = err
+          console.warn(`[Metadata] Strategy ${strategy.name} failed:`, err.message)
+        }
+      }
+
+      if (!success) {
+        throw lastError || new Error('Metadata fetch failed after all strategies.')
+      }
+
       const parsed = parseJsonOutput(raw)
       const keywordSource = Array.isArray(parsed?.tags) && parsed.tags.length
         ? parsed.tags
@@ -424,6 +534,57 @@ app.whenReady().then(() => {
       console.error('[Metadata] Failed to fetch metadata:', error)
       throw new Error(error?.stderr || error?.message || 'Metadata fetch failed')
     }
+  })
+
+  ipcMain.handle('auth:login', async (_event, platform) => {
+    if (platform !== 'instagram') return { success: false, message: 'Platform not supported' }
+    
+    return new Promise((resolve) => {
+      const authWindow = new BrowserWindow({
+        width: 500,
+        height: 700,
+        parent: mainWindow,
+        modal: true,
+        title: 'Login to Instagram',
+        autoHideMenuBar: true,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true
+        }
+      })
+
+      authWindow.loadURL('https://www.instagram.com/accounts/login/')
+
+      // Check for successful login by monitoring cookies
+      const checkLogin = setInterval(async () => {
+        try {
+          const cookies = await authWindow.webContents.session.cookies.get({ domain: 'instagram.com' })
+          const sessionCookie = cookies.find(c => c.name === 'sessionid')
+          
+          if (sessionCookie) {
+            clearInterval(checkLogin)
+            // Save cookies for yt-dlp
+            const cookiePath = path.join(app.getPath('userData'), 'instagram-cookies.txt')
+            // Format: domain flag path secure expiration name value
+            const cookieContent = cookies.map(c => {
+              return `${c.domain}\tTRUE\t${c.path}\t${c.secure ? 'TRUE' : 'FALSE'}\t${Math.floor(c.expirationDate || Date.now()/1000 + 31536000)}\t${c.name}\t${c.value}`
+            }).join('\n')
+            
+            fs.writeFileSync(cookiePath, '# Netscape HTTP Cookie File\n' + cookieContent)
+            
+            authWindow.close()
+            resolve({ success: true, cookiePath })
+          }
+        } catch (e) {
+          // Ignore errors during check
+        }
+      }, 1000)
+
+      authWindow.on('closed', () => {
+        clearInterval(checkLogin)
+        resolve({ success: false, message: 'Login window closed' })
+      })
+    })
   })
 
   ipcMain.handle('dialog:choose-folder', async () => {
@@ -684,7 +845,7 @@ app.on('window-all-closed', () => {
   }
 })
 
-async function runJob(url, label, formatSelector, outputDir, index, totalJobs, isRetry = false) {
+async function runJob(url, label, formatSelector, outputDir, index, totalJobs, strategyArgs = {}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'wh-downloader-'))
   
   // Detect platform
@@ -703,7 +864,7 @@ async function runJob(url, label, formatSelector, outputDir, index, totalJobs, i
   console.log('[Job Start] URL:', url)
   console.log('[Job Start] FFmpeg:', ffmpegPath)
   console.log('[Job Start] Temp dir:', tmpDir)
-  console.log('[Job Start] Retry attempt:', isRetry ? 'YES (with cookies)' : 'NO (public)')
+  console.log('[Job Start] Strategy:', JSON.stringify(strategyArgs))
   
   const args = {
     output: path.join(tmpDir, OUTPUT_TEMPLATE),
@@ -727,17 +888,19 @@ async function runJob(url, label, formatSelector, outputDir, index, totalJobs, i
     httpChunkSize: 10485760,        // 10MB chunks for optimal speed
     // ⚡ RETRY & STABILITY
     fragmentRetries: 10,            // Retry failed fragments
-    skipUnavailableFragments: true  // Skip bad fragments, don't fail entire download
+    skipUnavailableFragments: true,  // Skip bad fragments, don't fail entire download
+    ...strategyArgs // Apply strategy overrides (cookies, UA, etc)
   }
 
-  // Add cookies on retry or if platform requires it
-  if (isRetry && platformConfig && platformConfig.fallbackArgs && platformConfig.fallbackArgs.includes('--cookies-from-browser')) {
-    console.log('[yt-dlp] Using cookies from Chrome (retry with authentication)')
-    args.cookiesFromBrowser = 'chrome'
-  } else if (platformConfig && platformConfig.extraArgs && platformConfig.extraArgs.length > 0) {
-    // Don't pass extraArgs directly, handle cookies separately
-    if (platformConfig.extraArgs.includes('--cookies-from-browser')) {
-      args.cookiesFromBrowser = 'chrome'
+  // Add cookies if platform requires it and not already in strategy
+  if (!args.cookiesFromBrowser) {
+    if (platformConfig && platformConfig.fallbackArgs && platformConfig.fallbackArgs.includes('--cookies-from-browser')) {
+       // Default to chrome if platform strictly requires it and no strategy set
+       // But usually strategyArgs will handle this now.
+    } else if (platformConfig && platformConfig.extraArgs && platformConfig.extraArgs.length > 0) {
+      if (platformConfig.extraArgs.includes('--cookies-from-browser')) {
+        args.cookiesFromBrowser = 'chrome'
+      }
     }
   }
 

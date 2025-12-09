@@ -1,222 +1,178 @@
 /**
- * Premium Effects Controller - Cyberpunk / Hacker Aesthetic
- * "Coding should fall" - Matrix Rain & Dynamic Animations
+ * Digital Aurora - Premium Visual Effect
+ * A subtle, professional particle network that responds to mouse movement.
+ * Replaces the distracting Matrix Rain.
  */
 
-class MatrixRain {
-  constructor() {
-    this.canvas = document.createElement('canvas');
-    this.ctx = this.canvas.getContext('2d');
-    this.canvas.className = 'matrix-canvas';
-    this.canvas.style.position = 'fixed';
-    this.canvas.style.top = '0';
-    this.canvas.style.left = '0';
-    this.canvas.style.width = '100%';
-    this.canvas.style.height = '100%';
-    this.canvas.style.zIndex = '-1'; // Behind everything
-    this.canvas.style.pointerEvents = 'none';
-    this.canvas.style.opacity = '0';
-    this.canvas.style.transition = 'opacity 1s ease';
-    
-    this.drops = [];
-    this.running = false;
-    this.rafId = null;
-    
-        // Config
-    this.fontSize = 14;
-    this.columns = 0;
-    // Use a mix of binary, katakana (if supported), and special chars for "Coding" feel
-    this.chars = '0101010101XYZ<>[]{}*&^%$#@!'; 
-    this.speed = 2;
-  }
-
-  init() {
-    document.body.appendChild(this.canvas);
-    this.resize();
-    window.addEventListener('resize', () => this.resize());
-  }
-
-  resize() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.columns = Math.floor(this.canvas.width / this.fontSize);
-    this.drops = Array(this.columns).fill(1);
-  }
-
-  start() {
-    if (this.running) return;
-    this.running = true;
-    this.canvas.style.opacity = '0.6'; // Increased visibility
-    this.animate();
-  }
-
-  stop() {
-    this.running = false;
-    this.canvas.style.opacity = '0';
-    if (this.rafId) cancelAnimationFrame(this.rafId);
-  }
-
-  animate() {
-    if (!this.running) return;
-
-    // Translucent black for trail effect - slightly darker for cleaner look
-    this.ctx.fillStyle = 'rgba(11, 11, 13, 0.1)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.ctx.font = `${this.fontSize}px 'JetBrains Mono', monospace`;
-
-    for (let i = 0; i < this.drops.length; i++) {
-      const text = this.chars.charAt(Math.floor(Math.random() * this.chars.length));
-      
-      // Randomly highlight some characters
-      const isHighlight = Math.random() > 0.95;
-      this.ctx.fillStyle = isHighlight ? '#ffffff' : '#0aff6a';
-      
-      this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
-
-      if (this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
-        this.drops[i] = 0;
-      }
-      this.drops[i]++;
+class DigitalAurora {
+    constructor() {
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.isActive = false;
+        
+        this.init();
     }
 
-    this.rafId = requestAnimationFrame(() => this.animate());
-  }
-  }
-
-  init() {
-    document.body.appendChild(this.canvas);
-    this.resize();
-    window.addEventListener('resize', () => this.resize());
-  }
-
-  resize() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.columns = Math.floor(this.canvas.width / this.fontSize);
-    this.drops = Array(this.columns).fill(1);
-  }
-
-  start() {
-    if (this.running) return;
-    this.running = true;
-    this.canvas.style.opacity = '0.4'; // Increased visibility for Hacker feel
-    this.animate();
-  }
-
-  stop() {
-    this.running = false;
-    this.canvas.style.opacity = '0';
-    if (this.rafId) cancelAnimationFrame(this.rafId);
-  }
-
-  animate() {
-    if (!this.running) return;
-
-    // Translucent black for trail effect - slightly darker for cleaner look
-    this.ctx.fillStyle = 'rgba(11, 11, 13, 0.1)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.ctx.font = `${this.fontSize}px 'JetBrains Mono', monospace`;
-
-    for (let i = 0; i < this.drops.length; i++) {
-      const text = this.chars.charAt(Math.floor(Math.random() * this.chars.length));
-      
-      // Randomly highlight some characters
-      const isHighlight = Math.random() > 0.95;
-      this.ctx.fillStyle = isHighlight ? '#ffffff' : '#0aff6a';
-      
-      this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
-
-      if (this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
-        this.drops[i] = 0;
-      }
-      this.drops[i]++;
+    init() {
+        this.canvas.id = 'premium-effects-canvas';
+        this.canvas.style.position = 'fixed';
+        this.canvas.style.top = '0';
+        this.canvas.style.left = '0';
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.canvas.style.pointerEvents = 'none';
+        this.canvas.style.zIndex = '9999'; // Force on top for now to verify visibility
+        this.canvas.style.opacity = '0';
+        this.canvas.style.transition = 'opacity 1s ease';
+        this.canvas.style.mixBlendMode = 'screen'; // Add blend mode for cool effect
+        
+        document.body.appendChild(this.canvas);
+        
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => {
+            this.mouseX = e.clientX;
+            this.mouseY = e.clientY;
+        });
+        
+        this.resize();
     }
 
-    this.rafId = requestAnimationFrame(() => this.animate());
-  }
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.createParticles();
+    }
+
+    createParticles() {
+        this.particles = [];
+        const count = Math.floor((this.canvas.width * this.canvas.height) / 15000); // Density
+        
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 3 + 2, // Bigger particles for visibility
+                color: Math.random() > 0.5 ? '#0aff6a' : '#00ffcc', // Brighter colors
+                alpha: Math.random() * 0.6 + 0.2 // Higher opacity
+            });
+        }
+    }
+
+    start() {
+        if (this.isActive) return;
+        this.isActive = true;
+        this.canvas.style.opacity = '1';
+        this.animate();
+        console.log('✨ Digital Aurora Activated');
+    }
+
+    stop() {
+        this.isActive = false;
+        this.canvas.style.opacity = '0';
+    }
+
+    animate() {
+        if (!this.isActive) return;
+        
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Update and draw particles
+        this.particles.forEach((p, index) => {
+            // Movement
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            // Mouse interaction (gentle push)
+            const dx = this.mouseX - p.x;
+            const dy = this.mouseY - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 200) {
+                const force = (200 - dist) / 200;
+                p.x -= (dx / dist) * force * 2;
+                p.y -= (dy / dist) * force * 2;
+            }
+            
+            // Wrap around screen
+            if (p.x < 0) p.x = this.canvas.width;
+            if (p.x > this.canvas.width) p.x = 0;
+            if (p.y < 0) p.y = this.canvas.height;
+            if (p.y > this.canvas.height) p.y = 0;
+            
+            // Draw
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fillStyle = p.color;
+            this.ctx.globalAlpha = p.alpha;
+            this.ctx.fill();
+            
+            // Connections
+            for (let j = index + 1; j < this.particles.length; j++) {
+                const p2 = this.particles[j];
+                const dx2 = p.x - p2.x;
+                const dy2 = p.y - p2.y;
+                const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                
+                if (dist2 < 100) {
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = p.color;
+                    this.ctx.globalAlpha = (1 - dist2 / 100) * 0.15;
+                    this.ctx.lineWidth = 0.5;
+                    this.ctx.moveTo(p.x, p.y);
+                    this.ctx.lineTo(p2.x, p2.y);
+                    this.ctx.stroke();
+                }
+            }
+        });
+        
+        requestAnimationFrame(() => this.animate());
+    }
 }
 
-class PremiumEffects {
-  constructor() {
-    this.isActive = false;
-    this.matrixRain = new MatrixRain();
-    this.matrixRain.init();
-  }
+// Singleton instance
+const aurora = new DigitalAurora();
 
-  /**
-   * Activate premium effects with Hacker sequence
-   */
-  activate() {
-    if (this.isActive) return;
-    
-    this.isActive = true;
-    console.log(' Premium activating (Hacker Mode)...');
-
-    // Step 1: Add premium class to body and html
-    document.body.classList.add('premium-active');
-    document.documentElement.classList.add('premium-active');
-
-    // Step 2: Start Matrix Rain
-    this.matrixRain.start();
-
-    // Step 3: Trigger global UI animations
-    this.animateUIElements();
-
-    // Step 4: Show activation toast
-    this.showActivationToast();
-
-    console.log(' Premium activated (Hacker Mode)');
-  }
-
-  /**
-   * Deactivate premium effects cleanly
-   */
-  deactivate() {
-    if (!this.isActive) return;
-
-    this.isActive = false;
-    document.body.classList.remove('premium-active');
-    document.documentElement.classList.remove('premium-active');
-    this.matrixRain.stop();
-
-    console.log('💤 Premium deactivated');
-  }
-
-  animateUIElements() {
-    // Re-trigger animations on key elements
-    const elements = document.querySelectorAll('.panel, .card, .input-group, button');
-    elements.forEach((el, index) => {
-      el.style.animation = 'none';
-      el.offsetHeight; /* trigger reflow */
-      el.style.animation = `slideUpFade 0.5s ease-out ${index * 0.05}s forwards`;
-    });
-  }
-
-  showActivationToast() {
-    const toast = document.createElement('div');
-    toast.className = 'premium-toast';
-    toast.innerHTML = `
-      <div class="toast-content">
-        <span class="toast-icon">⚡</span>
-        <div class="toast-text">
-          <div class="toast-title">SYSTEM UNLOCKED</div>
-          <div class="toast-desc">Premium features active</div>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    // Remove after 3s
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(20px)';
-      setTimeout(() => toast.remove(), 500);
-    }, 3000);
-  }
+// Global API for compatibility with licenseManager (MUST be synchronous)
+if (!window.premiumEffects) {
+    window.premiumEffects = {
+        activate: () => {
+            console.log('✨ Premium activating via API...');
+            aurora.start();
+        },
+        deactivate: () => {
+            console.log('💤 Premium deactivating via API...');
+            aurora.stop();
+        },
+        showConfetti: () => {
+            console.log('🎉 Confetti effect triggered');
+            // Optional: Add a quick particle burst effect here
+        },
+        start: () => aurora.start(),
+        stop: () => aurora.stop()
+    };
+    console.log('✅ window.premiumEffects API installed');
 }
 
-// Initialize
-window.premiumEffects = new PremiumEffects();
+// Auto-start if premium is already active (checked via localStorage or similar)
+// For now, we'll listen for the premium-activated event
+window.addEventListener('premium-status-change', (e) => {
+    if (e.detail.isPremium) {
+        aurora.start();
+    } else {
+        aurora.stop();
+    }
+});
+
+// Check initial state
+// Also check if the user has manually enabled it via the toggle
+const isPremium = localStorage.getItem('wh404-premium') === 'true';
+const isEffectsEnabled = localStorage.getItem('wh404-effects-enabled') !== 'false'; // Default true
+
+if (isPremium && isEffectsEnabled) {
+    aurora.start();
+}
