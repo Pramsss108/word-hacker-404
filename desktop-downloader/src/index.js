@@ -2162,54 +2162,15 @@ const wireEvents = () => {
     setPreviewMode('video')
   })
   
-  // Close metadata modal - X button click (use capture phase)
+  // Close metadata modal - X button click
   if (metadataCloseBtn) {
-    // NUCLEAR OPTION: Force ALL styles via setAttribute and cssText
-    metadataCloseBtn.style.cssText += `
-      pointer-events: auto !important;
-      cursor: pointer !important;
-      z-index: 99999 !important;
-      position: relative !important;
-      display: inline-block !important;
-    `;
-    
-    // Also ensure parent header doesn't block
-    const header = metadataCloseBtn.parentElement;
-    if (header) {
-      header.style.cssText += `
-        pointer-events: auto !important;
-        z-index: 9999 !important;
-      `;
-    }
-    
-    // Triple-check: Add class for CSS targeting
-    metadataCloseBtn.classList.add('force-clickable');
-    
     metadataCloseBtn.addEventListener('click', (e) => {
       console.log('[Metadata] Close button clicked!')
-      e.preventDefault()
       e.stopPropagation()
       setPreviewMode('video')
-    }, true) // Use capture phase to catch it early
-    
-    // Also add mousedown as backup
-    metadataCloseBtn.addEventListener('mousedown', (e) => {
-      console.log('[Metadata] Close button mousedown!')
-      e.preventDefault()
-      setPreviewMode('video')
-    }, true)
-    
-    // Add hover test
-    metadataCloseBtn.addEventListener('mouseenter', () => {
-      console.log('[Metadata] Mouse ENTERED close button!')
     })
     
-    // Test if button is reachable
-    console.log('[Init] Close button found and listeners attached', {
-      element: metadataCloseBtn,
-      computedStyle: window.getComputedStyle(metadataCloseBtn).pointerEvents,
-      boundingBox: metadataCloseBtn.getBoundingClientRect()
-    })
+    console.log('[Init] Close button found and listener attached')
   } else {
     console.error('[Init] Close button NOT FOUND!')
   }
