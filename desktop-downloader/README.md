@@ -1,5 +1,12 @@
 # 🎬 WH404 Social Media Downloader
 
+> **⚠️ CRITICAL FOR AI AGENTS: This is a TAURI app (Rust + React), NOT Electron!**  
+> - Backend: Rust (Tauri) - See `src-tauri/`  
+> - Frontend: React + TypeScript + Vite  
+> - Run with: `npm run tauri:dev` (NOT electron or vite alone)  
+> - APIs exposed via Tauri commands, NOT Electron IPC  
+> - No preload.js or window.downloader - uses `window.__TAURI__`
+
 **Download from 1000+ platforms** | **Professional preview & trim** | **Batch processing** | **Lightning fast**
 
 <div align="center">
@@ -7,7 +14,7 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platforms](https://img.shields.io/badge/platforms-1000+-orange)
-![Electron](https://img.shields.io/badge/electron-latest-blue)
+![Tauri](https://img.shields.io/badge/tauri-1.6-blue)
 
 </div>
 
