@@ -49,6 +49,20 @@ desktop-downloader/
    - Tauri doesn't use preload scripts
    - Backend communication is via Rust commands
 
+3. **🚨 CRITICAL: bridge.js Detection Must Auto-Detect**
+   - **NEVER hardcode:** `const isTauri = false;`
+   - **ALWAYS use:** `const isTauri = !!window.__TAURI__;`
+   - Hardcoding forces Electron mode and causes infinite loops
+   - `probeFormats()` must check `if (isTauri)` properly
+   - Wrong detection → app crashes, downloads fail, stack overflow
+
+4. **UI Interactions Not Smooth / Clicks Not Working**
+   - App might be frozen due to infinite loop in bridge.js
+   - Check console for "Maximum call stack size exceeded"
+   - Usually caused by wrong Tauri/Electron detection
+   - Modal close buttons (X) may not respond
+   - Fix: Ensure bridge.js auto-detects correctly (see #3)
+
 3. **"IPC not working"**
    - Tauri uses `invoke()`, not Electron's IPC
    - Check `src-tauri/src/main.rs` for command definitions

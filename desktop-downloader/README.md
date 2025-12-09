@@ -7,6 +7,23 @@
 > - APIs exposed via Tauri commands, NOT Electron IPC  
 > - No preload.js or window.downloader - uses `window.__TAURI__`
 
+## 🚨 CRITICAL: bridge.js Auto-Detection
+
+**NEVER hardcode platform detection in `src/renderer/bridge.js`:**
+
+```javascript
+// ❌ WRONG - Causes infinite loops and UI freezes
+const isTauri = false;
+
+// ✅ CORRECT - Auto-detects platform
+const isTauri = !!window.__TAURI__;
+```
+
+**Symptoms of wrong detection:**
+- "Maximum call stack size exceeded" errors
+- UI freezes, clicks don't work, modal X buttons unresponsive
+- Downloads fail with "window.downloader not available"
+
 **Download from 1000+ platforms** | **Professional preview & trim** | **Batch processing** | **Lightning fast**
 
 <div align="center">

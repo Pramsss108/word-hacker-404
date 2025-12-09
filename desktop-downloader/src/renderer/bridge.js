@@ -4,8 +4,8 @@
  * Handles platform differences and normalizes data formats.
  */
 
-// Force Electron mode - this is an Electron app, never Tauri
-const isTauri = false; // !!window.__TAURI__;
+// Auto-detect: Tauri if window.__TAURI__ exists, otherwise Electron
+const isTauri = !!window.__TAURI__;
 console.log(`[Bridge] Initializing in ${isTauri ? 'TAURI' : 'ELECTRON'} mode`);
 
 let jobStartCallback = null;
@@ -364,34 +364,44 @@ const bridge = {
   // --- Metadata ---
   
   probeFormats: async (url) => {
-      // Always use Electron path
-      if (false) { // Disabled Tauri
-          const { invoke } = window.__TAURI__.tauri;
-          try {
-              const meta = await invoke('get_video_metadata', { url });
-              return meta;
-          } catch (e) {
-              console.error('Metadata fetch failed:', e);
-              return { formats: [] };
-          }
-      } else {
-          try {
-            return await window.downloader.probeFormats(url);
-          } catch (error) {
-            console.error('[Bridge] Probe failed:', error);
-            const errorMsg = (error.message || error.toString()).toLowerCase();
-            
-            // Show user-friendly message for private content
-            if (errorMsg.includes('inappropriate') || 
-                errorMsg.includes('private') ||
-                errorMsg.includes('sign in') ||
-                errorMsg.includes('confirm your age') ||
-                errorMsg.includes('unavailable')) {
-                throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
-            }
-            throw error;
-          }
+    if (isTauri) {
+      const { invoke } = window.__TAURI__.tauri;
+      try {
+        const meta = await invoke('get_video_metadata', { url });
+        return meta;
+      } catch (e) {
+        console.error('[Bridge] Tauri metadata fetch failed:', e);
+        const errorMsg = (e.message || e.toString()).toLowerCase();
+        
+        // Show user-friendly message for private content
+        if (errorMsg.includes('inappropriate') || 
+            errorMsg.includes('private') ||
+            errorMsg.includes('sign in') ||
+            errorMsg.includes('confirm your age') ||
+            errorMsg.includes('unavailable')) {
+            throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
+        }
+        throw e;
       }
+    } else {
+      // Electron mode
+      try {
+        return await window.downloader.probeFormats(url);
+      } catch (error) {
+        console.error('[Bridge] Electron probe failed:', error);
+        const errorMsg = (error.message || error.toString()).toLowerCase();
+        
+        // Show user-friendly message for private content
+        if (errorMsg.includes('inappropriate') || 
+            errorMsg.includes('private') ||
+            errorMsg.includes('sign in') ||
+            errorMsg.includes('confirm your age') ||
+            errorMsg.includes('unavailable')) {
+            throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
+        }
+        throw error;
+      }
+    }
   },
 
   getVideoMetadata: async (url) => {

@@ -1,5 +1,20 @@
 # Word Hacker 404 - Copilot Instructions
 
+## ⚠️ CRITICAL ARCHITECTURE NOTICE FOR AI AGENTS
+
+### Desktop Downloader Sub-Project (desktop-downloader/)
+**This is a TAURI application (Rust + React), NOT Electron!**
+
+- **Backend:** Rust (Tauri) - Located in `desktop-downloader/src-tauri/`
+- **Frontend:** React + TypeScript + Vite
+- **Run with:** `npm run tauri:dev` (NOT `npm run dev` or electron commands)
+- **APIs:** Use `window.__TAURI__` (NOT `window.downloader` or Electron IPC)
+- **NO preload.js, NO contextBridge, NO Electron APIs**
+
+**See `desktop-downloader/TAURI_ARCHITECTURE.md` for full details before making ANY changes to the desktop app!**
+
+---
+
 ## Project Overview
 **Word Hacker 404** is an AI-powered word game and linguistic decode experience built with React, TypeScript, and Vite. This project is completely independent—treat it standalone.
 
