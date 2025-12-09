@@ -2166,10 +2166,16 @@ const wireEvents = () => {
     console.log(`  Chip ${idx + 1}:`, chip.dataset.openPanel, 'Disabled:', chip.classList.contains('disabled'))
   })
 
-  // Close metadata modal - backdrop click
+  // Close metadata modal - backdrop click (only if clicking outside modal)
   metadataBackdrop?.addEventListener('click', (e) => {
-    console.log('[Metadata] Backdrop clicked')
-    setPreviewMode('video')
+    console.log('[Metadata] Backdrop clicked!')\n    setPreviewMode('video')
+  })
+  
+  // Prevent clicks on modal from closing it
+  const metadataPopover = document.getElementById('metadata-popover')
+  metadataPopover?.addEventListener('click', (e) => {
+    console.log('[Metadata] Modal content clicked, preventing close')
+    e.stopPropagation()
   })
   
   // Close metadata modal - X button click
