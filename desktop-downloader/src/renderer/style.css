@@ -75,7 +75,8 @@
 .summary-chip.disabled {
 	opacity: 0.4;
 	filter: grayscale(0.6);
-	pointer-events: none;
+	/* pointer-events: none; */ /* REMOVED: Chips should be clickable even when disabled to show "coming soon" or trigger data fetch */
+	cursor: pointer !important; /* Force clickable cursor */
 }
 
 .chip-label {
