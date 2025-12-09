@@ -124,7 +124,7 @@
 	background: radial-gradient(circle at 20% 5%, rgba(47, 21, 69, 0.75), transparent 55%), rgba(5, 3, 8, 0.75);
 	border-radius: 22px;
 	opacity: 0;
-	pointer-events: none;
+	pointer-events: none !important;
 	transition: opacity 0.25s ease;
 	z-index: 5;
 }
@@ -179,7 +179,7 @@
 
 .preview-pane[data-mode="insights"] .metadata-backdrop {
 	opacity: 1;
-	pointer-events: auto !important;
+	pointer-events: none !important;
 }
 
 .preview-pane[data-mode="insights"] .metadata-popover {

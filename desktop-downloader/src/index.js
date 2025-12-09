@@ -2237,6 +2237,25 @@ const wireEvents = () => {
       setPreviewMode('video')
     }
   })
+  
+  // ULTIMATE FALLBACK: Window-level click handler for close button
+  window.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'metadata-close') {
+      console.log('[Metadata] Window captured close button click!')
+      e.preventDefault()
+      e.stopPropagation()
+      setPreviewMode('video')
+    }
+  }, true)
+  
+  // NUCLEAR OPTION: Constantly ensure close button is clickable
+  setInterval(() => {
+    if (state.previewMode === 'insights' && metadataCloseBtn) {
+      metadataCloseBtn.style.pointerEvents = 'auto'
+      metadataCloseBtn.style.cursor = 'pointer'
+      metadataCloseBtn.style.zIndex = '999999'
+    }
+  }, 100)
 
   window.addEventListener('resize', () => {
     if (state.previewMode !== 'insights') return
