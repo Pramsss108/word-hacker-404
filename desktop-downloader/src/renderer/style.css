@@ -49,15 +49,19 @@
 	display: inline-flex;
 	align-items: baseline;
 	gap: 0.5rem;
-	cursor: pointer;
+	cursor: pointer !important;
 	transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 	min-width: 0;
+	pointer-events: auto !important;
+	position: relative;
+	z-index: 10;
 }
 
 .summary-chip:hover {
 	border-color: rgba(10, 255, 106, 0.55);
 	background: rgba(10, 255, 106, 0.08);
 	transform: translateY(-0.5px);
+	cursor: pointer !important;
 }
 
 .summary-chip.ready {
@@ -76,6 +80,16 @@
 	opacity: 0.7;
 	filter: grayscale(0.3);
 	pointer-events: auto !important;
+	cursor: pointer !important;
+}
+
+.summary-chip.disabled:hover {
+	cursor: pointer !important;
+	border-color: rgba(10, 255, 106, 0.4);
+}
+
+.summary-chip:hover,
+.summary-chip.disabled:hover {
 	cursor: pointer !important;
 }
 
@@ -969,6 +983,11 @@ h3 {
 	position: relative !important;
 	cursor: pointer !important;
 	display: inline-block !important;
+}
+
+#metadata-close:hover {
+	opacity: 0.7;
+	cursor: pointer !important;
 }
 
 /* Ensure modal body doesn't block header clicks */

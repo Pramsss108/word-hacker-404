@@ -2145,25 +2145,36 @@ const wireEvents = () => {
 
   summaryOpenTriggers.forEach((chip) => {
     chip.addEventListener('click', (e) => {
-      console.log('[Chip] Clicked:', chip.dataset.openPanel, 'Chip:', chip)
+      console.log('[Chip] Clicked:', chip.dataset.openPanel, 'Panel:', chip.dataset.summaryChip)
       const panel = chip.dataset.openPanel
+      if (!panel) {
+        console.error('[Chip] No panel attribute found!', chip)
+        return
+      }
       setActiveMetadataPanel(panel, chip)
       setPreviewMode('insights')
     })
     
-    // Ensure chips are clickable with ultra-aggressive CSS
-    chip.style.cursor = 'pointer'
-    chip.style.pointerEvents = 'auto'
-    chip.style.position = 'relative'
-    chip.style.zIndex = '10'
+    // ULTRA-AGGRESSIVE: Force chips to be 100% clickable
+    chip.style.cssText = `
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      position: relative !important;
+      z-index: 100 !important;
+    `
     
-    console.log('[Init] Chip configured:', chip.dataset.openPanel, 'Classes:', chip.className)
+    // Add hover effect
+    chip.addEventListener('mouseenter', () => {
+      chip.style.cursor = 'pointer'
+    })
+    
+    console.log('[Init] Chip configured:', chip.dataset.openPanel, 'Element:', chip.tagName, 'Classes:', chip.className)
   })
   
   // Debug: Log all chips found
   console.log('[Init] Total chips found:', summaryOpenTriggers.length)
   summaryOpenTriggers.forEach((chip, idx) => {
-    console.log(`  Chip ${idx + 1}:`, chip.dataset.openPanel, 'Disabled:', chip.classList.contains('disabled'))
+    console.log(`  Chip ${idx + 1}:`, chip.dataset.openPanel, 'Disabled:', chip.classList.contains('disabled'), 'Has listener:', true)
   })
 
   // Close metadata modal - backdrop click (only if clicking outside modal)
@@ -2180,41 +2191,41 @@ const wireEvents = () => {
   
   // Close metadata modal - X button click
   if (metadataCloseBtn) {
-    // Make button absolutely clickable
-    metadataCloseBtn.style.pointerEvents = 'auto'
-    metadataCloseBtn.style.cursor = 'pointer'
-    metadataCloseBtn.style.position = 'relative'
-    metadataCloseBtn.style.zIndex = '999999'
+    // ULTRA-AGGRESSIVE: Make button 100% clickable
+    metadataCloseBtn.style.cssText = `
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      position: relative !important;
+      z-index: 999999 !important;
+      display: inline-flex !important;
+    `
     
-    // Try multiple event types
-    metadataCloseBtn.addEventListener('click', (e) => {
-      console.log('[Metadata] Close button CLICKED!')
+    // Add ALL possible event types
+    const closeModal = (e) => {
+      console.log('[Metadata] Close button activated!', e.type)
       e.preventDefault()
       e.stopPropagation()
+      e.stopImmediatePropagation()
       setPreviewMode('video')
-    }, true) // Capture phase
+    }
     
-    metadataCloseBtn.addEventListener('mousedown', (e) => {
-      console.log('[Metadata] Close button MOUSEDOWN!')
-      e.preventDefault()
-      setPreviewMode('video')
-    }, true)
+    metadataCloseBtn.addEventListener('click', closeModal, { capture: true })
+    metadataCloseBtn.addEventListener('mousedown', closeModal, { capture: true })
+    metadataCloseBtn.addEventListener('touchstart', closeModal, { capture: true })
+    metadataCloseBtn.addEventListener('pointerdown', closeModal, { capture: true })
     
-    metadataCloseBtn.addEventListener('pointerdown', (e) => {
-      console.log('[Metadata] Close button POINTERDOWN!')
-      e.preventDefault()
-      setPreviewMode('video')
-    }, true)
-    
-    // Debug: Log when mouse enters
-    metadataCloseBtn.addEventListener('mouseenter', () => {
+    // Add hover effect manually
+    metadataCloseBtn.addEventListener('mouseenter', (e) => {
       console.log('[Metadata] Mouse ENTERED close button!')
+      metadataCloseBtn.style.opacity = '0.7'
+      metadataCloseBtn.style.cursor = 'pointer'
     })
     
-    console.log('[Init] Close button found, all listeners attached', {
-      computedPointerEvents: window.getComputedStyle(metadataCloseBtn).pointerEvents,
-      zIndex: window.getComputedStyle(metadataCloseBtn).zIndex
+    metadataCloseBtn.addEventListener('mouseleave', (e) => {
+      metadataCloseBtn.style.opacity = '1'
     })
+    
+    console.log('[Init] Close button configured with all event types')
   } else {
     console.error('[Init] Close button NOT FOUND!')
   }
