@@ -205,11 +205,16 @@
 
           <div id="metadata-pane" class="metadata-pane">
             <div class="metadata-backdrop" id="metadata-backdrop"></div>
+            <!-- FLOATING CLOSE BUTTON - completely independent -->
+            <button id="metadata-close-float" class="metadata-close-float" title="Close (or press ESC)" style="display: none;">
+              <span>✕</span>
+              <span class="close-hint">ESC</span>
+            </button>
             <div class="metadata-popover" id="metadata-popover" aria-hidden="true" role="dialog" aria-labelledby="metadata-popover-title">
               <div class="metadata-popover-shell">
                 <div class="metadata-popover-header">
                   <h3 id="metadata-popover-title">Smart thumbnail</h3>
-                  <button id="metadata-close" class="ghost ghost-icon" title="Close">✕</button>
+                  <button id="metadata-close" class="ghost ghost-icon" title="Close (or press ESC)">✕</button>
                 </div>
                 <div class="metadata-popover-body">
                   <article class="premium-card premium-card-thumbnail active" data-premium-card="thumbnail" data-popover-panel="thumbnail">

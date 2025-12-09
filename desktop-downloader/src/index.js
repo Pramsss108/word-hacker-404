@@ -487,6 +487,12 @@ const setPreviewMode = (mode = 'video') => {
   previewPane.dataset.mode = nextMode
   metadataPopover?.setAttribute('aria-hidden', nextMode === 'video' ? 'true' : 'false')
   updateSummaryChips()
+  
+  // Update floating close button
+  if (typeof updateFloatingButton === 'function') {
+    updateFloatingButton()
+  }
+  
   if (nextMode === 'insights') {
     const activeChip = summaryChipRefs[state.preview.activePanel]
     if (activeChip) {
@@ -2187,6 +2193,36 @@ const wireEvents = () => {
   metadataPopover?.addEventListener('click', (e) => {
     console.log('[Metadata] Modal content clicked, preventing close')
     e.stopPropagation()
+  })
+  
+  // FLOATING CLOSE BUTTON - completely separate
+  const metadataCloseFloat = document.getElementById('metadata-close-float')
+  
+  // Position floating button when modal opens
+  const positionFloatingCloseButton = () => {
+    if (!metadataCloseFloat || !metadataPopover) return
+    
+    const modalRect = metadataPopover.getBoundingClientRect()
+    metadataCloseFloat.style.top = `${modalRect.top - 50}px`
+    metadataCloseFloat.style.right = `${window.innerWidth - modalRect.right + 10}px`
+    metadataCloseFloat.style.display = state.previewMode === 'insights' ? 'flex' : 'none'
+  }
+  
+  // Show/hide and position floating button
+  const updateFloatingButton = () => {
+    if (state.previewMode === 'insights') {
+      positionFloatingCloseButton()
+    } else if (metadataCloseFloat) {
+      metadataCloseFloat.style.display = 'none'
+    }
+  }
+  
+  // Floating button click
+  metadataCloseFloat?.addEventListener('click', (e) => {
+    console.log('[Metadata] FLOATING close button clicked!')
+    e.preventDefault()
+    e.stopPropagation()
+    setPreviewMode('video')
   })
   
   // Close metadata modal - X button click
