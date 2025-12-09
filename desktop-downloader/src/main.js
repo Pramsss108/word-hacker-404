@@ -245,7 +245,12 @@ const resolveOutputDir = (customPath) => {
 }
 
 const createWindow = () => {
-  const preloadPath = path.join(__dirname, 'preload.js')
+  // Use absolute path for preload - critical for dev mode
+  const preloadPath = app.isPackaged 
+    ? path.join(__dirname, 'preload.js')
+    : path.join(__dirname, '..', 'src', 'preload.js')
+  
+  console.log('[Main] __dirname:', __dirname)
   console.log('[Main] Preload path:', preloadPath)
   console.log('[Main] Preload exists:', fs.existsSync(preloadPath))
   
@@ -272,7 +277,12 @@ const createWindow = () => {
     console.error('[Main] Page failed to load:', errorCode, errorDescription)
   })
   
-  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'))
+  const htmlPath = app.isPackaged
+    ? path.join(__dirname, 'renderer', 'index.html')
+    : path.join(__dirname, '..', 'index.html')
+  
+  console.log('[Main] Loading HTML from:', htmlPath)
+  mainWindow.loadFile(htmlPath)
   mainWindow.on('closed', () => {
     mainWindow = null
   })
