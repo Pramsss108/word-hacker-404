@@ -24,15 +24,9 @@ class DigitalAurora {
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
         this.canvas.style.pointerEvents = 'none'; // CRITICAL: Never capture clicks
-        this.canvas.style.zIndex = '-1'; // BEHIND everything
+        this.canvas.style.zIndex = '1'; // Above background, below content
         this.canvas.style.opacity = '0';
         this.canvas.style.transition = 'opacity 1s ease';
-        
-        // Force pointer-events to stay none (prevent CSS overrides)
-        Object.defineProperty(this.canvas.style, 'pointerEvents', {
-            value: 'none',
-            writable: false
-        });
         
         document.body.appendChild(this.canvas);
         
