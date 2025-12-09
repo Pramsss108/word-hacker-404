@@ -22,11 +22,66 @@ class MatrixRain {
     this.running = false;
     this.rafId = null;
     
-    // Config
+        // Config
     this.fontSize = 14;
     this.columns = 0;
-    this.chars = '01'; // Binary rain
+    // Use a mix of binary, katakana (if supported), and special chars for "Coding" feel
+    this.chars = '0101010101XYZ<>[]{}*&^%$#@!'; 
     this.speed = 2;
+  }
+
+  init() {
+    document.body.appendChild(this.canvas);
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+  }
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.columns = Math.floor(this.canvas.width / this.fontSize);
+    this.drops = Array(this.columns).fill(1);
+  }
+
+  start() {
+    if (this.running) return;
+    this.running = true;
+    this.canvas.style.opacity = '0.6'; // Increased visibility
+    this.animate();
+  }
+
+  stop() {
+    this.running = false;
+    this.canvas.style.opacity = '0';
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+  }
+
+  animate() {
+    if (!this.running) return;
+
+    // Translucent black for trail effect - slightly darker for cleaner look
+    this.ctx.fillStyle = 'rgba(11, 11, 13, 0.1)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.font = `${this.fontSize}px 'JetBrains Mono', monospace`;
+
+    for (let i = 0; i < this.drops.length; i++) {
+      const text = this.chars.charAt(Math.floor(Math.random() * this.chars.length));
+      
+      // Randomly highlight some characters
+      const isHighlight = Math.random() > 0.95;
+      this.ctx.fillStyle = isHighlight ? '#ffffff' : '#0aff6a';
+      
+      this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
+
+      if (this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
+        this.drops[i] = 0;
+      }
+      this.drops[i]++;
+    }
+
+    this.rafId = requestAnimationFrame(() => this.animate());
+  }
   }
 
   init() {
