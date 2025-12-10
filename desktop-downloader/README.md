@@ -6,6 +6,8 @@
 > - Run with: `npm run tauri:dev` (NOT electron or vite alone)  
 > - APIs exposed via Tauri commands, NOT Electron IPC  
 > - No preload.js or window.downloader - uses `window.__TAURI__`
+> 
+> **📚 READ FIRST**: [ARCHITECTURE_FOUNDATION.md](./ARCHITECTURE_FOUNDATION.md) - File structure & common mistakes
 
 ## 🚨 CRITICAL: bridge.js Auto-Detection
 

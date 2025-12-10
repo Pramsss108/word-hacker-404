@@ -49,161 +49,102 @@ function updateLicenseBadge() {
   
   if (status.active && status.type === 'premium') {
     badge.textContent = '✓ PREMIUM';
-    badge.className = 'license-badge license-badge-premium';
-    badge.title = 'Premium Active - Unlimited downloads';
-  } else {
-    const remaining = window.freeTierManager.getRemainingDownloads();
-    badge.textContent = `FREE (${remaining}/3)`;
-    badge.className = 'license-badge license-badge-free';
-    badge.title = `${remaining} free downloads remaining today`;
-  }
-}
+    if (metadataUIEnabled && summaryOpenTriggers.length) {
+      const openSummaryPanel = (chip) => {
+        if (!chip) return
+        const panel = chip.dataset.openPanel
+        if (!panel) {
+          console.error('[Chip] Missing panel attribute')
+          return
+        }
 
-// Add CSS for license badge
-const badgeStyles = document.createElement('style');
-badgeStyles.textContent = `
-  .license-badge {
-    display: inline-block;
-    margin-left: 12px;
-    padding: 4px 10px;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-  }
-  
-  .license-badge-free {
-    background: rgba(255, 193, 7, 0.2);
-    color: #ffc107;
-    border: 1px solid rgba(255, 193, 7, 0.3);
-  }
-  
-  .license-badge-premium {
-    background: rgba(74, 222, 128, 0.2);
-    color: #4ade80;
-    border: 1px solid rgba(74, 222, 128, 0.3);
-    animation: premium-glow 2s ease-in-out infinite;
-  }
-  
-  @keyframes premium-glow {
-    0%, 100% { box-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(74, 222, 128, 0.6); }
-  }
-`;
-document.head.appendChild(badgeStyles);
+        if (!state.preview.ready) {
+          setPremiumStatus('Select a clip to load metadata.', 'error')
+          return
+        }
 
-const textarea = document.getElementById('url-input')
-const addToQueueBtn = document.getElementById('add-to-queue-btn')
-const queueList = document.getElementById('queue-list')
-const queueCounter = document.getElementById('queue-counter')
-const selectionCounter = document.getElementById('selection-counter')
-const clearQueueBtn = document.getElementById('clear-queue')
-const queueSelectAll = document.getElementById('queue-select-all')
-const selectionClearBtn = document.getElementById('selection-clear')
-const queueExportSelectedBtn = document.getElementById('queue-export-selected')
-const queueExportAllBtn = document.getElementById('queue-export-all')
-const fileMenu = document.getElementById('file-menu')
-const statusDestination = document.getElementById('status-destination')
-const statusLine = document.getElementById('status-line')
-const statusQueue = document.getElementById('status-queue')
-const statusPreset = document.getElementById('status-preset')
-const statusEngine = document.getElementById('status-engine')
-const menuTriggers = document.querySelectorAll('[data-menu-trigger]')
+        const featureKey = summaryFeatureLookup[panel]
+        if (featureKey && !state.preview.premium[featureKey]) {
+          setPremiumStatus('Enable the Premium tester toggle to preview this insight.', 'error')
+          return
+        }
 
-const previewVideo = document.getElementById('preview-video')
-const previewCard = document.getElementById('preview-card')
-const previewEmpty = document.getElementById('preview-empty')
-const previewInfo = document.getElementById('preview-info')
-const previewPlayBtn = document.getElementById('preview-play')
-const previewStopBtn = document.getElementById('preview-stop')
-const previewRestartBtn = document.getElementById('preview-restart')
-const videoFormatBadge = document.getElementById('video-format-badge')
-const trimStartInput = document.getElementById('trim-start')
-const trimEndInput = document.getElementById('trim-end')
-const trimStartLabel = document.getElementById('trim-start-label')
-const trimEndLabel = document.getElementById('trim-end-label')
-const trimDurationLabel = document.getElementById('trim-duration')
-const trimFill = document.getElementById('trim-fill')
-const currentTimeDisplay = document.getElementById('current-time')
-const totalTimeDisplay = document.getElementById('total-time')
-const timelineHoverPreview = document.getElementById('timeline-hover')
-const playheadIndicator = document.getElementById('playhead-indicator')
-const timelineTrack = document.getElementById('trim-timeline-track')
-const timelineMarkers = document.getElementById('timeline-markers')
-const previewPane = document.querySelector('.preview-pane')
-const metadataPane = document.getElementById('metadata-pane')
-const metadataPopover = document.getElementById('metadata-popover')
-const metadataPopoverTitle = document.getElementById('metadata-popover-title')
-const metadataBackdrop = document.getElementById('metadata-backdrop')
-const metadataCloseBtn = document.getElementById('metadata-close')
-const summaryOpenTriggers = document.querySelectorAll('[data-open-panel]')
-const metadataCards = document.querySelectorAll('[data-popover-panel]')
-const summaryValueFields = {
-  thumbnail: document.getElementById('summary-thumbnail'),
-  title: document.getElementById('summary-title'),
-  keywords: document.getElementById('summary-keywords'),
-  description: document.getElementById('summary-description')
-}
-const summaryChipRefs = {
-  thumbnail: document.querySelector('[data-summary-chip="thumbnail"]'),
-  title: document.querySelector('[data-summary-chip="title"]'),
-  keywords: document.querySelector('[data-summary-chip="keywords"]'),
-  description: document.querySelector('[data-summary-chip="description"]')
-}
-const premiumRefreshBtn = document.getElementById('premium-refresh')
-const premiumStatusLabel = document.getElementById('premium-status')
-const premiumToggleControls = document.querySelectorAll('[data-premium-control]')
-const premiumCardGroups = {
-  thumbnail: Array.from(document.querySelectorAll('[data-premium-card="thumbnail"]')),
-  seo: Array.from(document.querySelectorAll('[data-premium-card="seo"]')),
-  story: Array.from(document.querySelectorAll('[data-premium-card^="story"]'))
-}
-const premiumThumbnailFrame = document.getElementById('premium-thumbnail')
-const premiumThumbnailRatioLabel = document.getElementById('premium-thumbnail-ratio')
-const premiumKeywordsField = document.getElementById('premium-keywords-string')
-const premiumTitleField = document.getElementById('premium-title')
-const premiumDescriptionField = document.getElementById('premium-description')
-const exportMetaThumbnail = document.getElementById('export-meta-thumbnail')
-const exportMetaKeywords = document.getElementById('export-meta-keywords')
-const exportMetaTitle = document.getElementById('export-meta-title')
-const featureSummaryMap = {
-  thumbnail: ['thumbnail'],
-  seo: ['keywords'],
-  story: ['title', 'description']
-}
-const summaryFeatureLookup = {
-  thumbnail: 'thumbnail',
-  keywords: 'seo',
-  title: 'story',
-  description: 'story'
-}
-const panelTitleMap = {
-  thumbnail: 'Smart thumbnail',
-  keywords: 'SEO keywords',
-  title: 'Story title',
-  description: 'Caption draft'
-}
-const orderedPanelKeys = ['thumbnail', 'keywords', 'title', 'description']
-const summaryReadyChecks = {
-  thumbnail: () => Boolean(state.preview.metadata.thumbnail),
-  keywords: () => Boolean(state.preview.metadata.keywords?.length),
-  title: () => Boolean(state.preview.metadata.title?.trim()),
-  description: () => Boolean(state.preview.metadata.description?.trim())
-}
+        const dataReadyCheck = summaryReadyChecks[panel]
+        if (typeof dataReadyCheck === 'function' && !dataReadyCheck()) {
+          setPremiumStatus('Generating that insight… tap Refresh Metadata if it takes long.', 'loading')
+        }
 
-const GUIDE_STAGES = ['paste', 'queue', 'download', 'preview']
-const guideProgress = GUIDE_STAGES.reduce((acc, stage) => ({ ...acc, [stage]: false }), {})
+        setActiveMetadataPanel(panel, chip)
+        setPreviewMode('insights')
+      }
 
-const getPreviewGuideMarkup = (message = 'Download a video to begin') => `
-  <div class="hacker-loading">
-    <div class="hacker-logo">
-      <span class="glitch-text" data-text="WH404">WH404</span>
-      <span class="hacker-subtitle">WORD HACKER</span>
-    </div>
-    <div class="hacker-logs">
-      <div class="log-line">▸ ${message}</div>
-      <div class="log-line">▸ We handle everything automatically</div>
-      <div class="log-line">▸ Follow these 4 quick steps</div>
+      summaryOpenTriggers.forEach((chip) => {
+        chip.addEventListener('click', (event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          openSummaryPanel(chip)
+        })
+        chip.style.pointerEvents = 'auto'
+        chip.style.cursor = 'pointer'
+      })
+
+      console.log('[Init] Summary chips wired:', summaryOpenTriggers.length)
+    } else {
+      console.log('[Init] Metadata chips removed - skipping listeners')
+    }
+
+    if (metadataUIEnabled) {
+      metadataPane?.addEventListener('click', (e) => {
+        const closeRequest = e.target.closest('[data-close-metadata]')
+        if (closeRequest) {
+          e.preventDefault()
+          e.stopPropagation()
+          console.log('[Pane] Close button delegation triggered')
+          setPreviewMode('video')
+          return
+        }
+        const isOutsideModal = !metadataPopover?.contains(e.target)
+        if (isOutsideModal && state.previewMode === 'insights') {
+          console.log('[Pane] Clicked outside modal, closing')
+          setPreviewMode('video')
+        }
+      })
+
+      metadataPopover?.addEventListener('click', () => {
+        console.log('[Modal] Content clicked (handled by delegation, will not close)')
+      })
+
+      if (metadataCloseBtn) {
+        const closeModal = (e) => {
+          console.log('[ModalClose] Button clicked:', e.type)
+          e.preventDefault()
+          e.stopPropagation()
+          setPreviewMode('video')
+        }
+
+        metadataCloseBtn.addEventListener('click', closeModal, true)
+        metadataCloseBtn.addEventListener('mousedown', closeModal, true)
+
+        console.log('[Init] Modal close button configured')
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && state.previewMode === 'insights') {
+          console.log('[Metadata] ESC pressed - closing')
+          setPreviewMode('video')
+        }
+      })
+
+      window.addEventListener('resize', () => {
+        if (state.previewMode !== 'insights') return
+        const anchor = lastPopoverAnchor || summaryChipRefs[state.preview.activePanel]
+        if (anchor) {
+          updatePopoverAnchor(anchor)
+        }
+      })
+    } else {
+      console.log('[Init] Metadata modal removed - listeners skipped')
+    }
     </div>
     <ul class="guide-steps">
       <li class="guide-step" data-stage="paste"><span>1.</span> Paste a link and press Add to Queue</li>
@@ -587,7 +528,11 @@ const renderPremiumMetadata = () => {
 
 const setPreviewMode = (mode = 'video') => {
   if (!previewPane) return
-  const nextMode = mode === 'insights' ? 'insights' : 'video'
+  const insightsAvailable = metadataUIEnabled && Boolean(metadataPopover)
+  const nextMode = insightsAvailable && mode === 'insights' ? 'insights' : 'video'
+  if (mode === 'insights' && !insightsAvailable) {
+    console.info('[PreviewMode] Metadata UI disabled, staying in video mode')
+  }
   state.previewMode = nextMode
   previewPane.dataset.mode = nextMode
   metadataPopover?.setAttribute('aria-hidden', nextMode === 'video' ? 'true' : 'false')

@@ -56,6 +56,7 @@ const summaryChipRefs = {
   keywords: document.querySelector('[data-summary-chip="keywords"]'),
   description: document.querySelector('[data-summary-chip="description"]')
 }
+const metadataUIEnabled = Boolean(metadataPane && metadataPopover && metadataCards.length)
 const premiumRefreshBtn = document.getElementById('premium-refresh')
 const premiumStatusLabel = document.getElementById('premium-status')
 const premiumToggleControls = document.querySelectorAll('[data-premium-control]')
@@ -347,25 +348,8 @@ const resolvePanelKey = (panel) => {
 }
 
 const updatePopoverAnchor = (chip) => {
-  if (!chip || !metadataPopover || !previewPane) return
-  const chipRect = chip.getBoundingClientRect()
-  const paneRect = previewPane.getBoundingClientRect()
-  if (!chipRect.width || !paneRect.width) return
-  
-  const popoverWidth = Math.min(420, paneRect.width - 54)
-  const halfPopover = popoverWidth / 2
-  const chipCenterX = chipRect.left + chipRect.width / 2 - paneRect.left
-  
-  const minX = halfPopover + 20
-  const maxX = paneRect.width - halfPopover - 20
-  const clampedX = clampValue(chipCenterX, minX, maxX)
-  
-  const anchorY = chipRect.bottom - paneRect.top + 16
-  const maxY = Math.max(120, paneRect.height - 140)
-  const clampedY = clampValue(anchorY, 90, maxY)
-  
-  metadataPopover.style.setProperty('--popover-x', `${clampedX}px`)
-  metadataPopover.style.setProperty('--popover-y', `${clampedY}px`)
+  // With fixed modal positioning, we don't need chip-based anchoring
+  // Modal is always centered, so this is now a no-op
   lastPopoverAnchor = chip
 }
 
@@ -482,17 +466,16 @@ const renderPremiumMetadata = () => {
 
 const setPreviewMode = (mode = 'video') => {
   if (!previewPane) return
-  const nextMode = mode === 'insights' ? 'insights' : 'video'
+  const insightsAvailable = metadataUIEnabled && Boolean(metadataPopover)
+  const nextMode = insightsAvailable && mode === 'insights' ? 'insights' : 'video'
+  if (mode === 'insights' && !insightsAvailable) {
+    console.info('[PreviewMode] Metadata UI disabled, staying in video mode')
+  }
   state.previewMode = nextMode
   previewPane.dataset.mode = nextMode
   metadataPopover?.setAttribute('aria-hidden', nextMode === 'video' ? 'true' : 'false')
   updateSummaryChips()
-  
-  // Update floating close button
-  if (typeof updateFloatingButton === 'function') {
-    updateFloatingButton()
-  }
-  
+
   if (nextMode === 'insights') {
     const activeChip = summaryChipRefs[state.preview.activePanel]
     if (activeChip) {
@@ -1030,6 +1013,31 @@ const toFileUrl = (filePath = '') => {
   return `file://${encoded.startsWith('/') ? '' : '/'}${encoded}`
 }
 
+const splitPathComponents = (targetPath = '') => {
+  if (!targetPath) {
+    return { dir: '', base: '', sep: '' }
+  }
+  const normalized = targetPath.trim()
+  const lastBackslash = normalized.lastIndexOf('\\')
+  const lastSlash = normalized.lastIndexOf('/')
+  const lastIndex = Math.max(lastBackslash, lastSlash)
+  if (lastIndex === -1) {
+    return { dir: '', base: normalized, sep: '' }
+  }
+  return {
+    dir: normalized.slice(0, lastIndex),
+    base: normalized.slice(lastIndex + 1),
+    sep: normalized[lastIndex]
+  }
+}
+
+const joinPathSegments = (dirPath, fileName, sepHint = '\\') => {
+  if (!dirPath) return fileName
+  const separator = sepHint || (dirPath.includes('/') ? '/' : '\\')
+  const needsSeparator = !dirPath.endsWith(separator)
+  return `${dirPath}${needsSeparator ? separator : ''}${fileName}`
+}
+
 const loadPreviewFromItem = async (item) => {
   if (!item.files || !item.files.length) {
     setStatus('Preview not ready yet. Finish the download first.')
@@ -1050,61 +1058,78 @@ const loadPreviewFromItem = async (item) => {
   
   console.log('[Preview] Loading:', source)
   console.log('[Preview] CODE VERSION: BLOB_FIX_FINAL')
+  const missingFileStatus = (targetName) => {
+    const safeName = targetName || source
+    setStatus(`File not found: ${safeName}. If this was an audio-only download, give it a moment to merge and try again.`)
+  }
+  const { dir: sourceDir, base: sourceFile, sep: sourceSep } = splitPathComponents(source)
   
   // CRITICAL FIX: Normalize double spaces in filename (YouTube metadata issue)
   // The queue stores paths with double spaces, but files may have single spaces
-  let normalizedSource = source.replace(/  +/g, ' ');
-  console.log('[Preview] Normalized path:', normalizedSource);
+  let normalizedSource = source.replace(/  +/g, ' ')
+  console.log('[Preview] Normalized path:', normalizedSource)
   
   // Double-check if file exists, if not try without the normalization
   if (window.downloader && window.downloader.checkFileExists) {
-    const exists = await window.downloader.checkFileExists(normalizedSource);
+    const exists = await window.downloader.checkFileExists(normalizedSource)
     if (!exists) {
-      console.warn('[Preview] Normalized path not found, trying original...');
-      const originalExists = await window.downloader.checkFileExists(source);
+      console.warn('[Preview] Normalized path not found, trying original...')
+      const originalExists = await window.downloader.checkFileExists(source)
       if (originalExists) {
-        normalizedSource = source;
-        console.log('[Preview] Using original path');
+        normalizedSource = source
+        console.log('[Preview] Using original path')
       } else {
         // Neither path exists - try to find the actual file in the directory
-        console.warn('[Preview] Exact path not found, searching directory...');
-        const dirPath = source.substring(0, source.lastIndexOf('\\'));
-        const expectedFilename = source.substring(source.lastIndexOf('\\') + 1);
-        
-        if (window.downloader.readDir) {
-          const files = await window.downloader.readDir(dirPath);
-          console.log('[Preview] Files in directory:', files);
-          
-          // Find the best match - normalize by removing ALL non-alphanumeric characters
-          // Also remove format codes like .f140, .f399 that are temp file markers
-          const normalizeForMatch = (str) => {
-            // Remove format codes (f followed by 2-3 digits before extension)
-            let normalized = str.replace(/\.f\d{2,3}(?=\.\w+$)/gi, '');
-            // Remove all non-alphanumeric
-            return normalized.toLowerCase().replace(/[^a-z0-9]/g, '');
-          };
-          
-          const expectedNormalized = normalizeForMatch(expectedFilename);
-          console.log('[Preview] Searching for normalized:', expectedNormalized);
-          
-          const match = files.find(f => {
-            const fileNormalized = normalizeForMatch(f);
-            console.log(`[Preview] Comparing: "${fileNormalized}" === "${expectedNormalized}"`);
-            return fileNormalized === expectedNormalized;
-          });
-          
-          if (match) {
-            normalizedSource = `${dirPath}\\${match}`;
-            console.log('[Preview] Found matching file:', match);
-          } else {
-            console.error('[Preview] No matching file found in directory');
-            setStatus(`File not found: ${expectedFilename}`);
-            return;
+        console.warn('[Preview] Exact path not found, searching directory...')
+        if (sourceDir && window.downloader.readDir) {
+          try {
+            const rawEntries = await window.downloader.readDir(sourceDir)
+            console.log('[Preview] Files in directory:', rawEntries)
+            const entryToName = (entry) => {
+              if (typeof entry === 'string') return entry
+              if (entry && typeof entry === 'object') {
+                if (entry.name) return entry.name
+                if (entry.path) return splitPathComponents(entry.path).base
+              }
+              return ''
+            }
+            const files = (rawEntries || []).map(entryToName).filter(Boolean)
+            
+            // Find the best match - normalize by removing ALL non-alphanumeric characters
+            // Also remove format codes like .f140, .f399 that are temp file markers
+            const normalizeForMatch = (str) => {
+              // Remove format codes (f followed by 2-3 digits before extension)
+              let normalized = str.replace(/\.f\d{2,3}(?=\.\w+$)/gi, '')
+              // Remove all non-alphanumeric
+              return normalized.toLowerCase().replace(/[^a-z0-9]/g, '')
+            }
+            
+            const expectedNormalized = normalizeForMatch(sourceFile || source)
+            console.log('[Preview] Searching for normalized:', expectedNormalized)
+            
+            const match = files.find((filename) => {
+              const fileNormalized = normalizeForMatch(filename)
+              console.log(`[Preview] Comparing: "${fileNormalized}" === "${expectedNormalized}"`)
+              return fileNormalized === expectedNormalized
+            })
+            
+            if (match) {
+              normalizedSource = joinPathSegments(sourceDir, match, sourceSep)
+              console.log('[Preview] Found matching file:', match)
+            } else {
+              console.error('[Preview] No matching file found in directory')
+              missingFileStatus(sourceFile || source)
+              return
+            }
+          } catch (dirError) {
+            console.error('[Preview] Unable to inspect directory:', dirError)
+            missingFileStatus(sourceFile || source)
+            return
           }
         } else {
-          console.error('[Preview] File does not exist at either path!');
-          setStatus(`File not found: ${source}`);
-          return;
+          console.error('[Preview] File does not exist at either path!')
+          missingFileStatus(sourceFile || source)
+          return
         }
       }
     }
@@ -2149,146 +2174,225 @@ const wireEvents = () => {
     }
   })
 
-  summaryOpenTriggers.forEach((chip) => {
-    chip.addEventListener('click', (e) => {
-      console.log('[Chip] Clicked:', chip.dataset.openPanel, 'Panel:', chip.dataset.summaryChip)
+  // === 🔬 DIAGNOSTIC PANEL SYSTEM ===
+  const diagnosticPanel = document.getElementById('diagnostic-panel')
+  const diagnosticToggleBtn = document.getElementById('diagnostic-toggle')
+  const diagnosticMenuToggle = document.getElementById('diagnostic-menu-toggle')
+  const diagnosticOutput = document.getElementById('diagnostic-output')
+  const diagnosticCopyBtn = document.getElementById('diagnostic-copy')
+  
+  let diagnosticActive = false
+  let lastInspectedElement = null
+  let lastInspectedCode = ''
+  
+  // Toggle diagnostic mode
+  const toggleDiagnostic = () => {
+    diagnosticActive = !diagnosticActive
+    if (diagnosticPanel) {
+      diagnosticPanel.style.display = diagnosticActive ? 'block' : 'none'
+    }
+    if (diagnosticToggleBtn) {
+      diagnosticToggleBtn.textContent = diagnosticActive ? 'Turn Off' : 'Turn On'
+    }
+    console.log('[Diagnostic] Mode:', diagnosticActive ? 'ON' : 'OFF')
+  }
+  
+  // Get element details
+  const getElementDetails = (element) => {
+    const rect = element.getBoundingClientRect()
+    const computedStyle = window.getComputedStyle(element)
+    
+    return {
+      tag: element.tagName,
+      id: element.id || 'none',
+      classes: element.className || 'none',
+      attributes: Array.from(element.attributes).map(attr => `${attr.name}="${attr.value}"`).join('\\n'),
+      position: {
+        top: Math.round(rect.top),
+        left: Math.round(rect.left),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height)
+      },
+      zIndex: computedStyle.zIndex,
+      pointerEvents: computedStyle.pointerEvents,
+      cursor: computedStyle.cursor,
+      display: computedStyle.display,
+      visibility: computedStyle.visibility,
+      opacity: computedStyle.opacity,
+      innerHTML: element.innerHTML.substring(0, 200)
+    }
+  }
+  
+  // Format diagnostic output
+  const formatDiagnosticOutput = (details) => {
+    return `ELEMENT DETAILS:
+━━━━━━━━━━━━━━━━━━━━
+Tag: <${details.tag}>
+ID: #${details.id}
+Classes: .${details.classes}
+
+ATTRIBUTES:
+${details.attributes}
+
+POSITION:
+Top: ${details.position.top}px
+Left: ${details.position.left}px
+Width: ${details.position.width}px
+Height: ${details.position.height}px
+
+CSS PROPERTIES:
+z-index: ${details.zIndex}
+pointer-events: ${details.pointerEvents}
+cursor: ${details.cursor}
+display: ${details.display}
+visibility: ${details.visibility}
+opacity: ${details.opacity}
+
+INNER HTML (first 200 chars):
+${details.innerHTML}
+━━━━━━━━━━━━━━━━━━━━`
+  }
+  
+  // Click handler for element inspection
+  const handleDiagnosticClick = (e) => {
+    if (!diagnosticActive) return
+    if (e.target.closest('#diagnostic-panel')) return
+    
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Remove previous highlight
+    if (lastInspectedElement) {
+      lastInspectedElement.classList.remove('diagnostic-active')
+    }
+    
+    // Highlight new element
+    e.target.classList.add('diagnostic-active')
+    lastInspectedElement = e.target
+    
+    // Get and display details
+    const details = getElementDetails(e.target)
+    lastInspectedCode = formatDiagnosticOutput(details)
+    
+    if (diagnosticOutput) {
+      diagnosticOutput.textContent = lastInspectedCode
+    }
+    if (diagnosticCopyBtn) {
+      diagnosticCopyBtn.style.display = 'block'
+    }
+    
+    console.log('[Diagnostic] Inspected:', details.tag, details.id, details.classes)
+  }
+  
+  // Copy diagnostic output
+  const copyDiagnosticOutput = () => {
+    if (lastInspectedCode) {
+      navigator.clipboard.writeText(lastInspectedCode).then(() => {
+        if (diagnosticCopyBtn) {
+          const originalText = diagnosticCopyBtn.textContent
+          diagnosticCopyBtn.textContent = '✓ Copied!'
+          setTimeout(() => {
+            diagnosticCopyBtn.textContent = originalText
+          }, 2000)
+        }
+        console.log('[Diagnostic] Code copied to clipboard')
+      })
+    }
+  }
+  
+  // Wire diagnostic events
+  if (diagnosticToggleBtn) {
+    diagnosticToggleBtn.addEventListener('click', toggleDiagnostic)
+  }
+  if (diagnosticMenuToggle) {
+    diagnosticMenuToggle.addEventListener('click', () => {
+      toggleDiagnostic()
+      closeMenus()
+    })
+  }
+  if (diagnosticCopyBtn) {
+    diagnosticCopyBtn.addEventListener('click', copyDiagnosticOutput)
+  }
+  
+  // Global click listener for diagnostic mode
+  document.addEventListener('click', handleDiagnosticClick, true)
+  
+  console.log('[Init] Diagnostic panel initialized')
+
+  if (metadataUIEnabled && summaryOpenTriggers.length) {
+    const openSummaryPanel = (chip) => {
+      if (!chip) return
       const panel = chip.dataset.openPanel
       if (!panel) {
-        console.error('[Chip] No panel attribute found!', chip)
+        console.error('[Chip] Missing panel attribute')
         return
       }
+
+      if (!state.preview.ready) {
+        setPremiumStatus('Select a clip to load metadata.', 'error')
+        return
+      }
+
+      const featureKey = summaryFeatureLookup[panel]
+      if (featureKey && !state.preview.premium[featureKey]) {
+        setPremiumStatus('Enable the Premium tester toggle to preview this insight.', 'error')
+        return
+      }
+
+      const dataReadyCheck = summaryReadyChecks[panel]
+      if (typeof dataReadyCheck === 'function' && !dataReadyCheck()) {
+        setPremiumStatus('Generating that insight… tap Refresh Metadata if it takes long.', 'loading')
+      }
+
       setActiveMetadataPanel(panel, chip)
       setPreviewMode('insights')
-    })
-    
-    // ULTRA-AGGRESSIVE: Force chips to be 100% clickable
-    chip.style.cssText = `
-      cursor: pointer !important;
-      pointer-events: auto !important;
-      position: relative !important;
-      z-index: 100 !important;
-    `
-    
-    // Add hover effect
-    chip.addEventListener('mouseenter', () => {
+    }
+
+    summaryOpenTriggers.forEach((chip) => {
+      chip.addEventListener('click', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        openSummaryPanel(chip)
+      })
+      chip.style.pointerEvents = 'auto'
       chip.style.cursor = 'pointer'
     })
-    
-    console.log('[Init] Chip configured:', chip.dataset.openPanel, 'Element:', chip.tagName, 'Classes:', chip.className)
-  })
-  
-  // Debug: Log all chips found
-  console.log('[Init] Total chips found:', summaryOpenTriggers.length)
-  summaryOpenTriggers.forEach((chip, idx) => {
-    console.log(`  Chip ${idx + 1}:`, chip.dataset.openPanel, 'Disabled:', chip.classList.contains('disabled'), 'Has listener:', true)
-  })
 
-  // Click outside modal to close (clean event delegation pattern)
-  const metadataPane = document.getElementById('metadata-pane')
-  const metadataPopover = document.getElementById('metadata-popover')
-  
-  metadataPane?.addEventListener('click', (e) => {
-    // Only close if clicking on pane/backdrop, not modal content
-    const isOutsideModal = !metadataPopover?.contains(e.target)
-    if (isOutsideModal && state.previewMode === 'insights') {
-      console.log('[Pane] Clicked outside modal, closing')
-      setPreviewMode('video')
-    }
-  })
-  
-  // Log modal clicks for debugging (no stopPropagation needed with delegation)
-  metadataPopover?.addEventListener('click', (e) => {
-    console.log('[Modal] Content clicked (handled by delegation, will not close)')
-  })
-  
-  // FLOATING CLOSE BUTTON - completely separate with proper event handling
-  const metadataCloseFloat = document.getElementById('metadata-close-float')
-  
-  // Position floating button when modal opens
-  const positionFloatingCloseButton = () => {
-    if (!metadataCloseFloat || !metadataPopover) return
-    
-    const modalRect = metadataPopover.getBoundingClientRect()
-    metadataCloseFloat.style.top = `${modalRect.top - 50}px`
-    metadataCloseFloat.style.right = `${window.innerWidth - modalRect.right + 10}px`
-    metadataCloseFloat.style.display = state.previewMode === 'insights' ? 'flex' : 'none'
-    
-    // Force pointer-events for reliability
-    metadataCloseFloat.style.pointerEvents = 'auto'
-    metadataCloseFloat.style.cursor = 'pointer'
-    
-    console.log('[FloatingButton] Positioned and shown')
-  }
-  
-  // Show/hide and position floating button
-  const updateFloatingButton = () => {
-    if (state.previewMode === 'insights') {
-      setTimeout(positionFloatingCloseButton, 50)
-    } else if (metadataCloseFloat) {
-      metadataCloseFloat.style.display = 'none'
-    }
-  }
-  
-  // Floating button - multiple event types for reliability
-  if (metadataCloseFloat) {
-    const closeViaFloat = (e) => {
-      console.log('[FloatingButton] Click detected:', e.type)
-      e.preventDefault()
-      e.stopPropagation()
-      setPreviewMode('video')
-    }
-    
-    metadataCloseFloat.addEventListener('click', closeViaFloat, true)
-    metadataCloseFloat.addEventListener('mousedown', closeViaFloat, true)
-    metadataCloseFloat.addEventListener('touchstart', closeViaFloat, { passive: false, capture: true })
-    
-    console.log('[Init] Floating close button configured with multi-event handlers')
-  }
-  
-  // Original close button inside modal header
-  if (metadataCloseBtn) {
-    const closeModal = (e) => {
-      console.log('[ModalClose] Button clicked:', e.type)
-      e.preventDefault()
-      e.stopPropagation()
-      setPreviewMode('video')
-    }
-    
-    // Use capture phase to catch event before any blocking
-    metadataCloseBtn.addEventListener('click', closeModal, true)
-    metadataCloseBtn.addEventListener('mousedown', closeModal, true)
-    
-    console.log('[Init] Modal close button configured')
+    console.log('[Init] Summary chips wired:', summaryOpenTriggers.length)
   } else {
-    console.warn('[Init] Modal close button NOT FOUND in DOM')
+    console.log('[Init] Metadata chips removed - skipping listeners')
   }
-  
-  // Emergency fallback: ESC key to close
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && state.previewMode === 'insights') {
-      console.log('[Metadata] ESC pressed - closing')
-      setPreviewMode('video')
-    }
-  })
-  
-  // Window-level fallback for floating button (last resort)
-  window.addEventListener('click', (e) => {
-    const target = e.target
-    if (target && (target.id === 'metadata-close-float' || target.closest('#metadata-close-float'))) {
-      console.log('[Window] Floating button click captured at window level')
-      e.preventDefault()
-      e.stopPropagation()
-      setPreviewMode('video')
-    }
-  }, true)
 
-  window.addEventListener('resize', () => {
-    if (state.previewMode !== 'insights') return
-    const anchor = lastPopoverAnchor || summaryChipRefs[state.preview.activePanel]
-    if (anchor) {
-      updatePopoverAnchor(anchor)
+  if (metadataUIEnabled) {
+    const metadataBackdrop = document.getElementById('metadata-backdrop')
+    
+    metadataBackdrop?.addEventListener('click', (e) => {
+      if (state.previewMode === 'insights') {
+        console.log('[Backdrop] Clicked, closing modal')
+        setPreviewMode('video')
+      }
+    })
+
+    if (metadataCloseBtn) {
+      metadataCloseBtn.addEventListener('click', (e) => {
+        console.log('[ModalClose] Button clicked')
+        e.preventDefault()
+        e.stopPropagation()
+        setPreviewMode('video')
+      })
+
+      console.log('[Init] Modal close button configured')
     }
-  })
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && state.previewMode === 'insights') {
+        console.log('[Metadata] ESC pressed - closing')
+        setPreviewMode('video')
+      }
+    })
+  } else {
+    console.log('[Init] Metadata modal removed - listeners skipped')
+  }
 
   document.querySelectorAll('[data-premium-copy]').forEach((btn) => {
     btn.addEventListener('click', () => handlePremiumCopy(btn.dataset.premiumCopy))
@@ -2408,6 +2512,26 @@ const wireEvents = () => {
         btn.textContent = 'Download'
         btn.disabled = false
       }
+    })
+  })
+
+  premiumRefreshBtn?.addEventListener('click', () => {
+    if (!state.preview.ready || !state.preview.url) {
+      setPremiumStatus('Select a clip to load metadata.', 'error')
+      return
+    }
+    const activeItem = state.queue.find((entry) => entry.url === state.preview.url)
+    fetchPremiumMetadata(activeItem || { url: state.preview.url, thumbnail: state.preview.metadata.thumbnail })
+  })
+
+  premiumToggleControls.forEach((toggle) => {
+    const checkbox = toggle.querySelector('input[type="checkbox"]')
+    const feature = toggle.dataset.premiumControl
+    if (!checkbox || !feature) return
+
+    checkbox.addEventListener('change', () => {
+      state.preview.premium[feature] = checkbox.checked
+      applyPremiumToggleUI()
     })
   })
 

@@ -101,6 +101,8 @@
                 <p class="help-email">team@bongbari.com</p>
                 <div class="menu-divider"></div>
                 <button class="menu-item" data-menu-action="check-updates">Check for updates</button>
+                <div class="menu-divider"></div>
+                <button class="menu-item" id="diagnostic-menu-toggle">🔬 Toggle Diagnostic Panel</button>
               </div>
             </div>
           </div>
@@ -133,23 +135,130 @@
               <span class="mono" id="preview-info">No media loaded</span>
             </div>
           </header>
-          <div class="metadata-summary" id="metadata-summary">
-            <button class="summary-chip" data-summary-chip="thumbnail" data-open-panel="thumbnail" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
-              <span class="chip-label">Thumbnail</span>
-              <span class="chip-value" id="summary-thumbnail">Waiting</span>
-            </button>
-            <button class="summary-chip" data-summary-chip="title" data-open-panel="title" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
-              <span class="chip-label">Title</span>
-              <span class="chip-value" id="summary-title">Title not ready</span>
-            </button>
-            <button class="summary-chip" data-summary-chip="keywords" data-open-panel="keywords" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
-              <span class="chip-label">Keywords</span>
-              <span class="chip-value" id="summary-keywords">Waiting</span>
-            </button>
-            <button class="summary-chip" data-summary-chip="description" data-open-panel="description" type="button" aria-haspopup="dialog" aria-controls="metadata-popover">
-              <span class="chip-label">Description</span>
-              <span class="chip-value" id="summary-description">Waiting</span>
-            </button>
+          <section class="insight-dock" id="metadata-pane" aria-live="polite">
+            <div class="insight-dock-shell">
+              <div class="insight-dock-header">
+                <span id="premium-status" class="premium-status">Select a clip to load metadata.</span>
+                <button id="premium-refresh" class="ghost ghost-icon insight-refresh" type="button" title="Refresh metadata">
+                  ↻
+                </button>
+              </div>
+              <div class="insight-toggle-row">
+                <label class="insight-toggle" data-premium-control="thumbnail">
+                  <input type="checkbox" checked />
+                  <span class="toggle-pill" aria-hidden="true"></span>
+                  <span>Thumbnail</span>
+                </label>
+                <label class="insight-toggle" data-premium-control="seo">
+                  <input type="checkbox" checked />
+                  <span class="toggle-pill" aria-hidden="true"></span>
+                  <span>SEO</span>
+                </label>
+                <label class="insight-toggle" data-premium-control="story">
+                  <input type="checkbox" checked />
+                  <span class="toggle-pill" aria-hidden="true"></span>
+                  <span>Story</span>
+                </label>
+              </div>
+              <div class="insight-chip-grid" role="tablist" aria-label="Metadata insights">
+                <button class="insight-chip" type="button" data-summary-chip="thumbnail" data-open-panel="thumbnail" aria-expanded="false">
+                  <span class="chip-label">Smart thumbnail</span>
+                  <span class="chip-value" id="summary-thumbnail">Waiting</span>
+                </button>
+                <button class="insight-chip" type="button" data-summary-chip="keywords" data-open-panel="keywords" aria-expanded="false">
+                  <span class="chip-label">SEO stack</span>
+                  <span class="chip-value" id="summary-keywords">Waiting</span>
+                </button>
+                <button class="insight-chip" type="button" data-summary-chip="title" data-open-panel="title" aria-expanded="false">
+                  <span class="chip-label">Story title</span>
+                  <span class="chip-value" id="summary-title">Waiting</span>
+                </button>
+                <button class="insight-chip" type="button" data-summary-chip="description" data-open-panel="description" aria-expanded="false">
+                  <span class="chip-label">Caption draft</span>
+                  <span class="chip-value" id="summary-description">Waiting</span>
+                </button>
+              </div>
+            </div>
+          </section>
+          <div id="metadata-backdrop" class="insight-backdrop" aria-hidden="true"></div>
+          <div id="metadata-popover" class="insight-modal" role="dialog" aria-modal="false" aria-labelledby="metadata-popover-title" aria-hidden="true">
+            <div class="insight-modal-shell">
+              <header class="insight-modal-header">
+                <div>
+                  <p class="eyebrow mini">Insight detail</p>
+                  <h3 id="metadata-popover-title">Smart thumbnail</h3>
+                </div>
+                <button id="metadata-close" class="ghost ghost-icon" data-close-metadata aria-label="Close insight">✕</button>
+              </header>
+              <div class="insight-modal-body">
+                <article class="insight-panel premium-card active" data-popover-panel="thumbnail" data-premium-card="thumbnail">
+                  <header class="insight-panel-header">
+                    <div>
+                      <p class="eyebrow mini">Visual</p>
+                      <h4>Smart thumbnail</h4>
+                    </div>
+                    <div class="insight-panel-actions">
+                      <button class="ghost-mini" data-premium-download="thumbnail">Download</button>
+                      <button class="ghost-mini" data-premium-copy="thumbnail">Copy link</button>
+                    </div>
+                  </header>
+                  <div class="insight-panel-body">
+                    <div id="premium-thumbnail" class="thumbnail-frame">
+                      <p>Thumbnail not ready</p>
+                    </div>
+                    <div class="thumbnail-meta">
+                      <span id="premium-thumbnail-ratio" class="thumbnail-ratio">Aspect: --</span>
+                      <span class="insight-pill">Auto-extract</span>
+                    </div>
+                  </div>
+                </article>
+                <article class="insight-panel premium-card" data-popover-panel="keywords" data-premium-card="seo">
+                  <header class="insight-panel-header">
+                    <div>
+                      <p class="eyebrow mini">Language</p>
+                      <h4>SEO keyword stack</h4>
+                    </div>
+                    <div class="insight-panel-actions">
+                      <button class="ghost-mini" data-premium-copy="keywords">Copy tags</button>
+                    </div>
+                  </header>
+                  <div class="insight-panel-body premium-card-keywords">
+                    <p class="premium-field-label">Keyword string</p>
+                    <div id="premium-keywords-string" class="premium-field-box">Keywords will appear here</div>
+                  </div>
+                </article>
+                <article class="insight-panel premium-card" data-popover-panel="title" data-premium-card="story-title">
+                  <header class="insight-panel-header">
+                    <div>
+                      <p class="eyebrow mini">Hook</p>
+                      <h4>Story title</h4>
+                    </div>
+                    <div class="insight-panel-actions">
+                      <button class="ghost-mini" data-premium-copy="title">Copy title</button>
+                    </div>
+                  </header>
+                  <div class="insight-panel-body premium-card-title">
+                    <p class="premium-field-label">Headline</p>
+                    <div id="premium-title" class="premium-field-box single-line">Title not ready</div>
+                  </div>
+                </article>
+                <article class="insight-panel premium-card" data-popover-panel="description" data-premium-card="story-description">
+                  <header class="insight-panel-header">
+                    <div>
+                      <p class="eyebrow mini">Caption</p>
+                      <h4>Long form copy</h4>
+                    </div>
+                    <div class="insight-panel-actions">
+                      <button class="ghost-mini" data-premium-copy="description">Copy caption</button>
+                    </div>
+                  </header>
+                  <div class="insight-panel-body premium-card-description">
+                    <p class="premium-field-label">Draft</p>
+                    <div id="premium-description" class="premium-field-box">Description will appear here when a clip is selected.</div>
+                  </div>
+                </article>
+              </div>
+            </div>
           </div>
           <div class="preview-card" id="preview-card">
             <video id="preview-video" preload="metadata"></video>
@@ -203,90 +312,20 @@
             </div>
           </div>
 
-          <div id="metadata-pane" class="metadata-pane">
-            <div class="metadata-backdrop" id="metadata-backdrop"></div>
-            <div class="metadata-popover" id="metadata-popover" aria-hidden="true" role="dialog" aria-labelledby="metadata-popover-title">
-              <div class="metadata-popover-shell">
-                <div class="metadata-popover-header">
-                  <h3 id="metadata-popover-title">Smart thumbnail</h3>
-                  <button id="metadata-close" class="ghost ghost-icon" title="Close">✕</button>
-                </div>
-                <div class="metadata-popover-body">
-                  <article class="premium-card premium-card-thumbnail active" data-premium-card="thumbnail" data-popover-panel="thumbnail">
-                    <header>
-                      <div>
-                        <p class="premium-card-title">🖼 Smart thumbnail</p>
-                        <p class="premium-card-hint">Best frame captured automatically</p>
-                      </div>
-                    </header>
-                    <div class="premium-card-body thumbnail-body">
-                      <div class="thumbnail-frame" id="premium-thumbnail">
-                        <p>Thumbnail not ready</p>
-                      </div>
-                      <div class="thumbnail-meta">
-                        <span class="thumbnail-ratio" id="premium-thumbnail-ratio">Aspect: --</span>
-                        <div class="premium-actions">
-                          <button class="ghost-mini" data-premium-download="thumbnail">Download</button>
-                          <button class="ghost-mini" data-premium-copy="thumbnail">Copy link</button>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                  <article class="premium-card premium-card-keywords" data-premium-card="seo" data-popover-panel="keywords">
-                    <header>
-                      <div>
-                        <p class="premium-card-title">🔑 SEO keywords</p>
-                        <p class="premium-card-hint">Comma separated for quick paste</p>
-                      </div>
-                    </header>
-                    <div class="premium-card-body">
-                      <div class="premium-field">
-                        <p class="premium-field-label">Keywords</p>
-                        <div class="premium-field-box" id="premium-keywords-string">Keywords will appear here</div>
-                      </div>
-                      <div class="premium-actions">
-                        <button class="ghost-mini" data-premium-copy="keywords">Copy keywords</button>
-                      </div>
-                    </div>
-                  </article>
-                  <article class="premium-card premium-card-title" data-premium-card="story-title" data-popover-panel="title">
-                    <header>
-                      <div>
-                        <p class="premium-card-title">📝 Title</p>
-                        <p class="premium-card-hint">One-line hook</p>
-                      </div>
-                    </header>
-                    <div class="premium-card-body">
-                      <div class="premium-field">
-                        <p class="premium-field-label">Title</p>
-                        <div class="premium-field-box single-line" id="premium-title">Title not ready</div>
-                      </div>
-                      <div class="premium-actions">
-                        <button class="ghost-mini" data-premium-copy="title">Copy title</button>
-                      </div>
-                    </div>
-                  </article>
-                  <article class="premium-card premium-card-description" data-premium-card="story" data-popover-panel="description">
-                    <header>
-                      <div>
-                        <p class="premium-card-title">🧾 Description</p>
-                        <p class="premium-card-hint">Drop-in caption draft</p>
-                      </div>
-                    </header>
-                    <div class="premium-card-body">
-                      <div class="premium-field">
-                        <p class="premium-field-label">Description</p>
-                        <div class="premium-field-box" id="premium-description">Description will appear here when a clip is selected.</div>
-                      </div>
-                      <div class="premium-actions">
-                        <button class="ghost-mini" data-premium-copy="description">Copy description</button>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-              </div>
+          <!-- 🔬 DIAGNOSTIC PANEL - Click any element to get its code -->
+          <div id="diagnostic-panel" class="diagnostic-panel" style="display: none;">
+            <div class="diagnostic-header">
+              <h3>🔬 Element Diagnostic</h3>
+              <button id="diagnostic-toggle" class="diagnostic-btn">Turn Off</button>
+            </div>
+            <div class="diagnostic-content">
+              <div class="diagnostic-info">Click any element to inspect it</div>
+              <div id="diagnostic-output" class="diagnostic-output"></div>
+              <button id="diagnostic-copy" class="diagnostic-copy-btn" style="display: none;">📋 Copy Code</button>
             </div>
           </div>
+
+          <!-- Metadata UI temporarily offline -->
         </section>
 
         <div class="stack">
