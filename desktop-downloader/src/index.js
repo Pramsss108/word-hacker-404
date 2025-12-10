@@ -213,9 +213,9 @@ const state = {
       fetched: false
     },
     premium: {
-      thumbnail: true,
-      seo: true,
-      story: true
+      thumbnail: false,
+      seo: false,
+      story: false
     },
     activePanel: 'thumbnail'
   },
@@ -371,6 +371,7 @@ const setActiveMetadataPanel = (panelKey = 'thumbnail', anchorChip) => {
 }
 
 const updateSummaryChips = () => {
+  // This function is kept for backward compatibility but no longer used for overlay
   Object.entries(summaryValueFields).forEach(([key, node]) => {
     if (!node) return
     const feature = summaryFeatureLookup[key]
@@ -393,16 +394,133 @@ const updateSummaryChips = () => {
   })
 }
 
+const updateInsightData = () => {
+  // Thumbnail
+  const thumbImage = document.getElementById('thumb-image')
+  const thumbRatio = document.getElementById('thumb-ratio')
+  const thumbDownload = document.getElementById('thumb-download')
+  
+  if (thumbImage && state.preview.metadata.thumbnail) {
+    thumbImage.src = state.preview.metadata.thumbnail
+    thumbDownload.disabled = false
+    
+    // Detect aspect ratio
+    const img = new Image()
+    img.onload = () => {
+      const ratio = (img.width / img.height).toFixed(2)
+      const common = {
+        '1.78': '16:9',
+        '0.56': '9:16',
+        '1.00': '1:1',
+        '1.33': '4:3',
+        '0.75': '3:4'
+      }
+      thumbRatio.textContent = common[ratio] || `${img.width}x${img.height}`
+    }
+    img.src = state.preview.metadata.thumbnail
+  } else if (thumbImage) {
+    thumbImage.removeAttribute('src')
+    thumbRatio.textContent = '--'
+    thumbDownload.disabled = true
+  }
+  
+  // Keywords
+  const keywordsField = document.getElementById('summary-keywords')
+  if (keywordsField) {
+    const keywords = (state.preview.metadata.keywords || []).filter(Boolean)
+    if (keywords.length) {
+      keywordsField.textContent = keywords.join(', ')
+      keywordsField.classList.add('ready')
+    } else {
+      keywordsField.textContent = 'Waiting for clip...'
+      keywordsField.classList.remove('ready')
+    }
+  }
+  
+  // Title
+  const titleField = document.getElementById('summary-title')
+  if (titleField) {
+    if (state.preview.metadata.title) {
+      titleField.textContent = state.preview.metadata.title
+      titleField.classList.add('ready')
+    } else {
+      titleField.textContent = 'Waiting for clip...'
+      titleField.classList.remove('ready')
+    }
+  }
+  
+  // Description
+  const descField = document.getElementById('summary-description')
+  if (descField) {
+    if (state.preview.metadata.description) {
+      descField.textContent = state.preview.metadata.description
+      descField.classList.add('ready')
+    } else {
+      descField.textContent = 'Waiting for clip...'
+      descField.classList.remove('ready')
+    }
+  }
+}
+
 const applyPremiumToggleUI = () => {
+  // Show/hide individual insight cards based on toggle state
+  const overlay = document.querySelector('.insight-overlay')
+  const thumbnailCard = document.querySelector('[data-insight-feature="thumbnail"]')
+  const seoCards = document.querySelectorAll('[data-insight-feature="seo"]')
+  const storyCards = document.querySelectorAll('[data-insight-feature="story"]')
+  const previewVideo = document.getElementById('preview-video')
+  
+  const thumbnailEnabled = state.preview.premium.thumbnail
+  const seoEnabled = state.preview.premium.seo
+  const storyEnabled = state.preview.premium.story
+  const anyEnabled = thumbnailEnabled || seoEnabled || storyEnabled
+  
+  if (thumbnailCard) {
+    thumbnailCard.style.display = thumbnailEnabled ? 'block' : 'none'
+  }
+  seoCards.forEach(card => {
+    card.style.display = seoEnabled ? 'block' : 'none'
+  })
+  storyCards.forEach(card => {
+    card.style.display = storyEnabled ? 'block' : 'none'
+  })
+  
+  // Control overlay visibility with active class
+  if (overlay) {
+    if (anyEnabled) {
+      overlay.classList.add('active')
+    } else {
+      overlay.classList.remove('active')
+    }
+  }
+  
+  // Hide video when any insight is active, show when all are off
+  if (previewVideo) {
+    if (anyEnabled) {
+      previewVideo.style.opacity = '0'
+      previewVideo.style.pointerEvents = 'none'
+      try {
+        previewVideo.pause()
+      } catch (e) {
+        // ignore
+      }
+    } else {
+      previewVideo.style.opacity = '1'
+      previewVideo.style.pointerEvents = 'auto'
+    }
+  }
+  
+  // Update modal cards
   Object.entries(premiumCardGroups).forEach(([feature, cards]) => {
     cards.forEach((card) => card?.classList.toggle('disabled', !state.preview.premium[feature]))
   })
+  
   const activeFeature = summaryFeatureLookup[state.preview.activePanel]
   if (activeFeature && !state.preview.premium[activeFeature]) {
     setActiveMetadataPanel(getFirstEnabledPanel())
-  } else {
-    updateSummaryChips()
   }
+  
+  updateInsightData()
   renderExportMetadata()
 }
 
@@ -461,6 +579,7 @@ const renderPremiumMetadata = () => {
     premiumDescriptionField.textContent = state.preview.metadata.description || 'Description will appear here when a clip is selected.'
   }
   updateSummaryChips()
+  updateInsightData()
   renderExportMetadata()
 }
 
@@ -2535,6 +2654,25 @@ ${details.innerHTML}
     })
   })
 
+  // Thumbnail download button
+  const thumbDownloadBtn = document.getElementById('thumb-download')
+  thumbDownloadBtn?.addEventListener('click', async () => {
+    if (!state.preview.metadata.thumbnail) return
+    
+    try {
+      const response = await fetch(state.preview.metadata.thumbnail)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `thumbnail-${Date.now()}.jpg`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Download failed:', error)
+    }
+  })
+
   exportBrowse.addEventListener('click', async () => {
     const selected = await window.systemDialogs?.chooseFolder()
     if (selected) {
@@ -3084,6 +3222,19 @@ setTimeout(() => {
     mainWindow.style.opacity = '1'
     mainWindow.style.visibility = 'visible'
   }
+  
+  // Sync toggle checkboxes with state on load
+  premiumToggleControls.forEach((toggle) => {
+    const checkbox = toggle.querySelector('input[type="checkbox"]')
+    const feature = toggle.dataset.premiumControl
+    if (checkbox && feature) {
+      state.preview.premium[feature] = checkbox.checked
+    }
+  })
+  
+  // Apply initial UI state
+  applyPremiumToggleUI()
+  
   console.log('[Startup] UI should be visible now!')
 }, 500)
 

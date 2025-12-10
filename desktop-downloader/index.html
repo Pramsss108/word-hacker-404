@@ -126,60 +126,38 @@
       <div class="workspace">
         <section class="pane preview-pane" data-mode="video">
           <header>
-            <div>
-              <p class="eyebrow">Review</p>
-              <h2>Preview & trim</h2>
-            </div>
-            <div class="preview-header-actions">
-              <span class="mono video-info-badge" id="video-format-badge"></span>
-              <span class="mono" id="preview-info">No media loaded</span>
-            </div>
-          </header>
-          <section class="insight-dock" id="metadata-pane" aria-live="polite">
-            <div class="insight-dock-shell">
-              <div class="insight-dock-header">
-                <span id="premium-status" class="premium-status">Select a clip to load metadata.</span>
-                <button id="premium-refresh" class="ghost ghost-icon insight-refresh" type="button" title="Refresh metadata">
-                  ↻
-                </button>
-              </div>
+            <div class="header-left">
               <div class="insight-toggle-row">
-                <label class="insight-toggle" data-premium-control="thumbnail">
-                  <input type="checkbox" checked />
+                <label class="insight-toggle" data-premium-control="thumbnail" title="Toggle thumbnail insight">
+                  <input type="checkbox" />
                   <span class="toggle-pill" aria-hidden="true"></span>
                   <span>Thumbnail</span>
                 </label>
-                <label class="insight-toggle" data-premium-control="seo">
-                  <input type="checkbox" checked />
+                <label class="insight-toggle" data-premium-control="seo" title="Toggle SEO insight">
+                  <input type="checkbox" />
                   <span class="toggle-pill" aria-hidden="true"></span>
                   <span>SEO</span>
                 </label>
-                <label class="insight-toggle" data-premium-control="story">
-                  <input type="checkbox" checked />
+                <label class="insight-toggle" data-premium-control="story" title="Toggle story insight">
+                  <input type="checkbox" />
                   <span class="toggle-pill" aria-hidden="true"></span>
                   <span>Story</span>
                 </label>
               </div>
-              <div class="insight-chip-grid" role="tablist" aria-label="Metadata insights">
-                <button class="insight-chip" type="button" data-summary-chip="thumbnail" data-open-panel="thumbnail" aria-expanded="false">
-                  <span class="chip-label">Smart thumbnail</span>
-                  <span class="chip-value" id="summary-thumbnail">Waiting</span>
-                </button>
-                <button class="insight-chip" type="button" data-summary-chip="keywords" data-open-panel="keywords" aria-expanded="false">
-                  <span class="chip-label">SEO stack</span>
-                  <span class="chip-value" id="summary-keywords">Waiting</span>
-                </button>
-                <button class="insight-chip" type="button" data-summary-chip="title" data-open-panel="title" aria-expanded="false">
-                  <span class="chip-label">Story title</span>
-                  <span class="chip-value" id="summary-title">Waiting</span>
-                </button>
-                <button class="insight-chip" type="button" data-summary-chip="description" data-open-panel="description" aria-expanded="false">
-                  <span class="chip-label">Caption draft</span>
-                  <span class="chip-value" id="summary-description">Waiting</span>
-                </button>
-              </div>
+              <button id="premium-refresh" class="ghost ghost-icon insight-refresh" type="button" title="Refresh metadata">
+                ↻
+              </button>
             </div>
-          </section>
+            <div class="header-center">
+              <p class="eyebrow">Review</p>
+              <h2>Preview & trim</h2>
+            </div>
+            <div class="preview-header-actions">
+              <span class="mono" id="premium-status">Select a clip to load metadata.</span>
+              <span class="mono video-info-badge" id="video-format-badge"></span>
+              <span class="mono" id="preview-info">No media loaded</span>
+            </div>
+          </header>
           <div id="metadata-backdrop" class="insight-backdrop" aria-hidden="true"></div>
           <div id="metadata-popover" class="insight-modal" role="dialog" aria-modal="false" aria-labelledby="metadata-popover-title" aria-hidden="true">
             <div class="insight-modal-shell">
@@ -262,6 +240,54 @@
           </div>
           <div class="preview-card" id="preview-card">
             <video id="preview-video" preload="metadata"></video>
+            <div class="insight-overlay" id="metadata-pane">
+              <!-- Thumbnail Detector -->
+              <div class="insight-card" data-insight-feature="thumbnail" style="display: none;">
+                <div class="insight-card-header">
+                  <span class="insight-icon">🖼️</span>
+                  <h3>Thumbnail</h3>
+                </div>
+                <div class="insight-card-body">
+                  <div id="thumb-preview" class="thumb-preview">
+                    <img id="thumb-image" alt="Thumbnail preview" />
+                    <span id="thumb-ratio" class="thumb-ratio">--</span>
+                  </div>
+                  <button id="thumb-download" class="insight-btn" type="button" disabled>
+                    <span>↓</span> Download
+                  </button>
+                </div>
+              </div>
+              <!-- SEO Keywords -->
+              <div class="insight-card" data-insight-feature="seo" style="display: none;">
+                <div class="insight-card-header">
+                  <span class="insight-icon">🏷️</span>
+                  <h3>SEO Keywords</h3>
+                </div>
+                <div class="insight-card-body">
+                  <p id="summary-keywords" class="insight-data">Waiting for clip...</p>
+                </div>
+              </div>
+              <!-- Title -->
+              <div class="insight-card" data-insight-feature="story" style="display: none;">
+                <div class="insight-card-header">
+                  <span class="insight-icon">✏️</span>
+                  <h3>Title</h3>
+                </div>
+                <div class="insight-card-body">
+                  <p id="summary-title" class="insight-data">Waiting for clip...</p>
+                </div>
+              </div>
+              <!-- Description -->
+              <div class="insight-card" data-insight-feature="story" style="display: none;">
+                <div class="insight-card-header">
+                  <span class="insight-icon">📝</span>
+                  <h3>Description</h3>
+                </div>
+                <div class="insight-card-body">
+                  <p id="summary-description" class="insight-data">Waiting for clip...</p>
+                </div>
+              </div>
+            </div>
             <div id="preview-empty" class="preview-empty">
               <div class="hacker-loading">
                 <div class="hacker-logo">

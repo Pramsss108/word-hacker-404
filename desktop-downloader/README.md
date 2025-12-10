@@ -8,6 +8,13 @@
 > - No preload.js or window.downloader - uses `window.__TAURI__`
 > 
 > **📚 READ FIRST**: [ARCHITECTURE_FOUNDATION.md](./ARCHITECTURE_FOUNDATION.md) - File structure & common mistakes
+> 
+> **🎯 RECENT UPDATES (Dec 10, 2025):**
+> - ✅ **Metadata Insight Overlay**: Cards appear inside preview area when toggles ON
+> - ✅ **Header Reorganized**: Toggles moved to LEFT (safe zone), title CENTER, status RIGHT
+> - ✅ **Z-Index Foundation**: Header z-index 100+, overlay confined to preview-card (z-index 1-2)
+> - ✅ **All Clickable**: Story toggle, SEO toggle, Thumbnail toggle, Refresh button - all working
+> - ✅ **Default OFF**: Toggles start unchecked, cards hidden on app start
 
 ## 🚨 CRITICAL: bridge.js Auto-Detection
 
