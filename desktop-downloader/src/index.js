@@ -2183,19 +2183,25 @@ const wireEvents = () => {
     console.log(`  Chip ${idx + 1}:`, chip.dataset.openPanel, 'Disabled:', chip.classList.contains('disabled'), 'Has listener:', true)
   })
 
-  // Close metadata modal - backdrop click (only if clicking outside modal)
-  metadataBackdrop?.addEventListener('click', (e) => {
-    console.log('[Metadata] Backdrop clicked!')\n    setPreviewMode('video')
-  })
-  
-  // Prevent clicks on modal from closing it
+  // Click outside modal to close (clean event delegation pattern)
+  const metadataPane = document.getElementById('metadata-pane')
   const metadataPopover = document.getElementById('metadata-popover')
-  metadataPopover?.addEventListener('click', (e) => {
-    console.log('[Metadata] Modal content clicked, preventing close')
-    e.stopPropagation()
+  
+  metadataPane?.addEventListener('click', (e) => {
+    // Only close if clicking on pane/backdrop, not modal content
+    const isOutsideModal = !metadataPopover?.contains(e.target)
+    if (isOutsideModal && state.previewMode === 'insights') {
+      console.log('[Pane] Clicked outside modal, closing')
+      setPreviewMode('video')
+    }
   })
   
-  // FLOATING CLOSE BUTTON - completely separate
+  // Log modal clicks for debugging (no stopPropagation needed with delegation)
+  metadataPopover?.addEventListener('click', (e) => {
+    console.log('[Modal] Content clicked (handled by delegation, will not close)')
+  })
+  
+  // FLOATING CLOSE BUTTON - completely separate with proper event handling
   const metadataCloseFloat = document.getElementById('metadata-close-float')
   
   // Position floating button when modal opens
@@ -2206,64 +2212,55 @@ const wireEvents = () => {
     metadataCloseFloat.style.top = `${modalRect.top - 50}px`
     metadataCloseFloat.style.right = `${window.innerWidth - modalRect.right + 10}px`
     metadataCloseFloat.style.display = state.previewMode === 'insights' ? 'flex' : 'none'
+    
+    // Force pointer-events for reliability
+    metadataCloseFloat.style.pointerEvents = 'auto'
+    metadataCloseFloat.style.cursor = 'pointer'
+    
+    console.log('[FloatingButton] Positioned and shown')
   }
   
   // Show/hide and position floating button
   const updateFloatingButton = () => {
     if (state.previewMode === 'insights') {
-      positionFloatingCloseButton()
+      setTimeout(positionFloatingCloseButton, 50)
     } else if (metadataCloseFloat) {
       metadataCloseFloat.style.display = 'none'
     }
   }
   
-  // Floating button click
-  metadataCloseFloat?.addEventListener('click', (e) => {
-    console.log('[Metadata] FLOATING close button clicked!')
-    e.preventDefault()
-    e.stopPropagation()
-    setPreviewMode('video')
-  })
-  
-  // Close metadata modal - X button click
-  if (metadataCloseBtn) {
-    // ULTRA-AGGRESSIVE: Make button 100% clickable
-    metadataCloseBtn.style.cssText = `
-      pointer-events: auto !important;
-      cursor: pointer !important;
-      position: relative !important;
-      z-index: 999999 !important;
-      display: inline-flex !important;
-    `
-    
-    // Add ALL possible event types
-    const closeModal = (e) => {
-      console.log('[Metadata] Close button activated!', e.type)
+  // Floating button - multiple event types for reliability
+  if (metadataCloseFloat) {
+    const closeViaFloat = (e) => {
+      console.log('[FloatingButton] Click detected:', e.type)
       e.preventDefault()
       e.stopPropagation()
-      e.stopImmediatePropagation()
       setPreviewMode('video')
     }
     
-    metadataCloseBtn.addEventListener('click', closeModal, { capture: true })
-    metadataCloseBtn.addEventListener('mousedown', closeModal, { capture: true })
-    metadataCloseBtn.addEventListener('touchstart', closeModal, { capture: true })
-    metadataCloseBtn.addEventListener('pointerdown', closeModal, { capture: true })
+    metadataCloseFloat.addEventListener('click', closeViaFloat, true)
+    metadataCloseFloat.addEventListener('mousedown', closeViaFloat, true)
+    metadataCloseFloat.addEventListener('touchstart', closeViaFloat, { passive: false, capture: true })
     
-    // Add hover effect manually
-    metadataCloseBtn.addEventListener('mouseenter', (e) => {
-      console.log('[Metadata] Mouse ENTERED close button!')
-      metadataCloseBtn.style.opacity = '0.7'
-      metadataCloseBtn.style.cursor = 'pointer'
-    })
+    console.log('[Init] Floating close button configured with multi-event handlers')
+  }
+  
+  // Original close button inside modal header
+  if (metadataCloseBtn) {
+    const closeModal = (e) => {
+      console.log('[ModalClose] Button clicked:', e.type)
+      e.preventDefault()
+      e.stopPropagation()
+      setPreviewMode('video')
+    }
     
-    metadataCloseBtn.addEventListener('mouseleave', (e) => {
-      metadataCloseBtn.style.opacity = '1'
-    })
+    // Use capture phase to catch event before any blocking
+    metadataCloseBtn.addEventListener('click', closeModal, true)
+    metadataCloseBtn.addEventListener('mousedown', closeModal, true)
     
-    console.log('[Init] Close button configured with all event types')
+    console.log('[Init] Modal close button configured')
   } else {
-    console.error('[Init] Close button NOT FOUND!')
+    console.warn('[Init] Modal close button NOT FOUND in DOM')
   }
   
   // Emergency fallback: ESC key to close
@@ -2274,24 +2271,16 @@ const wireEvents = () => {
     }
   })
   
-  // ULTIMATE FALLBACK: Window-level click handler for close button
+  // Window-level fallback for floating button (last resort)
   window.addEventListener('click', (e) => {
-    if (e.target && e.target.id === 'metadata-close') {
-      console.log('[Metadata] Window captured close button click!')
+    const target = e.target
+    if (target && (target.id === 'metadata-close-float' || target.closest('#metadata-close-float'))) {
+      console.log('[Window] Floating button click captured at window level')
       e.preventDefault()
       e.stopPropagation()
       setPreviewMode('video')
     }
   }, true)
-  
-  // NUCLEAR OPTION: Constantly ensure close button is clickable
-  setInterval(() => {
-    if (state.previewMode === 'insights' && metadataCloseBtn) {
-      metadataCloseBtn.style.pointerEvents = 'auto'
-      metadataCloseBtn.style.cursor = 'pointer'
-      metadataCloseBtn.style.zIndex = '999999'
-    }
-  }, 100)
 
   window.addEventListener('resize', () => {
     if (state.previewMode !== 'insights') return

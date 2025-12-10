@@ -1,7 +1,7 @@
 .metadata-pane {
 	position: absolute;
 	inset: 0;
-	pointer-events: none;
+	pointer-events: auto;
 	z-index: 2;
 }
 
@@ -173,8 +173,8 @@
 }
 
 .preview-pane[data-mode="insights"] .metadata-pane {
-	pointer-events: auto !important;
-	z-index: 9999;
+	pointer-events: auto;
+	z-index: 10000;
 }
 
 .preview-pane[data-mode="insights"] .metadata-backdrop {
@@ -184,9 +184,9 @@
 
 .preview-pane[data-mode="insights"] .metadata-popover {
 	opacity: 1;
-	pointer-events: auto !important;
+	pointer-events: auto;
 	transform: translate(-50%, 0) scale(1);
-	z-index: 100000 !important;
+	z-index: 10001;
 }
 
 .preview-pane[data-mode="insights"] .metadata-popover-shell {
@@ -960,9 +960,9 @@ h3 {
 /* Floating close button - COMPLETELY INDEPENDENT */
 .metadata-close-float {
 	position: fixed;
-	z-index: 999999 !important;
-	pointer-events: auto !important;
-	cursor: pointer !important;
+	z-index: 100000;
+	pointer-events: auto;
+	cursor: pointer;
 	background: rgba(217, 46, 46, 0.15);
 	border: 1px solid rgba(217, 46, 46, 0.5);
 	border-radius: 8px;
