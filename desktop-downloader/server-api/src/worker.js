@@ -42,6 +42,18 @@ export default {
       if (path === '/api/v1/video/resolve') {
         return await handleResolution(request, corsHeaders);
       }
+      
+      // 4. Route: Ad Verification (Monetization)
+      if (path === '/api/v1/ads/verify') {
+        const { handleAdVerification } = await import('./ads.js');
+        return await handleAdVerification(request, env);
+      }
+      
+      // 5. Route: Download Authorization (Server-side validation)
+      if (path === '/api/v1/download/authorize') {
+        const { handleDownloadAuthorization } = await import('./ads.js');
+        return await handleDownloadAuthorization(request, env);
+      }
 
       return new Response('Not Found', { status: 404, headers: corsHeaders });
 

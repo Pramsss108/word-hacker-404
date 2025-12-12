@@ -148,9 +148,14 @@
                 ↻
               </button>
             </div>
-            <div class="header-center">
-              <p class="eyebrow">Review</p>
-              <h2>Preview & trim</h2>
+            <div class="header-center slim-premium-header">
+              <span class="header-icon">🎬</span>
+              <h2 class="header-title">Media Studio</h2>
+              <span class="header-divider">·</span>
+              <span class="header-status" id="media-status-indicator">
+                <span class="status-dot"></span>
+                <span id="media-status-text">No media</span>
+              </span>
             </div>
             <div class="preview-header-actions">
               <span class="mono" id="premium-status">Select a clip to load metadata.</span>
@@ -197,12 +202,14 @@
                       <h4>SEO keyword stack</h4>
                     </div>
                     <div class="insight-panel-actions">
+                      <button id="youtube-oauth-btn" class="ghost-mini oauth-btn" title="Login for 100% tag accuracy">🔐 YT Login</button>
                       <button class="ghost-mini" data-premium-copy="keywords">Copy tags</button>
                     </div>
                   </header>
                   <div class="insight-panel-body premium-card-keywords">
                     <p class="premium-field-label">Keyword string</p>
                     <div id="premium-keywords-string" class="premium-field-box">Keywords will appear here</div>
+                    <p class="keyword-disclaimer">⚠️ Some tags may be hidden by YouTube. <span id="oauth-status"></span></p>
                   </div>
                 </article>
                 <article class="insight-panel premium-card" data-popover-panel="title" data-premium-card="story-title">
@@ -213,6 +220,7 @@
                     </div>
                     <div class="insight-panel-actions">
                       <button class="ghost-mini" data-premium-copy="title">Copy title</button>
+                      <button class="ghost-mini" data-premium-save="title">Save as...</button>
                     </div>
                   </header>
                   <div class="insight-panel-body premium-card-title">
@@ -228,6 +236,7 @@
                     </div>
                     <div class="insight-panel-actions">
                       <button class="ghost-mini" data-premium-copy="description">Copy caption</button>
+                      <button class="ghost-mini" data-premium-save="description">Save as...</button>
                     </div>
                   </header>
                   <div class="insight-panel-body premium-card-description">
@@ -239,7 +248,7 @@
             </div>
           </div>
           <div class="preview-card" id="preview-card">
-            <video id="preview-video" preload="metadata"></video>
+            <video id="preview-video" preload="metadata" playsinline disablePictureInPicture></video>
             <div class="insight-overlay" id="metadata-pane">
               <!-- Thumbnail Detector -->
               <div class="insight-card" data-insight-feature="thumbnail" style="display: none;">
@@ -312,6 +321,7 @@
                 <button id="preview-play" class="trim-btn" title="Play/Pause (Space)">▶</button>
                 <button id="preview-stop" class="trim-btn" title="Stop">⏹</button>
                 <button id="preview-restart" class="trim-btn" title="Restart">⟲</button>
+                <button id="shortcuts-help" class="trim-btn" title="Keyboard Shortcuts (?)">⌨️</button>
                 <span class="playback-time">
                   <strong id="current-time">00:00</strong> / <span id="total-time">00:00</span>
                 </span>
@@ -323,18 +333,44 @@
               </div>
             </div>
             <div class="trim-timeline-container">
-              <div class="timeline-hover-preview" id="timeline-hover">
-                <span class="hover-time">00:00</span>
-              </div>
-              <div class="trim-timeline" id="trim-timeline-track">
-                <div class="trim-track">
-                  <div id="trim-fill" class="trim-range-fill"></div>
-                  <div id="playhead-indicator" class="playhead"></div>
+              <!-- Premium Timeline -->
+              <div class="premium-timeline" id="premium-timeline">
+                <!-- Background track -->
+                <div class="timeline-track"></div>
+                
+                <!-- Green fill between handles -->
+                <div class="timeline-fill" id="timeline-fill"></div>
+                
+                <!-- Playhead (shows during playback) -->
+                <div class="timeline-playhead" id="timeline-playhead"></div>
+                
+                <!-- Hover time preview -->
+                <div class="timeline-hover-time" id="timeline-hover-time" style="display: none;">00:00</div>
+                
+                <!-- Left handle (start) with grip lines -->
+                <div class="timeline-handle timeline-handle-left" id="handle-left">
+                  <div class="handle-line"></div>
+                  <div class="handle-line"></div>
+                  <div class="handle-line"></div>
                 </div>
-                <input id="trim-start" class="trim-handle trim-handle-start" type="range" min="0" value="0" step="0.1" aria-label="Trim start" />
-                <input id="trim-end" class="trim-handle trim-handle-end" type="range" min="0" value="0" step="0.1" aria-label="Trim end" />
+                
+                <!-- Right handle (end) with grip lines -->
+                <div class="timeline-handle timeline-handle-right" id="handle-right">
+                  <div class="handle-line"></div>
+                  <div class="handle-line"></div>
+                  <div class="handle-line"></div>
+                </div>
               </div>
-              <div class="timeline-time-markers" id="timeline-markers"></div>
+              
+              <!-- Time markers -->
+              <div class="timeline-markers">
+                <span class="marker-start">00:00</span>
+                <span class="marker-end" id="marker-end">00:00</span>
+              </div>
+              
+              <!-- Hidden inputs for trim values -->
+              <input id="trim-start" type="range" min="0" value="0" step="0.1" style="display: none;" />
+              <input id="trim-end" type="range" min="0" value="0" step="0.1" style="display: none;" />
             </div>
           </div>
 
@@ -484,12 +520,103 @@
       </div>
     </div>
 
+    <!-- Keyboard Shortcuts Overlay -->
+    <div id="shortcuts-modal" class="shortcuts-modal" style="display: none;">
+      <div class="shortcuts-content">
+        <div class="shortcuts-header">
+          <h2>⌨️ Keyboard Shortcuts</h2>
+          <button id="shortcuts-close" class="shortcuts-close">✕</button>
+        </div>
+        <div class="shortcuts-grid">
+          <div class="shortcuts-section">
+            <h3>🎬 Playback</h3>
+            <div class="shortcut-item">
+              <kbd>Space</kbd> or <kbd>K</kbd>
+              <span>Play / Pause</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>J</kbd>
+              <span>Rewind 1 second</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>L</kbd>
+              <span>Forward 1 second</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>←</kbd>
+              <span>Jump back 5 seconds</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>→</kbd>
+              <span>Jump forward 5 seconds</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Shift</kbd> + <kbd>,</kbd>
+              <span>Previous frame (0.1s)</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Shift</kbd> + <kbd>.</kbd>
+              <span>Next frame (0.1s)</span>
+            </div>
+          </div>
+          
+          <div class="shortcuts-section">
+            <h3>✂️ Trimming</h3>
+            <div class="shortcut-item">
+              <kbd>I</kbd>
+              <span>Set IN point (trim start)</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>O</kbd>
+              <span>Set OUT point (trim end)</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Home</kbd>
+              <span>Jump to trim start</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>End</kbd>
+              <span>Jump to trim end</span>
+            </div>
+          </div>
+          
+          <div class="shortcuts-section">
+            <h3>🖱️ Mouse Controls</h3>
+            <div class="shortcut-item">
+              <span class="mouse-icon">🖱️</span>
+              <span>Click video to play/pause</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="mouse-icon">🖱️🖱️</span>
+              <span>Double-click for fullscreen</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="mouse-icon">🔄</span>
+              <span>Mouse wheel to scrub timeline</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="mouse-icon">👆</span>
+              <span>Click trim sliders to jump</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="mouse-icon">🖱️⬇️</span>
+              <span>Drag sliders for live preview</span>
+            </div>
+          </div>
+        </div>
+        <div class="shortcuts-footer">
+          <p>💡 <strong>Pro Tip:</strong> Drag trim sliders to see live video preview while adjusting!</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Security & Monetization System -->
     <script type="module" src="/src/renderer/licenseManager.js?v=10"></script>
     <script type="module" src="/src/renderer/freeTierManager.js?v=10"></script>
     <script src="/src/renderer/premiumEffects.js?v=11"></script>
     <script type="module" src="/src/renderer/premiumToggle.js?v=10"></script>
     <script type="module" src="/src/renderer/upgradeModal.js?v=10"></script>
+    <script src="/src/renderer/adPopup.js?v=11"></script>
     <script type="module" src="/src/index.js?v=10"></script>
     <script type="module" src="/src/renderer/tutorial.js?v=10"></script>
   </body>

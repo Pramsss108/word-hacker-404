@@ -1,7 +1,9 @@
 # 🎯 WH404 Downloader - Complete Feature List
 
+**🚨 AI AGENT NOTE: This file lists ALL working features. Don't remove features without user approval!**
+
 **Current Version**: 1.0.0 (Free)  
-**Last Updated**: December 7, 2025
+**Last Updated**: December 11, 2025
 
 ---
 

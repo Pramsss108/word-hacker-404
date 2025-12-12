@@ -1,9 +1,14 @@
-name = "wh404-api"
+name = "wh404-license-api"
 main = "src/worker.js"
 compatibility_date = "2023-10-30"
 
 [vars]
 ENVIRONMENT = "production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wh404-licenses"
+database_id = "45917a9a-a2c5-4676-89bb-9bb245465bb7"
 
 # [env.production]
 # kv_namespaces = [

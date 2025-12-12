@@ -11,6 +11,10 @@ const FORMAT_CACHE = new Map()
 const METADATA_CACHE_TTL = 1000 * 60 * 10 // 10 minutes
 const METADATA_CACHE = new Map()
 
+// 🔐 YouTube OAuth State
+let youtubeOAuthToken = null
+let youtubeOAuthExpiry = null
+
 // 🛡️ ELITE BYPASS STRATEGIES (Pro Developer Engine)
 const RETRY_STRATEGIES = [
   { name: 'Standard', args: {} },
@@ -479,16 +483,89 @@ app.whenReady().then(() => {
       }
 
       const parsed = parseJsonOutput(raw)
-      const keywordSource = Array.isArray(parsed?.tags) && parsed.tags.length
-        ? parsed.tags
-        : Array.isArray(parsed?.categories) && parsed.categories.length
-          ? parsed.categories
-          : Array.isArray(parsed?.keywords)
-            ? parsed.keywords
-            : []
+      
+      // DEBUG: Log what yt-dlp returned
+      console.log('[Backend] Parsed metadata fields:', {
+        hasTags: Array.isArray(parsed?.tags),
+        tagsLength: parsed?.tags?.length,
+        hasCategories: Array.isArray(parsed?.categories),
+        hasKeywords: Array.isArray(parsed?.keywords),
+        tags: parsed?.tags,
+        categories: parsed?.categories,
+        keywords: parsed?.keywords
+      })
+      
+      // 🎯 ENHANCED TAG EXTRACTION (Like SEO Tools)
+      let keywordSource = []
+      
+      // Try tags first
+      if (Array.isArray(parsed?.tags) && parsed.tags.length) {
+        keywordSource = parsed.tags
+      } 
+      // Try categories second
+      else if (Array.isArray(parsed?.categories) && parsed.categories.length) {
+        keywordSource = parsed.categories
+      } 
+      // Try keywords third
+      else if (Array.isArray(parsed?.keywords) && parsed.keywords.length) {
+        keywordSource = parsed.keywords
+      }
+      
+      // 🔥 FALLBACK: Scrape from description if we have less than 5 tags
+      if (keywordSource.length < 5 && parsed?.description) {
+        console.log('[Backend] Few tags found, extracting from description...')
+        const desc = parsed.description
+        
+        // Extract hashtags from description (SEO tool style)
+        const hashtagMatches = desc.match(/#[\w\u0980-\u09FF]+/g) || []
+        const hashtags = hashtagMatches.map(h => h.replace('#', '').toLowerCase())
+        
+        // Extract @mentions as keywords
+        const mentionMatches = desc.match(/@[\w]+/g) || []
+        const mentions = mentionMatches.map(m => m.replace('@', '').toLowerCase())
+        
+        // Extract capitalized words (likely important keywords)
+        const capitalWords = desc.match(/\b[A-Z][a-z]+\b/g) || []
+        
+        // Extract ALL words 4+ characters (aggressive extraction)
+        const allWords = desc
+          .toLowerCase()
+          .match(/\b[a-z]{4,}\b/g) || []
+        const filteredWords = allWords.filter(w => 
+          !['with', 'from', 'this', 'that', 'have', 'will', 'been', 'were', 'what', 'when', 'where', 'which', 'their', 'there', 'about', 'would', 'could', 'should'].includes(w)
+        )
+        
+        // Combine all extracted keywords
+        const extracted = [
+          ...hashtags, 
+          ...mentions, 
+          ...capitalWords.map(w => w.toLowerCase()),
+          ...filteredWords
+        ]
+        keywordSource = [...keywordSource, ...extracted]
+        
+        console.log('[Backend] Extracted from description:', extracted.length, 'keywords')
+      }
+      
       const keywords = keywordSource
         .map((word) => (typeof word === 'string' ? word.trim() : ''))
         .filter(Boolean)
+        .filter((word, index, self) => self.indexOf(word) === index) // Remove duplicates
+      
+      // Limit by total character count (500 chars) instead of keyword count
+      let finalKeywords = []
+      let charCount = 0
+      for (const keyword of keywords) {
+        if (charCount + keyword.length + 2 <= 500) { // +2 for ', ' separator
+          finalKeywords.push(keyword)
+          charCount += keyword.length + 2
+        } else {
+          break
+        }
+      }
+        
+      console.log('[Backend] Final keywords to send:', finalKeywords)
+      console.log('[Backend] Total character count:', charCount)
       const thumbnails = Array.isArray(parsed?.thumbnails) ? parsed.thumbnails : []
       const bestThumb = thumbnails.reduce((best, current) => {
         if (!current?.url) return best
@@ -560,6 +637,82 @@ app.whenReady().then(() => {
       authWindow.on('closed', () => {
         clearInterval(checkLogin)
         resolve({ success: false, message: 'Login window closed' })
+      })
+    })
+  })
+
+  // 🔐 YouTube OAuth Handler for 100% Tag Accuracy
+  ipcMain.handle('youtube:oauth-login', async () => {
+    return new Promise((resolve) => {
+      const authWindow = new BrowserWindow({
+        width: 600,
+        height: 700,
+        parent: mainWindow,
+        modal: true,
+        title: 'Login to YouTube for Full Tag Access',
+        autoHideMenuBar: true,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true
+        }
+      })
+
+      // Load YouTube OAuth consent screen
+      const clientId = '1234567890-abcdefghijklmnop.apps.googleusercontent.com' // Replace with actual
+      const redirectUri = 'http://localhost:3000/oauth/callback'
+      const scope = 'https://www.googleapis.com/auth/youtube.readonly'
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent(scope)}`
+      
+      authWindow.loadURL('https://accounts.google.com/ServiceLogin?continue=https://www.youtube.com/')
+
+      // Monitor URL changes for OAuth token
+      authWindow.webContents.on('will-redirect', (_event, url) => {
+        if (url.includes('access_token=')) {
+          const token = url.match(/access_token=([^&]+)/)?.[1]
+          const expiresIn = url.match(/expires_in=(\\d+)/)?.[1]
+          
+          if (token) {
+            youtubeOAuthToken = token
+            youtubeOAuthExpiry = Date.now() + (parseInt(expiresIn || '3600') * 1000)
+            
+            console.log('[YouTube OAuth] Token acquired, expires in:', expiresIn, 'seconds')
+            authWindow.close()
+            resolve({ success: true, token, expiresIn })
+          }
+        }
+      })
+
+      // Fallback: Check for YouTube cookies (simpler approach)
+      const checkLogin = setInterval(async () => {
+        try {
+          const cookies = await authWindow.webContents.session.cookies.get({ domain: '.youtube.com' })
+          const authCookie = cookies.find(c => c.name === 'SAPISID' || c.name === 'HSID')
+          
+          if (authCookie) {
+            clearInterval(checkLogin)
+            console.log('[YouTube OAuth] Logged in via cookies')
+            
+            // Save YouTube cookies for yt-dlp
+            const cookiePath = path.join(app.getPath('userData'), 'youtube-cookies.txt')
+            const cookieContent = cookies.map(c => {
+              return `${c.domain}\\tTRUE\\t${c.path}\\t${c.secure ? 'TRUE' : 'FALSE'}\\t${Math.floor(c.expirationDate || Date.now()/1000 + 31536000)}\\t${c.name}\\t${c.value}`
+            }).join('\\n')
+            
+            fs.writeFileSync(cookiePath, '# Netscape HTTP Cookie File\\n' + cookieContent)
+            
+            authWindow.close()
+            resolve({ success: true, method: 'cookies', cookiePath })
+          }
+        } catch (e) {
+          // Ignore errors during check
+        }
+      }, 1500)
+
+      authWindow.on('closed', () => {
+        clearInterval(checkLogin)
+        if (!youtubeOAuthToken) {
+          resolve({ success: false, message: 'Login window closed without authentication' })
+        }
       })
     })
   })

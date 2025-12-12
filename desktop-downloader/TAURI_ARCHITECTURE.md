@@ -1,3 +1,15 @@
+# 🚨 CRITICAL FILE STRUCTURE - READ THIS FIRST!
+
+**⚠️ FOR ALL AI AGENTS: STOP AND READ BEFORE CODING ⚠️**
+
+## File Structure (SINGLE SOURCE OF TRUTH):
+- **ROOT index.html** (`desktop-downloader/index.html`) ← **EDIT THIS HTML**
+- **src/renderer/style.css** ← **EDIT THIS CSS**
+- **src/renderer/renderer.js** ← **EDIT THIS JAVASCRIPT**
+- **NO OTHER HTML FILES EXIST** - If you see duplicates, DELETE them!
+
+---
+
 # ⚠️ CRITICAL: TAURI ARCHITECTURE NOTICE
 
 **FOR ALL AI AGENTS AND DEVELOPERS:**

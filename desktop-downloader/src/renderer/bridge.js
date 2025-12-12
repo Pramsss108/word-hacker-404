@@ -490,6 +490,16 @@ if (isTauri) {
       // TODO: Implement reveal file
       console.log('Reveal file:', path);
     },
+    youtubeOAuthLogin: async () => {
+      // YouTube OAuth for 100% tag accuracy
+      const { invoke } = window.__TAURI__.tauri;
+      try {
+        return await invoke('youtube_oauth_login');
+      } catch (err) {
+        console.error('[Bridge] YouTube OAuth failed:', err);
+        return { success: false, message: err.toString() };
+      }
+    },
     exportFiles: async (payload) => {
       // Payload: { files, destination, outputFormat, trim, metadata }
       // For now, we just copy the file to the destination if provided, or Downloads

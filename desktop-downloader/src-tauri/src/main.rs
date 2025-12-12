@@ -10,6 +10,14 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::io::BufRead;
 
+// New modules for advanced scraping
+mod orchestrator;
+mod oembed;
+mod cloudflare;
+mod license;
+mod security;
+mod ad_manager;
+
 fn strip_unc(path: PathBuf) -> String {
     let s = path.to_string_lossy().to_string();
     if s.starts_with(r"\\?\") {
@@ -22,6 +30,9 @@ fn strip_unc(path: PathBuf) -> String {
 // Store active downloads to allow cancellation
 struct DownloadState {
     active_downloads: Arc<Mutex<HashMap<String, u32>>>, // URL -> PID
+    orchestrator: Arc<Mutex<orchestrator::DownloadOrchestrator>>,
+    license_manager: Arc<Mutex<license::LicenseManager>>,
+    ad_manager: Arc<Mutex<ad_manager::AdManager>>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -54,69 +65,161 @@ async fn download_video(
     format: String,
     state: tauri::State<'_, DownloadState>
 ) -> Result<String, String> {
-    println!("DEBUG: download_video() CALLED");
-    println!("DEBUG: URL: {}", url);
-    println!("DEBUG: Format: {}", format);
+    println!("🚀 MULTI-METHOD DOWNLOADER ACTIVATED");
+    println!("🎯 URL: {}", url);
+    println!("📦 Format: {}", format);
 
+    // 0. LICENSE & QUOTA CHECK - FREE tier = unlimited with ads, PRO = no ads
+    let can_proceed = true; // Always allow - ads handle monetization
+    
+    if !can_proceed {
+        window.emit("quota_exceeded", Payload {
+            url: url.clone(),
+            progress: 0.0,
+            status: "Daily quota exceeded! Watch ad or upgrade to PRO.".to_string(),
+            filename: None,
+        }).ok();
+        return Err("Daily quota exceeded. Watch ad to continue or upgrade to PRO.".to_string());
+    }
+    
+    println!("✅ Quota check passed");
 
-    // 0. DUPLICATE CHECK (Prevent Crash)
+    // 1. DUPLICATE CHECK (Prevent Crash)
     {
         let mut downloads = state.active_downloads.lock().unwrap();
         if downloads.contains_key(&url) {
-            println!("⚠️ DEBUG: Found stuck lock for {}. FORCING REMOVAL to allow retry.", url);
+            println!("⚠️ Found stuck lock for {}. FORCING REMOVAL to allow retry.", url);
             downloads.remove(&url);
-            // In production, we would return Err here.
-            // return Err("Download already in progress".to_string());
         }
-        // Insert placeholder to block immediate subsequent clicks
         downloads.insert(url.clone(), 0);
     }
-    println!("DEBUG: Duplicate check passed (Lock acquired)");
-
-    // --- GOD MODE SECURITY CHECK ---
-    // In a real app, fetch this from secure storage
-    // let license_key = "WH404-FREE-USER".to_string(); 
     
-    // let client = reqwest::Client::new();
-    // Replace with your actual Worker URL after deployment
-    // let api_url = "https://wh404-api.YOUR_SUBDOMAIN.workers.dev/api/v1/video/resolve";
-
-    println!("DEBUG: Skipped network init");
-
-    // For now, we skip the actual network call if the URL is a placeholder
-    // to prevent crashing during development.
-    // In production, UNCOMMENT the network call block.
+    // 🔥 NEW: Try all 3 methods with smart fallback
+    let download_dir = tauri::api::path::download_dir().unwrap_or(PathBuf::from("."));
+    let output_template = download_dir.join("WordHacker").join("%(title)s.%(ext)s");
+    let output_path = strip_unc(output_template.clone());
     
-    /* 
-    let res = client.post(api_url)
-        .json(&ApiRequest {
-            url: url.clone(),
-            license_key: license_key.clone(),
-            quality: "1080p".to_string(), // Extract from format string in real app
-        })
-        .send()
-        .await
-        .map_err(|e| format!("API Connection Failed: {}", e))?;
-
-    let api_data: ApiResponse = res.json().await
-        .map_err(|e| format!("Invalid API Response: {}", e))?;
-
-    if let Some(err) = api_data.error {
-        return Err(format!("Server Error: {} - {}", err, api_data.message.unwrap_or_default()));
+    println!("\n🎲 METHOD 1: Trying yt-dlp...");
+    let ytdlp_result = try_ytdlp_download(
+        window.clone(),
+        url.clone(),
+        format.clone(),
+        state.active_downloads.clone()
+    );
+    
+    if ytdlp_result.is_ok() {
+        println!("✅ METHOD 1 SUCCESS: yt-dlp downloaded!");
+        state.orchestrator.lock().unwrap().record_success("yt-dlp", 5.0);
+        
+        // FREE tier = unlimited with ads
+        println!("📊 Download complete");
+        
+        return ytdlp_result;
+    }
+    println!("❌ METHOD 1 FAILED: {}", ytdlp_result.unwrap_err());
+    state.orchestrator.lock().unwrap().record_failure("yt-dlp");
+    
+    // METHOD 2: Try Instagram oEmbed API
+    if url.contains("instagram.com") {
+        println!("\n🎲 METHOD 2: Trying Instagram oEmbed API...");
+        let oembed_result = oembed::download_via_oembed(&url).await;
+        
+        if let Ok(video_url) = oembed_result {
+            println!("📹 Found video URL via oEmbed: {}", video_url);
+            match oembed::download_video_file(&video_url, &output_path).await {
+                Ok(_) => {
+                    println!("✅ METHOD 2 SUCCESS: oEmbed downloaded!");
+                    state.orchestrator.lock().unwrap().record_success("oembed", 8.0);
+                    state.active_downloads.lock().unwrap().remove(&url);
+                    
+                    // Decrement quota
+                    // FREE tier = unlimited with ads
+                    println!("📊 Download complete");
+                    
+                    window.emit("download_complete", Payload {
+                        url: url.clone(),
+                        progress: 100.0,
+                        status: "completed".to_string(),
+                        filename: Some(output_path.clone()),
+                    }).ok();
+                    return Ok("Downloaded via oEmbed API".to_string());
+                }
+                Err(e) => {
+                    println!("❌ METHOD 2 FAILED: {}", e);
+                    state.orchestrator.lock().unwrap().record_failure("oembed");
+                }
+            }
+        } else {
+            println!("❌ METHOD 2 FAILED: {}", oembed_result.unwrap_err());
+            state.orchestrator.lock().unwrap().record_failure("oembed");
+        }
     }
     
-    let params = api_data.engine_params.unwrap_or(EngineParams {
-        concurrent_fragments: 4,
-        buffer_size: "16K".to_string(),
-    });
-    */
-
-    // Mock Params for Dev (Simulating "Free Tier")
-    let _params = EngineParams {
-        concurrent_fragments: 8,
-        buffer_size: "16K".to_string(),
+    // METHOD 3: Try Cloudflare Worker Proxy
+    println!("\n🎲 METHOD 3: Trying Cloudflare Worker proxy...");
+    let worker_url = {
+        let orch = state.orchestrator.lock().unwrap();
+        orch.cloudflare_worker_url.clone()
     };
-    println!("DEBUG: Params set");
+    
+    if let Some(worker) = worker_url {
+        let cf_worker = cloudflare::CloudflareWorker::new(worker);
+        
+        match cf_worker.download_via_proxy(&url).await {
+            Ok(video_url) => {
+                println!("📹 Found video URL via Cloudflare: {}", video_url);
+                match cf_worker.download_video_file(&video_url, &output_path).await {
+                    Ok(_) => {
+                        println!("✅ METHOD 3 SUCCESS: Cloudflare downloaded!");
+                        state.orchestrator.lock().unwrap().record_success("cloudflare-worker", 10.0);
+                        state.active_downloads.lock().unwrap().remove(&url);
+                        window.emit("download_complete", Payload {
+                            url: url.clone(),
+                            progress: 100.0,
+                            status: "completed".to_string(),
+                            filename: Some(output_path),
+                        }).ok();
+                        return Ok("Downloaded via Cloudflare Worker".to_string());
+                    }
+                    Err(e) => {
+                        println!("❌ METHOD 3 FAILED: {}", e);
+                        state.orchestrator.lock().unwrap().record_failure("cloudflare-worker");
+                    }
+                }
+            }
+            Err(e) => {
+                println!("❌ METHOD 3 FAILED: {}", e);
+                state.orchestrator.lock().unwrap().record_failure("cloudflare-worker");
+            }
+        }
+    }
+    
+    // ALL METHODS FAILED
+    println!("\n💀 ALL 3 METHODS FAILED!");
+    state.active_downloads.lock().unwrap().remove(&url);
+    window.emit("download_error", Payload {
+        url: url.clone(),
+        progress: 0.0,
+        status: "All download methods failed".to_string(),
+        filename: None,
+    }).ok();
+    Err("All download methods failed. Try a different URL or check your internet connection.".to_string())
+}
+
+// OLD METHOD: yt-dlp only (now extracted as fallback option)
+fn try_ytdlp_download(
+    window: Window,
+    url: String,
+    format: String,
+    active_downloads: Arc<Mutex<HashMap<String, u32>>>
+) -> Result<String, String> {
+    println!("DEBUG: try_ytdlp_download() CALLED");
+    println!("DEBUG: URL: {}", url);
+    println!("DEBUG: Format: {}", format);
+
+    println!("DEBUG: yt-dlp method starting...");
+
+    // Simplified for yt-dlp method
 
     // 0.5 FORMAT TRANSLATION (Fix for "Stuck" Issue)
     // Frontend sends "mp4-1080", "mp3", etc. yt-dlp needs real format strings.
@@ -228,7 +331,7 @@ async fn download_video(
 
     let window_clone = window.clone();
     let url_clone = url.clone();
-    let active_downloads = state.active_downloads.clone();
+    let active_downloads_clone = active_downloads.clone();
     // FIX: Strip UNC prefix from executable path too, just in case
     let sidecar_path_str = strip_unc(sidecar_path.clone());
 
@@ -334,7 +437,7 @@ async fn download_video(
                 let status = child.wait();
                 println!("DEBUG: Process finished with status: {:?}", status);
                 
-                active_downloads.lock().unwrap().remove(&url_clone);
+                active_downloads_clone.lock().unwrap().remove(&url_clone);
                 
                 // If we captured a filename, it means success (even if it was already downloaded)
                 // If it was already downloaded, we might not have sent 100% progress yet.
@@ -356,7 +459,7 @@ async fn download_video(
             }
             Err(e) => {
                 println!("Failed to spawn std::process: {}", e);
-                active_downloads.lock().unwrap().remove(&url_clone);
+                active_downloads_clone.lock().unwrap().remove(&url_clone);
                 let _ = window_clone.emit("download_error", Payload {
                     url: url_clone,
                     progress: 0.0,
@@ -467,12 +570,103 @@ async fn get_video_metadata(url: String) -> Result<VideoMetadata, String> {
     })
 }
 
+// ============================================
+// AD MONETIZATION COMMANDS
+// Professional Ad-Gated Download System
+// ============================================
+
+#[command]
+async fn check_ad_required(state: tauri::State<'_, DownloadState>) -> Result<bool, String> {
+    let ad_mgr = state.ad_manager.lock().unwrap();
+    Ok(ad_mgr.requires_ad())
+}
+
+#[command]
+async fn request_download_token(state: tauri::State<'_, DownloadState>) -> Result<String, String> {
+    // Get data needed without holding lock across await
+    let (hwid, api_url) = {
+        let ad_mgr = state.ad_manager.lock().unwrap();
+        (ad_mgr.get_hwid(), ad_mgr.get_api_url())
+    };
+    
+    // Create temporary instance for token request (no lock held)
+    let mut temp_mgr = ad_manager::AdManager::new(hwid, api_url);
+    let token = temp_mgr.request_ad_token().await?;
+    
+    // Update the stored ad_manager with new token (lock briefly)
+    {
+        let mut ad_mgr = state.ad_manager.lock().unwrap();
+        *ad_mgr = temp_mgr;
+    }
+    
+    Ok(token)
+}
+
+#[command]
+async fn authorize_download(
+    state: tauri::State<'_, DownloadState>,
+    token: String,
+    url: String
+) -> Result<(), String> {
+    // Get hwid and API URL without holding lock during async
+    let (hwid, api_url) = {
+        let ad_mgr = state.ad_manager.lock().unwrap();
+        (ad_mgr.get_hwid(), ad_mgr.get_api_url())
+    };
+    
+    // Create temporary instance for authorization
+    let temp_mgr = ad_manager::AdManager::new(hwid, api_url);
+    temp_mgr.authorize_download(&token, &url).await
+}
+
 fn main() {
+    // 🔒 SECURITY LAYER 1: Anti-Debug Check
+    if security::check_debugger() || security::check_debugger_processes() {
+        println!("⚠️ Security violation detected");
+        std::process::exit(0);
+    }
+    
+    // 🔒 SECURITY LAYER 2: Integrity Check
+    if !security::verify_integrity() {
+        println!("⚠️ Binary integrity check failed");
+        std::process::exit(0);
+    }
+    
+    // 🔒 SECURITY LAYER 3: Start Continuous Monitoring
+    security::start_security_monitor();
+    
+    // Initialize orchestrator with ENCRYPTED Cloudflare Worker URL
+    let mut orch = orchestrator::DownloadOrchestrator::new();
+    let cloudflare_url = security::get_cloudflare_worker_url();
+    orch.set_cloudflare_worker(cloudflare_url.clone());
+    
+    // Initialize license manager with ENCRYPTED API URL
+    let license_api_url = security::get_license_api_url();
+    let license_mgr = license::LicenseManager::new(license_api_url.clone());
+    
+    // 💰 Initialize Ad Manager for monetization
+    let hwid = license::LicenseManager::generate_hwid();
+    println!("🔐 Ad Manager API URL: {}", license_api_url);
+    let ad_mgr = ad_manager::AdManager::new(hwid, license_api_url);
+    
+    println!("✅ Cloudflare Worker enabled: {}", cloudflare_url);
+    println!("🔐 License Manager initialized - HWID: {}", license_mgr.get_hwid());
+    println!("🛡️ Security layers active: Anti-Debug + Integrity + Monitoring");
+    
     tauri::Builder::default()
         .manage(DownloadState {
             active_downloads: Arc::new(Mutex::new(HashMap::new())),
+            orchestrator: Arc::new(Mutex::new(orch)),
+            license_manager: Arc::new(Mutex::new(license_mgr)),
+            ad_manager: Arc::new(Mutex::new(ad_mgr)),
         })
-        .invoke_handler(tauri::generate_handler![download_video, get_video_metadata])
+        .invoke_handler(tauri::generate_handler![
+            download_video, 
+            get_video_metadata,
+            check_ad_required,
+            request_download_token,
+            authorize_download
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -8,44 +8,48 @@ const PRESET_LABELS = {
 // ============================================
 // FREE TIER & LICENSE SYSTEM INITIALIZATION
 // ============================================
+// PREMIUM FEATURES DISABLED - App is FREE
+// ============================================
+if (!window.licenseManager) {
+  window.licenseManager = {
+    isPremium: () => false,
+    getStatus: () => ({ active: false, type: 'free' }),
+    saveLicense: () => ({ success: false, message: 'App is FREE - no licenses needed' })
+  };
+}
+if (!window.premiumEffects) {
+  window.premiumEffects = {
+    activate: () => console.log('[Premium] Disabled - App is FREE'),
+    deactivate: () => {}
+  };
+}
+if (!window.upgradeModal) {
+  window.upgradeModal = {
+    show: () => console.log('[Upgrade] Disabled - App is FREE'),
+    hide: () => {}
+  };
+}
+
+// ============================================
 function initializeSecuritySystem() {
-  console.log('[Security] Initializing free tier and license system...');
+  console.log('[Security] App is FREE - No premium features');
   
   // Update license badge in header
   updateLicenseBadge();
   
-  // Check if user is premium and activate effects
-  if (window.licenseManager && window.licenseManager.isPremium()) {
-    console.log('[Security] Premium user detected!');
-    
-    // Activate premium visual effects
-    if (window.premiumEffects) {
-      setTimeout(() => {
-        window.premiumEffects.activate();
-      }, 1000); // Small delay for smooth transition
-    }
-  } else {
-    // Show remaining downloads for free users
-    const remaining = window.freeTierManager.getRemainingDownloads();
-    console.log('[FreeTier] Downloads remaining today:', remaining);
-    
-    if (remaining === 0) {
-      // Show upgrade modal immediately if limit reached
-      setTimeout(() => {
-        window.upgradeModal.show({
-          current: 3,
-          max: 3
-        });
-      }, 2000);
-    }
-  }
+  // Show remaining downloads for free users
+  const remaining = window.freeTierManager.getRemainingDownloads();
+  console.log('[FreeTier] Downloads remaining today:', remaining);
 }
 
 function updateLicenseBadge() {
   const badge = document.getElementById('license-badge');
   if (!badge) return;
   
-  const status = window.licenseManager.getStatus();
+  // App is FREE - always show free status
+  badge.textContent = 'FREE';
+  badge.className = 'license-badge';
+}
   
   if (status.active && status.type === 'premium') {
     badge.textContent = '✓ PREMIUM';
@@ -446,16 +450,8 @@ const updateSummaryChips = () => {
 }
 
 const applyPremiumToggleUI = () => {
-  Object.entries(premiumCardGroups).forEach(([feature, cards]) => {
-    cards.forEach((card) => card?.classList.toggle('disabled', !state.preview.premium[feature]))
-  })
-  const activeFeature = summaryFeatureLookup[state.preview.activePanel]
-  if (activeFeature && !state.preview.premium[activeFeature]) {
-    setActiveMetadataPanel(getFirstEnabledPanel())
-  } else {
-    updateSummaryChips()
-  }
-  renderExportMetadata()
+  // DISABLED - App is FREE, no premium features
+  console.log('[Premium] UI toggle disabled - App is FREE');
 }
 
 const renderExportMetadata = () => {
@@ -1032,11 +1028,12 @@ const addToQueue = (urls) => {
   if (!checkResult.allowed) {
     console.log('[FreeTier] Download blocked:', checkResult);
     
-    // Show upgrade modal
-    window.upgradeModal.show({
-      current: checkResult.count,
-      max: checkResult.max
-    });
+    // DISABLED: No upgrade modal - App is FREE
+    // window.upgradeModal.show({
+    //   current: checkResult.count,
+    //   max: checkResult.max
+    // });
+    console.log('[FreeTier] Download limit reached - App is FREE, no upgrade needed');
     
     // Show status message
     pushLog(`⚠️ Daily limit reached (${checkResult.count}/${checkResult.max}). Upgrade to Premium for unlimited downloads!`);
@@ -1051,19 +1048,10 @@ const addToQueue = (urls) => {
       state.queue.push(createQueueItem(url));
       added += 1;
       
-      // Increment download counter for free users
-      if (!window.licenseManager.isPremium()) {
-        const newCount = window.freeTierManager.incrementCount();
-        const remaining = window.freeTierManager.getRemainingDownloads();
-        console.log('[FreeTier] Downloads today:', newCount, '/ Remaining:', remaining);
-        
-        // Show warning when approaching limit
-        if (remaining === 1) {
-          pushLog(`⚠️ Warning: Only 1 free download remaining today. Upgrade to Premium for unlimited!`);
-        } else if (remaining === 0) {
-          pushLog(`✓ Download added (last free download for today). Upgrade to Premium!`);
-        }
-      }
+      // Increment download counter (App is FREE - no limits enforced)
+      const newCount = window.freeTierManager.incrementCount();
+      const remaining = window.freeTierManager.getRemainingDownloads();
+      console.log('[FreeTier] Downloads today:', newCount, '/ Remaining:', remaining);
     } else {
       console.log('[Queue] Duplicate URL skipped:', url);
     }
@@ -1273,7 +1261,7 @@ const resetPreviewRanges = (duration) => {
   if (totalTimeDisplay) totalTimeDisplay.textContent = formatTime(duration)
   
   state.preview.ready = true
-  updateTrimFill()
+  updatePremiumTimeline()
 }
 
 const clampPreviewRanges = () => {
@@ -1289,6 +1277,7 @@ const clampPreviewRanges = () => {
   trimEndLabel.textContent = formatTime(end)
   trimDurationLabel.textContent = formatTime(end - start)
   updateTrimFill()
+  updatePremiumTimeline()
   
   // Trigger background trim processing
   debouncedBackgroundTrim()
@@ -1344,19 +1333,7 @@ const processBackgroundTrim = async () => {
   }
 }
 
-const updateTrimFill = () => {
-  if (!trimFill) return
-  const duration = state.preview.duration || 0
-  if (!duration) {
-    trimFill.style.left = '0%'
-    trimFill.style.width = '0%'
-    return
-  }
-  const startPercent = (state.preview.start / duration) * 100
-  const endPercent = (state.preview.end / duration) * 100
-  trimFill.style.left = `${startPercent}%`
-  trimFill.style.width = `${Math.max(0, endPercent - startPercent)}%`
-}
+// updateTrimFill function DELETED - using updatePremiumTimeline() now
 
 const resetPreviewPlayer = (message = DEFAULT_PREVIEW_MESSAGE) => {
   if (!previewVideo) return
@@ -1420,7 +1397,7 @@ const resetPreviewPlayer = (message = DEFAULT_PREVIEW_MESSAGE) => {
 }
 
 resetPreviewPlayer()
-applyPremiumToggleUI()
+// DISABLED: applyPremiumToggleUI()
 setPreviewMode('video')
 setActiveMetadataPanel('thumbnail')
 
@@ -1906,6 +1883,11 @@ const bindPreviewEvents = () => {
     setStatus(`Preview ready: ${Math.round(previewVideo.duration)}s`)
     updateGuideProgress('preview')
     console.log('[Preview] Loaded successfully, duration:', previewVideo.duration)
+    
+    // Initialize premium timeline handles after video loads
+    setTimeout(() => {
+      updatePremiumTimeline()
+    }, 100)
   })
   
   // Update current time display and playhead during playback
@@ -1918,12 +1900,15 @@ const bindPreviewEvents = () => {
         currentTimeDisplay.textContent = formatTime(currentTime)
       }
       
-      // Update playhead position
+      // Update playhead position (old)
       if (playheadIndicator) {
         const progress = (currentTime / previewVideo.duration) * 100
         playheadIndicator.style.left = `${progress}%`
         playheadIndicator.classList.add('active')
       }
+      
+      // Update premium timeline playhead
+      updatePremiumTimeline()
       
       // Auto-stop at trim end
       if (currentTime >= state.preview.end) {
@@ -1987,86 +1972,193 @@ const bindPreviewEvents = () => {
   previewStopBtn.addEventListener('click', stopPreview)
   previewRestartBtn.addEventListener('click', restartPreview)
 
-  // Magnetic snap functionality for trim timeline
-  let activeTrimHandle = null
-  const SNAP_THRESHOLD = 30 // pixels for magnetic snap
+  // REMOVED OLD TIMELINE CODE - Now using premium timeline system
+  // All trim functionality handled by initPremiumTimeline() below
+
+  trimStartInput.addEventListener('input', () => {
+    clampPreviewRanges()
+    updatePremiumTimeline()
+  })
+  trimEndInput.addEventListener('input', () => {
+    clampPreviewRanges()
+    updatePremiumTimeline()
+  })
   
-  const handleTrimTimelineClick = (event) => {
-    if (!state.preview.ready) return
-    const timeline = event.currentTarget
+  // Initialize premium timeline
+  initPremiumTimeline()
+}
+
+// PREMIUM TIMELINE SYSTEM
+function initPremiumTimeline() {
+  const timeline = document.getElementById('premium-timeline')
+  const track = timeline ? timeline.querySelector('.timeline-track') : null
+  const leftHandle = document.getElementById('handle-left')
+  const rightHandle = document.getElementById('handle-right')
+  const trimStartInput = document.getElementById('trim-start')
+  const trimEndInput = document.getElementById('trim-end')
+  
+  console.log('[Timeline Init] Checking elements...', {
+    timeline: !!timeline,
+    track: !!track,
+    leftHandle: !!leftHandle,
+    rightHandle: !!rightHandle,
+    trimStart: !!trimStartInput,
+    trimEnd: !!trimEndInput
+  })
+  
+  if (!timeline || !track || !leftHandle || !rightHandle) {
+    console.error('[Timeline] CRITICAL: Elements missing!')
+    return
+  }
+  
+  console.log('[Timeline] ✅ All elements found! Initializing drag system...')
+  
+  let activeHandle = null
+  let startX = 0
+  let startValue = 0
+  
+  // Click on track to seek
+  track.addEventListener('click', (e) => {
+    if (!state.preview.duration) {
+      console.warn('[Timeline] Cannot seek - no duration')
+      return
+    }
+    
     const rect = timeline.getBoundingClientRect()
-    const clickX = event.clientX - rect.left
-    const clickPercent = (clickX / rect.width) * 100
-    const clickTime = (clickPercent / 100) * state.preview.duration
+    const clickX = e.clientX - rect.left
+    const percent = (clickX / rect.width) * 100
+    const time = (percent / 100) * state.preview.duration
     
-    // Calculate distances to both handles
-    const startDistance = Math.abs(state.preview.start - clickTime)
-    const endDistance = Math.abs(state.preview.end - clickTime)
+    console.log('[Timeline] 🎯 Click seek to:', time.toFixed(2) + 's')
     
-    // Snap to nearest handle if within threshold
-    const threshold = (SNAP_THRESHOLD / rect.width) * state.preview.duration
+    // Seek video to clicked position
+    if (previewVideo) {
+      previewVideo.currentTime = Math.max(0, Math.min(time, state.preview.duration))
+    }
+  })
+  
+  // Left handle mousedown
+  leftHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('[Timeline] 👈 LEFT handle grabbed!')
+    activeHandle = 'left'
+    startX = e.clientX
+    startValue = parseFloat(trimStartInput.value)
+    leftHandle.style.cursor = 'grabbing'
+  })
+  
+  // Right handle mousedown
+  rightHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('[Timeline] 👉 RIGHT handle grabbed!')
+    activeHandle = 'right'
+    startX = e.clientX
+    startValue = parseFloat(trimEndInput.value)
+    rightHandle.style.cursor = 'grabbing'
+  })
+  
+  // Global mouse move
+  document.addEventListener('mousemove', (e) => {
+    if (!activeHandle || !state.preview.duration) return
     
-    if (startDistance < threshold && startDistance < endDistance) {
-      // Snap to start handle
-      trimStartInput.value = clickTime
-      activeTrimHandle = 'start'
-    } else if (endDistance < threshold) {
-      // Snap to end handle
-      trimEndInput.value = clickTime
-      activeTrimHandle = 'end'
-    } else {
-      // Click-to-seek: Jump playback to clicked position within trim range
-      const trimStart = state.preview.start
-      const trimEnd = state.preview.end
-      
-      // Only seek if click is within trim range
-      if (clickTime >= trimStart && clickTime <= trimEnd) {
-        previewVideo.currentTime = clickTime
-        console.log(`[Timeline] Seek to ${clickTime.toFixed(2)}s within trim range`)
-      }
+    const rect = timeline.getBoundingClientRect()
+    const deltaX = e.clientX - startX
+    const deltaPercent = (deltaX / rect.width) * 100
+    const deltaTime = (deltaPercent / 100) * state.preview.duration
+    
+    if (activeHandle === 'left') {
+      const newValue = Math.max(0, Math.min(startValue + deltaTime, state.preview.end - 0.1))
+      trimStartInput.value = newValue
+      console.log('[Timeline] ↔️ Dragging LEFT:', newValue.toFixed(2) + 's')
+    } else if (activeHandle === 'right') {
+      const newValue = Math.max(state.preview.start + 0.1, Math.min(startValue + deltaTime, state.preview.duration))
+      trimEndInput.value = newValue
+      console.log('[Timeline] ↔️ Dragging RIGHT:', newValue.toFixed(2) + 's')
     }
     
     clampPreviewRanges()
+    updatePremiumTimeline()
+  })
+  
+  // Global mouse up
+  document.addEventListener('mouseup', () => {
+    if (activeHandle) {
+      console.log('[Timeline] ✋ Released', activeHandle, 'handle')
+      leftHandle.style.cursor = 'grab'
+      rightHandle.style.cursor = 'grab'
+    }
+    activeHandle = null
+  })
+  
+  console.log('[Timeline] ✅ Premium timeline initialized successfully!')
+}
+
+function updatePremiumTimeline() {
+  const timeline = document.getElementById('premium-timeline')
+  const leftHandle = document.getElementById('handle-left')
+  const rightHandle = document.getElementById('handle-right')
+  const fill = document.getElementById('timeline-fill')
+  const playhead = document.getElementById('timeline-playhead')
+  const trimStartInput = document.getElementById('trim-start')
+  const trimEndInput = document.getElementById('trim-end')
+  const markerEnd = document.getElementById('marker-end')
+  
+  if (!timeline || !leftHandle || !rightHandle) {
+    console.warn('[Timeline] Missing elements')
+    return
   }
   
-  const trimTimeline = document.querySelector('.trim-timeline')
-  if (trimTimeline) {
-    trimTimeline.addEventListener('click', handleTrimTimelineClick)
-    
-    // Add drag support for magnetic handles
-    let isDragging = false
-    
-    trimTimeline.addEventListener('mousedown', (event) => {
-      if (event.target.classList.contains('trim-track') || event.target.classList.contains('trim-range-fill')) {
-        handleTrimTimelineClick(event)
-        isDragging = true
-      }
-    })
-    
-    trimTimeline.addEventListener('mousemove', (event) => {
-      if (!isDragging || !activeTrimHandle) return
-      const rect = trimTimeline.getBoundingClientRect()
-      const clickX = event.clientX - rect.left
-      const clickPercent = Math.max(0, Math.min(100, (clickX / rect.width) * 100))
-      const clickTime = (clickPercent / 100) * state.preview.duration
-      
-      if (activeTrimHandle === 'start') {
-        trimStartInput.value = clickTime
-      } else {
-        trimEndInput.value = clickTime
-      }
-      clampPreviewRanges()
-    })
-    
-    document.addEventListener('mouseup', () => {
-      isDragging = false
-      activeTrimHandle = null
-    })
+  if (!state.preview.duration || state.preview.duration === 0) {
+    console.warn('[Timeline] No duration yet')
+    return
   }
-
-  trimStartInput.addEventListener('input', clampPreviewRanges)
-  trimEndInput.addEventListener('input', clampPreviewRanges)
+  
+  const startValue = parseFloat(trimStartInput?.value || 0)
+  const endValue = parseFloat(trimEndInput?.value || state.preview.duration)
+  const startPercent = (startValue / state.preview.duration) * 100
+  const endPercent = (endValue / state.preview.duration) * 100
+  
+  console.log('[Timeline Update]', {
+    duration: state.preview.duration,
+    start: startValue,
+    end: endValue,
+    startPercent: startPercent.toFixed(1) + '%',
+    endPercent: endPercent.toFixed(1) + '%'
+  })
+  
+  // Position handles
+  leftHandle.style.left = `${startPercent}%`
+  rightHandle.style.left = `${endPercent}%`
+  
+  // Position fill
+  if (fill) {
+    fill.style.left = `${startPercent}%`
+    fill.style.width = `${endPercent - startPercent}%`
+  }
+  
+  // Update playhead during playback
+  if (previewVideo && !previewVideo.paused && previewVideo.currentTime) {
+    const currentPercent = (previewVideo.currentTime / state.preview.duration) * 100
+    if (playhead) {
+      playhead.style.left = `${currentPercent}%`
+      playhead.classList.add('active')
+    }
+  } else if (playhead) {
+    playhead.classList.remove('active')
+  }
+  
+  // Update end marker
+  if (markerEnd) {
+    markerEnd.textContent = formatTime(state.preview.duration)
+  }
 }
+
+// ========================================
+// ALL OLD/BROKEN TIMELINE CODE DELETED
+// Only initPremiumTimeline() and updatePremiumTimeline() remain above
+// ========================================
 
 const handleMenuAction = (action) => {
   switch (action) {
