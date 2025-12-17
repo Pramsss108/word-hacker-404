@@ -51,7 +51,10 @@ class ProAuthService {
             this.user = user;
             if (user) {
                 console.log("✅ User logged in:", user.uid, user.email || 'anonymous', "Is Anonymous?", user.isAnonymous);
-                this.syncUserToDB(user); // 📧 MARKETING: Save email to DB
+                // Only sync real users to DB, not anonymous guests
+                if (!user.isAnonymous) {
+                    this.syncUserToDB(user);
+                }
             } else {
                 console.log("❌ User is null/signed out");
             }
@@ -79,12 +82,14 @@ class ProAuthService {
     private updateStatus() {
         if (this.DEV_SECRET && this.DEV_SECRET.length > 5) {
             this.status = 'god_mode'; // Local Dev Override
+        } else if (this.user?.isAnonymous) {
+            this.status = 'anonymous'; // Guest user
         } else if (this.user) {
-            this.status = 'pro';
+            this.status = 'pro'; // Logged in user
         } else {
-            this.status = 'anonymous';
+            this.status = 'loading'; // No user yet
         }
-        this.notifyListeners(); // Now it exists!
+        this.notifyListeners();
     }
 
     private notifyListeners() {
