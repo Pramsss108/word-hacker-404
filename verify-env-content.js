@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-console.log("\n🕵️ DEEP INSPECTION OF .env FILE...\n");
+console.log("\n🕵️ DEEP INSPECTION OF .env FILE (STRICT MODE)...\n");
 
 const envPath = path.resolve(process.cwd(), '.env');
 
@@ -31,21 +31,28 @@ required.forEach(key => {
         if (!value) {
             console.error(`❌ EMPTY VALUE: ${key} is empty.`);
             hasError = true;
-        } else if (value.includes("YOUR_") || value.includes("placeholder")) {
-            console.error(`❌ PLACEHOLDER DETECTED: ${key} = ${value}`);
-            console.error("   (You forgot to paste the real key!)");
-            hasError = true;
         } else {
-            // Mask the key for safety in logs
-            const masked = value.substring(0, 4) + "****" + value.substring(value.length - 4);
-            console.log(`✅ ${key} = ${masked}`);
+            // CHECK FOR QUOTES
+            if (value.startsWith("'") || value.startsWith('"')) {
+                console.error(`❌ QUOTES DETECTED on ${key}`);
+                console.error(`   Current Value: ${value}`);
+                console.error(`   REQUIRED:      ${value.replace(/['"]/g, '')}`);
+                console.error("   >>> YOU MUST REMOVE THE QUOTES! <<<");
+                hasError = true;
+            } else if (value.includes("YOUR_")) {
+                console.error(`❌ PLACEHOLDER DETECTED: ${key}`);
+                hasError = true;
+            } else {
+                const masked = value.substring(0, 4) + "****" + value.substring(value.length - 4);
+                console.log(`✅ ${key} = ${masked}`);
+            }
         }
     }
 });
 
 if (hasError) {
     console.log("\n⛔ STOP! You cannot deploy until you fix the above errors.");
-    console.log("   Open '.env' and paste your REAL Firebase keys.");
+    console.log("   Open '.env' and remove the quotes/placeholders.");
 } else {
     console.log("\n✅ .env looks valid! You are ready to deploy.");
 }
