@@ -4,11 +4,6 @@ import { doc, getDoc, setDoc, increment, serverTimestamp } from 'firebase/firest
 
 export type UserStatus = 'loading' | 'anonymous' | 'pro' | 'god_mode';
 
-interface DailyUsage {
-    count: number;
-    date: string; // YYYY-MM-DD
-}
-
 class ProAuthService {
     private user: User | null = null;
     private status: UserStatus = 'loading';
@@ -52,7 +47,11 @@ class ProAuthService {
         } else {
             this.status = 'anonymous';
         }
-        this.notifyListeners();
+        this.notifyListeners(); // Now it exists!
+    }
+
+    private notifyListeners() {
+        this.listeners.forEach(cb => cb(this.status, this.user));
     }
 
     public subscribe(callback: (status: UserStatus, user: User | null) => void) {
@@ -97,7 +96,6 @@ class ProAuthService {
 
         // 3. CHECK FIRESTORE LIMITS
         const today = new Date().toISOString().split('T')[0];
-        const userRef = doc(db, 'users', this.user.uid);
         const usageRef = doc(db, `users/${this.user.uid}/usage/${today}`);
 
         try {

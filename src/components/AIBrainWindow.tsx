@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Maximize2 } from 'lucide-react'
+import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { aiEngine, type ChatMessage } from '../services/AIEngine'
@@ -49,7 +49,8 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
 
   useEffect(() => {
     // 3. Subscribe to Auth Status
-    const unsub = proAuth.subscribe((status, user) => {
+    // Removed unused 'user' var (replaced with _)
+    const unsub = proAuth.subscribe((status, _) => {
       setAuthStatus(status);
       checkCredits();
     });
