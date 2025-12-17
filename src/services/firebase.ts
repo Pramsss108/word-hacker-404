@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
@@ -22,6 +22,12 @@ let googleProvider = new GoogleAuthProvider();
 try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
+    
+    // CRITICAL: Set persistence to LOCAL (keep user logged in across page reloads)
+    setPersistence(auth, browserLocalPersistence)
+        .then(() => console.log("✅ Firebase persistence enabled"))
+        .catch(e => console.error("❌ Persistence failed:", e));
+    
     db = getFirestore(app);
     // Analytics (Safe init)
     isSupported().then(yes => yes ? getAnalytics(app) : null).catch(e => console.warn('Analytics failed', e));

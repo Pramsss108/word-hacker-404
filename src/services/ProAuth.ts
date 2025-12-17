@@ -1,5 +1,15 @@
 import { auth, db, googleProvider } from './firebase';
-import { signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged, User } from 'firebase/auth';
+import { 
+    signInWithPopup, 
+    signInWithRedirect,
+    getRedirectResult,
+    signOut as firebaseSignOut, 
+    onAuthStateChanged, 
+    User,
+    signInAnonymously,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+} from 'firebase/auth';
 import { doc, getDoc, setDoc, increment, serverTimestamp } from 'firebase/firestore';
 
 export type UserStatus = 'loading' | 'anonymous' | 'pro' | 'god_mode';
@@ -13,10 +23,37 @@ class ProAuthService {
     private readonly DEV_SECRET = import.meta.env.VITE_AI_ACCESS_SECRET;
 
     constructor() {
+        // Check for redirect result on page load - MUST complete before anything else
+        console.log("🔍 Checking for redirect result...");
+        
+        // Add to localStorage for debugging
+        localStorage.setItem('auth_debug', 'Checking redirect...');
+        
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result?.user) {
+                    console.log("✅ Redirect login successful!", result.user.email);
+                    localStorage.setItem('auth_debug', `SUCCESS: ${result.user.email}`);
+                    alert(`Login Success! ${result.user.email}`); // Temporary debug
+                } else {
+                    console.log("ℹ️ No redirect result (normal page load)");
+                    localStorage.setItem('auth_debug', 'No redirect result');
+                }
+            })
+            .catch((error) => {
+                console.error("❌ Redirect result error:", error.code, error.message);
+                localStorage.setItem('auth_debug', `ERROR: ${error.code}`);
+                alert(`Login Error: ${error.message}`); // Temporary debug
+            });
+
         onAuthStateChanged(auth, (user) => {
+            console.log("🔄 Auth state changed:", user ? `User: ${user.email || user.uid}` : 'No user');
             this.user = user;
             if (user) {
+                console.log("✅ User logged in:", user.uid, user.email || 'anonymous', "Is Anonymous?", user.isAnonymous);
                 this.syncUserToDB(user); // 📧 MARKETING: Save email to DB
+            } else {
+                console.log("❌ User is null/signed out");
             }
             this.updateStatus();
         });
@@ -64,9 +101,70 @@ class ProAuthService {
 
     public async signIn() {
         try {
-            await signInWithPopup(auth, googleProvider);
+            console.log("🚀 Starting Google sign in...");
+            const result = await signInWithPopup(auth, googleProvider);
+            console.log("✅ Popup sign in successful!", result.user.email);
+            return result;
+        } catch (error: any) {
+            console.error("❌ Popup error:", error.code, error.message);
+            // If popup blocked or fails, use redirect method
+            if (error.code === 'auth/popup-blocked' || 
+                error.code === 'auth/popup-closed-by-user' ||
+                error.code === 'auth/cancelled-popup-request') {
+                console.log("🔄 Popup failed, trying redirect...");
+                await signInWithRedirect(auth, googleProvider);
+            } else {
+                console.error("Login failed", error);
+                throw error;
+            }
+        }
+    }
+
+    /**
+     * Alternative: Direct redirect login (no popup)
+     */
+    public async signInWithRedirect() {
+        try {
+            await signInWithRedirect(auth, googleProvider);
         } catch (error) {
-            console.error("Login failed", error);
+            console.error("Redirect login failed", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Sign in with Email and Password
+     */
+    public async signInWithEmail(email: string, password: string) {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            console.error("Email login failed", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Create new account with Email and Password
+     */
+    public async signUpWithEmail(email: string, password: string) {
+        try {
+            const result = await createUserWithEmailAndPassword(auth, email, password);
+            return result.user;
+        } catch (error) {
+            console.error("Email signup failed", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Sign in as Anonymous Guest
+     */
+    public async signInAsGuest() {
+        try {
+            await signInAnonymously(auth);
+        } catch (error) {
+            console.error("Anonymous login failed", error);
             throw error;
         }
     }

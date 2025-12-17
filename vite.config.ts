@@ -37,8 +37,8 @@ export default defineConfig({
   ],
   // base: '/', // Removed duplicate
   server: {
-    port: 1420,
-    strictPort: true,
+    port: 3001,
+    strictPort: false, // Allow fallback to next available port
     host: true,
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
