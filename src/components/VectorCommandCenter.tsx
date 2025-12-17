@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Wand2, 
-  Download, 
-  Copy, 
-  PenTool, 
-  Cpu, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  Wand2,
+  Download,
+  Copy,
+  PenTool,
+  Cpu,
+  CheckCircle2,
+  AlertCircle,
   Upload,
   ZoomIn,
   ZoomOut,
@@ -209,7 +209,7 @@ const styles = {
 
 export default function VectorCommandCenter() {
   const [mode, setMode] = useState<Mode>('architect');
-  
+
   // Architect State
   const [promptState, setPromptState] = useState<PromptState>({
     subject: '',
@@ -264,14 +264,14 @@ export default function VectorCommandCenter() {
         reason: `Insufficient RAM (${ram}GB detected). The Max Power AI requires at least 4GB.`
       };
     }
-    
+
     // Mobile check (rough heuristic)
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (isMobile && ram < 6) {
-       return {
-         compatible: false,
-         reason: "Mobile device detected. High-performance AI requires a desktop environment or high-end mobile device."
-       };
+      return {
+        compatible: false,
+        reason: "Mobile device detected. High-performance AI requires a desktop environment or high-end mobile device."
+      };
     }
 
     return { compatible: true };
@@ -281,7 +281,7 @@ export default function VectorCommandCenter() {
   const initializeWorker = (modelName: string = 'Xenova/LaMini-Flan-T5-248M') => {
     // Use the global worker if available
     const globalW = getWorker();
-    
+
     // If we already have a local ref, clean it up unless it's the global one
     if (llmWorkerRef.current && llmWorkerRef.current !== globalW) {
       llmWorkerRef.current.terminate();
@@ -290,7 +290,7 @@ export default function VectorCommandCenter() {
     try {
       // Use global worker or create new one if somehow missing (fallback)
       const worker = globalW || new LLMWorker();
-      
+
       // Attach event listeners to the worker
       // Note: This overrides previous listeners, which is what we want for the active component
       worker.onmessage = (e) => {
@@ -318,7 +318,7 @@ export default function VectorCommandCenter() {
             .replace(/^Here is a /, 'A ')
             .replace(/^\d+\.\s*Title:.*?(?=\d+\.|A )/i, '') // Remove "1. Title: ..." garbage
             .trim();
-          
+
           // If it starts with "A The", fix it to "A"
           if (cleanText.startsWith("A The ")) {
             cleanText = cleanText.replace("A The ", "A ");
@@ -326,7 +326,7 @@ export default function VectorCommandCenter() {
 
           // If it still starts with "1.", strip it
           if (cleanText.match(/^\d+\./)) {
-              cleanText = cleanText.replace(/^\d+\.\s*/, '');
+            cleanText = cleanText.replace(/^\d+\.\s*/, '');
           }
 
           // Capitalize first letter
@@ -337,42 +337,42 @@ export default function VectorCommandCenter() {
         } else if (type === 'error') {
           console.error("AI Worker Error:", error);
           setAiLoading(false);
-          
+
           // Check for specific "offset out of bounds" error which means WASM memory limit
           if (error.message && error.message.includes('offset is out of bounds')) {
-             setSystemError("Browser Memory Limit Reached. The 'Ultra' model is too large for this browser tab's allocated memory (WASM Limit), even with 16GB RAM.");
+            setSystemError("Browser Memory Limit Reached. The 'Ultra' model is too large for this browser tab's allocated memory (WASM Limit), even with 16GB RAM.");
           } else {
-             setSystemError("AI Engine Failure: " + (error.message || "Unknown error."));
+            setSystemError("AI Engine Failure: " + (error.message || "Unknown error."));
           }
           setAiEnabled(false);
         }
       };
-      
+
       worker.onerror = (err) => {
         console.error("Worker Script Error:", err);
         setAiLoading(false);
         setSystemError("Critical Worker Failure. The AI model crashed the browser tab (Out of Memory).");
         setAiEnabled(false);
       };
-      
+
       llmWorkerRef.current = worker;
-      
+
       // If it's a fresh worker (not global), start loading
       if (!globalW) {
-         worker.postMessage({ type: 'load', model: modelName });
+        worker.postMessage({ type: 'load', model: modelName });
       } else {
-         // If it is global, check status
-         const status = getStatus();
-         if (status === 'ready') {
-            setAiModelReady(true);
-            setAiLoading(false);
-         } else if (status === 'loading') {
-            setAiLoading(true);
-            // We might miss progress events if we attach late, 
-            // but the worker will keep sending them if we ask or if it's busy.
-            // Actually, we can't easily "ask" for current progress.
-            // But the next progress event will update us.
-         }
+        // If it is global, check status
+        const status = getStatus();
+        if (status === 'ready') {
+          setAiModelReady(true);
+          setAiLoading(false);
+        } else if (status === 'loading') {
+          setAiLoading(true);
+          // We might miss progress events if we attach late, 
+          // but the worker will keep sending them if we ask or if it's busy.
+          // Actually, we can't easily "ask" for current progress.
+          // But the next progress event will update us.
+        }
       }
 
     } catch (err: any) {
@@ -391,12 +391,12 @@ export default function VectorCommandCenter() {
 
     // Initialize using the global worker
     initializeWorker();
-    
+
     return () => {
       // DO NOT terminate the worker on unmount anymore!
       // We want it to keep running in the background.
       // llmWorkerRef.current?.terminate();
-      
+
       // Just remove the listener to avoid memory leaks or state updates on unmounted component
       if (llmWorkerRef.current) {
         llmWorkerRef.current.onmessage = null;
@@ -429,12 +429,12 @@ export default function VectorCommandCenter() {
     setAiModelType(type);
     setAiModelReady(false);
     setAiProgress(null);
-    
+
     if (llmWorkerRef.current) {
-        let modelName = 'Xenova/LaMini-Flan-T5-248M';
-        if (type === 'lite') modelName = 'Xenova/LaMini-Flan-T5-77M';
-        
-        llmWorkerRef.current.postMessage({ type: 'load', model: modelName });
+      let modelName = 'Xenova/LaMini-Flan-T5-248M';
+      if (type === 'lite') modelName = 'Xenova/LaMini-Flan-T5-77M';
+
+      llmWorkerRef.current.postMessage({ type: 'load', model: modelName });
     }
   };
 
@@ -450,7 +450,7 @@ export default function VectorCommandCenter() {
       alert("AI Brain is initializing... Please wait a moment.");
       return;
     }
-    
+
     if (!promptState.subject.trim()) {
       alert("Please type a subject (e.g. 'Cyberpunk Wolf') in the text box first!");
       return;
@@ -458,25 +458,25 @@ export default function VectorCommandCenter() {
 
     // If model is not ready, show loading state (which will show progress bar)
     if (!aiModelReady) {
-       setAiLoading(true);
-       waitingForEnhance.current = true;
+      setAiLoading(true);
+      waitingForEnhance.current = true;
     } else {
-       setAiLoading(true);
-       waitingForEnhance.current = true; // Also set here just in case
+      setAiLoading(true);
+      waitingForEnhance.current = true; // Also set here just in case
     }
 
     setAiResult(null);
     setAiOriginalInput(promptState.subject);
-    
+
     // If model is ready, send the request. If not, we need to wait.
     // Actually, if we send 'enhance' while it's loading, the worker might drop it or queue it depending on implementation.
     // Our worker is simple. It processes messages in order.
     // So we CAN send it now! It will just sit in the message queue until 'load' finishes.
-    
+
     const context = `${promptState.subject} in ${promptState.style} style for ${promptState.industry}`;
-    llmWorkerRef.current.postMessage({ 
-      type: 'enhance', 
-      text: context, 
+    llmWorkerRef.current.postMessage({
+      type: 'enhance',
+      text: context,
       id: Date.now(),
       model: 'Xenova/LaMini-Flan-T5-783M'
     });
@@ -485,14 +485,14 @@ export default function VectorCommandCenter() {
   // --- ARCHITECT LOGIC ---
   const generatePrompt = () => {
     const { subject, industry, assetType, style, composition, mood, palette, customColors } = promptState;
-    
+
     // 1. Core Definition
     const typeStr = ASSET_TYPES[assetType].keywords;
     const industryStr = INDUSTRIES[industry].keywords;
     const styleStr = STYLES[style].keywords;
     const compStr = COMPOSITIONS[composition].keywords;
     const moodStr = MOODS[mood].keywords;
-    
+
     // 2. Color Logic
     let colorStr = '';
     if (palette === 'custom') {
@@ -508,7 +508,7 @@ export default function VectorCommandCenter() {
 
     // 3. Engineering the "Super Duper" Prompt
     // Structure: [Role/Context] + [Subject] + [Style Modifiers] + [Technical Constraints] + [Parameters]
-    
+
     const rolePrefix = "professional vector graphics of";
     const qualityBoosters = "award winning, behance feature, dribbble style, vectorizer.ai ready, perfect composition";
     const techSpecs = "white background, flat color, 2d, no gradients, clean lines, svg style, high contrast";
@@ -517,7 +517,7 @@ export default function VectorCommandCenter() {
 
     // Assemble the master prompt
     const finalPrompt = `/imagine prompt: ${rolePrefix} ${subject}, ${typeStr}, ${industryStr}, ${styleStr}, ${moodStr}, ${compStr}, ${colorStr}, ${qualityBoosters}, ${techSpecs} ${parameters} ${negativePrompt}`;
-    
+
     setGeneratedPrompt(finalPrompt);
     setShowResultModal(true);
   };
@@ -535,25 +535,25 @@ export default function VectorCommandCenter() {
 
     setIsProcessing(true);
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
       const result = event.target?.result as string;
       setOriginalImage(result);
       const img = new Image();
       img.src = result;
-      
+
       img.onload = () => {
         // Create canvas to extract ImageData
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
-        
+
         if (!ctx) {
           setIsProcessing(false);
           return;
         }
-        
+
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, img.width, img.height);
 
@@ -582,7 +582,7 @@ export default function VectorCommandCenter() {
 
         // Initialize Worker
         const worker = new VectorizerWorker();
-        
+
         worker.onmessage = (e: MessageEvent) => {
           if (e.data.type === 'success') {
             setSvgOutput(e.data.svg);
@@ -600,17 +600,17 @@ export default function VectorCommandCenter() {
         };
 
         // Send data to worker
-        worker.postMessage({ 
+        worker.postMessage({
           imageData: {
             width: imageData.width,
             height: imageData.height,
             data: imageData.data
-          }, 
-          options 
+          },
+          options
         });
       };
     };
-    
+
     reader.readAsDataURL(file);
   };
 
@@ -658,7 +658,7 @@ export default function VectorCommandCenter() {
 
   const downloadPDF = async () => {
     if (!svgOutput) return;
-    
+
     try {
       const { jsPDF } = await import('jspdf');
       await import('svg2pdf.js');
@@ -666,13 +666,13 @@ export default function VectorCommandCenter() {
       const container = document.createElement('div');
       container.innerHTML = svgOutput;
       const svgElement = container.firstElementChild as SVGElement;
-      
+
       if (!svgElement) return;
 
       // Get dimensions from viewBox or attributes
       let width = 595.28; // A4 width in pt
       let height = 841.89; // A4 height in pt
-      
+
       if (svgElement.hasAttribute('viewBox')) {
         const viewBox = svgElement.getAttribute('viewBox')!.split(' ').map(Number);
         width = viewBox[2];
@@ -728,8 +728,8 @@ export default function VectorCommandCenter() {
           Vector Command Center
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <a 
-            href="/downloads/WordHacker404-Setup.exe" 
+          <a
+            href="/downloads/WordHacker404-Setup.zip"
             download
             style={{
               display: 'flex',
@@ -756,15 +756,15 @@ export default function VectorCommandCenter() {
 
       {/* TABS */}
       <div style={styles.tabContainer}>
-        <button 
-          style={styles.tab(mode === 'architect')} 
+        <button
+          style={styles.tab(mode === 'architect')}
           onClick={() => setMode('architect')}
         >
           <Wand2 size={18} />
           Prompt Architect
         </button>
-        <button 
-          style={styles.tab(mode === 'vectorizer')} 
+        <button
+          style={styles.tab(mode === 'vectorizer')}
           onClick={() => setMode('vectorizer')}
         >
           <PenTool size={18} />
@@ -781,18 +781,18 @@ export default function VectorCommandCenter() {
                 <label style={styles.label}>Subject / Concept</label>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   {!aiEnabled ? (
-                    <button 
+                    <button
                       onClick={() => setAiEnabled(true)}
-                      style={{ 
-                        background: 'rgba(10, 255, 106, 0.1)', 
-                        border: '1px solid #0aff6a', 
-                        borderRadius: '4px', 
-                        color: '#0aff6a', 
-                        fontSize: '0.75rem', 
-                        padding: '4px 12px', 
-                        cursor: 'pointer', 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                      style={{
+                        background: 'rgba(10, 255, 106, 0.1)',
+                        border: '1px solid #0aff6a',
+                        borderRadius: '4px',
+                        color: '#0aff6a',
+                        fontSize: '0.75rem',
+                        padding: '4px 12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
                         gap: '6px',
                         fontWeight: '600',
                         boxShadow: '0 0 10px rgba(10, 255, 106, 0.1)'
@@ -842,21 +842,21 @@ export default function VectorCommandCenter() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <input 
-                  style={{ ...styles.input, flex: 1 }} 
+                <input
+                  style={{ ...styles.input, flex: 1 }}
                   placeholder="e.g. A cybernetic wolf head..."
                   value={promptState.subject}
-                  onChange={(e) => setPromptState({...promptState, subject: e.target.value})}
+                  onChange={(e) => setPromptState({ ...promptState, subject: e.target.value })}
                 />
                 {aiEnabled && (
-                  <button 
+                  <button
                     onClick={handleAiEnhance}
                     disabled={aiLoading}
-                    style={{ 
-                      background: aiLoading ? '#222' : '#1a1a1a', 
-                      border: '1px solid #333', 
-                      borderRadius: '8px', 
-                      color: '#0aff6a', 
+                    style={{
+                      background: aiLoading ? '#222' : '#1a1a1a',
+                      border: '1px solid #333',
+                      borderRadius: '8px',
+                      color: '#0aff6a',
                       padding: '0 16px',
                       cursor: aiLoading ? 'wait' : 'pointer',
                       display: 'flex',
@@ -892,25 +892,25 @@ export default function VectorCommandCenter() {
                         <Loader2 size={20} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
                         <span>{aiProgress ? `DOWNLOADING NEURAL CORE (${Math.round(aiProgress.progress || 0)}%)` : 'CONNECTING...'}</span>
                       </div>
-                      
+
                       <div style={{ width: '100%', maxWidth: '300px', height: '6px', background: '#222', borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
                         {/* Percentage Loading Bar */}
-                        <div style={{ 
+                        <div style={{
                           width: `${Math.round(aiProgress?.progress || 0)}%`,
                           height: '100%',
                           background: '#0aff6a',
                           transition: 'width 0.2s ease-out'
                         }} />
                       </div>
-                      
+
                       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: '300px', fontSize: '0.7rem', color: '#666', fontFamily: 'monospace' }}>
-                         <span>{aiProgress?.file || 'Initializing...'}</span>
-                         <span>{aiProgress?.loaded ? (aiProgress.loaded / 1024 / 1024).toFixed(1) + 'MB' : ''}</span>
+                        <span>{aiProgress?.file || 'Initializing...'}</span>
+                        <span>{aiProgress?.loaded ? (aiProgress.loaded / 1024 / 1024).toFixed(1) + 'MB' : ''}</span>
                       </div>
 
                       {/* CONTROLS */}
                       <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                        <button 
+                        <button
                           onClick={handleCancelDownload}
                           style={{
                             background: 'transparent',
@@ -926,7 +926,7 @@ export default function VectorCommandCenter() {
                         >
                           Cancel
                         </button>
-                        <button 
+                        <button
                           onClick={handleRetryDownload}
                           style={{
                             background: 'rgba(10, 255, 106, 0.1)',
@@ -956,10 +956,10 @@ export default function VectorCommandCenter() {
               {aiResult && (
                 <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {/* BEFORE */}
-                  <div style={{ 
-                    padding: '12px 16px', 
-                    background: 'rgba(255, 255, 255, 0.02)', 
-                    border: '1px dashed #333', 
+                  <div style={{
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px dashed #333',
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     color: '#888',
@@ -968,12 +968,12 @@ export default function VectorCommandCenter() {
                     alignItems: 'center',
                     gap: '12px'
                   }}>
-                    <div style={{ 
-                      background: '#222', 
-                      padding: '2px 6px', 
-                      borderRadius: '4px', 
-                      fontSize: '0.65rem', 
-                      color: '#666', 
+                    <div style={{
+                      background: '#222',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '0.65rem',
+                      color: '#666',
                       letterSpacing: '1px',
                       textTransform: 'uppercase',
                       whiteSpace: 'nowrap'
@@ -987,25 +987,25 @@ export default function VectorCommandCenter() {
                   </div>
 
                   {/* AFTER */}
-                  <div style={{ 
-                    padding: '24px', 
-                    background: 'linear-gradient(145deg, rgba(10, 255, 106, 0.05) 0%, rgba(0,0,0,0.4) 100%)', 
-                    border: '1px solid #0aff6a', 
+                  <div style={{
+                    padding: '24px',
+                    background: 'linear-gradient(145deg, rgba(10, 255, 106, 0.05) 0%, rgba(0,0,0,0.4) 100%)',
+                    border: '1px solid #0aff6a',
                     borderRadius: '12px',
                     position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
                     boxShadow: '0 0 20px rgba(10, 255, 106, 0.05)'
                   }}>
-                    <div style={{ 
-                      position: 'absolute', 
-                      top: '-10px', 
-                      left: '20px', 
-                      background: '#0b0b0d', 
-                      padding: '0 8px', 
-                      fontSize: '0.75rem', 
-                      color: '#0aff6a', 
-                      fontWeight: 'bold', 
+                    <div style={{
+                      position: 'absolute',
+                      top: '-10px',
+                      left: '20px',
+                      background: '#0b0b0d',
+                      padding: '0 8px',
+                      fontSize: '0.75rem',
+                      color: '#0aff6a',
+                      fontWeight: 'bold',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '6px',
@@ -1014,38 +1014,38 @@ export default function VectorCommandCenter() {
                     }}>
                       <Sparkles size={12} /> AI ENHANCED CONCEPT
                     </div>
-                    
-                    <div style={{ 
-                        marginTop: '8px', 
-                        marginBottom: '20px', 
-                        color: '#fff', 
-                        fontSize: '1.15rem', 
-                        lineHeight: '1.6',
-                        whiteSpace: 'pre-wrap',
-                        fontWeight: '500',
-                        textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+
+                    <div style={{
+                      marginTop: '8px',
+                      marginBottom: '20px',
+                      color: '#fff',
+                      fontSize: '1.15rem',
+                      lineHeight: '1.6',
+                      whiteSpace: 'pre-wrap',
+                      fontWeight: '500',
+                      textShadow: '0 2px 4px rgba(0,0,0,0.5)'
                     }}>
-                        {aiResult}
+                      {aiResult}
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => {
                         setPromptState({ ...promptState, subject: aiResult });
                         setAiResult(null);
                         setAiOriginalInput(null);
                       }}
-                      style={{ 
-                        display: 'flex', 
+                      style={{
+                        display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        background: '#0aff6a', 
-                        border: 'none', 
+                        background: '#0aff6a',
+                        border: 'none',
                         borderRadius: '6px',
                         padding: '12px 20px',
-                        color: '#000', 
-                        fontSize: '0.9rem', 
+                        color: '#000',
+                        fontSize: '0.9rem',
                         fontWeight: '800',
-                        cursor: 'pointer', 
+                        cursor: 'pointer',
                         width: '100%',
                         justifyContent: 'center',
                         transition: 'all 0.2s',
@@ -1063,10 +1063,10 @@ export default function VectorCommandCenter() {
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>Industry / Niche</label>
-              <select 
+              <select
                 style={styles.select}
                 value={promptState.industry}
-                onChange={(e) => setPromptState({...promptState, industry: e.target.value as keyof typeof INDUSTRIES})}
+                onChange={(e) => setPromptState({ ...promptState, industry: e.target.value as keyof typeof INDUSTRIES })}
               >
                 {Object.entries(INDUSTRIES).map(([key, val]) => (
                   <option key={key} value={key}>{val.label}</option>
@@ -1076,10 +1076,10 @@ export default function VectorCommandCenter() {
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>Asset Type</label>
-              <select 
+              <select
                 style={styles.select}
                 value={promptState.assetType}
-                onChange={(e) => setPromptState({...promptState, assetType: e.target.value as keyof typeof ASSET_TYPES})}
+                onChange={(e) => setPromptState({ ...promptState, assetType: e.target.value as keyof typeof ASSET_TYPES })}
               >
                 {Object.entries(ASSET_TYPES).map(([key, val]) => (
                   <option key={key} value={key}>{val.label}</option>
@@ -1089,10 +1089,10 @@ export default function VectorCommandCenter() {
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>Art Style</label>
-              <select 
+              <select
                 style={styles.select}
                 value={promptState.style}
-                onChange={(e) => setPromptState({...promptState, style: e.target.value as keyof typeof STYLES})}
+                onChange={(e) => setPromptState({ ...promptState, style: e.target.value as keyof typeof STYLES })}
               >
                 {Object.entries(STYLES).map(([key, val]) => (
                   <option key={key} value={key}>{val.label}</option>
@@ -1102,10 +1102,10 @@ export default function VectorCommandCenter() {
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>Composition</label>
-              <select 
+              <select
                 style={styles.select}
                 value={promptState.composition}
-                onChange={(e) => setPromptState({...promptState, composition: e.target.value as keyof typeof COMPOSITIONS})}
+                onChange={(e) => setPromptState({ ...promptState, composition: e.target.value as keyof typeof COMPOSITIONS })}
               >
                 {Object.entries(COMPOSITIONS).map(([key, val]) => (
                   <option key={key} value={key}>{val.label}</option>
@@ -1115,10 +1115,10 @@ export default function VectorCommandCenter() {
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>Mood / Vibe</label>
-              <select 
+              <select
                 style={styles.select}
                 value={promptState.mood}
-                onChange={(e) => setPromptState({...promptState, mood: e.target.value as keyof typeof MOODS})}
+                onChange={(e) => setPromptState({ ...promptState, mood: e.target.value as keyof typeof MOODS })}
               >
                 {Object.entries(MOODS).map(([key, val]) => (
                   <option key={key} value={key}>{val.label}</option>
@@ -1126,23 +1126,23 @@ export default function VectorCommandCenter() {
               </select>
             </div>
 
-            <div style={{...styles.inputGroup, gridColumn: '1 / -1'}}>
+            <div style={{ ...styles.inputGroup, gridColumn: '1 / -1' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={styles.label}>Project Palette (5 Colors)</label>
-                <button 
+                <button
                   onClick={() => {
                     const keys = Object.keys(COLOR_PALETTES);
                     const randomKey = keys[Math.floor(Math.random() * keys.length)];
                     const val = COLOR_PALETTES[randomKey as keyof typeof COLOR_PALETTES];
                     const newColors = [...val.colors];
-                    while(newColors.length < 5) newColors.push(newColors[newColors.length - 1] || '#000000');
-                    setPromptState({...promptState, palette: 'custom', customColors: newColors.slice(0, 5)});
+                    while (newColors.length < 5) newColors.push(newColors[newColors.length - 1] || '#000000');
+                    setPromptState({ ...promptState, palette: 'custom', customColors: newColors.slice(0, 5) });
                   }}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    color: '#0aff6a', 
-                    fontSize: '0.75rem', 
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#0aff6a',
+                    fontSize: '0.75rem',
                     cursor: 'pointer',
                     textDecoration: 'underline'
                   }}
@@ -1150,17 +1150,17 @@ export default function VectorCommandCenter() {
                   Shuffle Preset
                 </button>
               </div>
-              
+
               {/* Active 5 Colors (Editable) */}
               <div style={{ display: 'flex', gap: '8px' }}>
                 {promptState.customColors.map((color, index) => (
-                  <div 
-                    key={index} 
-                    style={{ 
-                      flex: 1, 
-                      height: '48px', 
-                      background: color, 
-                      borderRadius: '8px', 
+                  <div
+                    key={index}
+                    style={{
+                      flex: 1,
+                      height: '48px',
+                      background: color,
+                      borderRadius: '8px',
                       border: '1px solid #333',
                       position: 'relative',
                       cursor: 'pointer',
@@ -1169,8 +1169,8 @@ export default function VectorCommandCenter() {
                     }}
                     title="Click to change color"
                   >
-                    <input 
-                      type="color" 
+                    <input
+                      type="color"
                       value={color}
                       onChange={(e) => {
                         const newColors = [...promptState.customColors];
@@ -1222,104 +1222,104 @@ export default function VectorCommandCenter() {
                 flexDirection: 'column',
                 animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
               }}>
-                 {/* Header */}
-                 <div style={{ 
-                   padding: '20px 24px', 
-                   borderBottom: '1px solid #222', 
-                   display: 'flex', 
-                   justifyContent: 'space-between', 
-                   alignItems: 'center', 
-                   background: 'linear-gradient(90deg, rgba(10, 255, 106, 0.05) 0%, transparent 100%)' 
-                 }}>
-                    <span style={{ color: '#0aff6a', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px', letterSpacing: '1px', fontSize: '0.9rem' }}>
-                      <BrainCircuit size={20} /> AI ARCHITECT
-                    </span>
-                    <button 
-                      onClick={() => setAiResult(null)} 
-                      style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: '4px', borderRadius: '4px', transition: 'all 0.2s' }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
-                    >
-                      <X size={24} />
-                    </button>
-                 </div>
+                {/* Header */}
+                <div style={{
+                  padding: '20px 24px',
+                  borderBottom: '1px solid #222',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  background: 'linear-gradient(90deg, rgba(10, 255, 106, 0.05) 0%, transparent 100%)'
+                }}>
+                  <span style={{ color: '#0aff6a', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px', letterSpacing: '1px', fontSize: '0.9rem' }}>
+                    <BrainCircuit size={20} /> AI ARCHITECT
+                  </span>
+                  <button
+                    onClick={() => setAiResult(null)}
+                    style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: '4px', borderRadius: '4px', transition: 'all 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
 
-                 {/* Content */}
-                 <div style={{ padding: '32px 24px', color: '#e9eef6', fontSize: '1.15rem', lineHeight: '1.6', fontFamily: '"Inter", sans-serif', fontWeight: '500' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Enhanced Concept</div>
-                    {aiResult}
-                 </div>
+                {/* Content */}
+                <div style={{ padding: '32px 24px', color: '#e9eef6', fontSize: '1.15rem', lineHeight: '1.6', fontFamily: '"Inter", sans-serif', fontWeight: '500' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Enhanced Concept</div>
+                  {aiResult}
+                </div>
 
-                 {/* Actions */}
-                 <div style={{ padding: '24px', display: 'flex', gap: '16px', background: '#111', borderTop: '1px solid #222' }}>
-                    <button 
-                      onClick={handleAiEnhance} 
-                      style={{ 
-                        flex: 0.5, 
-                        background: 'transparent', 
-                        border: '1px solid #333', 
-                        color: '#888', 
-                        padding: '14px', 
-                        borderRadius: '8px', 
-                        cursor: 'pointer', 
-                        fontWeight: '600',
-                        transition: 'all 0.2s',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      title="Regenerate"
-                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#666'; e.currentTarget.style.color = '#fff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = '#888'; }}
-                    >
-                      <RefreshCcw size={18} />
-                    </button>
-                    <button 
-                      onClick={() => setAiResult(null)} 
-                      style={{ 
-                        flex: 1, 
-                        background: 'transparent', 
-                        border: '1px solid #333', 
-                        color: '#888', 
-                        padding: '14px', 
-                        borderRadius: '8px', 
-                        cursor: 'pointer', 
-                        fontWeight: '600',
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#666'; e.currentTarget.style.color = '#fff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = '#888'; }}
-                    >
-                      Discard
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setPromptState({ ...promptState, subject: aiResult });
-                        setAiResult(null);
-                        setAiOriginalInput(null);
-                      }} 
-                      style={{ 
-                        flex: 2, 
-                        background: '#0aff6a', 
-                        border: 'none', 
-                        color: '#000', 
-                        padding: '14px', 
-                        borderRadius: '8px', 
-                        cursor: 'pointer', 
-                        fontWeight: '800', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        gap: '8px',
-                        boxShadow: '0 4px 12px rgba(10, 255, 106, 0.25)',
-                        transition: 'transform 0.1s'
-                      }}
-                      onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
-                      onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                    >
-                      <Sparkles size={18} /> Use Concept
-                    </button>
-                 </div>
+                {/* Actions */}
+                <div style={{ padding: '24px', display: 'flex', gap: '16px', background: '#111', borderTop: '1px solid #222' }}>
+                  <button
+                    onClick={handleAiEnhance}
+                    style={{
+                      flex: 0.5,
+                      background: 'transparent',
+                      border: '1px solid #333',
+                      color: '#888',
+                      padding: '14px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    title="Regenerate"
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#666'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = '#888'; }}
+                  >
+                    <RefreshCcw size={18} />
+                  </button>
+                  <button
+                    onClick={() => setAiResult(null)}
+                    style={{
+                      flex: 1,
+                      background: 'transparent',
+                      border: '1px solid #333',
+                      color: '#888',
+                      padding: '14px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#666'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = '#888'; }}
+                  >
+                    Discard
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPromptState({ ...promptState, subject: aiResult });
+                      setAiResult(null);
+                      setAiOriginalInput(null);
+                    }}
+                    style={{
+                      flex: 2,
+                      background: '#0aff6a',
+                      border: 'none',
+                      color: '#000',
+                      padding: '14px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '800',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 12px rgba(10, 255, 106, 0.25)',
+                      transition: 'transform 0.1s'
+                    }}
+                    onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+                    onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                  >
+                    <Sparkles size={18} /> Use Concept
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -1351,7 +1351,7 @@ export default function VectorCommandCenter() {
                   <AlertCircle size={32} />
                   <h2 style={{ margin: 0, fontSize: '1.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>System Incompatible</h2>
                 </div>
-                
+
                 <p style={{ color: '#e9eef6', lineHeight: '1.6', marginBottom: '24px', fontSize: '1rem' }}>
                   {systemError}
                 </p>
@@ -1363,7 +1363,7 @@ export default function VectorCommandCenter() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => setSystemError(null)}
                   style={{
                     width: '100%',
@@ -1397,7 +1397,7 @@ export default function VectorCommandCenter() {
               justifyContent: 'center',
               padding: '20px'
             }} onClick={() => setShowResultModal(false)}>
-              <div 
+              <div
                 style={{
                   background: '#111',
                   border: '1px solid #333',
@@ -1413,7 +1413,7 @@ export default function VectorCommandCenter() {
                 }}
                 onClick={e => e.stopPropagation()}
               >
-                <button 
+                <button
                   onClick={() => setShowResultModal(false)}
                   style={{
                     position: 'absolute',
@@ -1433,10 +1433,10 @@ export default function VectorCommandCenter() {
                   <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Prompt Generated</h2>
                 </div>
 
-                <div style={{ 
-                  background: '#050505', 
-                  padding: '20px', 
-                  borderRadius: '8px', 
+                <div style={{
+                  background: '#050505',
+                  padding: '20px',
+                  borderRadius: '8px',
                   border: '1px dashed #333',
                   marginBottom: '24px'
                 }}>
@@ -1444,7 +1444,7 @@ export default function VectorCommandCenter() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <button 
+                  <button
                     onClick={copyToClipboard}
                     style={{ ...styles.button, flex: 1 }}
                   >
@@ -1473,7 +1473,7 @@ export default function VectorCommandCenter() {
                       <div style={{ color: '#888', fontSize: '0.8rem' }}>Explicitly forbids "3d render", "blur", and "shading" to ensure a clean vector-ready result.</div>
                     </div>
                   </div>
-                  
+
                   <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#888', fontSize: '0.9rem' }}>
                     <span style={{ background: '#222', padding: '2px 8px', borderRadius: '4px', color: '#0aff6a', fontSize: '0.75rem', fontWeight: 700 }}>PRO TIP</span>
                     <span>This prompt is optimized for Midjourney v6. For DALL-E 3, remove the "--v 6.0" parameter.</span>
@@ -1535,32 +1535,32 @@ export default function VectorCommandCenter() {
               ))}
             </div>
           ) : !svgOutput ? (
-            <div 
+            <div
               style={styles.dropZone}
               onClick={() => fileInputRef.current?.click()}
             >
               <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center', gap: '12px' }}>
-                 <span style={{ background: '#222', padding: '4px 12px', borderRadius: '99px', fontSize: '0.8rem', color: '#0aff6a' }}>
-                   Target: {sector.toUpperCase()}
-                 </span>
-                 <button 
-                   onClick={(e) => { e.stopPropagation(); setSector(null); }}
-                   style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}
-                 >
-                   Change
-                 </button>
+                <span style={{ background: '#222', padding: '4px 12px', borderRadius: '99px', fontSize: '0.8rem', color: '#0aff6a' }}>
+                  Target: {sector.toUpperCase()}
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSector(null); }}
+                  style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}
+                >
+                  Change
+                </button>
               </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                style={{ display: 'none' }} 
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
                 accept="image/png, image/jpeg"
                 onChange={handleFileUpload}
               />
               <Upload size={48} color="#333" style={{ marginBottom: '16px' }} />
               <h3 style={{ color: '#fff', marginBottom: '8px' }}>Upload Raster Image</h3>
               <p style={{ color: '#666', fontSize: '0.9rem' }}>
-                Drag & drop or click to select PNG/JPG<br/>
+                Drag & drop or click to select PNG/JPG<br />
                 Best results with high contrast images
               </p>
               {isProcessing && (
@@ -1571,12 +1571,12 @@ export default function VectorCommandCenter() {
             </div>
           ) : (
             <div style={styles.section}>
-              <div 
-                style={{ 
-                  ...styles.resultBox, 
-                  padding: 0, 
-                  overflow: 'hidden', 
-                  height: isFullscreen ? '85vh' : '400px', 
+              <div
+                style={{
+                  ...styles.resultBox,
+                  padding: 0,
+                  overflow: 'hidden',
+                  height: isFullscreen ? '85vh' : '400px',
                   position: isFullscreen ? 'fixed' : 'relative',
                   top: isFullscreen ? '50%' : 'auto',
                   left: isFullscreen ? '50%' : 'auto',
@@ -1616,9 +1616,9 @@ export default function VectorCommandCenter() {
                 </div>
 
                 {/* Content Container with Zoom */}
-                <div style={{ 
-                  width: '100%', 
-                  height: '100%', 
+                <div style={{
+                  width: '100%',
+                  height: '100%',
                   position: 'relative',
                   transform: `scale(${zoom})`,
                   transformOrigin: 'center',
@@ -1626,41 +1626,41 @@ export default function VectorCommandCenter() {
                 }}>
                   {/* Original Image (Background) */}
                   {originalImage && (
-                    <img 
-                      src={originalImage} 
-                      alt="Original" 
-                      style={{ 
-                        position: 'absolute', 
-                        top: 0, 
-                        left: 0, 
-                        width: '100%', 
-                        height: '100%', 
+                    <img
+                      src={originalImage}
+                      alt="Original"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
                         objectFit: 'contain',
                         opacity: 0.5,
                         filter: 'grayscale(100%)'
-                      }} 
+                      }}
                     />
                   )}
 
                   {/* Vector Result (Foreground, Clipped) */}
-                  <div 
-                    style={{ 
-                      position: 'absolute', 
-                      top: 0, 
-                      left: 0, 
-                      width: `${comparePos}%`, 
-                      height: '100%', 
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: `${comparePos}%`,
+                      height: '100%',
                       overflow: 'hidden',
                       borderRight: `2px solid #0aff6a`,
                       background: '#1a1a1a'
                     }}
                   >
-                     <div style={{ width: isFullscreen ? '95vw' : '100%', maxWidth: isFullscreen ? '1200px' : '900px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div 
-                          style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                          dangerouslySetInnerHTML={{ __html: svgOutput }} 
-                        />
-                     </div>
+                    <div style={{ width: isFullscreen ? '95vw' : '100%', maxWidth: isFullscreen ? '1200px' : '900px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div
+                        style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        dangerouslySetInnerHTML={{ __html: svgOutput }}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -1693,38 +1693,38 @@ export default function VectorCommandCenter() {
               {isFullscreen && <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 999 }} onClick={toggleFullscreen} />}
 
               <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                 <button 
+                <button
                   style={{ ...styles.button, flex: 1, background: isRemovingBg ? '#222' : '#333', color: '#fff', opacity: isRemovingBg ? 0.7 : 1 }}
                   onClick={handleRemoveBackground}
                   disabled={isRemovingBg || isUpscaling}
                 >
-                  {isRemovingBg ? <div className="spinner" /> : <Eraser size={18} />} 
+                  {isRemovingBg ? <div className="spinner" /> : <Eraser size={18} />}
                   {isRemovingBg ? 'Removing BG...' : 'Remove BG (AI)'}
                 </button>
-                <button 
+                <button
                   style={{ ...styles.button, flex: 1, background: isUpscaling ? '#222' : '#333', color: '#fff', opacity: isUpscaling ? 0.7 : 1 }}
                   onClick={handleUpscale}
                   disabled={isRemovingBg || isUpscaling}
                 >
-                  {isUpscaling ? <div className="spinner" /> : <ArrowUpCircle size={18} />} 
+                  {isUpscaling ? <div className="spinner" /> : <ArrowUpCircle size={18} />}
                   {isUpscaling ? 'Upscaling (2x)...' : 'Upscale (AI)'}
                 </button>
               </div>
 
               <div style={{ display: 'flex', gap: '16px' }}>
-                <button 
+                <button
                   style={{ ...styles.button, flex: 1, background: '#222', color: 'white' }}
                   onClick={() => { setSvgOutput(null); setOriginalImage(null); }}
                 >
                   <AlertCircle size={18} /> Reset
                 </button>
-                <button 
+                <button
                   style={{ ...styles.button, flex: 1.5, background: '#333', color: '#fff' }}
                   onClick={downloadPDF}
                 >
                   <FileText size={18} /> PDF
                 </button>
-                <button 
+                <button
                   style={{ ...styles.button, flex: 2 }}
                   onClick={downloadSVG}
                 >
