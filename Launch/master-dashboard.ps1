@@ -31,8 +31,8 @@ do {
 
     switch ($input) {
         "1" { 
-            Write-Host "Starting Main Website..." -ForegroundColor Green
-            Start-Process "npm" -ArgumentList "run dev" -WorkingDirectory "$Root"
+            Write-Host "Starting Main Website (Smart Launch)..." -ForegroundColor Green
+            Start-Process "powershell" -ArgumentList "-NoExit", "-File", "`"$PSScriptRoot\smart-launch-website.ps1`""
         }
         "2" { 
             Write-Host "Starting Trash Hunter (Admin Safe Mode)..." -ForegroundColor Magenta
@@ -42,12 +42,12 @@ do {
             Set-Location $PSScriptRoot
         }
         "3" { 
-            Write-Host "Starting Replica Studio..." -ForegroundColor White
-            Start-Process "npm" -ArgumentList "run dev" -WorkingDirectory "$Root\replica-studio"
+            Write-Host "Starting Replica Studio (Smart Launch)..." -ForegroundColor White
+            Start-Process "powershell" -ArgumentList "-NoExit", "-File", "`"$PSScriptRoot\smart-launch-replica.ps1`""
         }
         "4" { 
-            Write-Host "Starting AI Gateway..." -ForegroundColor Yellow
-            Start-Process "npx" -ArgumentList "wrangler dev" -WorkingDirectory "$Root\ai-gateway"
+            Write-Host "Starting AI Gateway (Smart Launch)..." -ForegroundColor Yellow
+            Start-Process "powershell" -ArgumentList "-NoExit", "-File", "`"$PSScriptRoot\smart-launch-gateway.ps1`""
         }
         "5" { 
             Write-Host "Starting Desktop App..." -ForegroundColor Blue
@@ -55,15 +55,15 @@ do {
         }
         "6" {
             Write-Host "LAUNCHING ALL SYSTEMS..." -ForegroundColor Red
-            Start-Process "npm" -ArgumentList "run dev" -WorkingDirectory "$Root"
+            Start-Process "powershell" -ArgumentList "-NoExit", "-File", "`"$PSScriptRoot\smart-launch-website.ps1`""
             Start-Sleep -Seconds 2
             
             Set-Location "$Root\trash-hunter"
             Start-Process "START-SMART-DEV.bat" -Verb RunAs
             Set-Location $PSScriptRoot
             
-            Start-Process "npm" -ArgumentList "run dev" -WorkingDirectory "$Root\replica-studio"
-            Start-Process "npx" -ArgumentList "wrangler dev" -WorkingDirectory "$Root\ai-gateway"
+            Start-Process "powershell" -ArgumentList "-NoExit", "-File", "`"$PSScriptRoot\smart-launch-replica.ps1`""
+            Start-Process "powershell" -ArgumentList "-NoExit", "-File", "`"$PSScriptRoot\smart-launch-gateway.ps1`""
         }
         "Q" { exit }
         "q" { exit }

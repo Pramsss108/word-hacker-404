@@ -6,8 +6,10 @@ import VoiceEncrypter from './components/VoiceEncrypter'
 import ToolsPage from './components/ToolsPage'
 import RawWatchdogIndicator from './components/RawWatchdogIndicator'
 import RawDiagnosticsPanel from './components/RawDiagnosticsPanel'
+import LoginDashboard from './components/LoginDashboard'
 import { getSharedArrayBufferWatchdogReport } from './raw'
 import { useGlobalAIWorker } from './services/GlobalAIWorker'
+import { proAuth, type UserStatus } from './services/ProAuth'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -28,6 +30,19 @@ function App() {
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
+  const [showLogin, setShowLogin] = useState(false)
+  const [authStatus, setAuthStatus] = useState<UserStatus>('loading')
+  const [currentUser, setCurrentUser] = useState<any>(null)
+
+  // Subscribe to auth changes
+  useEffect(() => {
+    const unsub = proAuth.subscribe((status, user) => {
+      setAuthStatus(status)
+      setCurrentUser(user)
+    })
+    return () => unsub()
+  }, [])
+
   const heroRef = useRef<HTMLDivElement | null>(null)
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
   const { initWorker } = useGlobalAIWorker();
@@ -56,7 +71,10 @@ function App() {
         <>
           {/* System bar (mood setter) */}
           <div className="sysbar">
-            <div className="sys-item"><span className="dot" /> ACCESS: OPEN</div>
+            <div className="sys-item clickable" onClick={() => setShowLogin(true)} style={{ cursor: 'pointer' }}>
+              <span className={`dot ${currentUser ? 'active' : ''}`} style={{ background: currentUser ? '#0aff6a' : (authStatus === 'loading' ? '#f59e0b' : '#d92e2e') }} /> 
+              {authStatus === 'loading' ? 'ACCESS: VERIFYING...' : (currentUser ? `ID: ${currentUser.displayName?.split(' ')[0].toUpperCase()}` : 'ACCESS: GUEST')}
+            </div>
             <div className="sys-item mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
             <div className="sys-item mono">BETA · MATRIX-{Math.abs((Date.now()/1000|0)%999)}</div>
             <div className={`sys-item mono sab-pill ${sabReport.available ? 'ok' : 'warn'}`}>
@@ -226,6 +244,10 @@ function App() {
             </div>
           </div>
         </main>
+      )}
+
+      {showLogin && (
+        <LoginDashboard onClose={() => setShowLogin(false)} />
       )}
     </div>
   )

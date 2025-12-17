@@ -14,3 +14,8 @@ declare module 'wasm-vips' {
   const VipsFactory: any
   export default VipsFactory
 }
+
+interface Window {
+  SpeechRecognition: any;
+  webkitSpeechRecognition: any;
+}

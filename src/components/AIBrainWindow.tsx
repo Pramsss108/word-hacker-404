@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2 } from 'lucide-react'
+import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Mic, Volume2, StopCircle } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { aiEngine, type ChatMessage } from '../services/AIEngine'
@@ -29,6 +29,45 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
   const [authStatus, setAuthStatus] = useState<UserStatus>('loading');
   const [credits, setCredits] = useState<number | 'inf'>('inf');
   const [accessReason, setAccessReason] = useState<string | undefined>();
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const handleVoiceInput = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Neural Voice Link not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(prev => prev + (prev ? ' ' : '') + transcript);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  };
+
+  const handleSpeak = (text: string) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.0;
+    utterance.pitch = 0.9; // Slightly deeper "AI" voice
+    window.speechSynthesis.speak(utterance);
+  };
 
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -197,7 +236,14 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
         <div className="ai-chat-viewport">
           {messages.map((m, i) => (
             <div key={i} className={`chat-bubble ${m.role}`}>
-              {m.role === 'assistant' && <Cpu size={14} style={{ marginBottom: 4, display: 'block', opacity: 0.5 }} />}
+              {m.role === 'assistant' && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <Cpu size={14} style={{ opacity: 0.5 }} />
+                  <button onClick={() => handleSpeak(m.content)} className="icon-btn" style={{ padding: 2, opacity: 0.7 }} title="Vocalize">
+                    <Volume2 size={12} />
+                  </button>
+                </div>
+              )}
 
               {/* MARKDOWN RENDERING */}
               <div className="ai-markdown">
@@ -222,6 +268,14 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
         {/* INPUT ZONE */}
         <footer className="ai-input-zone">
           <div className="input-wrapper">
+            <button
+              className={`icon-btn ${isListening ? 'pulse-red' : ''}`}
+              onClick={handleVoiceInput}
+              title="Voice Input"
+              style={{ marginRight: 8, color: isListening ? '#ef4444' : 'inherit' }}
+            >
+              {isListening ? <StopCircle size={20} /> : <Mic size={20} />}
+            </button>
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
