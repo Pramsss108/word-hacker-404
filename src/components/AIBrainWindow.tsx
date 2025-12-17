@@ -1,0 +1,248 @@
+import { useState, useRef, useEffect } from 'react'
+import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Maximize2 } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { aiEngine, type ChatMessage } from '../services/AIEngine'
+import { proAuth, type UserStatus } from '../services/ProAuth'
+import './AIBrainWindow.css'
+
+interface AIBrainWindowProps {
+  onClose: () => void
+}
+
+export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
+  // Initial State: Try to load from local storage
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const saved = localStorage.getItem('cortex_history');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) { console.error("Failed to load history", e) }
+    }
+    return [{ role: 'assistant', content: "SYSTEM ONLINE. Connected to Central Neural Net (GPT-OSS-120B). Awaiting input..." }];
+  })
+
+  const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Auth State
+  const [authStatus, setAuthStatus] = useState<UserStatus>('loading');
+  const [credits, setCredits] = useState<number | 'inf'>('inf');
+  const [accessReason, setAccessReason] = useState<string | undefined>();
+
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  // 1. Persistence Hook
+  useEffect(() => {
+    localStorage.setItem('cortex_history', JSON.stringify(messages));
+  }, [messages]);
+
+  // 2. Scroll Lock Hook (Fix for background scrolling)
+  useEffect(() => {
+    // Lock body scroll
+    document.body.style.overflow = 'hidden';
+    // Unlock on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    }
+  }, []);
+
+  useEffect(() => {
+    // 3. Subscribe to Auth Status
+    const unsub = proAuth.subscribe((status, user) => {
+      setAuthStatus(status);
+      checkCredits();
+    });
+    return unsub;
+  }, []);
+
+  const checkCredits = async () => {
+    const access = await proAuth.checkAccess();
+    if (access.remaining !== undefined) {
+      setCredits(access.remaining > 100 ? 'inf' : access.remaining);
+    }
+    setAccessReason(access.reason);
+  };
+
+  const handleClearHistory = () => {
+    if (confirm("Delete neural logs? This cannot be undone.")) {
+      const resetMsg: ChatMessage[] = [{ role: 'assistant', content: "Memory Wiped. System Ready." }];
+      setMessages(resetMsg);
+      localStorage.setItem('cortex_history', JSON.stringify(resetMsg));
+    }
+  }
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    // A. Security Check
+    const access = await proAuth.checkAccess();
+    if (!access.allowed) {
+      setAccessReason(access.reason);
+      return; // Block
+    }
+
+    const userMsg = input
+    setInput('')
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }])
+    setIsLoading(true)
+
+    // B. AI Request
+    const result = await aiEngine.chat(messages.concat({ role: 'user', content: userMsg }))
+
+    // C. Handle Result
+    if (result.error) {
+      setMessages(prev => [...prev, { role: 'assistant', content: `⚠️ SYSTEM ERROR: ${result.error}` }])
+    } else {
+      setMessages(prev => [...prev, { role: 'assistant', content: result.content }])
+      // D. Deduct Credit (Only on success)
+      await proAuth.incrementUsage();
+      checkCredits(); // Refresh display
+    }
+
+    setIsLoading(false)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  }
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  // --- RENDER HELPERS ---
+
+  const renderOverlay = () => {
+    if (authStatus === 'loading') {
+      return (
+        <div className="ai-overlay-glass">
+          <Activity className="spin" size={48} color="#a855f7" />
+          <p>ESTABLISHING SECURE LINK...</p>
+        </div>
+      )
+    }
+
+    if (authStatus === 'anonymous') {
+      return (
+        <div className="ai-overlay-glass">
+          <Lock size={64} color="#ef4444" />
+          <h2>ACCESS RESTRICTED</h2>
+          <p>Identity Verification Required.</p>
+          <button className="btn-neon" onClick={() => proAuth.signIn()}>
+            <Zap size={18} /> CONNECT NEURAL ID (GOOGLE)
+          </button>
+          <p className="tiny-text">Free Plan: 10 Queries / Day</p>
+        </div>
+      )
+    }
+
+    if (accessReason === 'limit_reached') {
+      return (
+        <div className="ai-overlay-glass">
+          <ShieldAlert size={64} color="#f59e0b" />
+          <h2>DAILY LIMIT REACHED</h2>
+          <p>Neural capacity exhausted for today.</p>
+          <div className="limit-box">
+            <span>Refills in: 24h</span>
+            <span>God Mode: LOCKED</span>
+          </div>
+          <button className="btn-neon" disabled style={{ opacity: 0.5 }}>
+            WATCH AD TO REFILL (SOON)
+          </button>
+        </div>
+      )
+    }
+
+    return null;
+  }
+
+  const getStatusColor = () => {
+    if (authStatus === 'god_mode') return '#22c55e'; // Green
+    if (credits === 0) return '#ef4444'; // Red
+    return '#a855f7'; // Purple
+  }
+
+  return (
+    <div className="ai-brain-overlay">
+      <div className="ai-brain-container">
+
+        {/* HEADER */}
+        <header className="ai-header">
+          <div className="ai-title">
+            <Cpu size={24} className="ai-icon-pulse" />
+            <div>
+              <h3>Cortex Neural Link</h3>
+              <div className="ai-status">
+                <span className="dot" style={{ background: getStatusColor(), boxShadow: `0 0 8px ${getStatusColor()}` }} />
+                <span className="secure">
+                  {authStatus === 'god_mode' ? 'GOD MODE ACTIVE' : `CREDITS: ${credits}/10`}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="header-actions">
+            <button className="icon-btn" title="Clear History" onClick={handleClearHistory}>
+              <Trash2 size={20} />
+            </button>
+            <button onClick={onClose} className="icon-btn close-btn"><X size={24} /></button>
+          </div>
+        </header>
+
+        {/* CHAT AREA */}
+        <div className="ai-chat-viewport">
+          {messages.map((m, i) => (
+            <div key={i} className={`chat-bubble ${m.role}`}>
+              {m.role === 'assistant' && <Cpu size={14} style={{ marginBottom: 4, display: 'block', opacity: 0.5 }} />}
+
+              {/* MARKDOWN RENDERING */}
+              <div className="ai-markdown">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {m.content}
+                </ReactMarkdown>
+              </div>
+
+            </div>
+          ))}
+          {isLoading && (
+            <div className="chat-bubble assistant">
+              <Activity className="spin" size={16} /> PROCESSING...
+            </div>
+          )}
+          <div ref={bottomRef} />
+
+          {/* SECURITY OVERLAYS */}
+          {renderOverlay()}
+        </div>
+
+        {/* INPUT ZONE */}
+        <footer className="ai-input-zone">
+          <div className="input-wrapper">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={accessReason ? "SYSTEM LOCKED" : "Input command... (Shift+Enter for newline)"}
+              disabled={!!accessReason || authStatus === 'anonymous'}
+              className="ai-textarea"
+            />
+            <button
+              className="send-btn"
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading || !!accessReason || authStatus === 'anonymous'}
+            >
+              <Send size={18} />
+            </button>
+          </div>
+          <div className="ai-footer-info">
+            Model: GPT-OSS-120B via Groq • {authStatus === 'god_mode' ? 'UNLIMITED' : 'FREE TIER'}
+          </div>
+        </footer>
+
+      </div>
+    </div>
+  )
+}

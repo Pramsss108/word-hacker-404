@@ -202,18 +202,38 @@ const bridge = {
         const directory = filePath.replace(/\\/g, '/').split('/').slice(0, -1).join('/');
         
         console.log('[Bridge] Opening folder:', directory);
+        console.log('[Bridge] Original file path:', filePath);
         
-        // Windows: Use explorer to select the file
-        if (navigator.platform.includes('Win')) {
-          const command = new Command('explorer', ['/select,', filePath.replace(/\//g, '\\')]);
-          await command.execute();
-        } else if (navigator.platform.includes('Mac')) {
-          const command = new Command('open', ['-R', filePath]);
-          await command.execute();
-        } else {
-          // Linux: Just open the directory
-          const command = new Command('xdg-open', [directory]);
-          await command.execute();
+        // Normalize path for Windows
+        const normalizedPath = filePath.replace(/\//g, '\\');
+        
+        try {
+          // Windows: Use shell.open to open folder with file selected
+          if (navigator.platform.includes('Win')) {
+            // Use Tauri shell.open with explorer command
+            const { shell } = window.__TAURI__;
+            await shell.open(`explorer /select,"${normalizedPath}"`);
+            console.log('[Bridge] ✅ Folder opened successfully');
+          } else if (navigator.platform.includes('Mac')) {
+            const { shell } = window.__TAURI__;
+            await shell.open(`open -R "${filePath}"`);
+          } else {
+            // Linux: Just open the directory
+            const { shell } = window.__TAURI__;
+            await shell.open(directory);
+          }
+          return { success: true };
+        } catch (shellError) {
+          console.error('[Bridge] shell.open failed:', shellError);
+          // Fallback: Just open the directory without selecting the file
+          try {
+            const { shell } = window.__TAURI__;
+            await shell.open(directory.replace(/\//g, '\\'));
+            return { success: true };
+          } catch (fallbackError) {
+            console.error('[Bridge] Fallback also failed:', fallbackError);
+            throw fallbackError;
+          }
         }
         
         return { success: true };
@@ -502,18 +522,18 @@ if (isTauri) {
     },
     exportFiles: async (payload) => {
       // Payload: { files, destination, outputFormat, trim, metadata }
-      // For now, we just copy the file to the destination if provided, or Downloads
-      // Real implementation needs ffmpeg in Rust
-      
       const { invoke } = window.__TAURI__.tauri;
       console.log('[Bridge] Exporting:', payload);
       
-      // Mock export for now - just return success
-      // In a real app, we would call a Rust command to run ffmpeg
-      return {
-        exported: payload.files,
-        outputDir: payload.destination || 'Downloads'
-      };
+      try {
+        // Call REAL Tauri command with FFmpeg processing
+        const result = await invoke('export_files', { payload });
+        console.log('[Bridge] Export success:', result);
+        return result;
+      } catch (error) {
+        console.error('[Bridge] Export failed:', error);
+        throw new Error(`Export failed: ${error}`);
+      }
     },
     backgroundTrim: async (trimData) => {
       // Mock background trim

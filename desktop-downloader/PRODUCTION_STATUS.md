@@ -38,16 +38,21 @@
 - ✅ Cached trimming for instant export
 - ✅ Fallback to real-time trim if cache fails
 
-### 4. Export System
+### 4. Export System ✅ **FULLY WORKING - December 14, 2025**
 - ✅ Video formats: MP4, MKV, AVI, WebM
 - ✅ Audio formats: MP3, M4A, OGG, WAV
+- ✅ **FIXED**: Audio export now working (was returning .mp4 before)
+- ✅ **FIXED**: FFmpeg integration via Tauri backend (Rust)
+- ✅ **FIXED**: Audio extraction with `-vn` flag (no video)
+- ✅ **FIXED**: Format conversion (mp4→mp3, mp4→m4a, etc.)
+- ✅ **FIXED**: Double Downloads path bug (Downloads/Downloads/)
+- ✅ **FIXED**: Trim support with FFmpeg `-ss` and `-to` flags
 - ✅ Resolution control (1080p, 720p, 480p, 360p, Original)
-- ✅ **FIXED**: Audio quality dropdown shows ALL formats (highest to lowest)
-- ✅ Quality slider (0-100 CRF control)
-- ✅ Audio-only extraction mode
+- ✅ Audio-only extraction mode with proper codec settings
 - ✅ Custom save location picker
 - ✅ Batch export (multiple items at once)
-- ✅ FFmpeg optimization (fast preset)
+- ✅ FFmpeg optimization (H.264 fast preset, 192kbps audio)
+- ✅ Folder reveal button (opens export directory)
 
 ### 5. Metadata & SEO
 - ✅ Auto-extract title, description, keywords

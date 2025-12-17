@@ -72,32 +72,44 @@ Built-in presets optimized for common use cases:
 
 ## 📤 **Export System**
 
+### ✅ **FULLY IMPLEMENTED - FFmpeg Tauri Backend**
+
+The export system now uses native Rust FFmpeg integration for professional-grade video/audio processing:
+
 ### Format Options
 **Video Formats**:
-- MP4 (H.264) — Universal compatibility
-- MKV (Matroska) — High quality, multiple tracks
-- AVI — Legacy support
-- WebM (VP9) — Web-optimized
+- ✅ **MP4 (H.264)** — Universal compatibility, H.264 codec, AAC audio, 192kbps
+- ✅ **MKV (Matroska)** — High quality, multiple tracks
+- ✅ **AVI** — Legacy support
+- ✅ **WebM (VP9)** — Web-optimized
 
-**Audio Formats**:
-- MP3 — Universal audio
-- M4A (AAC) — Apple ecosystem
-- OGG (Vorbis) — Open source
-- WAV — Lossless audio
+**Audio Formats** (✅ NOW WORKING):
+- ✅ **MP3** — Universal audio, libmp3lame codec, 192kbps
+- ✅ **M4A (AAC)** — Apple ecosystem, AAC codec, 192kbps
+- ✅ **OGG (Vorbis)** — Open source, quality level 5
+- ✅ **WAV** — Lossless audio
 
-### Resolution Control
-Choose output resolution:
-- **1080p**: 1920×1080 (Full HD)
-- **720p**: 1280×720 (HD Ready)
-- **480p**: 854×480 (SD)
-- **360p**: 640×360 (Low bandwidth)
-- **Original**: Keep source resolution
-
-### Export Settings
-- 🎚️ **Quality slider**: 0-100 (CRF control)
-- 🔇 **Audio-only mode**: Extract audio, discard video
+### Export Features
+- ✅ **Audio extraction**: Automatically strips video with `-vn` flag
+- ✅ **Format conversion**: Converts between any format (mp4→mp3, mp4→m4a, etc.)
+- ✅ **Trim support**: Precise trimming with `-ss` and `-to` flags
+- ✅ **Quality control**: CRF 23 for video, 192kbps for audio
+- ✅ **Fast encoding**: H.264 fast preset for better UX
+- ✅ **Compatibility**: yuv420p pixel format, faststart flag for streaming
 - 📁 **Custom save location**: Choose where to export
 - 📦 **Batch export**: Export multiple selected items at once
+- 📂 **Folder reveal button**: Opens export folder after completion
+
+### Technical Implementation
+**Architecture**: Frontend (index.js) → IPC Bridge (bridge.js) → Tauri Command (export_files) → FFmpeg Processing
+
+**FFmpeg Integration**:
+```rust
+// Audio export example
+ffmpeg -i input.mp4 -ss 50.2 -to 82.1 -vn -c:a libmp3lame -b:a 192k -y output.mp3
+```
+
+**Path Handling**: Fixed "double Downloads" bug - correctly resolves `Downloads/WordHackerDownloads` to `C:\Users\...\Downloads\WordHackerDownloads`
 - ⚡ **FFmpeg optimization**: Fast preset for quick exports
 
 ### Export Progress

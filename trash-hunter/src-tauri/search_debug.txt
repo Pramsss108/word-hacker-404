@@ -1,0 +1,24 @@
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000
+START SCAN: Volume='D:' Query='None'
+FIRST MATCH: D:\
+END SCAN: Scanned=2000 Results=2000

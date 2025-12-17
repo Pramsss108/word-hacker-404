@@ -1,0 +1,306 @@
+/* 🧠 AIBrainWindow.css - PRO VERSION */
+
+/* Full Screen Overlay */
+.ai-brain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Maximized Container - ChatGPT Style */
+.ai-brain-container {
+  width: 95vw;
+  height: 92vh;
+  max-width: 1800px;
+  /* Huge on big screens */
+  background: #0f0f12;
+  /* Deep Dark */
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Header - Sleek Top Bar */
+.ai-header {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  flex-shrink: 0;
+}
+
+.ai-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+
+.ai-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.ai-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #71717a;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.close-btn {
+  color: #ef4444;
+}
+
+.close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Chat Viewport - Expands to fill space */
+.ai-chat-viewport {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 2rem 15%;
+  /* Centered reading column */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+/* Responsive side padding */
+@media (max-width: 1000px) {
+  .ai-chat-viewport {
+    padding: 2rem 5%;
+  }
+}
+
+/* Chat Bubbles */
+.chat-bubble {
+  max-width: 100%;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #e4e4e7;
+  user-select: text;
+  /* Allow copying */
+  -webkit-user-select: text;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  /* User right ? No, ChatGPT style is left-aligned blocks usually, but let's stick to blocks */
+  /* Actually, let's distinct them by background */
+  background: rgba(63, 63, 70, 0.4);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-left: 20%;
+}
+
+.chat-bubble.assistant {
+  background: transparent;
+  /* Clean look */
+  margin-right: 5%;
+  padding: 0 1rem;
+  /* Minimal padding */
+}
+
+/* Markdown Styles */
+.ai-markdown p {
+  margin-bottom: 0.8em;
+}
+
+.ai-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.95em;
+}
+
+.ai-markdown th,
+.ai-markdown td {
+  border: 1px solid #3f3f46;
+  padding: 10px;
+  text-align: left;
+}
+
+.ai-markdown th {
+  background: #18181b;
+  color: #a1a1aa;
+  font-weight: 600;
+}
+
+.ai-markdown pre {
+  background: #18181b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1em 0;
+  overflow-x: auto;
+  border: 1px solid #27272a;
+}
+
+.ai-markdown code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.ai-markdown pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Input Zone - Footer */
+.ai-input-zone {
+  flex-shrink: 0;
+  padding: 1.5rem 15%;
+  background: #0f0f12;
+  /* Match BG */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 1000px) {
+  .ai-input-zone {
+    padding: 1.5rem 5%;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  background: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #a855f7;
+}
+
+.ai-textarea {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  resize: none;
+  max-height: 200px;
+  min-height: 24px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  padding: 0;
+}
+
+.ai-textarea::placeholder {
+  color: #52525b;
+}
+
+.send-btn {
+  background: #a855f7;
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.send-btn:hover {
+  background: #9333ea;
+}
+
+.send-btn:disabled {
+  background: #3f3f46;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ai-footer-info {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #52525b;
+  margin-top: 0.8rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

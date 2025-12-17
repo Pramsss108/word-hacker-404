@@ -791,6 +791,15 @@ app.whenReady().then(() => {
 
   ipcMain.handle('export:files', async (_event, payload = {}) => {
     const { files, destination, outputFormat, trim } = payload
+    
+    console.log('[BACKEND Export] 📥 Received payload:', {
+      filesCount: files?.length,
+      destination,
+      outputFormat,
+      trim,
+      rawPayload: payload
+    })
+    
     if (!files || !files.length) {
       throw new Error('No files to export.')
     }
@@ -804,11 +813,27 @@ app.whenReady().then(() => {
       const baseName = path.basename(tempPath, ext)
       const targetFormat = outputFormat || 'mp4'
       
+      console.log('[BACKEND Export] 📄 Processing file:', {
+        tempPath,
+        ext,
+        baseName,
+        targetFormat,
+        extWithoutDot: ext.slice(1)
+      })
+      
       // Check if we need FFmpeg processing (trim or format conversion)
       const needsProcessing = (trim && trim.start !== undefined && trim.end !== undefined) || 
                              (targetFormat && targetFormat !== ext.slice(1))
       
+      console.log('[BACKEND Export] 🔍 Processing check:', {
+        needsProcessing,
+        hasTrim: trim && trim.start !== undefined && trim.end !== undefined,
+        needsFormatChange: targetFormat && targetFormat !== ext.slice(1),
+        comparison: `'${targetFormat}' !== '${ext.slice(1)}' = ${targetFormat !== ext.slice(1)}`
+      })
+      
       if (needsProcessing) {
+        console.log('[BACKEND Export] ⚙️ Using FFmpeg for processing')
         // Use FFmpeg to process the file
         const isAudioFile = ['.mp3', '.m4a', '.ogg', '.wav', '.aac'].includes(ext.toLowerCase())
         const outputFileName = `${baseName}.${targetFormat}`
@@ -948,10 +973,21 @@ app.whenReady().then(() => {
         }
       } else {
         // Simple copy without processing
+        console.log('[BACKEND Export] 📋 Simple copy path (no FFmpeg)')
+        
+        // SAFETY CHECK: If formats don't match, something went wrong
+        if (targetFormat !== ext.slice(1)) {
+          console.error('[BACKEND Export] ⚠️ FORMAT MISMATCH IN COPY PATH!')
+          console.error('[BACKEND Export] Expected needsProcessing=true but got false')
+          console.error('[BACKEND Export] targetFormat:', targetFormat, 'ext:', ext.slice(1))
+          throw new Error(`Cannot convert ${ext} to ${targetFormat} - FFmpeg path not taken`)
+        }
+        
         const filename = path.basename(tempPath)
         const destPath = path.join(outputDir, filename)
         fs.copyFileSync(tempPath, destPath)
         exported.push(destPath)
+        console.log('[BACKEND Export] ✅ Copied to:', destPath)
       }
     }
     

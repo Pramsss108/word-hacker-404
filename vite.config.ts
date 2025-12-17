@@ -35,9 +35,10 @@ export default defineConfig({
       }
     })
   ],
-  base: '/',
+  // base: '/', // Removed duplicate
   server: {
-    port: 3000,
+    port: 1420,
+    strictPort: true,
     host: true,
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',

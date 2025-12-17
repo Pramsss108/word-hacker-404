@@ -16,10 +16,12 @@
       "shell": {
         "all": false,
         "open": true,
+        "execute": true,
         "sidecar": true,
         "scope": [
             { "name": "yt-dlp", "sidecar": true },
-            { "name": "ffmpeg", "sidecar": true }
+            { "name": "ffmpeg", "sidecar": true },
+            { "name": "explorer", "cmd": "explorer", "args": true }
         ]
       },
       "fs": {

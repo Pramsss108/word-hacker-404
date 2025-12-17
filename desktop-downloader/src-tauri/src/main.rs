@@ -619,6 +619,227 @@ async fn authorize_download(
     temp_mgr.authorize_download(&token, &url).await
 }
 
+// ============================================
+// FFMPEG EXPORT COMMAND
+// Professional Video/Audio Export with Trim Support
+// ============================================
+
+#[derive(Deserialize)]
+struct TrimData {
+    start: f64,
+    end: f64,
+}
+
+#[derive(Deserialize)]
+struct ExportPayload {
+    files: Vec<String>,
+    destination: Option<String>,
+    #[serde(rename = "outputFormat")]
+    output_format: Option<String>,
+    trim: Option<TrimData>,
+}
+
+#[derive(Serialize)]
+struct ExportResult {
+    exported: Vec<String>,
+    #[serde(rename = "outputDir")]
+    output_dir: String,
+}
+
+#[command]
+async fn export_files(payload: ExportPayload) -> Result<ExportResult, String> {
+    println!("[BACKEND Export] 📥 Received payload:");
+    println!("  - Files count: {}", payload.files.len());
+    println!("  - Destination: {:?}", payload.destination);
+    println!("  - Output format: {:?}", payload.output_format);
+    println!("  - Trim: {:?}", payload.trim.as_ref().map(|t| format!("{}s → {}s", t.start, t.end)));
+    
+    if payload.files.is_empty() {
+        return Err("No files to export".to_string());
+    }
+    
+    // Resolve output directory
+    let output_dir = if let Some(dest) = &payload.destination {
+        // Check if destination starts with "Downloads/" - if so, it's relative to Downloads folder
+        if dest.starts_with("Downloads/") || dest.starts_with("Downloads\\") {
+            let download_dir = tauri::api::path::download_dir().unwrap_or(PathBuf::from("."));
+            // Strip "Downloads/" prefix to avoid double path
+            let relative_path = dest.strip_prefix("Downloads/")
+                .or_else(|| dest.strip_prefix("Downloads\\"))
+                .unwrap_or(dest);
+            download_dir.join(relative_path)
+        } else {
+            // Absolute path or relative to current directory
+            PathBuf::from(dest)
+        }
+    } else {
+        tauri::api::path::download_dir().unwrap_or(PathBuf::from("."))
+    };
+    
+    // Ensure output directory exists
+    std::fs::create_dir_all(&output_dir).map_err(|e| format!("Failed to create output directory: {}", e))?;
+    
+    let mut exported_files = Vec::new();
+    
+    // Find FFmpeg
+    let possible_paths = vec![
+        PathBuf::from("ffmpeg.exe"),
+        PathBuf::from("src-tauri/ffmpeg.exe"),
+        PathBuf::from("../src-tauri/ffmpeg.exe"),
+        PathBuf::from("ffmpeg-x86_64-pc-windows-msvc.exe"),
+    ];
+    
+    let mut ffmpeg_path: Option<PathBuf> = None;
+    for p in possible_paths {
+        if let Ok(abs_path) = std::fs::canonicalize(&p) {
+            if abs_path.exists() {
+                println!("[BACKEND Export] Found ffmpeg at: {:?}", abs_path);
+                ffmpeg_path = Some(abs_path);
+                break;
+            }
+        }
+    }
+    
+    if ffmpeg_path.is_none() {
+        return Err("FFmpeg not found. Cannot export files.".to_string());
+    }
+    
+    let ffmpeg_exe = ffmpeg_path.unwrap();
+    
+    // Process each file
+    for temp_path in &payload.files {
+        let temp_pathbuf = PathBuf::from(temp_path);
+        
+        if !temp_pathbuf.exists() {
+            println!("[BACKEND Export] ⚠️ File not found: {}", temp_path);
+            continue;
+        }
+        
+        let ext = temp_pathbuf.extension().and_then(|s| s.to_str()).unwrap_or("");
+        let base_name = temp_pathbuf.file_stem().and_then(|s| s.to_str()).unwrap_or("output");
+        let target_format = payload.output_format.as_deref().unwrap_or("mp4");
+        
+        println!("[BACKEND Export] 📄 Processing file:");
+        println!("  - Path: {}", temp_path);
+        println!("  - Ext: .{}", ext);
+        println!("  - Base name: {}", base_name);
+        println!("  - Target format: {}", target_format);
+        
+        // Check if processing needed
+        let needs_processing = payload.trim.is_some() || (target_format != ext);
+        
+        println!("[BACKEND Export] 🔍 Processing check:");
+        println!("  - needsProcessing: {}", needs_processing);
+        println!("  - hasTrim: {}", payload.trim.is_some());
+        println!("  - needsFormatChange: {} ('{}'  != '{}')", target_format != ext, target_format, ext);
+        
+        if needs_processing {
+            println!("[BACKEND Export] ⚙️ Using FFmpeg for processing");
+            
+            // Build FFmpeg command
+            let output_filename = format!("{}.{}", base_name, target_format);
+            let dest_path = output_dir.join(&output_filename);
+            
+            let mut args = vec!["-i".to_string(), temp_path.clone()];
+            
+            // Add trim parameters if specified
+            if let Some(trim) = &payload.trim {
+                println!("[BACKEND Export] ✂️ Adding trim: {}s to {}s", trim.start, trim.end);
+                args.push("-ss".to_string());
+                args.push(trim.start.to_string());
+                args.push("-to".to_string());
+                args.push(trim.end.to_string());
+            }
+            
+            // Add format-specific encoding parameters
+            let is_audio_format = ["mp3", "m4a", "ogg", "wav", "aac"].contains(&target_format);
+            
+            if is_audio_format {
+                println!("[BACKEND Export] 🎵 Audio-only export");
+                args.push("-vn".to_string()); // No video
+                
+                if target_format == "mp3" {
+                    args.push("-c:a".to_string());
+                    args.push("libmp3lame".to_string());
+                    args.push("-b:a".to_string());
+                    args.push("192k".to_string());
+                } else if target_format == "m4a" {
+                    args.push("-c:a".to_string());
+                    args.push("aac".to_string());
+                    args.push("-b:a".to_string());
+                    args.push("192k".to_string());
+                } else if target_format == "ogg" {
+                    args.push("-c:a".to_string());
+                    args.push("libvorbis".to_string());
+                    args.push("-q:a".to_string());
+                    args.push("5".to_string());
+                } else {
+                    args.push("-c:a".to_string());
+                    args.push("copy".to_string());
+                }
+            } else {
+                println!("[BACKEND Export] 📹 Video export");
+                args.push("-c:v".to_string());
+                args.push("libx264".to_string());
+                args.push("-preset".to_string());
+                args.push("fast".to_string());
+                args.push("-crf".to_string());
+                args.push("23".to_string());
+                args.push("-pix_fmt".to_string());
+                args.push("yuv420p".to_string());
+                args.push("-c:a".to_string());
+                args.push("aac".to_string());
+                args.push("-b:a".to_string());
+                args.push("192k".to_string());
+                args.push("-movflags".to_string());
+                args.push("+faststart".to_string());
+            }
+            
+            args.push("-y".to_string()); // Overwrite output
+            args.push(strip_unc(dest_path.clone()));
+            
+            println!("[BACKEND Export] 🎬 FFmpeg command: {:?} {:?}", ffmpeg_exe, args);
+            
+            // Execute FFmpeg
+            let output = std::process::Command::new(&ffmpeg_exe)
+                .args(&args)
+                .output()
+                .map_err(|e| format!("Failed to execute FFmpeg: {}", e))?;
+            
+            if output.status.success() {
+                println!("[BACKEND Export] ✅ FFmpeg success: {:?}", dest_path);
+                exported_files.push(strip_unc(dest_path));
+            } else {
+                let stderr = String::from_utf8_lossy(&output.stderr);
+                println!("[BACKEND Export] ❌ FFmpeg failed: {}", stderr);
+                return Err(format!("FFmpeg processing failed: {}", stderr));
+            }
+            
+        } else {
+            println!("[BACKEND Export] 📋 Simple copy path (no FFmpeg)");
+            
+            // Safety check
+            if target_format != ext {
+                println!("[BACKEND Export] ⚠️ FORMAT MISMATCH IN COPY PATH!");
+                return Err(format!("Cannot convert .{} to .{} without FFmpeg", ext, target_format));
+            }
+            
+            let filename = temp_pathbuf.file_name().unwrap();
+            let dest_path = output_dir.join(filename);
+            std::fs::copy(temp_path, &dest_path)
+                .map_err(|e| format!("Failed to copy file: {}", e))?;
+            
+            println!("[BACKEND Export] ✅ Copied to: {:?}", dest_path);
+            exported_files.push(strip_unc(dest_path));
+        }
+    }
+    
+    Ok(ExportResult {
+        exported: exported_files,
+        output_dir: strip_unc(output_dir),
+    })
+}
+
 fn main() {
     // 🔒 SECURITY LAYER 1: Anti-Debug Check
     if security::check_debugger() || security::check_debugger_processes() {
@@ -665,7 +886,8 @@ fn main() {
             get_video_metadata,
             check_ad_required,
             request_download_token,
-            authorize_download
+            authorize_download,
+            export_files
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

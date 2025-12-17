@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState, useEffect } from 'react'
 import {
   ArrowLeft,
   ChevronLeft,
@@ -11,10 +11,17 @@ import {
   Wand2,
   Workflow,
   Zap,
+  Trash2,
+  Activity,
+  Brain,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
 import VectorCommandCenter from './VectorCommandCenter'
+import TrashHunter from './TrashHunter/TrashHunter'
+import SystemMonitor from './SystemMonitor'
+import AIBrainWindow from './AIBrainWindow'
 import { getSharedArrayBufferWatchdogReport } from '../raw'
+import { proAuth, type UserStatus } from '../services/ProAuth'
 
 interface ToolBannerMeta {
   id: string
@@ -24,7 +31,7 @@ interface ToolBannerMeta {
   status: 'open' | 'soon'
   badge: string
   motionClass: string
-  openId?: 'raw' | 'downloader' | 'vector'
+  openId?: 'raw' | 'downloader' | 'vector' | 'trash' | 'monitor' | 'ai-brain'
 }
 
 interface RawProcessStep {
@@ -64,92 +71,135 @@ const rawSteps: RawProcessStep[] = [
   },
 ]
 
-
-
 function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
-  const toolList = useMemo<ToolBannerMeta[]>(() => ([
-    {
-      id: 'vector-command',
-      name: 'Vector Command Center',
-      summary: 'Prompt Architect & Image-to-SVG Vectorizer.',
-      icon: <Cpu size={22} aria-hidden />,
-      status: 'open',
-      badge: 'NEW',
-      motionClass: 'vector-grid',
-      openId: 'vector',
-    },
-    {
-      id: 'raw-decoder',
-      name: 'RAW Decoder Lab',
-      summary: 'Lossless demosaic + LibRaw arbitration. Active build.',
-      icon: <ShieldCheck size={22} aria-hidden />,
-      status: 'open',
-      badge: 'ACTIVE',
-      motionClass: 'raw-grid',
-      openId: 'raw',
-    },
-    {
-      id: 'internet-downloader',
-      name: '404 Social Media Downloader',
-      summary: 'Client-side helper for the yt-dlp PowerShell runner.',
-      icon: <Download size={22} aria-hidden />,
-      status: 'open',
-      badge: 'NEW',
-      motionClass: 'downloader-stream',
-      openId: 'downloader',
-    },
-    {
-      id: 'voice-encrypter',
-      name: 'Voice Encryptor FX',
-      summary: 'FX toggles + mastering queue for drops.',
-      icon: <Wand2 size={22} aria-hidden />,
-      status: 'soon',
-      badge: 'COMING SOON',
-      motionClass: 'cipher-glyphs',
-    },
-    {
-      id: 'prompt-forge',
-      name: 'Prompt Forge',
-      summary: 'Micro prompt polisher + tone guardrails.',
-      icon: <Sparkles size={22} aria-hidden />,
-      status: 'soon',
-      badge: 'COMING SOON',
-      motionClass: 'prompt-plasma',
-    },
-    {
-      id: 'ops-pipeline',
-      name: 'Ops Pipeline',
-      summary: 'Multi-step task runner for drops and proofing.',
-      icon: <Workflow size={22} aria-hidden />,
-      status: 'soon',
-      badge: 'COMING SOON',
-      motionClass: 'ops-orbit',
-    },
-    {
-      id: 'anagram-lab',
-      name: 'Anagram Lab',
-      summary: 'Scramble tools for undercover scripts.',
-      icon: <Shuffle size={22} aria-hidden />,
-      status: 'soon',
-      badge: 'COMING SOON',
-      motionClass: 'anagram-matrix',
-    },
-    {
-      id: 'ai-companion',
-      name: 'AI Companion',
-      summary: 'Supervise agents, pin diagnostics, run macros.',
-      icon: <Cpu size={22} aria-hidden />,
-      status: 'soon',
-      badge: 'COMING SOON',
-      motionClass: 'ai-circuits',
-    },
-  ]), [])
 
-  const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | 'vector' | null>(null)
+  // Auth Integration
+  const [authStatus, setAuthStatus] = useState<UserStatus>('loading');
+  useEffect(() => {
+    return proAuth.subscribe((status) => {
+      setAuthStatus(status);
+    });
+  }, []);
+
+  const toolList = useMemo<ToolBannerMeta[]>(() => {
+    // Dynamic Badge Logic
+    let brainBadge = 'CHECKING...';
+    if (authStatus === 'anonymous') brainBadge = 'LOGIN REQUIRED';
+    else if (authStatus === 'god_mode') brainBadge = 'GOD MODE';
+    else if (authStatus === 'pro') brainBadge = '10/10 CREDITS'; // Simplification, real count is in window
+
+    return [
+      {
+        id: 'ai-brain',
+        name: 'Central AI Brain',
+        summary: 'Powered by OpenAI GPT-OSS-120B. The Master Intelligence.',
+        icon: <Brain size={22} aria-hidden />,
+        status: 'open',
+        badge: brainBadge,
+        motionClass: 'vector-grid',
+        openId: 'ai-brain',
+      },
+      {
+        id: 'trash-hunter',
+        name: 'Trash Hunter',
+        summary: 'AI-Powered System Cleaner & God Mode.',
+        icon: <Trash2 size={22} aria-hidden />,
+        status: 'open',
+        badge: 'GOD MODE',
+        motionClass: 'vector-grid',
+        openId: 'trash',
+      },
+      {
+        id: 'system-monitor',
+        name: 'AI Overseer',
+        summary: 'Real-time Process Analysis & Threat Detection.',
+        icon: <Activity size={22} aria-hidden />,
+        status: 'open',
+        badge: 'BETA',
+        motionClass: 'vector-grid',
+        openId: 'monitor',
+      },
+      {
+        id: 'vector-command',
+        name: 'Vector Command Center',
+        summary: 'Prompt Architect & Image-to-SVG Vectorizer.',
+        icon: <Cpu size={22} aria-hidden />,
+        status: 'open',
+        badge: 'NEW',
+        motionClass: 'vector-grid',
+        openId: 'vector',
+      },
+      {
+        id: 'raw-decoder',
+        name: 'RAW Decoder Lab',
+        summary: 'Lossless demosaic + LibRaw arbitration. Active build.',
+        icon: <ShieldCheck size={22} aria-hidden />,
+        status: 'open',
+        badge: 'ACTIVE',
+        motionClass: 'raw-grid',
+        openId: 'raw',
+      },
+      {
+        id: 'internet-downloader',
+        name: '404 Social Media Downloader',
+        summary: 'Client-side helper for the yt-dlp PowerShell runner.',
+        icon: <Download size={22} aria-hidden />,
+        status: 'open',
+        badge: 'NEW',
+        motionClass: 'downloader-stream',
+        openId: 'downloader',
+      },
+      {
+        id: 'voice-encrypter',
+        name: 'Voice Encryptor FX',
+        summary: 'FX toggles + mastering queue for drops.',
+        icon: <Wand2 size={22} aria-hidden />,
+        status: 'soon',
+        badge: 'COMING SOON',
+        motionClass: 'cipher-glyphs',
+      },
+      {
+        id: 'prompt-forge',
+        name: 'Prompt Forge',
+        summary: 'Micro prompt polisher + tone guardrails.',
+        icon: <Sparkles size={22} aria-hidden />,
+        status: 'soon',
+        badge: 'COMING SOON',
+        motionClass: 'prompt-plasma',
+      },
+      {
+        id: 'ops-pipeline',
+        name: 'Ops Pipeline',
+        summary: 'Multi-step task runner for drops and proofing.',
+        icon: <Workflow size={22} aria-hidden />,
+        status: 'soon',
+        badge: 'COMING SOON',
+        motionClass: 'ops-orbit',
+      },
+      {
+        id: 'anagram-lab',
+        name: 'Anagram Lab',
+        summary: 'Scramble tools for undercover scripts.',
+        icon: <Shuffle size={22} aria-hidden />,
+        status: 'soon',
+        badge: 'COMING SOON',
+        motionClass: 'anagram-matrix',
+      },
+      {
+        id: 'ai-companion',
+        name: 'AI Companion',
+        summary: 'Supervise agents, pin diagnostics, run macros.',
+        icon: <Cpu size={22} aria-hidden />,
+        status: 'soon',
+        badge: 'COMING SOON',
+        motionClass: 'ai-circuits',
+      },
+    ]
+  }, [authStatus])
+
+  const [activeTool, setActiveTool] = useState<'raw' | 'downloader' | 'vector' | 'trash' | 'monitor' | 'ai-brain' | null>(null)
   const [rawStepIndex, setRawStepIndex] = useState(0)
-
-
 
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {
     setRawStepIndex((prev) => {
@@ -159,6 +209,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
       return prev - 1 < 0 ? rawSteps.length - 1 : prev - 1
     })
   }, [])
+
+  if (activeTool === 'trash') {
+    return <TrashHunter onBack={() => setActiveTool(null)} />
+  }
 
   return (
     <div className="app tools-screen">
@@ -222,6 +276,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         <small className="mono" aria-label="terminal-log">terminal-log: tools deck primed</small>
       </footer>
 
+      {activeTool === 'ai-brain' && (
+        <AIBrainWindow onClose={() => setActiveTool(null)} />
+      )}
+
       {activeTool === 'vector' && (
         <div className="tools-overlay" role="dialog" aria-modal="true">
           <div className="raw-holo" style={{ width: '95vw', maxWidth: 'none', height: '90vh', display: 'flex', flexDirection: 'column' }}>
@@ -238,6 +296,27 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
 
             <div style={{ flex: 1, overflow: 'hidden', padding: '0' }}>
               <VectorCommandCenter />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTool === 'monitor' && (
+        <div className="tools-overlay" role="dialog" aria-modal="true">
+          <div className="raw-holo" style={{ maxWidth: '900px', width: '95%', height: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="raw-anim-grid vector-grid" aria-hidden />
+            <header className="raw-holo-head">
+              <div>
+                <h3 className="raw-head-title">AI Overseer</h3>
+                <p className="raw-head-note">System Process Monitor & Analysis</p>
+              </div>
+              <button className="btn ghost" onClick={() => setActiveTool(null)}>
+                Close <span className="close-cross" aria-hidden>✕</span>
+              </button>
+            </header>
+
+            <div style={{ flex: 1, overflow: 'hidden', padding: '0', position: 'relative' }}>
+              <SystemMonitor onBack={() => setActiveTool(null)} />
             </div>
           </div>
         </div>
@@ -331,12 +410,12 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
 
               <div className="trust-badge" style={{ fontSize: '0.8rem', color: '#9aa3b2', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
                 ⚠️ <strong>Windows Warning?</strong> Click "More Info" → "Run Anyway".
-                <br/>
+                <br />
                 (Normal for new open-source tools!)
               </div>
-              
+
               <div className="cta-stack" style={{ width: '100%', maxWidth: '400px' }}>
-                <button 
+                <button
                   className="btn full"
                   type="button"
                   onClick={() => window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases/download/desktop-v1.0.0/WH404.Downloader_1.0.0_x64-setup.exe', '_blank')}
@@ -344,10 +423,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                 >
                   <Zap size={20} /> Download Installer
                 </button>
-                
-                <button 
-                  className="btn ghost full" 
-                  type="button" 
+
+                <button
+                  className="btn ghost full"
+                  type="button"
                   onClick={() => window.open('https://github.com/Pramsss108/wh404-desktop-builds/releases', '_blank')}
                 >
                   <Sparkles size={20} /> View All Releases

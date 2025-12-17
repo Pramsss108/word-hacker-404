@@ -2177,6 +2177,51 @@ const bindPreviewEvents = () => {
   
   // Update current time display and playhead during playback - THROTTLED
   let rafId = null
+  let playheadUpdateFrame = null
+  
+  // Continuous playhead animation function
+  const updatePlayheadContinuously = () => {
+    if (!previewVideo || previewVideo.paused || !previewVideo.duration) {
+      if (playheadUpdateFrame) {
+        cancelAnimationFrame(playheadUpdateFrame)
+        playheadUpdateFrame = null
+      }
+      return
+    }
+    
+    // Update playhead position
+    const playheadElement = document.getElementById('timeline-playhead')
+    if (playheadElement && previewVideo.currentTime !== undefined) {
+      const currentPercent = (previewVideo.currentTime / previewVideo.duration) * 100
+      playheadElement.style.left = `${Math.max(0, Math.min(100, currentPercent))}%`
+      playheadElement.classList.add('active')
+    }
+    
+    // Continue animation loop
+    playheadUpdateFrame = requestAnimationFrame(updatePlayheadContinuously)
+  }
+  
+  // Start playhead animation on play
+  previewVideo.addEventListener('play', () => {
+    console.log('[Playhead] ▶️ Starting continuous animation')
+    updatePlayheadContinuously()
+  })
+  
+  // Stop playhead animation on pause
+  previewVideo.addEventListener('pause', () => {
+    console.log('[Playhead] ⏸️ Stopping animation')
+    if (playheadUpdateFrame) {
+      cancelAnimationFrame(playheadUpdateFrame)
+      playheadUpdateFrame = null
+    }
+    // Final update to show correct position when paused
+    const playheadElement = document.getElementById('timeline-playhead')
+    if (playheadElement && previewVideo.duration) {
+      const currentPercent = (previewVideo.currentTime / previewVideo.duration) * 100
+      playheadElement.style.left = `${currentPercent}%`
+    }
+  })
+  
   previewVideo.addEventListener('timeupdate', () => {
     if (!state.preview.ready || !previewVideo.duration) return
     
@@ -2191,8 +2236,6 @@ const bindPreviewEvents = () => {
       if (currentTimeDisplay) {
         currentTimeDisplay.textContent = formatTime(currentTime)
       }
-      
-      // OLD playheadIndicator code DELETED - element doesn't exist
       
       // Auto-loop at trim end - use current input values
       const trimStart = parseFloat(trimStartInput.value) || 0
@@ -3235,21 +3278,52 @@ ${details.innerHTML}
       const destination = exportPathInput.value || state.destination || undefined
       const outputFormat = exportFormatSelect.value || 'mp4'
       
+      console.log('[Export] 🚀 Starting export process:', {
+        filesCount: allFiles.length,
+        outputFormat,
+        destination,
+        previewReady: state.preview.ready,
+        trimStart: state.preview.start,
+        trimEnd: state.preview.end,
+        duration: state.preview.duration
+      })
+      
       // Use pre-processed trim file if available, otherwise pass trim data
       let trimData = null
       let exportFiles = allFiles
       
-      if (state.preview.ready && (state.preview.start > 0 || state.preview.end < state.preview.duration)) {
+      // Get actual trim values from inputs (state.preview may be outdated)
+      const trimStartValue = parseFloat(trimStartInput?.value || 0)
+      const trimEndValue = parseFloat(trimEndInput?.value || state.preview.duration)
+      
+      const isTrimmed = state.preview.ready && 
+        state.preview.duration > 0 &&
+        (trimStartValue > 0 || trimEndValue < state.preview.duration)
+      
+      console.log('[Export] ✂️ Trim detection:', {
+        trimStart: trimStartValue,
+        trimEnd: trimEndValue,
+        duration: state.preview.duration,
+        isTrimmed
+      })
+      
+      if (isTrimmed) {
         if (state.preview.trimmedFile) {
           // Use pre-processed file for instant export
-          console.log('[Export] Using pre-processed trim file')
+          console.log('[Export] ✂️ Using pre-processed trim file:', state.preview.trimmedFile)
           exportFiles = [state.preview.trimmedFile]
           trimData = null // No need to trim again
         } else {
-          // Fall back to real-time trimming
-          console.log('[Export] Processing trim in real-time')
-          trimData = { start: state.preview.start, end: state.preview.end }
+          // Fall back to real-time trimming - USE INPUT VALUES
+          console.log('[Export] ✂️ Processing trim in real-time:', trimStartValue, 's →', trimEndValue, 's')
+          trimData = { 
+            start: trimStartValue, 
+            end: trimEndValue 
+          }
+          exportFiles = allFiles
         }
+      } else {
+        console.log('[Export] 📹 No trim - full video/audio export')
       }
       
       const metadataPayload = buildMetadataPayload()
@@ -3262,8 +3336,28 @@ ${details.innerHTML}
       if (metadataPayload) {
         exportPayload.metadata = metadataPayload
       }
+      
+      console.log('[Export] 📦 Sending to backend:', {
+        filesCount: exportPayload.files.length,
+        format: exportPayload.outputFormat,
+        type: state.exportContext.type,
+        hasTrim: !!exportPayload.trim,
+        trimData: exportPayload.trim
+      })
 
       const result = await window.systemDialogs?.exportFiles(exportPayload)
+      
+      console.log('[Export] 📥 Backend result:', result)
+      
+      // CRITICAL: Check if audio was requested but video was returned
+      if (state.exportContext.type === 'audio' && result?.exported) {
+        const firstFile = result.exported[0]
+        const isVideoFile = /\.(mp4|mkv|avi|webm|mov)$/i.test(firstFile)
+        if (isVideoFile) {
+          console.error('[Export] ⚠️ AUDIO REQUESTED BUT GOT VIDEO FILE:', firstFile)
+          console.error('[Export] ⚠️ Backend did not convert to audio format!')
+        }
+      }
       
       if (activeHeartbeat) {
         clearInterval(activeHeartbeat)
@@ -3271,26 +3365,63 @@ ${details.innerHTML}
       }
       
       if (result && result.exported) {
-        pushLog(`✔ Exported ${result.exported.length} file${result.exported.length === 1 ? '' : 's'} to ${result.outputDir}`)
+        const outputPath = result.outputDir || result.exported[0]
+        pushLog(`✔ Exported ${result.exported.length} file${result.exported.length === 1 ? '' : 's'} to ${outputPath}`)
         
-        // Show success state in the modal - NO POPUP
+        // Show success state with folder reveal button
         updateExportMessage(`✓ Saved ${result.exported.length} file${result.exported.length === 1 ? '' : 's'}!`, { variant: 'success' })
-        exportConfirm.textContent = '✓ Done'
+        
+        // Change button to folder opener
+        exportConfirm.textContent = '📁 Open Folder'
         exportConfirm.style.background = 'var(--highlight)'
         exportConfirm.style.opacity = '1'
+        exportConfirm.disabled = false
+        
+        // Add click handler to open folder
+        const openFolderHandler = () => {
+          console.log('[Export] 📂 Opening folder:', outputPath)
+          if (window.downloader?.openFolderLocation) {
+            window.downloader.openFolderLocation(outputPath)
+          } else if (window.systemDialogs?.openFolder) {
+            window.systemDialogs.openFolder(outputPath)
+          }
+        }
+        
+        exportConfirm.removeEventListener('click', openFolderHandler)
+        exportConfirm.addEventListener('click', openFolderHandler, { once: true })
         
         // Update items to show exported status
         targets.forEach(item => {
           item.exported = true
           item.exportedFiles = result.exported
+          item.exportPath = outputPath
+          
+          // Track export signature for duplicate detection
+          const exportSig = `${item.url}_${trimData ? trimData.start : 0}_${trimData ? trimData.end : 0}_${outputFormat}`
+          if (!item.exportHistory) item.exportHistory = []
+          item.exportHistory.push({
+            signature: exportSig,
+            timestamp: Date.now(),
+            files: result.exported
+          })
+          
           updateHistoryStatus(item.url, 'exported')
         })
         renderQueue()
+        
+        // Store last export path for folder open button
+        state.lastExportPath = outputPath
+        
+        console.log('[Export] 📁 Saved to:', outputPath)
         
         // Auto-close smoothly after showing success
         setTimeout(() => {
           closeExportDrawer()
         }, 1800)
+      } else if (!result) {
+        // Export failed - likely backend issue
+        console.error('[Export] ⚠️ Backend returned no result')
+        updateExportMessage('Export failed - check console for details', { variant: 'error' })
       }
     } catch (error) {
       if (activeHeartbeat) {
@@ -3313,12 +3444,19 @@ ${details.innerHTML}
   })
 
   exportTypeSelect.addEventListener('change', () => {
-    state.exportContext.type = exportTypeSelect.value
+    const selectedType = exportTypeSelect.value
+    state.exportContext.type = selectedType
+    
+    console.log('[Export] 🎛️ Type changed to:', selectedType)
+    
     updateExportResolutionSelect()
     
-    const outputFormats = exportTypeSelect.value === 'video' 
-      ? ['mp4', 'mkv', 'avi', 'webm']
-      : ['mp3', 'm4a', 'ogg', 'wav']
+    // FIXED: Correct logic - if type is 'audio', use audio formats
+    const outputFormats = selectedType === 'audio'
+      ? ['mp3', 'm4a', 'ogg', 'wav']  // Audio formats
+      : ['mp4', 'mkv', 'avi', 'webm']  // Video formats
+    
+    console.log('[Export] 📋 Available formats:', outputFormats)
     
     exportFormatSelect.innerHTML = outputFormats
       .map((format) => `<option value="${format}">${format.toUpperCase()}</option>`)
@@ -3866,6 +4004,30 @@ function initPremiumTimeline() {
     if (hoverTimeElement) hoverTimeElement.style.display = 'none'
   })
   
+  // Create drag tooltip for showing time while dragging
+  let dragTooltip = document.getElementById('drag-tooltip')
+  if (!dragTooltip) {
+    dragTooltip = document.createElement('div')
+    dragTooltip.id = 'drag-tooltip'
+    dragTooltip.style.cssText = `
+      position: fixed;
+      background: rgba(10, 255, 106, 0.95);
+      color: #000;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      pointer-events: none;
+      z-index: 99999;
+      display: none;
+      transform: translate(-50%, -180%);
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 4px 12px rgba(10, 255, 106, 0.4);
+    `
+    document.body.appendChild(dragTooltip)
+  }
+  
   // Handle mouse move - OPTIMIZED FOR SPEED
   document.addEventListener('mousemove', (e) => {
     if (!isDragging || !currentHandle || !previewVideo.duration) return
@@ -3874,9 +4036,11 @@ function initPremiumTimeline() {
     const percent = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100))
     const timeValue = (percent / 100) * previewVideo.duration
     
+    let newTime = 0
+    
     if (currentHandle === 'left') {
       const maxTime = parseFloat(trimEndInput.value) || previewVideo.duration
-      const newTime = Math.max(0, Math.min(maxTime - 0.1, timeValue))
+      newTime = Math.max(0, Math.min(maxTime - 0.1, timeValue))
       trimStartInput.value = newTime.toFixed(2)
       
       // Direct visual update - NO function calls for speed
@@ -3884,12 +4048,23 @@ function initPremiumTimeline() {
       handleLeft.style.left = `${startPercent}%`
     } else if (currentHandle === 'right') {
       const minTime = parseFloat(trimStartInput.value) || 0
-      const newTime = Math.max(minTime + 0.1, Math.min(previewVideo.duration, timeValue))
+      newTime = Math.max(minTime + 0.1, Math.min(previewVideo.duration, timeValue))
       trimEndInput.value = newTime.toFixed(2)
       
       // Direct visual update - NO function calls for speed
       const endPercent = (newTime / previewVideo.duration) * 100
       handleRight.style.left = `${endPercent}%`
+    }
+    
+    // Show drag tooltip with exact time
+    if (dragTooltip && newTime !== undefined) {
+      const minutes = Math.floor(newTime / 60)
+      const seconds = Math.floor(newTime % 60)
+      const ms = Math.floor((newTime % 1) * 10)
+      dragTooltip.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${ms}`
+      dragTooltip.style.left = e.clientX + 'px'
+      dragTooltip.style.top = e.clientY + 'px'
+      dragTooltip.style.display = 'block'
     }
   })
   
@@ -3905,6 +4080,11 @@ function initPremiumTimeline() {
       }
       currentHandle = null
       document.body.style.userSelect = ''
+      
+      // Hide drag tooltip
+      if (dragTooltip) {
+        dragTooltip.style.display = 'none'
+      }
       
       // Small delay to prevent click-to-seek after drag
       setTimeout(() => {
