@@ -136,7 +136,6 @@ const bridge = {
     if (isTauri) {
       try {
         const { save } = window.__TAURI__.dialog;
-        const { fetch } = window.__TAURI__.http;
         const { writeBinaryFile } = window.__TAURI__.fs;
         
         console.log('[Bridge] Starting thumbnail download:', thumbnailUrl);
@@ -158,18 +157,14 @@ const bridge = {
         
         console.log('[Bridge] Downloading to:', savePath);
         
-        // Download image
-        const response = await fetch(thumbnailUrl, {
-          method: 'GET',
-          responseType: 2 // ResponseType.Binary
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.data}`);
-        }
+        // Use standard fetch (works better than Tauri HTTP for simple images)
+        const response = await fetch(thumbnailUrl);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const blob = await response.blob();
+        const buffer = await blob.arrayBuffer();
         
         // Write to chosen location
-        await writeBinaryFile(savePath, response.data);
+        await writeBinaryFile(savePath, new Uint8Array(buffer));
         
         console.log('[Bridge] Thumbnail saved successfully');
         return {
@@ -191,6 +186,24 @@ const bridge = {
     // Fallback for Electron (if needed)
     console.warn('[Bridge] downloadThumbnail not implemented for Electron');
     return { success: false, error: 'Not implemented for this platform' };
+  },
+
+  // Save binary file to disk
+  saveFile: async (path, data) => {
+    if (isTauri) {
+      try {
+        const { writeBinaryFile } = window.__TAURI__.fs;
+        // Ensure data is Uint8Array
+        const binaryData = data instanceof Uint8Array ? data : new Uint8Array(data);
+        await writeBinaryFile(path, binaryData);
+        console.log('[Bridge] File saved:', path);
+        return true;
+      } catch (e) {
+        console.error('[Bridge] saveFile failed:', e);
+        throw e;
+      }
+    }
+    return false;
   },
 
   // Open folder location in file explorer

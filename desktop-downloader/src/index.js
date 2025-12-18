@@ -1,5 +1,13 @@
 /* eslint-disable */
 console.log('[Init] Loaded index.js v11 - FORCE RELOAD - EXPORT FIX APPLIED');
+
+const PRESET_LABELS = {
+  'mp4-1080': 'Best Quality (4K+)',
+  'mp4-720': '720p HD',
+  mp3: 'Audio only',
+  social: 'Social'
+}
+
 const textarea = document.getElementById('url-input')
 const addToQueueBtn = document.getElementById('add-to-queue-btn')
 const queueList = document.getElementById('queue-list')
@@ -2509,6 +2517,16 @@ const bindPreviewEvents = () => {
   })
 }
 
+const chooseDestinationFolder = async () => {
+  try {
+    const selected = await window.systemDialogs.chooseFolder()
+    if (selected) {
+      setDestination(selected)
+    }
+  } catch (err) {
+    console.error('Failed to choose folder:', err)
+  }
+}
 
 const handleMenuAction = (action) => {
   switch (action) {

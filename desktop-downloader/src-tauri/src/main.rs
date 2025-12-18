@@ -264,7 +264,8 @@ fn try_ytdlp_download(
     // Frontend sends "mp4-1080", "mp3", etc. yt-dlp needs real format strings.
     println!("DEBUG: Translating format: {}", format);
     let (dlp_format, is_audio) = match format.as_str() {
-        "mp4-1080" => ("bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4]/best", false),
+        // UPGRADE: "mp4-1080" now maps to BEST available quality (including 4K/8K)
+        "mp4-1080" => ("bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best", false),
         "mp4-720" => ("bestvideo[ext=mp4][height<=720]+bestaudio[ext=m4a]/best[ext=mp4]/best", false),
         "mp3" => ("bestaudio/best", true),
         "social" => ("best", false),

@@ -26,7 +26,7 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$DOWNLOAD/**", "$TEMP/*", "$APP/*"]
+        "scope": ["$DOWNLOAD/**", "$TEMP/*", "$APP/*", "$DESKTOP/**", "$DOCUMENTS/**", "$PICTURES/**", "$VIDEOS/**"]
       },
       "dialog": {
         "all": true
