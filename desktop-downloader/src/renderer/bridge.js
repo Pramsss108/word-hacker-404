@@ -1,559 +1,392 @@
 /**
- * WH404 Unified Bridge
- * Abstraction layer that routes calls to either Electron (IPC) or Tauri (Rust).
- * Handles platform differences and normalizes data formats.
+ * WH404 Unified Bridge (Tauri Edition)
+ * Routes calls to Tauri (Rust) backend.
  */
 
-// Auto-detect: Tauri if window.__TAURI__ exists, otherwise Electron
-const isTauri = !!window.__TAURI__;
-console.log(`[Bridge] Initializing in ${isTauri ? 'TAURI' : 'ELECTRON'} mode`);
+console.log('[Bridge] Initializing in TAURI mode');
 
 let jobStartCallback = null;
 
-
-// Helper: Parse raw yt-dlp output (for Tauri)
-// Matches the logic in Electron's main.js
-const parseProgress = (line, url) => {
-  // Match: [download]  15.2% of 45.67MiB at 2.34MiB/s ETA 00:12
-  const match = line.match(/\[download\]\s+([0-9.]+)%.*?at\s+([0-9.]+[^\s]+)\s+ETA\s+([0-9:\-]+)/i) ||
-                line.match(/\[download\]\s+([0-9.]+)%/i);
-
-  if (match) {
-    const rawPercent = Number(match[1]);
-    const speed = match[2] || '-- MB/s';
-    const eta = match[3] || '--:--';
-    
-    // Remap 0-100 to 15-100 (matching Electron's UX)
-    const percent = 15 + (rawPercent * 0.85);
-    
-    return {
-      url,
-      percent: Math.round(percent),
-      speed,
-      eta,
-      status: 'downloading'
-    };
-  }
-  return null;
-};
-
 const bridge = {
-  platform: isTauri ? 'tauri' : 'electron',
+  platform: 'tauri',
 
-  // Stub for onJobCancelled to prevent startup errors
+  // Stub for onJobCancelled
   onJobCancelled: (callback) => {
-    // TODO: Implement cancellation events
     console.log('[Bridge] onJobCancelled registered (stub)');
   },
 
   onExportProgress: (callback) => {
-    // TODO: Implement export progress events
     console.log('[Bridge] onExportProgress registered (stub)');
   },
 
   // --- Core Actions ---
 
-  // Check if a file exists and return corrected path
   checkFileExists: async (filePath) => {
     console.log(`[Bridge] Checking existence of: ${filePath}`);
-    if (isTauri) {
-      try {
-        const { exists } = window.__TAURI__.fs;
-        const fileExists = await exists(filePath);
-        console.log(`[Bridge] File exists check: ${filePath} = ${fileExists}`);
-        return fileExists;
-      } catch (e) {
-        console.error('[Bridge] checkFileExists failed:', e);
-        return false;
-      }
+    try {
+      const { exists } = window.__TAURI__.fs;
+      const fileExists = await exists(filePath);
+      console.log(`[Bridge] File exists check: ${filePath} = ${fileExists}`);
+      return fileExists;
+    } catch (e) {
+      console.error('[Bridge] checkFileExists failed:', e);
+      return false;
     }
-    return false;
   },
 
-  // List files in a directory
   readDir: async (dirPath) => {
-    if (isTauri) {
-      try {
-        const { readDir } = window.__TAURI__.fs;
-        const entries = await readDir(dirPath);
-        console.log(`[Bridge] Found ${entries.length} files in ${dirPath}`);
-        return entries.map(e => e.name);
-      } catch (e) {
-        console.error('[Bridge] readDir failed:', e);
-        return [];
-      }
+    try {
+      const { readDir } = window.__TAURI__.fs;
+      const entries = await readDir(dirPath);
+      console.log(`[Bridge] Found ${entries.length} files in ${dirPath}`);
+      return entries.map(e => e.name);
+    } catch (e) {
+      console.error('[Bridge] readDir failed:', e);
+      return [];
     }
-    return [];
   },
 
-  // Read file directly into memory (Bypasses asset protocol issues)
   readVideoFile: async (filePath) => {
-    if (isTauri) {
-      try {
-        const { readBinaryFile } = window.__TAURI__.fs;
-        console.log('[Bridge] Reading video file into memory:', filePath);
-        const data = await readBinaryFile(filePath);
-        
-        // Guess mime type
-        let mime = 'video/mp4';
-        if (filePath.endsWith('.m4a')) mime = 'audio/mp4';
-        if (filePath.endsWith('.mp3')) mime = 'audio/mpeg';
-        if (filePath.endsWith('.webm')) mime = 'video/webm';
-        
-        const blob = new Blob([data], { type: mime });
-        const url = URL.createObjectURL(blob);
-        console.log('[Bridge] Blob URL created:', url);
-        return url;
-      } catch (e) {
-        console.error('[Bridge] readVideoFile failed:', e);
-        throw e;
-      }
+    try {
+      const { readBinaryFile } = window.__TAURI__.fs;
+      console.log('[Bridge] Reading video file into memory:', filePath);
+      const data = await readBinaryFile(filePath);
+      
+      let mime = 'video/mp4';
+      if (filePath.endsWith('.m4a')) mime = 'audio/mp4';
+      if (filePath.endsWith('.mp3')) mime = 'audio/mpeg';
+      if (filePath.endsWith('.webm')) mime = 'video/webm';
+      
+      const blob = new Blob([data], { type: mime });
+      const url = URL.createObjectURL(blob);
+      console.log('[Bridge] Blob URL created:', url);
+      return url;
+    } catch (e) {
+      console.error('[Bridge] readVideoFile failed:', e);
+      throw e;
     }
-    return null;
   },
 
   convertPath: (filePath) => {
-    if (isTauri) {
-      try {
-        // CRITICAL: Normalize backslashes to forward slashes BEFORE conversion
-        // Tauri's convertFileSrc doesn't handle backslashes correctly on Windows
-        const normalized = filePath.replace(/\\/g, '/');
-        
-        const { convertFileSrc } = window.__TAURI__.tauri;
-        const url = convertFileSrc(normalized);
-        console.log('[Bridge] Converted to asset URL:', url);
-        return url;
-      } catch (e) {
-        console.error('[Bridge] convertPath failed:', e);
-        return null;
-      }
+    try {
+      const normalized = filePath.replace(/\\/g, '/');
+      const { convertFileSrc } = window.__TAURI__.tauri;
+      const url = convertFileSrc(normalized);
+      console.log('[Bridge] Converted to asset URL:', url);
+      return url;
+    } catch (e) {
+      console.error('[Bridge] convertPath failed:', e);
+      return null;
     }
-    return null;
   },
 
-  // Download thumbnail with native Save As dialog
   downloadThumbnail: async (thumbnailUrl, defaultFilename = 'thumbnail.jpg') => {
-    if (isTauri) {
-      try {
-        const { save } = window.__TAURI__.dialog;
-        const { writeBinaryFile } = window.__TAURI__.fs;
-        
-        console.log('[Bridge] Starting thumbnail download:', thumbnailUrl);
-        
-        // Show Save As dialog
-        const savePath = await save({
-          defaultPath: defaultFilename,
-          filters: [{
-            name: 'Images',
-            extensions: ['jpg', 'jpeg', 'png', 'webp']
-          }]
-        });
-        
-        // User cancelled
-        if (!savePath) {
-          console.log('[Bridge] Download cancelled by user');
-          return { success: false, cancelled: true };
-        }
-        
-        console.log('[Bridge] Downloading to:', savePath);
-        
-        // Use standard fetch (works better than Tauri HTTP for simple images)
-        const response = await fetch(thumbnailUrl);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const blob = await response.blob();
-        const buffer = await blob.arrayBuffer();
-        
-        // Write to chosen location
-        await writeBinaryFile(savePath, new Uint8Array(buffer));
-        
-        console.log('[Bridge] Thumbnail saved successfully');
-        return {
-          success: true,
-          path: savePath,
-          cancelled: false
-        };
-        
-      } catch (e) {
-        console.error('[Bridge] downloadThumbnail failed:', e);
-        return {
-          success: false,
-          error: e.message || 'Download failed',
-          cancelled: false
-        };
+    try {
+      const { save } = window.__TAURI__.dialog;
+      const { writeBinaryFile } = window.__TAURI__.fs;
+      
+      console.log('[Bridge] Starting thumbnail download:', thumbnailUrl);
+      
+      const savePath = await save({
+        defaultPath: defaultFilename,
+        filters: [{
+          name: 'Images',
+          extensions: ['jpg', 'jpeg', 'png', 'webp']
+        }]
+      });
+      
+      if (!savePath) {
+        console.log('[Bridge] Download cancelled by user');
+        return { success: false, cancelled: true };
       }
+      
+      console.log('[Bridge] Downloading to:', savePath);
+      
+      const response = await fetch(thumbnailUrl);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const blob = await response.blob();
+      const buffer = await blob.arrayBuffer();
+      
+      await writeBinaryFile(savePath, new Uint8Array(buffer));
+      
+      console.log('[Bridge] Thumbnail saved successfully');
+      return {
+        success: true,
+        path: savePath,
+        cancelled: false
+      };
+      
+    } catch (e) {
+      console.error('[Bridge] downloadThumbnail failed:', e);
+      return {
+        success: false,
+        error: e.message || 'Download failed',
+        cancelled: false
+      };
     }
-    
-    // Fallback for Electron (if needed)
-    console.warn('[Bridge] downloadThumbnail not implemented for Electron');
-    return { success: false, error: 'Not implemented for this platform' };
   },
 
-  // Save binary file to disk
   saveFile: async (path, data) => {
-    if (isTauri) {
-      try {
-        const { writeBinaryFile } = window.__TAURI__.fs;
-        // Ensure data is Uint8Array
-        const binaryData = data instanceof Uint8Array ? data : new Uint8Array(data);
-        await writeBinaryFile(path, binaryData);
-        console.log('[Bridge] File saved:', path);
-        return true;
-      } catch (e) {
-        console.error('[Bridge] saveFile failed:', e);
-        throw e;
-      }
+    try {
+      const { writeBinaryFile } = window.__TAURI__.fs;
+      const binaryData = data instanceof Uint8Array ? data : new Uint8Array(data);
+      await writeBinaryFile(path, binaryData);
+      console.log('[Bridge] File saved:', path);
+      return true;
+    } catch (e) {
+      console.error('[Bridge] saveFile failed:', e);
+      throw e;
     }
-    return false;
   },
 
-  // Open folder location in file explorer
   openFolderLocation: async (filePath) => {
-    if (isTauri) {
+    try {
+      console.log('[Bridge] Opening location:', filePath);
+      
       try {
-        console.log('[Bridge] Opening location:', filePath);
+        const { invoke } = window.__TAURI__.tauri;
+        await invoke('open_folder', { path: filePath });
+        console.log('[Bridge] ✅ Folder opened successfully via Rust');
+        return { success: true };
+      } catch (rustError) {
+        console.error('[Bridge] Rust open_folder failed:', rustError);
         
         try {
-          // Use custom Rust command to open folder (bypasses shell.open regex)
-          // Rust backend handles both files (select) and folders (open)
-          const { invoke } = window.__TAURI__.tauri;
-          await invoke('open_folder', { path: filePath });
-          console.log('[Bridge] ✅ Folder opened successfully via Rust');
+          const directory = filePath.replace(/\\/g, '/').split('/').slice(0, -1).join('/');
+          const { shell } = window.__TAURI__;
+          await shell.open(directory);
           return { success: true };
-        } catch (rustError) {
-          console.error('[Bridge] Rust open_folder failed:', rustError);
-          
-          // Fallback to shell.open (likely to fail if regex is strict, but worth a try)
-          try {
-            // For fallback, we MUST strip to directory because shell.open usually only opens folders/urls
-            const directory = filePath.replace(/\\/g, '/').split('/').slice(0, -1).join('/');
-            const { shell } = window.__TAURI__;
-            await shell.open(directory);
-            return { success: true };
-          } catch (shellError) {
-            console.error('[Bridge] Fallback shell.open failed:', shellError);
-            return { success: false, error: rustError || shellError };
-          }
+        } catch (shellError) {
+          console.error('[Bridge] Fallback shell.open failed:', shellError);
+          return { success: false, error: rustError || shellError };
         }
-      } catch (e) {
-        console.error('[Bridge] openFolderLocation failed:', e);
-        return { success: false, error: e.message };
       }
+    } catch (e) {
+      console.error('[Bridge] openFolderLocation failed:', e);
+      return { success: false, error: e.message };
     }
-    return { success: false, error: 'Not implemented for this platform' };
   },
 
   startDownload: async ({ urls, format, destination }) => {
-    if (isTauri) {
-      const { invoke } = window.__TAURI__.tauri;
-      console.log('[Bridge] Starting batch download:', urls.length);
-      
-      // Notify UI that jobs are starting
-      if (jobStartCallback) {
-          urls.forEach(url => jobStartCallback({ url }));
-      }
-      
-      // Fire off downloads for each URL
-      // We don't await them all to finish, just to start
-      const promises = urls.map(url => 
-        invoke('download_video', { url, format })
-          .then(res => console.log('[Bridge] Started:', url))
-          .catch(err => console.error('[Bridge] Failed to start:', url, err))
-      );
-      
-      return { success: true, count: urls.length, message: 'Batch started' };
-    } else {
-      return window.downloader.startDownload({ urls, format, destination });
+    const { invoke } = window.__TAURI__.tauri;
+    console.log('[Bridge] Starting batch download:', urls.length);
+    
+    if (jobStartCallback) {
+        urls.forEach(url => jobStartCallback({ url }));
     }
+    
+    const promises = urls.map(url => 
+      invoke('download_video', { url, format })
+        .then(res => console.log('[Bridge] Started:', url))
+        .catch(err => console.error('[Bridge] Failed to start:', url, err))
+    );
+    
+    return { success: true, count: urls.length, message: 'Batch started' };
   },
 
   download: async (url, format) => {
-    if (isTauri) {
-      const { invoke } = window.__TAURI__.tauri;
-      return invoke('download_video', { url, format });
-    } else {
-      return window.downloader.download(url, format);
-    }
+    const { invoke } = window.__TAURI__.tauri;
+    return invoke('download_video', { url, format });
   },
 
   cancelDownload: async (url) => {
-    if (isTauri) {
-      // TODO: Implement cancel in Rust
-      console.warn('[Bridge] Cancel not implemented in Tauri yet');
-      return { success: false };
-    } else {
-      return window.downloader.cancelDownload(url);
-    }
+    console.warn('[Bridge] Cancel not implemented in Tauri yet');
+    return { success: false };
   },
 
   // --- Events ---
 
   onJobStart: (callback) => {
-    if (isTauri) {
-      jobStartCallback = callback;
-    } else {
-      window.downloader.onJobStart(callback);
-    }
+    jobStartCallback = callback;
   },
 
   onStatus: (callback) => {
-    if (isTauri) {
-      // Mock status update
-      callback({ network: 'online' });
-    } else {
-      window.downloader.onStatus(callback);
-    }
+    callback({ network: 'online' });
   },
 
   onProgress: (callback) => {
-    if (isTauri) {
-      const { listen } = window.__TAURI__.event;
-      listen('download_progress', (event) => {
-        // Rust sends { url, progress, status }
-        const { url, progress, status } = event.payload;
-        callback({
-            url,
-            percent: progress,
-            status,
-            speed: 'Processing...', // Placeholder
-            eta: '...'      // Placeholder
-        });
+    const { listen } = window.__TAURI__.event;
+    listen('download_progress', (event) => {
+      const { url, progress, status } = event.payload;
+      callback({
+          url,
+          percent: progress,
+          status,
+          speed: 'Processing...',
+          eta: '...'
       });
-    } else {
-      window.downloader.onProgress(callback);
-    }
+    });
   },
 
   onJobComplete: (callback) => {
-    if (isTauri) {
-      const { listen } = window.__TAURI__.event;
-      listen('download_complete', (event) => {
-        const { url, filename } = event.payload;
-        // Convert local path to asset URL if needed, or just pass path
-        // For now, pass path. Renderer might need to handle it.
-        // In Tauri, to show local video, we usually need convertFileSrc
-        
-        let files = [];
-        if (filename) {
-            files = [filename];
-        }
+    const { listen } = window.__TAURI__.event;
+    listen('download_complete', (event) => {
+      const { url, filename } = event.payload;
+      
+      let files = [];
+      if (filename) {
+          files = [filename];
+      }
 
-        callback({ 
-          url: url, 
-          status: 'completed',
-          progress: 100,
-          files: files,
-          tempDir: '' 
-        });
+      callback({ 
+        url: url, 
+        status: 'completed',
+        progress: 100,
+        files: files,
+        tempDir: '' 
       });
-    } else {
-      window.downloader.onJobComplete(callback);
-    }
+    });
   },
 
   onJobError: (callback) => {
-    if (isTauri) {
-      const { listen } = window.__TAURI__.event;
-      listen('download_error', (event) => {
-        callback({ 
-          url: event.payload.url, 
-          message: event.payload.status 
-        });
+    const { listen } = window.__TAURI__.event;
+    listen('download_error', (event) => {
+      callback({ 
+        url: event.payload.url, 
+        message: event.payload.status 
       });
-    } else {
-      window.downloader.onJobError(callback);
-    }
+    });
   },
 
   // --- File System / Dialogs ---
 
   showSaveDialog: async (options) => {
-    if (isTauri) {
-      const { save } = window.__TAURI__.dialog;
-      return save({
-        defaultPath: options.defaultPath,
-        filters: options.filters
-      });
-    } else {
-      return window.downloader.showSaveDialog(options);
-    }
+    const { save } = window.__TAURI__.dialog;
+    return save({
+      defaultPath: options.defaultPath,
+      filters: options.filters
+    });
   },
 
   // --- Metadata ---
   
   probeFormats: async (url) => {
-    if (isTauri) {
-      const { invoke } = window.__TAURI__.tauri;
-      try {
-        const meta = await invoke('get_video_metadata', { url });
-        return meta;
-      } catch (e) {
-        console.error('[Bridge] Tauri metadata fetch failed:', e);
-        const errorMsg = (e.message || e.toString()).toLowerCase();
-        
-        // Show user-friendly message for private content
-        if (errorMsg.includes('inappropriate') || 
-            errorMsg.includes('private') ||
-            errorMsg.includes('sign in') ||
-            errorMsg.includes('confirm your age') ||
-            errorMsg.includes('unavailable')) {
-            throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
-        }
-        throw e;
+    const { invoke } = window.__TAURI__.tauri;
+    try {
+      const meta = await invoke('get_video_metadata', { url });
+      return meta;
+    } catch (e) {
+      console.error('[Bridge] Tauri metadata fetch failed:', e);
+      const errorMsg = (e.message || e.toString()).toLowerCase();
+      
+      if (errorMsg.includes('inappropriate') || 
+          errorMsg.includes('private') ||
+          errorMsg.includes('sign in') ||
+          errorMsg.includes('confirm your age') ||
+          errorMsg.includes('unavailable')) {
+          throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
       }
-    } else {
-      // Electron mode
-      try {
-        return await window.downloader.probeFormats(url);
-      } catch (error) {
-        console.error('[Bridge] Electron probe failed:', error);
-        const errorMsg = (error.message || error.toString()).toLowerCase();
-        
-        // Show user-friendly message for private content
-        if (errorMsg.includes('inappropriate') || 
-            errorMsg.includes('private') ||
-            errorMsg.includes('sign in') ||
-            errorMsg.includes('confirm your age') ||
-            errorMsg.includes('unavailable')) {
-            throw new Error('⚠️ This is a PRIVATE video. Only PUBLIC videos can be downloaded. Please use a public link.');
-        }
-        throw error;
-      }
+      throw e;
     }
   },
 
   getVideoMetadata: async (url) => {
-    if (isTauri) {
-      const { invoke } = window.__TAURI__.tauri;
-      try {
-          const meta = await invoke('get_video_metadata', { url });
-          // Normalize keywords if needed
-          return {
-              ...meta,
-              keywords: meta.tags || ['word-hacker']
-          };
-      } catch (e) {
-          console.error('Metadata fetch failed:', e);
-          return {
-            title: 'Word Hacker Capture',
-            thumbnail: `https://image.thum.io/get/width/900/crop/600/${encodeURIComponent(url)}`,
-            description: 'Metadata unavailable',
-            keywords: []
-          };
-      }
-    } else {
-      return window.downloader.getVideoMetadata(url);
+    const { invoke } = window.__TAURI__.tauri;
+    try {
+        const meta = await invoke('get_video_metadata', { url });
+        return {
+            ...meta,
+            keywords: meta.tags || ['word-hacker']
+        };
+    } catch (e) {
+        console.error('Metadata fetch failed:', e);
+        return {
+          title: 'Word Hacker Capture',
+          thumbnail: `https://image.thum.io/get/width/900/crop/600/${encodeURIComponent(url)}`,
+          description: 'Metadata unavailable',
+          keywords: []
+        };
     }
   },
 
   fetchMetadata: async (url) => {
-    if (isTauri) {
-      const { invoke } = window.__TAURI__.tauri;
-      try {
-          const meta = await invoke('get_video_metadata', { url });
-          return {
-              ...meta,
-              keywords: meta.tags || ['word-hacker']
-          };
-      } catch (e) {
-          return {
-            title: 'Word Hacker Capture',
-            thumbnail: `https://image.thum.io/get/width/900/crop/600/${encodeURIComponent(url)}`,
-            description: 'Metadata unavailable',
-            keywords: []
-          };
-      }
-    } else {
-      return window.downloader.fetchMetadata(url);
+    const { invoke } = window.__TAURI__.tauri;
+    try {
+        const meta = await invoke('get_video_metadata', { url });
+        return {
+            ...meta,
+            keywords: meta.tags || ['word-hacker']
+        };
+    } catch (e) {
+        return {
+          title: 'Word Hacker Capture',
+          thumbnail: `https://image.thum.io/get/width/900/crop/600/${encodeURIComponent(url)}`,
+          description: 'Metadata unavailable',
+          keywords: []
+        };
     }
   }
 };
 
-// Expose as window.downloader to maintain compatibility with renderer.js
-// If Electron is present, it might have already defined it.
-// We wrap it if needed, but for Tauri, we define it.
-if (isTauri) {
-  window.downloader = bridge;
-  
-  // Window Controls for Custom UI
-  const { appWindow } = window.__TAURI__.window;
-  window.windowControls = {
-    control: (action) => {
-      switch (action) {
-        case 'minimize': appWindow.minimize(); break;
-        case 'maximize': appWindow.toggleMaximize(); break;
-        case 'close': appWindow.close(); break;
-      }
-    },
-    togglePin: async () => {
-      // Basic toggle implementation
-      // Note: Requires allowlist "window": { "setAlwaysOnTop": true } in tauri.conf.json
-      return false; 
+// Expose as window.downloader
+window.downloader = bridge;
+
+// Window Controls for Custom UI
+const { appWindow } = window.__TAURI__.window;
+window.windowControls = {
+  control: (action) => {
+    switch (action) {
+      case 'minimize': appWindow.minimize(); break;
+      case 'maximize': appWindow.toggleMaximize(); break;
+      case 'close': appWindow.close(); break;
     }
-  };
+  },
+  togglePin: async () => {
+    return false; 
+  }
+};
 
-  console.log('🚀 WH404 Bridge: Tauri Mode Activated');
+console.log('🚀 WH404 Bridge: Tauri Mode Activated');
 
-  // System Dialogs & File Operations
-  window.systemDialogs = {
-    saveFile: async (options) => {
-      const { save } = window.__TAURI__.dialog;
-      return save({
-        defaultPath: options.defaultPath,
-        filters: options.filters
-      });
-    },
-    openFolder: async (path) => {
-      // TODO: Implement open folder in Rust
-      console.log('Open folder:', path);
-    },
-    chooseFolder: async () => {
-      const { open } = window.__TAURI__.dialog;
-      return open({ directory: true, multiple: false });
-    },
-    revealFile: async (path) => {
-      // TODO: Implement reveal file
-      console.log('Reveal file:', path);
-    },
-    youtubeOAuthLogin: async () => {
-      // YouTube OAuth for 100% tag accuracy
-      const { invoke } = window.__TAURI__.tauri;
-      try {
-        return await invoke('youtube_oauth_login');
-      } catch (err) {
-        console.error('[Bridge] YouTube OAuth failed:', err);
-        return { success: false, message: err.toString() };
-      }
-    },
-    exportFiles: async (payload) => {
-      // Payload: { files, destination, outputFormat, trim, metadata }
-      const { invoke } = window.__TAURI__.tauri;
-      console.log('[Bridge] Exporting payload:', JSON.stringify(payload, null, 2));
-      
-      // Double check existence before sending to Rust
-      if (payload.files && payload.files.length > 0) {
-        for (const f of payload.files) {
-           const exists = await bridge.checkFileExists(f);
-           console.log(`[Bridge] Pre-flight check for ${f}: ${exists}`);
-        }
-      }
-
-      try {
-        // Call REAL Tauri command with FFmpeg processing
-        const result = await invoke('export_files', { payload });
-        console.log('[Bridge] Export success:', result);
-        return result;
-      } catch (error) {
-        console.error('[Bridge] Export failed:', error);
-        throw new Error(`Export failed: ${error}`);
-      }
-    },
-    backgroundTrim: async (trimData) => {
-      // Mock background trim
-      return { trimmedFile: trimData.sourceFile };
+// System Dialogs & File Operations
+window.systemDialogs = {
+  saveFile: async (options) => {
+    const { save } = window.__TAURI__.dialog;
+    return save({
+      defaultPath: options.defaultPath,
+      filters: options.filters
+    });
+  },
+  openFolder: async (path) => {
+    console.log('Open folder:', path);
+  },
+  chooseFolder: async () => {
+    const { open } = window.__TAURI__.dialog;
+    return open({ directory: true, multiple: false });
+  },
+  revealFile: async (path) => {
+    console.log('Reveal file:', path);
+  },
+  youtubeOAuthLogin: async () => {
+    const { invoke } = window.__TAURI__.tauri;
+    try {
+      return await invoke('youtube_oauth_login');
+    } catch (err) {
+      console.error('[Bridge] YouTube OAuth failed:', err);
+      return { success: false, message: err.toString() };
     }
-  };
+  },
+  exportFiles: async (payload) => {
+    const { invoke } = window.__TAURI__.tauri;
+    console.log('[Bridge] Exporting payload:', JSON.stringify(payload, null, 2));
+    
+    if (payload.files && payload.files.length > 0) {
+      for (const f of payload.files) {
+         const exists = await bridge.checkFileExists(f);
+         console.log(`[Bridge] Pre-flight check for ${f}: ${exists}`);
+      }
+    }
 
-} else {
-  // In Electron, window.downloader is already defined by preload.js
-  console.log('⚡ WH404 Bridge: Electron Mode Detected');
-}
+    try {
+      const result = await invoke('export_files', { payload });
+      console.log('[Bridge] Export success:', result);
+      return result;
+    } catch (error) {
+      console.error('[Bridge] Export failed:', error);
+      throw new Error(`Export failed: ${error}`);
+    }
+  },
+  backgroundTrim: async (trimData) => {
+    return { trimmedFile: trimData.sourceFile };
+  }
+};

@@ -5,7 +5,7 @@
 > - Frontend: React + TypeScript + Vite  
 > - Run with: `npm run tauri:dev` (NOT electron or vite alone)  
 > - APIs exposed via Tauri commands, NOT Electron IPC  
-> - No preload.js or window.downloader - uses `window.__TAURI__`
+> - No preload.js - uses `window.__TAURI__` via `bridge.js`
 > 
 > **📚 READ FIRST**: [ARCHITECTURE_FOUNDATION.md](./ARCHITECTURE_FOUNDATION.md) - File structure & common mistakes
 > 
@@ -18,23 +18,6 @@
 > - ✅ **Format Conversion**: Real mp4→mp3, mp4→m4a processing with proper codecs
 > - ✅ **Metadata Insight Overlay**: Cards appear inside preview area when toggles ON
 > - ✅ **Header Reorganized**: Toggles moved to LEFT (safe zone), title CENTER, status RIGHT
-
-## 🚨 CRITICAL: bridge.js Auto-Detection
-
-**NEVER hardcode platform detection in `src/renderer/bridge.js`:**
-
-```javascript
-// ❌ WRONG - Causes infinite loops and UI freezes
-const isTauri = false;
-
-// ✅ CORRECT - Auto-detects platform
-const isTauri = !!window.__TAURI__;
-```
-
-**Symptoms of wrong detection:**
-- "Maximum call stack size exceeded" errors
-- UI freezes, clicks don't work, modal X buttons unresponsive
-- Downloads fail with "window.downloader not available"
 
 **Download from 1000+ platforms** | **Professional preview & trim** | **Batch processing** | **Lightning fast**
 

@@ -6,6 +6,9 @@ param(
     [string]$Version = "1.0.0"
 )
 
+# Ensure we are running in the script's directory
+Set-Location $PSScriptRoot
+
 $ErrorActionPreference = "Stop"
 $releaseRepo = "Pramsss108/wh404-desktop-builds"
 $websiteRepo = "Pramsss108/word-hacker-404"
@@ -54,9 +57,9 @@ Write-Success "Build completed"
 
 # Find installer
 Write-Step "Locating installer..."
-$installer = Get-ChildItem -Path "src-tauri\target\release\bundle\nsis" -Filter "*.exe" -File | Select-Object -First 1
+$installer = Get-ChildItem -Path "src-tauri\target\release\bundle\nsis" -Filter "*$Version*.exe" -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if (-not $installer) {
-    Write-Error "No installer found"
+    Write-Error "No installer found matching version $Version"
     exit 1
 }
 
@@ -69,9 +72,9 @@ Write-Success "Found: $installerName ($fileSize MB)"
 $tagName = "desktop-v$Version"
 Write-Step "Creating git tag: $tagName"
 
-# Delete existing tag if exists (suppress errors if tag doesn't exist)
-git tag -d $tagName 2>&1 | Out-Null
-git push origin --delete $tagName 2>&1 | Out-Null
+# Delete existing tag if exists (allow failure)
+try { git tag -d $tagName 2>&1 | Out-Null } catch {}
+try { git push origin --delete $tagName 2>&1 | Out-Null } catch {}
 
 git tag -a $tagName -m "Desktop App v$Version"
 if ($LASTEXITCODE -ne 0) {

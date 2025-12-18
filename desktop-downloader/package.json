@@ -2,63 +2,21 @@
   "name": "word-hacker-desktop-downloader",
   "version": "1.0.3",
   "description": "The official desktop companion for Word Hacker 404. Download, trim, and master audio/video from the underground.",
-  "main": "src/main.js",
   "author": "Word Hacker 404",
   "license": "MIT",
   "homepage": "https://wordhacker404.me",
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "electron:dev": "electron .",
     "build": "vite build",
-    "package:win": "electron-builder --win",
-    "package:mac": "electron-builder --mac dmg",
-    "package:linux": "electron-builder --linux AppImage",
-    "package": "electron-builder -mwl",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"
   },
-  "dependencies": {
-    "ffmpeg-static": "^5.2.0",
-    "os-utils": "0.0.14",
-    "sanitize-filename": "^1.6.3",
-    "yt-dlp-exec": "^1.0.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@tauri-apps/cli": "^1.6.3",
-    "electron": "^30.0.6",
-    "electron-builder": "^25.1.8",
-    "electronmon": "^2.0.2",
     "vite": "^5.2.0"
-  },
-  "build": {
-    "appId": "com.wordhacker.downloader",
-    "productName": "Word Hacker 404",
-    "directories": {
-      "output": "release"
-    },
-    "asarUnpack": [
-      "node_modules/yt-dlp-exec/bin/**",
-      "node_modules/ffmpeg-static/**"
-    ],
-    "win": {
-      "target": [
-        "portable",
-        "nsis"
-      ]
-    },
-    "mac": {
-      "category": "public.app-category.utilities",
-      "target": [
-        "dmg"
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage"
-      ]
-    }
   },
   "browserslist": {
     "production": [
