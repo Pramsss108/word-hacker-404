@@ -1157,7 +1157,7 @@ h3 {
 	width: 100%;
 	height: auto;
 	min-height: 185px;
-	max-height: 70vh;
+	max-height: 480px;
 	background: transparent;
 	object-fit: contain;
 	transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1167,20 +1167,20 @@ h3 {
 
 /* Responsive video sizing based on orientation */
 .preview-card.video-vertical #preview-video {
-	max-height: 80vh;
+	max-height: 520px;
 	height: auto;
 	width: auto;
 	max-width: 100%;
 }
 
 .preview-card.video-horizontal #preview-video {
-	max-height: 70vh;
+	max-height: 380px;
 	height: auto;
 	width: 100%;
 }
 
 .preview-card.video-shorts #preview-video {
-	max-height: 85vh;
+	max-height: 600px;
 	width: auto;
 	max-width: 100%;
 	aspect-ratio: 9 / 16;
@@ -1632,9 +1632,7 @@ h3 {
 .thumbnail-frame {
 	border-radius: 12px;
 	border: 1px dashed rgba(136, 86, 189, 0.4);
-	height: auto;
-	min-height: 220px;
-	aspect-ratio: 16/9;
+	height: 220px;
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -1644,12 +1642,6 @@ h3 {
 	color: var(--text-soft);
 	font-size: 0.8rem;
 	overflow: hidden;
-	transition: aspect-ratio 0.3s ease, max-height 0.3s ease;
-}
-
-.thumbnail-frame.vertical {
-	aspect-ratio: 9/16;
-	max-height: 500px;
 }
 
 .thumbnail-body {

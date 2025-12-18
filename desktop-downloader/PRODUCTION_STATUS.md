@@ -327,3 +327,10 @@ See `PREVIEW_FIX_GUIDE.md` for complete debugging playbook covering:
 **Last Verified**: December 8, 2025, 3:45 PM  
 **Verified By**: AI Agent (GitHub Copilot)  
 **Status**: ✅ Production Ready
+
+### 6. UI & UX Enhancements (v1.0.3)
+-  **FIXED**: Video Preview aspect ratio now adapts to screen size (using 'vh' units).
+-  **FIXED**: Vertical thumbnails (Shorts/Reels) now display correctly with 9:16 aspect ratio.
+-  **FIXED**: SEO Keywords now extracted directly from 'yt-dlp' tags for better accuracy.
+-  **FIXED**: Responsive layout improvements for large screens.
+

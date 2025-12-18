@@ -542,6 +542,7 @@ struct VideoMetadata {
     thumbnail: String,
     description: String,
     formats: Vec<VideoFormat>,
+    tags: Vec<String>,
 }
 
 #[derive(Clone, serde::Serialize)]
@@ -596,12 +597,22 @@ async fn get_video_metadata(url: String) -> Result<VideoMetadata, String> {
         }
     }
 
+    let mut tags = Vec::new();
+    if let Some(tags_array) = json["tags"].as_array() {
+        for t in tags_array {
+            if let Some(tag_str) = t.as_str() {
+                tags.push(tag_str.to_string());
+            }
+        }
+    }
+
     Ok(VideoMetadata {
         id: json["id"].as_str().unwrap_or("").to_string(),
         title: json["title"].as_str().unwrap_or("").to_string(),
         thumbnail: json["thumbnail"].as_str().unwrap_or("").to_string(),
         description: json["description"].as_str().unwrap_or("").to_string(),
         formats,
+        tags,
     })
 }
 

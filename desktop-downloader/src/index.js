@@ -1503,14 +1503,18 @@ const detectVideoFormat = () => {
   
   // Remove all format classes
   previewCard.classList.remove('video-horizontal', 'video-vertical', 'video-shorts')
+  if (premiumThumbnailFrame) premiumThumbnailFrame.classList.remove('vertical', 'shorts')
   
   let format = 'Unknown'
   
   if (height > width) {
     // Vertical video (likely Shorts, Reels, TikTok)
+    if (premiumThumbnailFrame) premiumThumbnailFrame.classList.add('vertical')
+    
     if (aspectRatio < 0.6) {
       format = '9:16 Shorts'
       previewCard.classList.add('video-shorts')
+      if (premiumThumbnailFrame) premiumThumbnailFrame.classList.add('shorts')
     } else {
       format = 'Vertical'
       previewCard.classList.add('video-vertical')
