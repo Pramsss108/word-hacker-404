@@ -1,7 +1,7 @@
 # 🚀 WH404 Downloader - Production Status
 
-**Version**: 1.0.0  
-**Last Updated**: December 8, 2025  
+**Version**: 1.0.2  
+**Last Updated**: December 18, 2025  
 **Status**: Production Ready (Desktop App)
 
 ---
@@ -38,7 +38,7 @@
 - ✅ Cached trimming for instant export
 - ✅ Fallback to real-time trim if cache fails
 
-### 4. Export System ✅ **FULLY WORKING - December 14, 2025**
+### 4. Export System ✅ **FULLY WORKING - December 18, 2025**
 - ✅ Video formats: MP4, MKV, AVI, WebM
 - ✅ Audio formats: MP3, M4A, OGG, WAV
 - ✅ **FIXED**: Audio export now working (was returning .mp4 before)
@@ -48,6 +48,13 @@
 - ✅ **FIXED**: Double Downloads path bug (Downloads/Downloads/)
 - ✅ **FIXED**: Trim support with FFmpeg `-ss` and `-to` flags
 - ✅ Resolution control (1080p, 720p, 480p, 360p, Original)
+- ✅ **FIXED**: "Source file not found" error via Fuzzy Resolution System
+- ✅ **FIXED**: "Open Folder" button now selects the file directly in Explorer
+
+### 5. UI & UX
+- ✅ **FIXED**: Success modal now has a direct "Open Folder" button
+- ✅ **FIXED**: Batch list folder icons are now functional
+- ✅ **FIXED**: Navigation logic in `bridge.js` to support file selection
 - ✅ Audio-only extraction mode with proper codec settings
 - ✅ Custom save location picker
 - ✅ Batch export (multiple items at once)
