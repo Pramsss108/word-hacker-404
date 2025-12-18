@@ -1,4 +1,5 @@
 /* eslint-disable */
+console.log('[Init] Loaded index.js v11 - FORCE RELOAD - EXPORT FIX APPLIED');
 const textarea = document.getElementById('url-input')
 const addToQueueBtn = document.getElementById('add-to-queue-btn')
 const queueList = document.getElementById('queue-list')
@@ -416,6 +417,7 @@ const updateInsightData = () => {
   const thumbImage = document.getElementById('thumb-image')
   const thumbRatio = document.getElementById('thumb-ratio')
   const thumbDownload = document.getElementById('thumb-download')
+  const thumbPreview = document.getElementById('thumb-preview')
   
   if (thumbImage && state.preview.metadata.thumbnail) {
     thumbImage.src = state.preview.metadata.thumbnail
@@ -424,7 +426,8 @@ const updateInsightData = () => {
     // Detect aspect ratio
     const img = new Image()
     img.onload = () => {
-      const ratio = (img.width / img.height).toFixed(2)
+      const ratioVal = img.width / img.height
+      const ratio = ratioVal.toFixed(2)
       const common = {
         '1.78': '16:9',
         '0.56': '9:16',
@@ -433,12 +436,20 @@ const updateInsightData = () => {
         '0.75': '3:4'
       }
       thumbRatio.textContent = common[ratio] || `${img.width}x${img.height}`
+      
+      // Auto-adjust container aspect ratio to match image
+      if (thumbPreview) {
+        thumbPreview.style.aspectRatio = `${img.width} / ${img.height}`
+      }
     }
     img.src = state.preview.metadata.thumbnail
   } else if (thumbImage) {
     thumbImage.removeAttribute('src')
     thumbRatio.textContent = '--'
     thumbDownload.disabled = true
+    if (thumbPreview) {
+      thumbPreview.style.aspectRatio = '16 / 9' // Reset to default
+    }
   }
   
   // Keywords
@@ -959,11 +970,19 @@ const stopExportDots = () => {
   }
 }
 
-const updateExportMessage = (text, { loading = false, variant } = {}) => {
+const updateExportMessage = (text, { loading = false, variant, html = false } = {}) => {
   if (exportMessageText) {
-    exportMessageText.textContent = text
+    if (html) {
+      exportMessageText.innerHTML = text
+    } else {
+      exportMessageText.textContent = text
+    }
   } else {
-    exportMessage.textContent = text
+    if (html) {
+      exportMessage.innerHTML = text
+    } else {
+      exportMessage.textContent = text
+    }
   }
 
   if (exportMessage) {
@@ -1113,8 +1132,17 @@ const buildFileList = (item) => {
       const revealBtn = document.createElement('button')
       revealBtn.className = 'ghost ghost-icon'
       revealBtn.title = 'Show in Explorer'
-      revealBtn.dataset.action = 'reveal'
-      revealBtn.dataset.path = encodeURIComponent(file)
+      // FIX: Use onclick directly to ensure it works
+      revealBtn.onclick = (e) => {
+        e.stopPropagation();
+        const path = file;
+        console.log('[Batch] Opening folder for:', path);
+        if (window.downloader?.openFolderLocation) {
+           window.downloader.openFolderLocation(path);
+        } else if (window.systemDialogs?.openFolder) {
+           window.systemDialogs.openFolder(path);
+        }
+      };
       revealBtn.textContent = '📂'
       actions.appendChild(revealBtn)
     }
@@ -1301,11 +1329,114 @@ const joinPathSegments = (dirPath, fileName, sepHint = '\\') => {
   return `${dirPath}${needsSeparator ? separator : ''}${fileName}`
 }
 
+// Helper to resolve actual file path using fuzzy search
+const resolveItemFiles = async (item) => {
+  console.log('[Resolve] Starting resolution for item:', item.url)
+  if (!item.files || !item.files.length) {
+    console.warn('[Resolve] No files in item to resolve')
+    return
+  }
+  
+  // Process each file in the item
+  for (let i = 0; i < item.files.length; i++) {
+    const source = item.files[i]
+    console.log(`[Resolve] Checking file [${i}]: ${source}`)
+    
+    try {
+      const { dir: sourceDir, base: sourceFile, sep: sourceSep } = splitPathComponents(source)
+      
+      // 1. Check if exact path exists
+      let exists = false
+      if (window.downloader && window.downloader.checkFileExists) {
+        try {
+          exists = await window.downloader.checkFileExists(source)
+          console.log(`[Resolve] Existence check result: ${exists}`)
+        } catch (err) {
+          console.error('[Resolve] checkFileExists threw error:', err)
+        }
+      } else {
+        console.warn('[Resolve] window.downloader.checkFileExists is missing!')
+      }
+
+      if (exists) {
+        console.log('[Resolve] File exists, skipping search.')
+        continue // File is good, move to next
+      }
+      
+      console.warn(`[Resolve] File not found: ${source}. Searching directory...`)
+      
+      // 2. Search directory
+      if (sourceDir && window.downloader && window.downloader.readDir) {
+        try {
+          console.log(`[Resolve] Reading directory: ${sourceDir}`)
+          const rawEntries = await window.downloader.readDir(sourceDir)
+          const entryToName = (entry) => {
+            if (typeof entry === 'string') return entry
+            if (entry && typeof entry === 'object') {
+              if (entry.name) return entry.name
+              if (entry.path) return splitPathComponents(entry.path).base
+            }
+            return ''
+          }
+          const files = (rawEntries || []).map(entryToName).filter(Boolean)
+          console.log(`[Resolve] Found ${files.length} files in directory`)
+          
+          const normalizeForMatch = (str) => {
+            // Remove .f123 (format code) if present
+            let normalized = str.replace(/\.f\d{2,3}(?=\.\w+$)/gi, '')
+            // Remove extension
+            normalized = normalized.replace(/\.\w+$/gi, '')
+            // Keep only alphanumeric
+            return normalized.toLowerCase().replace(/[^a-z0-9]/g, '')
+          }
+          
+          const expectedNormalized = normalizeForMatch(sourceFile)
+          console.log(`[Resolve] Looking for normalized: ${expectedNormalized}`)
+          
+          // Try exact match first (normalized)
+          let match = files.find((filename) => normalizeForMatch(filename) === expectedNormalized)
+          
+          // Try fuzzy match
+          if (!match) {
+            // Take first 20 chars of normalized title
+            const searchKey = expectedNormalized.slice(0, 20)
+            console.log(`[Resolve] Fuzzy search key: ${searchKey}`)
+            
+            match = files.find((filename) => {
+              return normalizeForMatch(filename).includes(searchKey)
+            })
+          }
+          
+          if (match) {
+            const newPath = joinPathSegments(sourceDir, match, sourceSep)
+            console.log(`[Resolve] ✅ Found match: ${newPath}`)
+            item.files[i] = newPath
+          } else {
+            console.error(`[Resolve] ❌ No match found for ${sourceFile}`)
+            // Fallback: Try to find ANY file with similar extension if list is small? No, too risky.
+          }
+        } catch (e) {
+          console.error('[Resolve] Directory scan failed:', e)
+        }
+      } else {
+        console.warn('[Resolve] Cannot read directory (missing API)')
+      }
+    } catch (outerErr) {
+      console.error('[Resolve] Critical error processing file:', outerErr)
+    }
+  }
+  console.log('[Resolve] Finished resolution for item')
+  return item.files
+}
+
 const loadPreviewFromItem = async (item) => {
   if (!item.files || !item.files.length) {
     setStatus('Preview not ready yet. Finish the download first.')
     return
   }
+  
+  // Ensure files are resolved before loading
+  await resolveItemFiles(item)
   
   // Find the first video/audio file
   const source = item.files.find(f => 
@@ -1320,114 +1451,11 @@ const loadPreviewFromItem = async (item) => {
   previewEmpty.classList.add('hidden')
   
   console.log('[Preview] Loading:', source)
-  console.log('[Preview] CODE VERSION: BLOB_FIX_FINAL')
-  const missingFileStatus = (targetName) => {
-    const safeName = targetName || source
-    setStatus(`File not found: ${safeName}. If this was an audio-only download, give it a moment to merge and try again.`)
-  }
-  const { dir: sourceDir, base: sourceFile, sep: sourceSep } = splitPathComponents(source)
-  
-  // CRITICAL FIX: Normalize double spaces in filename (YouTube metadata issue)
-  // The queue stores paths with double spaces, but files may have single spaces
-  let normalizedSource = source.replace(/  +/g, ' ')
-  console.log('[Preview] Normalized path:', normalizedSource)
-  
-  // Double-check if file exists, if not try without the normalization
-  if (window.downloader && window.downloader.checkFileExists) {
-    const exists = await window.downloader.checkFileExists(normalizedSource)
-    if (!exists) {
-      console.warn('[Preview] Normalized path not found, trying original...')
-      const originalExists = await window.downloader.checkFileExists(source)
-      if (originalExists) {
-        normalizedSource = source
-        console.log('[Preview] Using original path')
-      } else {
-        // Neither path exists - try to find the actual file in the directory
-        console.warn('[Preview] Exact path not found, searching directory...')
-        if (sourceDir && window.downloader.readDir) {
-          try {
-            const rawEntries = await window.downloader.readDir(sourceDir)
-            console.log('[Preview] Files in directory:', rawEntries)
-            const entryToName = (entry) => {
-              if (typeof entry === 'string') return entry
-              if (entry && typeof entry === 'object') {
-                if (entry.name) return entry.name
-                if (entry.path) return splitPathComponents(entry.path).base
-              }
-              return ''
-            }
-            const files = (rawEntries || []).map(entryToName).filter(Boolean)
-            
-            // Find the best match - normalize by removing ALL non-alphanumeric characters
-            // Also remove format codes like .f140, .f399 that are temp file markers
-            const normalizeForMatch = (str) => {
-              // Remove format codes (f followed by 2-3 digits before extension)
-              let normalized = str.replace(/\.f\d{2,3}(?=\.\w+$)/gi, '')
-              // Remove all non-alphanumeric
-              return normalized.toLowerCase().replace(/[^a-z0-9]/g, '')
-            }
-            
-            const expectedNormalized = normalizeForMatch(sourceFile || source)
-            console.log('[Preview] Searching for normalized:', expectedNormalized)
-            
-            // Try exact match first
-            let match = files.find((filename) => {
-              const fileNormalized = normalizeForMatch(filename)
-              console.log(`[Preview] Comparing: "${fileNormalized}" === "${expectedNormalized}"`)
-              return fileNormalized === expectedNormalized
-            })
-            
-            // If no exact match, try fuzzy match (contains most of the title)
-            if (!match) {
-              console.log('[Preview] No exact match, trying fuzzy match...')
-              // Extract base title (remove format code and extension from expected)
-              const baseTitleNormalized = sourceFile
-                .replace(/\.f\d{2,3}\.\w+$/gi, '') // Remove .f140.m4a
-                .replace(/\.\w+$/gi, '') // Remove .m4a
-                .toLowerCase()
-                .replace(/[^a-z0-9]/g, '')
-                .slice(0, 30) // Use first 30 chars as signature
-              
-              console.log('[Preview] Base title signature:', baseTitleNormalized)
-              
-              match = files.find((filename) => {
-                const fileNormalized = normalizeForMatch(filename)
-                // Check if file contains the base title
-                const contains = fileNormalized.includes(baseTitleNormalized.slice(0, 20))
-                if (contains) {
-                  console.log(`[Preview] Fuzzy match found: "${filename}"`)
-                }
-                return contains
-              })
-            }
-            
-            if (match) {
-              normalizedSource = joinPathSegments(sourceDir, match, sourceSep)
-              console.log('[Preview] ✅ Found matching file:', match)
-            } else {
-              console.error('[Preview] ❌ No matching file found in directory')
-              console.error('[Preview] Expected (normalized):', expectedNormalized)
-              console.error('[Preview] Available files:', files)
-              missingFileStatus(sourceFile || source)
-              return
-            }
-          } catch (dirError) {
-            console.error('[Preview] Unable to inspect directory:', dirError)
-            missingFileStatus(sourceFile || source)
-            return
-          }
-        } else {
-          console.error('[Preview] File does not exist at either path!')
-          missingFileStatus(sourceFile || source)
-          return
-        }
-      }
-    }
-  }
+  console.log('[Preview] CODE VERSION: BULLETPROOF_V2')
   
   // Skip Blob loading for now - causes memory issues with large files
   // Try asset protocol directly
-  let fileUrl = toFileUrl(normalizedSource);
+  let fileUrl = toFileUrl(source);
   console.log('[Preview] Using Asset URL:', fileUrl);
   
   previewVideo.src = fileUrl
@@ -1736,7 +1764,7 @@ const renderQueue = () => {
                 <p class="slot-url">${item.url}</p>
                 ${platformBadge}
               </div>
-              <p class="slot-status">${item.status === 'pending' ? 'Waiting' : item.status === 'downloading' ? 'Processing' : item.status === 'complete' ? 'Done' : item.status === 'cancelled' ? 'Cancelled' : 'Error'}</p>
+              <p class="slot-status">${item.exported ? 'Saved' : item.status === 'pending' ? 'Waiting' : item.status === 'downloading' ? 'Processing' : item.status === 'complete' ? 'Temporary' : item.status === 'cancelled' ? 'Cancelled' : 'Error'}</p>
             </div>
           </div>
         </div>
@@ -1925,8 +1953,9 @@ const onDownload = async () => {
   }
   
   // ============================================
-  // AD CHECK - FREE users MUST watch ads
+  // AD CHECK - DISABLED (Temporary Bypass)
   // ============================================
+  /*
   console.log('[Ad] About to check if ad required...')
   try {
     console.log('[Ad] Calling check_ad_required...')
@@ -1966,6 +1995,7 @@ const onDownload = async () => {
     pushLog('⚠ Ad system error. Please restart app.')
     return // STOP download if ad fails
   }
+  */
   
   try {
     setBusy(true)
@@ -2006,6 +2036,8 @@ const closeExportDrawer = () => {
   exportConfirm.disabled = false
   exportConfirm.textContent = exportConfirmDefaultLabel
   exportConfirm.style.background = ''
+  delete exportConfirm.dataset.action
+  delete exportConfirm.dataset.path
 }
 
 const extractResolutionsFromFormats = (formats) => {
@@ -3239,6 +3271,18 @@ ${details.innerHTML}
   })
 
   exportConfirm.addEventListener('click', async () => {
+    // Check if we are in "Open Folder" mode
+    if (exportConfirm.dataset.action === 'open-folder') {
+      const outputPath = exportConfirm.dataset.path
+      console.log('[Export] 📂 Opening folder:', outputPath)
+      if (window.downloader?.openFolderLocation) {
+        window.downloader.openFolderLocation(outputPath)
+      } else if (window.systemDialogs?.openFolder) {
+        window.systemDialogs.openFolder(outputPath)
+      }
+      return
+    }
+
     const targets = state.exportContext.targets
     if (!targets.length) {
       updateExportMessage('No items to export.', { variant: 'error' })
@@ -3265,6 +3309,38 @@ ${details.innerHTML}
       exportConfirm.style.opacity = '0.7'
       updateExportMessage('Starting export', { loading: true })
       
+      // CRITICAL: Ensure files exist before exporting
+      // This handles cases where user exports without previewing, or if files were moved
+      updateExportMessage('Verifying files...', { loading: true })
+      
+      // Re-collect files after resolution
+      const resolvedFiles = []
+      
+      console.log('[Export] Starting file resolution loop for', targets.length, 'items');
+      for (const item of targets) {
+        console.log('[Export] Resolving item:', item.url);
+        // Force resolution and capture the result
+        const files = await resolveItemFiles(item);
+        if (files && files.length) {
+           console.log('[Export] Resolved files for item:', files);
+           resolvedFiles.push(...files);
+        } else {
+           console.warn('[Export] No files returned from resolution for item:', item.url);
+           // Fallback to existing files if resolution returned nothing (shouldn't happen if modified correctly)
+           if (item.files) resolvedFiles.push(...item.files);
+        }
+      }
+      
+      console.log('[Export] Final resolved files list:', resolvedFiles);
+      
+      if (!resolvedFiles.length) {
+        updateExportMessage('No valid files found to export.', { variant: 'error' })
+        exportConfirm.disabled = false
+        exportConfirm.textContent = exportConfirmDefaultLabel
+        exportConfirm.style.opacity = '1'
+        return
+      }
+
       // Start heartbeat to show we're alive
       let heartbeatCount = 0
       activeHeartbeat = setInterval(() => {
@@ -3279,7 +3355,7 @@ ${details.innerHTML}
       const outputFormat = exportFormatSelect.value || 'mp4'
       
       console.log('[Export] 🚀 Starting export process:', {
-        filesCount: allFiles.length,
+        filesCount: resolvedFiles.length,
         outputFormat,
         destination,
         previewReady: state.preview.ready,
@@ -3290,7 +3366,8 @@ ${details.innerHTML}
       
       // Use pre-processed trim file if available, otherwise pass trim data
       let trimData = null
-      let exportFiles = allFiles
+      // CRITICAL: Use the explicitly resolved files list
+      let exportFiles = resolvedFiles
       
       // Get actual trim values from inputs (state.preview may be outdated)
       const trimStartValue = parseFloat(trimStartInput?.value || 0)
@@ -3320,7 +3397,8 @@ ${details.innerHTML}
             start: trimStartValue, 
             end: trimEndValue 
           }
-          exportFiles = allFiles
+          // FIX: Ensure we use the resolved files for trimming source
+          exportFiles = resolvedFiles 
         }
       } else {
         console.log('[Export] 📹 No trim - full video/audio export')
@@ -3338,12 +3416,54 @@ ${details.innerHTML}
       }
       
       console.log('[Export] 📦 Sending to backend:', {
+        files: exportPayload.files, // LOGGING ADDED: Show exact paths
         filesCount: exportPayload.files.length,
         format: exportPayload.outputFormat,
         type: state.exportContext.type,
         hasTrim: !!exportPayload.trim,
         trimData: exportPayload.trim
       })
+
+      // 1. Ask user where to save (if not already set or if user wants to choose)
+      // We'll use the save dialog to get a path
+      let finalDestination = destination
+      
+      // If no destination set, or if we want to force "Save As" behavior
+      // For batch exports, we might want to pick a folder. For single files, a file path.
+      // Since exportFiles backend handles directory creation, let's ask for a DIRECTORY.
+      
+      try {
+        const { dialog } = window.__TAURI__
+        // If we have multiple files, we pick a folder. If single file, we could pick a file, 
+        // but the backend logic seems designed to take a directory and output files there.
+        // Let's stick to "Pick a Folder" for consistency.
+        
+        const selectedPath = await dialog.open({
+          directory: true,
+          multiple: false,
+          defaultPath: destination || undefined,
+          title: 'Select Export Folder'
+        })
+        
+        if (selectedPath) {
+          finalDestination = selectedPath
+          exportPayload.destination = selectedPath
+          // Update state for next time
+          setDestination(selectedPath)
+        } else {
+          // User cancelled dialog
+          console.log('[Export] User cancelled save dialog')
+          updateExportMessage('Export cancelled', { variant: 'info' })
+          exportConfirm.disabled = false
+          exportConfirm.textContent = 'Export'
+          exportConfirm.style.opacity = '1'
+          if (activeHeartbeat) clearInterval(activeHeartbeat)
+          return
+        }
+      } catch (dialogErr) {
+        console.warn('[Export] Dialog failed, falling back to default:', dialogErr)
+        // Continue with default destination if dialog fails
+      }
 
       const result = await window.systemDialogs?.exportFiles(exportPayload)
       
@@ -3364,31 +3484,33 @@ ${details.innerHTML}
         activeHeartbeat = null
       }
       
-      if (result && result.exported) {
-        const outputPath = result.outputDir || result.exported[0]
-        pushLog(`✔ Exported ${result.exported.length} file${result.exported.length === 1 ? '' : 's'} to ${outputPath}`)
+      if (result && result.exported && result.exported.length > 0) {
+        // FIX: Prefer the specific file path so Explorer selects/highlights it
+        const outputPath = result.exported[0] || result.outputDir
+        pushLog(`✔ Exported ${result.exported.length} file${result.exported.length === 1 ? '' : 's'} to ${result.outputDir}`)
         
         // Show success state with folder reveal button
-        updateExportMessage(`✓ Saved ${result.exported.length} file${result.exported.length === 1 ? '' : 's'}!`, { variant: 'success' })
+        // ENHANCEMENT: Allow opening folder AND exporting again
+        const escapedPath = outputPath.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
         
-        // Change button to folder opener
-        exportConfirm.textContent = '📁 Open Folder'
-        exportConfirm.style.background = 'var(--highlight)'
+        // Create a cleaner success UI
+        updateExportMessage(
+          `<div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+             <span>✓ Saved!</span>
+             <button class="ghost-btn" onclick="window.downloader.openFolderLocation('${escapedPath}'); return false;" style="background: rgba(10, 255, 106, 0.1); color: #0aff6a; border: 1px solid #0aff6a; padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">📂 Open Folder</button>
+           </div>`, 
+          { variant: 'success', html: true }
+        )
+        
+        // Reset button to allow another export immediately
+        exportConfirm.textContent = 'Export Selection'
+        exportConfirm.style.background = ''
         exportConfirm.style.opacity = '1'
         exportConfirm.disabled = false
         
-        // Add click handler to open folder
-        const openFolderHandler = () => {
-          console.log('[Export] 📂 Opening folder:', outputPath)
-          if (window.downloader?.openFolderLocation) {
-            window.downloader.openFolderLocation(outputPath)
-          } else if (window.systemDialogs?.openFolder) {
-            window.systemDialogs.openFolder(outputPath)
-          }
-        }
-        
-        exportConfirm.removeEventListener('click', openFolderHandler)
-        exportConfirm.addEventListener('click', openFolderHandler, { once: true })
+        // Remove any previous action overrides
+        delete exportConfirm.dataset.action
+        delete exportConfirm.dataset.path
         
         // Update items to show exported status
         targets.forEach(item => {
@@ -3414,10 +3536,10 @@ ${details.innerHTML}
         
         console.log('[Export] 📁 Saved to:', outputPath)
         
-        // Auto-close smoothly after showing success
-        setTimeout(() => {
-          closeExportDrawer()
-        }, 1800)
+        // Keep drawer open so user can click "Open Folder"
+        // setTimeout(() => { closeExportDrawer() }, 1800)
+      } else if (result && (!result.exported || result.exported.length === 0)) {
+        throw new Error('Export completed but no files were generated. Check if source files exist.')
       } else if (!result) {
         // Export failed - likely backend issue
         console.error('[Export] ⚠️ Backend returned no result')

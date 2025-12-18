@@ -1158,26 +1158,32 @@ h3 {
 	height: auto;
 	min-height: 185px;
 	max-height: 480px;
-	background: #05070b;
+	background: transparent;
 	object-fit: contain;
 	transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	margin: 0 auto;
+	display: block;
 }
 
 /* Responsive video sizing based on orientation */
 .preview-card.video-vertical #preview-video {
 	max-height: 520px;
 	height: auto;
+	width: auto;
+	max-width: 100%;
 }
 
 .preview-card.video-horizontal #preview-video {
 	max-height: 380px;
 	height: auto;
+	width: 100%;
 }
 
 .preview-card.video-shorts #preview-video {
 	max-height: 600px;
 	width: auto;
 	max-width: 100%;
+	aspect-ratio: 9 / 16;
 }
 
 .header-left {

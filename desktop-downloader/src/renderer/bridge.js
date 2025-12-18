@@ -55,6 +55,7 @@ const bridge = {
 
   // Check if a file exists and return corrected path
   checkFileExists: async (filePath) => {
+    console.log(`[Bridge] Checking existence of: ${filePath}`);
     if (isTauri) {
       try {
         const { exists } = window.__TAURI__.fs;
@@ -196,47 +197,30 @@ const bridge = {
   openFolderLocation: async (filePath) => {
     if (isTauri) {
       try {
-        const { Command } = window.__TAURI__.shell;
-        
-        // Extract directory from full path
-        const directory = filePath.replace(/\\/g, '/').split('/').slice(0, -1).join('/');
-        
-        console.log('[Bridge] Opening folder:', directory);
-        console.log('[Bridge] Original file path:', filePath);
-        
-        // Normalize path for Windows
-        const normalizedPath = filePath.replace(/\//g, '\\');
+        console.log('[Bridge] Opening location:', filePath);
         
         try {
-          // Windows: Use shell.open to open folder with file selected
-          if (navigator.platform.includes('Win')) {
-            // Use Tauri shell.open with explorer command
-            const { shell } = window.__TAURI__;
-            await shell.open(`explorer /select,"${normalizedPath}"`);
-            console.log('[Bridge] ✅ Folder opened successfully');
-          } else if (navigator.platform.includes('Mac')) {
-            const { shell } = window.__TAURI__;
-            await shell.open(`open -R "${filePath}"`);
-          } else {
-            // Linux: Just open the directory
+          // Use custom Rust command to open folder (bypasses shell.open regex)
+          // Rust backend handles both files (select) and folders (open)
+          const { invoke } = window.__TAURI__.tauri;
+          await invoke('open_folder', { path: filePath });
+          console.log('[Bridge] ✅ Folder opened successfully via Rust');
+          return { success: true };
+        } catch (rustError) {
+          console.error('[Bridge] Rust open_folder failed:', rustError);
+          
+          // Fallback to shell.open (likely to fail if regex is strict, but worth a try)
+          try {
+            // For fallback, we MUST strip to directory because shell.open usually only opens folders/urls
+            const directory = filePath.replace(/\\/g, '/').split('/').slice(0, -1).join('/');
             const { shell } = window.__TAURI__;
             await shell.open(directory);
-          }
-          return { success: true };
-        } catch (shellError) {
-          console.error('[Bridge] shell.open failed:', shellError);
-          // Fallback: Just open the directory without selecting the file
-          try {
-            const { shell } = window.__TAURI__;
-            await shell.open(directory.replace(/\//g, '\\'));
             return { success: true };
-          } catch (fallbackError) {
-            console.error('[Bridge] Fallback also failed:', fallbackError);
-            throw fallbackError;
+          } catch (shellError) {
+            console.error('[Bridge] Fallback shell.open failed:', shellError);
+            return { success: false, error: rustError || shellError };
           }
         }
-        
-        return { success: true };
       } catch (e) {
         console.error('[Bridge] openFolderLocation failed:', e);
         return { success: false, error: e.message };
@@ -523,8 +507,16 @@ if (isTauri) {
     exportFiles: async (payload) => {
       // Payload: { files, destination, outputFormat, trim, metadata }
       const { invoke } = window.__TAURI__.tauri;
-      console.log('[Bridge] Exporting:', payload);
+      console.log('[Bridge] Exporting payload:', JSON.stringify(payload, null, 2));
       
+      // Double check existence before sending to Rust
+      if (payload.files && payload.files.length > 0) {
+        for (const f of payload.files) {
+           const exists = await bridge.checkFileExists(f);
+           console.log(`[Bridge] Pre-flight check for ${f}: ${exists}`);
+        }
+      }
+
       try {
         // Call REAL Tauri command with FFmpeg processing
         const result = await invoke('export_files', { payload });

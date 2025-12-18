@@ -4,6 +4,7 @@
 )]
 
 use tauri::{command, Window};
+use tauri::api::process::{Command, CommandEvent};
 use std::sync::{Arc, Mutex};
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
@@ -17,6 +18,44 @@ mod cloudflare;
 mod license;
 mod security;
 mod ad_manager;
+
+#[command]
+fn open_folder(path: String) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    {
+        let path = path.replace("/", "\\");
+        let path_buf = std::path::PathBuf::from(&path);
+        // FIX: If it's a directory, just open it. If it's a file, select it.
+        if path_buf.is_dir() {
+             std::process::Command::new("explorer")
+                .arg(&path)
+                .spawn()
+                .map_err(|e| e.to_string())?;
+        } else {
+            // Default to select behavior for files (or if unsure)
+            std::process::Command::new("explorer")
+                .arg("/select,")
+                .arg(&path)
+                .spawn()
+                .map_err(|e| e.to_string())?;
+        }
+    }
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("open")
+            .arg(path)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+    #[cfg(target_os = "linux")]
+    {
+        std::process::Command::new("xdg-open")
+            .arg(path)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
 
 fn strip_unc(path: PathBuf) -> String {
     let s = path.to_string_lossy().to_string();
@@ -244,21 +283,46 @@ fn try_ytdlp_download(
     println!("Saving to: {:?}", output_template); // LOGGING ADDED
     println!("Current Directory: {:?}", std::env::current_dir()); // DEBUG CWD
 
-    // FIND FFMPEG (Robust Search)
-    let possible_paths = vec![
-        PathBuf::from("ffmpeg.exe"),
-        PathBuf::from("src-tauri/ffmpeg.exe"),
-        PathBuf::from("../src-tauri/ffmpeg.exe"),
-        PathBuf::from("ffmpeg-x86_64-pc-windows-msvc.exe"),
-    ];
-
+    // FIND FFMPEG (Robust Search for Sidecar)
     let mut ffmpeg_arg = None;
-    for p in possible_paths {
-        if let Ok(abs_path) = std::fs::canonicalize(&p) {
-            if abs_path.exists() {
-                println!("Found ffmpeg at: {:?}", abs_path);
-                ffmpeg_arg = Some(abs_path);
-                break;
+    
+    // 1. Try to find ffmpeg sidecar in the same directory as the executable (Production)
+    if let Ok(exe_path) = std::env::current_exe() {
+        if let Some(exe_dir) = exe_path.parent() {
+            if let Ok(entries) = std::fs::read_dir(exe_dir) {
+                for entry in entries {
+                    if let Ok(entry) = entry {
+                        let path = entry.path();
+                        if let Some(name) = path.file_name() {
+                            let name_str = name.to_string_lossy();
+                            // Look for ffmpeg-*.exe or ffmpeg.exe
+                            if (name_str.starts_with("ffmpeg") && name_str.ends_with(".exe")) || name_str == "ffmpeg.exe" {
+                                println!("Found ffmpeg sidecar at: {:?}", path);
+                                ffmpeg_arg = Some(path);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 2. Fallback to dev paths if not found
+    if ffmpeg_arg.is_none() {
+        let possible_paths = vec![
+            PathBuf::from("ffmpeg.exe"),
+            PathBuf::from("src-tauri/ffmpeg.exe"),
+            PathBuf::from("../src-tauri/ffmpeg.exe"),
+            PathBuf::from("ffmpeg-x86_64-pc-windows-msvc.exe"),
+        ];
+        for p in possible_paths {
+            if let Ok(abs_path) = std::fs::canonicalize(&p) {
+                if abs_path.exists() {
+                    println!("Found ffmpeg (dev) at: {:?}", abs_path);
+                    ffmpeg_arg = Some(abs_path);
+                    break;
+                }
             }
         }
     }
@@ -266,40 +330,6 @@ fn try_ytdlp_download(
     // Note: We rely on yt-dlp finding ffmpeg in the same directory or PATH
     // Args are defined below after sidecar resolution
 
-
-    // 2. Spawn Sidecar (MANUAL RESOLUTION to bypass Tauri sidecar bug)
-    let sidecar_filename = "yt-dlp-x86_64-pc-windows-msvc.exe";
-    let mut sidecar_path = PathBuf::from(sidecar_filename);
-    
-    // Try to find it in known locations
-    if let Ok(cwd) = std::env::current_dir() {
-        let p1 = cwd.join("src-tauri").join(sidecar_filename);
-        let p2 = cwd.join(sidecar_filename);
-        
-        if p1.exists() { 
-            sidecar_path = p1; 
-        } else if p2.exists() { 
-            sidecar_path = p2; 
-        } else {
-             // Fallback to trying to find it in the resources directory if packaged
-             // But for dev, p1 or p2 should work.
-             println!("WARNING: Could not find sidecar in standard dev locations. Using default: {:?}", sidecar_path);
-        }
-    }
-    
-    // Ensure we have an absolute path if possible
-    if let Ok(abs) = std::fs::canonicalize(&sidecar_path) {
-        sidecar_path = abs;
-    }
-
-    println!("DEBUG: Attempting to spawn yt-dlp via Command::new...");
-    
-    // Use Command::new with the resolved path
-    // On Windows, we might need to be careful with UNC paths if canonicalize adds \\?\.
-    // But Command::new usually handles it.
-    // let command = Command::new(sidecar_path.to_string_lossy().to_string());
-
-    // RESTORE REAL ARGS
     // RESTORE REAL ARGS
     let mut args = vec![
         url.clone(),
@@ -327,147 +357,159 @@ fn try_ytdlp_download(
         args.push("mp3".to_string());
     }
 
-    println!("DEBUG: Sidecar found. Spawning with args: {:?}", args);
+    println!("DEBUG: Spawning yt-dlp sidecar with args: {:?}", args);
 
     let window_clone = window.clone();
     let url_clone = url.clone();
     let active_downloads_clone = active_downloads.clone();
-    // FIX: Strip UNC prefix from executable path too, just in case
-    let sidecar_path_str = strip_unc(sidecar_path.clone());
 
-    // Use std::thread to avoid blocking the async runtime, and use std::process for reliable piping
-    std::thread::spawn(move || {
-        println!("DEBUG: Starting std::process::Command for {}", url_clone);
-        println!("DEBUG: Executing binary: {}", sidecar_path_str);
+    // Use Tauri's async runtime to handle the sidecar
+    tauri::async_runtime::spawn(async move {
+        println!("DEBUG: Starting Command::new_sidecar for {}", url_clone);
         
-        // const CREATE_NO_WINDOW: u32 = 0x08000000;
-        let child = std::process::Command::new(sidecar_path_str)
-            .args(args)
-            .env("PYTHONUNBUFFERED", "1") // Force unbuffered output
-            .stdin(std::process::Stdio::null()) // CRITICAL: Prevent waiting for input
-            .stdout(std::process::Stdio::piped()) // RESTORED: Capture output for UI
-            .stderr(std::process::Stdio::piped()) // RESTORED: Capture errors for UI
-            // .creation_flags(CREATE_NO_WINDOW) // DEBUG: Let window show if needed
-            .spawn();
-
-        match child {
-            Ok(mut child) => {
-                println!("DEBUG: Child spawned, capturing stdout and stderr...");
-                let stdout = child.stdout.take().unwrap();
-                let stderr = child.stderr.take().unwrap();
-
-                let window_clone_stderr = window_clone.clone();
-                let url_clone_stderr = url_clone.clone();
-
-                // Spawn thread for stderr
-                std::thread::spawn(move || {
-                    let reader = std::io::BufReader::new(stderr);
-                    for line in reader.lines() {
-                        match line {
-                            Ok(line) => {
-                                // CLEAN LOGS: Only show real errors as DL_ERR
-                                if line.contains("WARNING") || line.contains("[debug]") || line.contains("[youtube]") || line.contains("[info]") {
-                                    println!("DEBUG: {}", line);
-                                } else {
-                                    println!("DL_ERR: {}", line);
-                                }
-                                
-                                // Also try to parse progress from stderr
-                                if line.contains("[download]") && line.contains("%") {
-                                    if let Some(pct) = extract_percent(&line) {
-                                        let _ = window_clone_stderr.emit("download_progress", Payload {
-                                            url: url_clone_stderr.clone(),
-                                            progress: pct,
-                                            status: "downloading".to_string(),
-                                            filename: None,
-                                        });
-                                    }
-                                }
-                            }
-                            Err(e) => println!("DL_ERR_READ_FAIL: {}", e),
-                        }
-                    }
-                });
-
-                let reader = std::io::BufReader::new(stdout);
-                let mut captured_filename: Option<String> = None;
-
-                // Read stdout line by line
-                for line in reader.lines() {
-                    match line {
-                        Ok(line) => {
-                            println!("DL_OUT: {}", line);
-                            
-                            // Capture filename
-                            if line.contains("[download]") {
-                                if line.contains("Destination:") {
-                                    // Format: [download] Destination: C:\path\to\file.mp4
-                                    if let Some(idx) = line.find("Destination: ") {
-                                        let path = line[idx + 13..].trim().to_string();
-                                        captured_filename = Some(path);
-                                    }
-                                } else if line.contains("has already been downloaded") {
-                                    // Format: [download] C:\path\to\file.mp4 has already been downloaded
-                                    if let Some(start_idx) = line.find("[download] ") {
-                                        if let Some(end_idx) = line.find(" has already been downloaded") {
-                                            let path = line[start_idx + 11..end_idx].trim().to_string();
-                                            captured_filename = Some(path);
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Parse progress
-                            if line.contains("[download]") && line.contains("%") {
-                                if let Some(pct) = extract_percent(&line) {
-                                    let _ = window_clone.emit("download_progress", Payload {
-                                        url: url_clone.clone(),
-                                        progress: pct,
-                                        status: "downloading".to_string(),
-                                        filename: None,
-                                    });
-                                }
-                            }
-                        }
-                        Err(e) => println!("DL_OUT_READ_FAIL: {}", e),
-                    }
-                }
-                
-                // Wait for exit
-                let status = child.wait();
-                println!("DEBUG: Process finished with status: {:?}", status);
-                
-                active_downloads_clone.lock().unwrap().remove(&url_clone);
-                
-                // If we captured a filename, it means success (even if it was already downloaded)
-                // If it was already downloaded, we might not have sent 100% progress yet.
-                if captured_filename.is_some() {
-                     let _ = window_clone.emit("download_progress", Payload {
-                        url: url_clone.clone(),
-                        progress: 100.0,
-                        status: "downloading".to_string(),
-                        filename: None,
-                    });
-                }
-
-                let _ = window_clone.emit("download_complete", Payload {
-                    url: url_clone,
-                    progress: 100.0,
-                    status: "completed".to_string(),
-                    filename: captured_filename,
-                });
-            }
+        let command = match Command::new_sidecar("yt-dlp") {
+            Ok(cmd) => cmd,
             Err(e) => {
-                println!("Failed to spawn std::process: {}", e);
+                println!("Failed to create sidecar command: {}", e);
                 active_downloads_clone.lock().unwrap().remove(&url_clone);
                 let _ = window_clone.emit("download_error", Payload {
                     url: url_clone,
                     progress: 0.0,
-                    status: format!("Failed to start download: {}", e),
+                    status: format!("Failed to create downloader process: {}", e),
                     filename: None,
                 });
+                return;
+            }
+        };
+
+        let (mut rx, _child) = match command.args(args).spawn() {
+            Ok(res) => res,
+            Err(e) => {
+                println!("Failed to spawn sidecar: {}", e);
+                active_downloads_clone.lock().unwrap().remove(&url_clone);
+                let _ = window_clone.emit("download_error", Payload {
+                    url: url_clone,
+                    progress: 0.0,
+                    status: format!("Failed to start downloader: {}", e),
+                    filename: None,
+                });
+                return;
+            }
+        };
+
+        println!("DEBUG: Child spawned, capturing output...");
+        
+        let mut captured_filename: Option<String> = None;
+
+        while let Some(event) = rx.recv().await {
+            match event {
+                CommandEvent::Stdout(line) => {
+                    println!("DL_OUT: {}", line);
+                    
+                    // Capture filename
+                    // We need to handle multiple stages: [download], [Merger], [ExtractAudio]
+                    // The LAST one reported is the final file we want.
+                    
+                    if line.contains("Destination:") {
+                        // 1. Standard Download
+                        if line.contains("[download]") {
+                            if let Some(idx) = line.find("Destination: ") {
+                                let path = line[idx + 13..].trim().to_string();
+                                captured_filename = Some(path);
+                            }
+                        } 
+                        // 2. Audio Extraction (e.g. webm -> mp3)
+                        else if line.contains("[ExtractAudio]") {
+                            if let Some(idx) = line.find("Destination: ") {
+                                let path = line[idx + 13..].trim().to_string();
+                                println!("DEBUG: Captured Audio Output: {}", path);
+                                captured_filename = Some(path);
+                            }
+                        }
+                    }
+                    
+                    // 3. Merger (e.g. video+audio -> mp4)
+                    // Output: [Merger] Merging formats into "C:\path\to\file.mp4"
+                    if line.contains("[Merger]") && line.contains("Merging formats into") {
+                         if let Some(start) = line.find("\"") {
+                             if let Some(end) = line.rfind("\"") {
+                                 if end > start {
+                                     let path = line[start+1..end].to_string();
+                                     println!("DEBUG: Captured Merged Output: {}", path);
+                                     captured_filename = Some(path);
+                                 }
+                             }
+                         }
+                    }
+
+                    if line.contains("[download]") {
+                        if line.contains("has already been downloaded") {
+                            // Format: [download] C:\path\to\file.mp4 has already been downloaded
+                            if let Some(start_idx) = line.find("[download] ") {
+                                if let Some(end_idx) = line.find(" has already been downloaded") {
+                                    let path = line[start_idx + 11..end_idx].trim().to_string();
+                                    captured_filename = Some(path);
+                                }
+                            }
+                        }
+                    }
+
+                    // Parse progress
+                    if line.contains("[download]") && line.contains("%") {
+                        if let Some(pct) = extract_percent(&line) {
+                            let _ = window_clone.emit("download_progress", Payload {
+                                url: url_clone.clone(),
+                                progress: pct,
+                                status: "downloading".to_string(),
+                                filename: None,
+                            });
+                        }
+                    }
+                }
+                CommandEvent::Stderr(line) => {
+                    // CLEAN LOGS: Only show real errors as DL_ERR
+                    if line.contains("WARNING") || line.contains("[debug]") || line.contains("[youtube]") || line.contains("[info]") {
+                        println!("DEBUG: {}", line);
+                    } else {
+                        println!("DL_ERR: {}", line);
+                    }
+                    
+                    // Also try to parse progress from stderr (yt-dlp sometimes writes progress here)
+                    if line.contains("[download]") && line.contains("%") {
+                        if let Some(pct) = extract_percent(&line) {
+                            let _ = window_clone.emit("download_progress", Payload {
+                                url: url_clone.clone(),
+                                progress: pct,
+                                status: "downloading".to_string(),
+                                filename: None,
+                            });
+                        }
+                    }
+                }
+                _ => {}
             }
         }
+        
+        println!("DEBUG: Process finished");
+        
+        active_downloads_clone.lock().unwrap().remove(&url_clone);
+        
+        // If we captured a filename, it means success (even if it was already downloaded)
+        if captured_filename.is_some() {
+             let _ = window_clone.emit("download_progress", Payload {
+                url: url_clone.clone(),
+                progress: 100.0,
+                status: "downloading".to_string(),
+                filename: None,
+            });
+        }
+
+        let _ = window_clone.emit("download_complete", Payload {
+            url: url_clone,
+            progress: 100.0,
+            status: "completed".to_string(),
+            filename: captured_filename,
+        });
     });
 
     Ok("Download started".to_string())
@@ -521,25 +563,18 @@ struct VideoFormat {
 async fn get_video_metadata(url: String) -> Result<VideoMetadata, String> {
     println!("DEBUG: Fetching metadata for {}", url);
     
-    // Resolve sidecar path (same logic as download_video)
-    let sidecar_filename = "yt-dlp-x86_64-pc-windows-msvc.exe";
-    let mut sidecar_path = PathBuf::from(sidecar_filename);
-    if let Ok(cwd) = std::env::current_dir() {
-        let p1 = cwd.join("src-tauri").join(sidecar_filename);
-        let p2 = cwd.join(sidecar_filename);
-        if p1.exists() { sidecar_path = p1; } else if p2.exists() { sidecar_path = p2; }
-    }
-    
-    let output = std::process::Command::new(sidecar_path)
+    // Use Tauri sidecar for robust path resolution in production
+    let output = Command::new_sidecar("yt-dlp")
+        .map_err(|e| format!("Failed to create sidecar command: {}", e))?
         .args(&["--dump-json", "--no-playlist", &url])
         .output()
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("Failed to execute sidecar: {}", e))?;
 
     if !output.status.success() {
-        return Err(String::from_utf8_lossy(&output.stderr).to_string());
+        return Err(output.stderr);
     }
 
-    let json_str = String::from_utf8_lossy(&output.stdout);
+    let json_str = output.stdout;
     let json: serde_json::Value = serde_json::from_str(&json_str).map_err(|e| e.to_string())?;
 
     let mut formats = Vec::new();
@@ -712,7 +747,7 @@ async fn export_files(payload: ExportPayload) -> Result<ExportResult, String> {
         
         if !temp_pathbuf.exists() {
             println!("[BACKEND Export] ⚠️ File not found: {}", temp_path);
-            continue;
+            return Err(format!("Source file not found: {}. Please try downloading again.", temp_path));
         }
         
         let ext = temp_pathbuf.extension().and_then(|s| s.to_str()).unwrap_or("");
@@ -737,8 +772,23 @@ async fn export_files(payload: ExportPayload) -> Result<ExportResult, String> {
             println!("[BACKEND Export] ⚙️ Using FFmpeg for processing");
             
             // Build FFmpeg command
-            let output_filename = format!("{}.{}", base_name, target_format);
-            let dest_path = output_dir.join(&output_filename);
+            // ENHANCEMENT: Smart Naming to prevent overwrites
+            // If trim is used, append trim range to filename
+            let mut output_filename = if let Some(trim) = &payload.trim {
+                format!("{}_trim_{}-{}.{}", base_name, trim.start, trim.end, target_format)
+            } else {
+                format!("{}.{}", base_name, target_format)
+            };
+            
+            // Check for duplicates and auto-increment
+            let mut dest_path = output_dir.join(&output_filename);
+            let mut counter = 1;
+            while dest_path.exists() {
+                let stem = PathBuf::from(&output_filename).file_stem().unwrap().to_string_lossy().to_string();
+                let new_name = format!("{}_({}).{}", stem, counter, target_format);
+                dest_path = output_dir.join(&new_name);
+                counter += 1;
+            }
             
             let mut args = vec!["-i".to_string(), temp_path.clone()];
             
@@ -825,7 +875,18 @@ async fn export_files(payload: ExportPayload) -> Result<ExportResult, String> {
             }
             
             let filename = temp_pathbuf.file_name().unwrap();
-            let dest_path = output_dir.join(filename);
+            let mut dest_path = output_dir.join(filename);
+            
+            // Check for duplicates and auto-increment
+            let mut counter = 1;
+            while dest_path.exists() {
+                let stem = temp_pathbuf.file_stem().unwrap().to_string_lossy().to_string();
+                let ext = temp_pathbuf.extension().unwrap().to_string_lossy().to_string();
+                let new_name = format!("{}_({}).{}", stem, counter, ext);
+                dest_path = output_dir.join(&new_name);
+                counter += 1;
+            }
+            
             std::fs::copy(temp_path, &dest_path)
                 .map_err(|e| format!("Failed to copy file: {}", e))?;
             
@@ -841,20 +902,20 @@ async fn export_files(payload: ExportPayload) -> Result<ExportResult, String> {
 }
 
 fn main() {
-    // 🔒 SECURITY LAYER 1: Anti-Debug Check
-    if security::check_debugger() || security::check_debugger_processes() {
-        println!("⚠️ Security violation detected");
-        std::process::exit(0);
-    }
+    // 🔒 SECURITY LAYER 1: Anti-Debug Check (DISABLED for Stability)
+    // if security::check_debugger() || security::check_debugger_processes() {
+    //     println!("⚠️ Security violation detected");
+    //     std::process::exit(0);
+    // }
     
-    // 🔒 SECURITY LAYER 2: Integrity Check
-    if !security::verify_integrity() {
-        println!("⚠️ Binary integrity check failed");
-        std::process::exit(0);
-    }
+    // 🔒 SECURITY LAYER 2: Integrity Check (DISABLED for Stability)
+    // if !security::verify_integrity() {
+    //     println!("⚠️ Binary integrity check failed");
+    //     std::process::exit(0);
+    // }
     
-    // 🔒 SECURITY LAYER 3: Start Continuous Monitoring
-    security::start_security_monitor();
+    // 🔒 SECURITY LAYER 3: Start Continuous Monitoring (DISABLED for Stability)
+    // security::start_security_monitor();
     
     // Initialize orchestrator with ENCRYPTED Cloudflare Worker URL
     let mut orch = orchestrator::DownloadOrchestrator::new();
@@ -887,7 +948,8 @@ fn main() {
             check_ad_required,
             request_download_token,
             authorize_download,
-            export_files
+            export_files,
+            open_folder
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
