@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, User, Zap, Shield, LogOut, Lock, LayoutDashboard, Settings, CreditCard, History, ChevronRight, Mail, UserCircle, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, User, Zap, Shield, LogOut, Lock, LayoutDashboard, Settings, CreditCard, History, ChevronRight, Mail, UserCircle, Eye, EyeOff, AlertCircle, CheckCircle, Trash2 } from 'lucide-react';
 import { proAuth, type UserStatus } from '../services/ProAuth';
 import { User as FirebaseUser } from 'firebase/auth';
 import './LoginDashboard.css';
@@ -53,23 +53,10 @@ export default function LoginDashboard({ onClose }: LoginDashboardProps) {
     setAuthError('');
     
     try {
-      // Use redirect method directly - more reliable than popup
-      await proAuth.signInWithRedirect();
-      // Page will redirect to Google, no need for timeout
+      // Use smart sign in (Popup -> Redirect fallback)
+      await proAuth.signIn();
     } catch (e: any) {
       setAuthError(e.message || "Login Failed. Please try again.");
-      setAuthLoading(false);
-    }
-  };
-
-  const handleRedirectLogin = async () => {
-    setAuthLoading(true);
-    setAuthError('');
-    try {
-      await proAuth.signInWithRedirect();
-      // Page will redirect, no need for success message
-    } catch (e: any) {
-      setAuthError(e.message || "Redirect login failed.");
       setAuthLoading(false);
     }
   };
@@ -125,6 +112,26 @@ export default function LoginDashboard({ onClose }: LoginDashboardProps) {
   const handleLogout = async () => {
     await proAuth.signOut();
     onClose();
+  };
+
+  // Helper for safe image loading
+  const UserAvatar = ({ user }: { user: FirebaseUser }) => {
+    const [error, setError] = useState(false);
+    
+    if (user.photoURL && !error) {
+      return (
+        <img 
+          src={user.photoURL} 
+          alt="Profile" 
+          className="profile-img"
+          onError={(e) => {
+            setError(true);
+            e.currentTarget.style.display = 'none'; // Double safety
+          }} 
+        />
+      );
+    }
+    return <User size={24} />;
   };
 
   return (
@@ -238,10 +245,6 @@ export default function LoginDashboard({ onClose }: LoginDashboardProps) {
                   </div>
                   
                   <p className="auth-note">Guest access has limited features. Sign in to save your progress.</p>
-                  
-                  <button className="trouble-link" onClick={handleRedirectLogin} disabled={authLoading}>
-                    Trouble logging in? Try redirect method →
-                  </button>
                 </>
               ) : (
                 /* Email Login/Signup Form */
@@ -308,61 +311,141 @@ export default function LoginDashboard({ onClose }: LoginDashboardProps) {
             </div>
           ) : (
             <div className="user-view">
-              <header className="content-header">
-                <div className="user-welcome">
-                  <div className="avatar-small">
-                    {user.photoURL ? <img src={user.photoURL} alt="User" /> : <User size={20} />}
-                  </div>
-                  <div>
-                    <h1>Welcome{user.displayName ? `, ${user.displayName.split(' ')[0]}` : ' back'}!</h1>
-                    <p className="user-email">{user.email || (user.isAnonymous ? 'Guest User' : 'No email')}</p>
-                  </div>
-                </div>
-                <span className={`plan-badge ${user.isAnonymous ? 'guest' : ''}`}>
-                  {status === 'god_mode' ? 'GOD MODE' : (user.isAnonymous ? 'GUEST' : 'PRO PLAN')}
-                </span>
-              </header>
+              {activeTab === 'overview' && (
+                <>
+                  <header className="content-header">
+                    <div className="user-welcome">
+                      <div className="avatar-small">
+                        <UserAvatar user={user} />
+                      </div>
+                      <div>
+                        <h1>Welcome{user.displayName ? `, ${user.displayName.split(' ')[0]}` : ' back'}!</h1>
+                        <p className="user-email">{user.email || (user.isAnonymous ? 'Guest User' : 'No email')}</p>
+                      </div>
+                    </div>
+                    <div className="header-badges">
+                      <span className={`plan-badge ${user.isAnonymous ? 'guest' : ''}`}>
+                        {status === 'god_mode' ? 'GOD MODE' : (user.isAnonymous ? 'GUEST' : 'PRO PLAN')}
+                      </span>
+                    </div>
+                  </header>
 
-              {user.isAnonymous && (
-                <div className="guest-upgrade-banner">
-                  <p>🔒 You're browsing as a guest. Sign in to unlock all features and save your progress.</p>
-                  <button onClick={() => { proAuth.signOut(); }}>Upgrade Account</button>
+                  {user.isAnonymous && (
+                    <div className="guest-upgrade-banner">
+                      <p>🔒 You're browsing as a guest. Sign in to unlock all features and save your progress.</p>
+                      <button onClick={() => { proAuth.signOut(); }}>Upgrade Account</button>
+                    </div>
+                  )}
+
+                  <div className="stats-row">
+                    <div className="stat-card">
+                      <label>Daily Credits</label>
+                      <div className="stat-value">
+                        {status === 'god_mode' ? '∞' : (user.isAnonymous ? '3' : credits)}
+                        <span className="stat-total">/{user.isAnonymous ? '3' : '10'}</span>
+                      </div>
+                      <div className="stat-bar">
+                        <div className="stat-fill" style={{ width: status === 'god_mode' ? '100%' : `${(Number(credits)/10)*100}%` }}></div>
+                      </div>
+                    </div>
+                    <div className="stat-card">
+                      <label>Account Status</label>
+                      <div className={`stat-value ${user.isAnonymous ? '' : 'ok'}`}>{user.isAnonymous ? 'Limited' : 'Active'}</div>
+                      <div className="stat-sub">{user.isAnonymous ? 'Anonymous Session' : 'Verified Identity'}</div>
+                    </div>
+                  </div>
+
+                  <div className="action-section">
+                    <h3>Quick Actions</h3>
+                    <div className="action-grid">
+                      <button className="action-card">
+                        <History size={20} />
+                        <span>View History</span>
+                        <ChevronRight size={16} className="arrow" />
+                      </button>
+                      <button className="action-card">
+                        <Shield size={20} />
+                        <span>Security Log</span>
+                        <ChevronRight size={16} className="arrow" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'billing' && (
+                <div className="tab-content fade-in">
+                  <h2 className="tab-title">Plan & Billing</h2>
+                  <div className="billing-card glass">
+                    <div className="plan-header">
+                      <div>
+                        <h3>Free Tier</h3>
+                        <p>Current Plan</p>
+                      </div>
+                      <span className="badge active">Active</span>
+                    </div>
+                    <ul className="plan-features">
+                      <li><CheckCircle size={16} /> 10 AI Credits / Day</li>
+                      <li><CheckCircle size={16} /> Basic Word Decoding</li>
+                      <li><CheckCircle size={16} /> Community Support</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="billing-card glass disabled">
+                    <div className="plan-header">
+                      <div>
+                        <h3>Pro Hacker</h3>
+                        <p>Coming Soon</p>
+                      </div>
+                      <span className="badge">Soon</span>
+                    </div>
+                    <ul className="plan-features">
+                      <li><Zap size={16} /> Unlimited Credits</li>
+                      <li><Zap size={16} /> GPT-4 Turbo Access</li>
+                      <li><Zap size={16} /> Priority Queue</li>
+                    </ul>
+                  </div>
                 </div>
               )}
 
-              <div className="stats-row">
-                <div className="stat-card">
-                  <label>Daily Credits</label>
-                  <div className="stat-value">
-                    {status === 'god_mode' ? '∞' : (user.isAnonymous ? '3' : credits)}
-                    <span className="stat-total">/{user.isAnonymous ? '3' : '10'}</span>
+              {activeTab === 'settings' && (
+                <div className="tab-content fade-in">
+                  <h2 className="tab-title">Settings</h2>
+                  <div className="settings-group">
+                    <h3>Account</h3>
+                    <div className="setting-item">
+                      <div>
+                        <label>Email</label>
+                        <p>{user.email || 'Anonymous'}</p>
+                      </div>
+                    </div>
+                    <div className="setting-item">
+                      <div>
+                        <label>User ID</label>
+                        <p className="mono">{user.uid.slice(0,8)}...</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="stat-bar">
-                    <div className="stat-fill" style={{ width: status === 'god_mode' ? '100%' : `${(Number(credits)/10)*100}%` }}></div>
-                  </div>
-                </div>
-                <div className="stat-card">
-                  <label>Account Status</label>
-                  <div className={`stat-value ${user.isAnonymous ? '' : 'ok'}`}>{user.isAnonymous ? 'Limited' : 'Active'}</div>
-                  <div className="stat-sub">{user.isAnonymous ? 'Anonymous Session' : 'Verified Identity'}</div>
-                </div>
-              </div>
 
-              <div className="action-section">
-                <h3>Quick Actions</h3>
-                <div className="action-grid">
-                  <button className="action-card">
-                    <History size={20} />
-                    <span>View History</span>
-                    <ChevronRight size={16} className="arrow" />
-                  </button>
-                  <button className="action-card">
-                    <Shield size={20} />
-                    <span>Security Log</span>
-                    <ChevronRight size={16} className="arrow" />
-                  </button>
+                  <div className="settings-group">
+                    <h3>Data & Privacy</h3>
+                    <button className="btn-danger-outline" onClick={() => {
+                      if(confirm('Clear local history?')) {
+                        localStorage.removeItem('cortex_history');
+                        alert('History cleared.');
+                      }
+                    }}>
+                      <Trash2 size={16} /> Clear Local History
+                    </button>
+                  </div>
+                  
+                  <div className="settings-group">
+                    <button className="btn-danger-full" onClick={handleLogout}>
+                      <LogOut size={16} /> Sign Out
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </main>

@@ -26,24 +26,16 @@ class ProAuthService {
         // Check for redirect result on page load - MUST complete before anything else
         console.log("🔍 Checking for redirect result...");
         
-        // Add to localStorage for debugging
-        localStorage.setItem('auth_debug', 'Checking redirect...');
-        
         getRedirectResult(auth)
             .then((result) => {
                 if (result?.user) {
                     console.log("✅ Redirect login successful!", result.user.email);
-                    localStorage.setItem('auth_debug', `SUCCESS: ${result.user.email}`);
-                    alert(`Login Success! ${result.user.email}`); // Temporary debug
                 } else {
                     console.log("ℹ️ No redirect result (normal page load)");
-                    localStorage.setItem('auth_debug', 'No redirect result');
                 }
             })
             .catch((error) => {
                 console.error("❌ Redirect result error:", error.code, error.message);
-                localStorage.setItem('auth_debug', `ERROR: ${error.code}`);
-                alert(`Login Error: ${error.message}`); // Temporary debug
             });
 
         onAuthStateChanged(auth, (user) => {
