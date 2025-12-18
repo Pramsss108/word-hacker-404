@@ -495,6 +495,13 @@ if (isTauri) {
 
   // System Dialogs & File Operations
   window.systemDialogs = {
+    saveFile: async (options) => {
+      const { save } = window.__TAURI__.dialog;
+      return save({
+        defaultPath: options.defaultPath,
+        filters: options.filters
+      });
+    },
     openFolder: async (path) => {
       // TODO: Implement open folder in Rust
       console.log('Open folder:', path);
