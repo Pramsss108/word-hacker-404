@@ -93,7 +93,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
       {
         id: 'ai-brain',
         name: 'Central AI Brain',
-        summary: 'Powered by OpenAI GPT-OSS-120B. The Master Intelligence.',
+        summary: 'Powered by Llama 3.3 70B (Uncensored Cloud Core). The Master Intelligence.',
         icon: <Brain size={22} aria-hidden />,
         status: 'open',
         badge: brainBadge,

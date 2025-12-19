@@ -12,6 +12,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
+import CentralBrainChat from './components/CentralBrainChat'
 import { getSharedArrayBufferWatchdogReport } from '../raw'
 
 interface ToolBannerMeta {
@@ -64,6 +65,15 @@ const rawSteps: RawProcessStep[] = [
 function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
   const toolList = useMemo<ToolBannerMeta[]>(() => ([
+    {
+      id: 'central-brain',
+      name: 'Central AI Brain',
+      summary: 'Powered by Llama 3.3 70B (Uncensored Cloud Core). The Master Intelligence.',
+      icon: <Cpu size={22} aria-hidden />,
+      status: 'open',
+      badge: 'GOD MODE',
+      motionClass: 'ai-circuits',
+    },
     {
       id: 'raw-decoder',
       name: 'RAW Decoder Lab',
@@ -130,6 +140,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   ]), [])
 
   const [rawOverlayOpen, setRawOverlayOpen] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
   const [rawStepIndex, setRawStepIndex] = useState(0)
 
   const cycleRawStep = useCallback((direction: 'prev' | 'next') => {
@@ -182,7 +193,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
                 <button
                   className={`btn ${tool.status === 'open' ? 'cta-open' : ''}`}
                   disabled={tool.status !== 'open'}
-                  onClick={() => setRawOverlayOpen(true)}
+                  onClick={() => {
+                    if (tool.id === 'central-brain') setChatOpen(true)
+                    else if (tool.id === 'raw-decoder') setRawOverlayOpen(true)
+                  }}
                 >
                   {tool.status === 'open' ? 'Open Tool' : 'Coming Soon'}
                 </button>
@@ -197,6 +211,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         <p>Built like a pro. React + TypeScript + Vite. Optimized for touch.</p>
         <small className="mono" aria-label="terminal-log">terminal-log: tools deck primed</small>
       </footer>
+
+      {chatOpen && (
+        <CentralBrainChat onClose={() => setChatOpen(false)} />
+      )}
 
       {rawOverlayOpen && (
         <div className="tools-overlay" role="dialog" aria-modal="true">

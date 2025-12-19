@@ -3450,41 +3450,40 @@ ${details.innerHTML}
       // We'll use the save dialog to get a path
       let finalDestination = destination
       
-      // If no destination set, or if we want to force "Save As" behavior
-      // For batch exports, we might want to pick a folder. For single files, a file path.
-      // Since exportFiles backend handles directory creation, let's ask for a DIRECTORY.
-      
-      try {
-        const { dialog } = window.__TAURI__
-        // If we have multiple files, we pick a folder. If single file, we could pick a file, 
-        // but the backend logic seems designed to take a directory and output files there.
-        // Let's stick to "Pick a Folder" for consistency.
-        
-        const selectedPath = await dialog.open({
-          directory: true,
-          multiple: false,
-          defaultPath: destination || undefined,
-          title: 'Select Export Folder'
-        })
-        
-        if (selectedPath) {
-          finalDestination = selectedPath
-          exportPayload.destination = selectedPath
-          // Update state for next time
-          setDestination(selectedPath)
-        } else {
-          // User cancelled dialog
-          console.log('[Export] User cancelled save dialog')
-          updateExportMessage('Export cancelled', { variant: 'info' })
-          exportConfirm.disabled = false
-          exportConfirm.textContent = 'Export'
-          exportConfirm.style.opacity = '1'
-          if (activeHeartbeat) clearInterval(activeHeartbeat)
-          return
+      // Only ask if no destination is set
+      if (!finalDestination) {
+        try {
+          const { dialog } = window.__TAURI__
+          // If we have multiple files, we pick a folder. If single file, we could pick a file, 
+          // but the backend logic seems designed to take a directory and output files there.
+          // Let's stick to "Pick a Folder" for consistency.
+          
+          const selectedPath = await dialog.open({
+            directory: true,
+            multiple: false,
+            defaultPath: undefined,
+            title: 'Select Export Folder'
+          })
+          
+          if (selectedPath) {
+            finalDestination = selectedPath
+            exportPayload.destination = selectedPath
+            // Update state for next time
+            setDestination(selectedPath)
+          } else {
+            // User cancelled dialog
+            console.log('[Export] User cancelled save dialog')
+            updateExportMessage('Export cancelled', { variant: 'info' })
+            exportConfirm.disabled = false
+            exportConfirm.textContent = 'Export'
+            exportConfirm.style.opacity = '1'
+            if (activeHeartbeat) clearInterval(activeHeartbeat)
+            return
+          }
+        } catch (dialogErr) {
+          console.warn('[Export] Dialog failed, falling back to default:', dialogErr)
+          // Continue with default destination if dialog fails
         }
-      } catch (dialogErr) {
-        console.warn('[Export] Dialog failed, falling back to default:', dialogErr)
-        // Continue with default destination if dialog fails
       }
 
       const result = await window.systemDialogs?.exportFiles(exportPayload)
@@ -3748,6 +3747,10 @@ const renderHistory = () => {
   
   historyList.innerHTML = history.map(item => {
     const statusMeta = getHistoryStatusMeta(item.status)
+    // Check if we have a valid export path to open
+    const canOpen = item.status === 'exported' && item.exportPath;
+    const escapedPath = canOpen ? item.exportPath.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
+    
     return `
       <div class="history-item" data-url="${item.url}">
         <div class="history-item-header">
@@ -3762,6 +3765,13 @@ const renderHistory = () => {
         </div>
         <div class="history-url">${item.url}</div>
         <div class="history-filename">${item.filename}</div>
+        ${canOpen ? `
+        <div class="history-actions" style="margin-top: 8px; display: flex; justify-content: flex-end;">
+           <button class="ghost-btn" onclick="event.stopPropagation(); window.downloader.openFolderLocation('${escapedPath}'); return false;" style="background: rgba(10, 255, 106, 0.1); color: #0aff6a; border: 1px solid #0aff6a; padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+             <span>📂</span> Open Folder
+           </button>
+        </div>
+        ` : ''}
       </div>
     `
   }).join('')

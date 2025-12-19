@@ -332,9 +332,31 @@ window.windowControls = {
     }
   },
   togglePin: async () => {
-    return false; 
+    try {
+      // Check current state (not directly available, so we toggle based on a local var or just set it)
+      // Since we don't track state here, let's assume the UI tracks it.
+      // But wait, the UI asks for the new state.
+      // Let's use a simple toggle logic if possible, or just return true/false.
+      // Tauri doesn't easily give "isAlwaysOnTop" sync.
+      // We'll assume the UI passes the DESIRED state? No, the UI calls togglePin().
+      
+      // Let's try to get the current state from the UI class if possible, or just toggle blindly.
+      // Better: Let's just toggle it.
+      // Actually, let's just set it to true if the button doesn't have 'active' class?
+      // The UI code: const pinned = await window.windowControls?.togglePin()
+      // if (typeof pinned === 'boolean') { pinBtn.classList.toggle('active', pinned) }
+      
+      // We'll use a static variable to track state since we can't easily query it sync
+      this._pinned = !this._pinned;
+      await appWindow.setAlwaysOnTop(this._pinned);
+      return this._pinned;
+    } catch (e) {
+      console.error('Pin failed:', e);
+      return false;
+    }
   }
 };
+window.windowControls._pinned = false;
 
 console.log('🚀 WH404 Bridge: Tauri Mode Activated');
 
@@ -348,7 +370,13 @@ window.systemDialogs = {
     });
   },
   openFolder: async (path) => {
-    console.log('Open folder:', path);
+    if (!path) return;
+    const { invoke } = window.__TAURI__.tauri;
+    try {
+      await invoke('open_folder', { path });
+    } catch (e) {
+      console.error('Failed to open folder:', e);
+    }
   },
   chooseFolder: async () => {
     const { open } = window.__TAURI__.dialog;

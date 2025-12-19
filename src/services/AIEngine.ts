@@ -27,14 +27,15 @@ class AIEngineService {
 
     /**
      * Send a message to the Central Brain
-     * Uses GPT-OSS-120B by default
+     * Uses Llama 3.3 70B by default
      */
-    async chat(messages: ChatMessage[], systemPrompt?: string): Promise<AIResponse> {
+    async chat(messages: ChatMessage[], systemPrompt?: string, mode: 'general' | 'security' | 'creative' = 'general'): Promise<AIResponse> {
         try {
             const payload = {
                 messages: messages,
                 system: systemPrompt || "You are a helpful AI assistant specialized in word games and coding.",
-                temperature: 0.7
+                temperature: mode === 'creative' ? 0.9 : 0.7,
+                mode: mode
             };
 
             const response = await fetch(`${BRAIN_URL}/v1/chat`, {

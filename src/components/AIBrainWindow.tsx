@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Mic, Volume2, StopCircle } from 'lucide-react'
+import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Mic, Volume2, StopCircle, Terminal, Unlock, Sparkles } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { aiEngine, type ChatMessage } from '../services/AIEngine'
@@ -19,11 +19,12 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
         return JSON.parse(saved);
       } catch (e) { console.error("Failed to load history", e) }
     }
-    return [{ role: 'assistant', content: "SYSTEM ONLINE. Connected to Central Neural Net (GPT-OSS-120B). Awaiting input..." }];
+    return [{ role: 'assistant', content: "SYSTEM ONLINE. Connected to Central Neural Net (Llama 3.3 70B Uncensored). Awaiting input..." }];
   })
 
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [mode, setMode] = useState<'general' | 'security' | 'creative'>('general')
 
   // Auth State
   const [authStatus, setAuthStatus] = useState<UserStatus>('loading');
@@ -128,7 +129,7 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
     setIsLoading(true)
 
     // B. AI Request
-    const result = await aiEngine.chat(messages.concat({ role: 'user', content: userMsg }))
+    const result = await aiEngine.chat(messages.concat({ role: 'user', content: userMsg }), undefined, mode)
 
     // C. Handle Result
     if (result.error) {
@@ -232,6 +233,31 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
           </div>
         </header>
 
+        {/* MODE SELECTOR */}
+        <div style={{ padding: '0 1.5rem 1rem', display: 'flex', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          <button 
+            className={`btn ${mode === 'general' ? 'cta-open' : 'ghost'}`}
+            onClick={() => setMode('general')}
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.8rem', background: mode === 'general' ? 'rgba(255,255,255,0.1)' : 'transparent' }}
+          >
+            <Terminal size={14} style={{ marginRight: '6px' }} /> General
+          </button>
+          <button 
+            className={`btn ${mode === 'security' ? 'cta-open' : 'ghost'}`}
+            onClick={() => setMode('security')}
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.8rem', borderColor: mode === 'security' ? '#ff3333' : undefined, color: mode === 'security' ? '#ff3333' : undefined, background: mode === 'security' ? 'rgba(255, 51, 51, 0.1)' : 'transparent' }}
+          >
+            <Unlock size={14} style={{ marginRight: '6px' }} /> Uncensored
+          </button>
+          <button 
+            className={`btn ${mode === 'creative' ? 'cta-open' : 'ghost'}`}
+            onClick={() => setMode('creative')}
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.8rem', background: mode === 'creative' ? 'rgba(168, 85, 247, 0.1)' : 'transparent' }}
+          >
+            <Sparkles size={14} style={{ marginRight: '6px' }} /> Creative
+          </button>
+        </div>
+
         {/* CHAT AREA */}
         <div className="ai-chat-viewport">
           {messages.map((m, i) => (
@@ -293,7 +319,7 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
             </button>
           </div>
           <div className="ai-footer-info">
-            Model: GPT-OSS-120B via Groq • {authStatus === 'god_mode' ? 'UNLIMITED' : 'FREE TIER'}
+            Model: Llama 3.3 70B (Uncensored Cloud Core) • {authStatus === 'god_mode' ? 'UNLIMITED' : 'FREE TIER'}
           </div>
         </footer>
 

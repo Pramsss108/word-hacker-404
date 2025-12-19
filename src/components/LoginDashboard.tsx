@@ -196,7 +196,7 @@ export default function LoginDashboard({ onClose }: LoginDashboardProps) {
                   <div className="feature-list">
                     <div className="feature">
                       <Zap size={16} className="f-icon" />
-                      <span>GPT-OSS-120B Access</span>
+                      <span>Llama 3.3 70B Access</span>
                     </div>
                     <div className="feature">
                       <History size={16} className="f-icon" />

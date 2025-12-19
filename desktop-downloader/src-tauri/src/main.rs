@@ -10,6 +10,8 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::io::BufRead;
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
 
 // New modules for advanced scraping
 mod orchestrator;
@@ -863,9 +865,16 @@ async fn export_files(payload: ExportPayload) -> Result<ExportResult, String> {
             println!("[BACKEND Export] 🎬 FFmpeg command: {:?} {:?}", ffmpeg_exe, args);
             
             // Execute FFmpeg
-            let output = std::process::Command::new(&ffmpeg_exe)
-                .args(&args)
-                .output()
+            let mut cmd = std::process::Command::new(&ffmpeg_exe);
+            cmd.args(&args);
+            
+            #[cfg(target_os = "windows")]
+            {
+                const CREATE_NO_WINDOW: u32 = 0x08000000;
+                cmd.creation_flags(CREATE_NO_WINDOW);
+            }
+
+            let output = cmd.output()
                 .map_err(|e| format!("Failed to execute FFmpeg: {}", e))?;
             
             if output.status.success() {

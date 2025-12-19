@@ -1528,36 +1528,22 @@ fn get_ollama_path() -> String {
 
 #[tauri::command]
 async fn check_ollama_status() -> Result<OllamaStatus, String> {
-    let ollama_bin = get_ollama_path();
+    // CLOUD BRAIN OVERRIDE:
+    // We are bypassing local Ollama checks because we are using the Cloud Brain.
+    // We return a "Virtual" model so the UI enables the chat interface.
     
-    // Check if installed
-    let installed = std::process::Command::new(&ollama_bin)
-        .arg("--version")
-        .output()
-        .is_ok();
-
-    if !installed {
-        return Ok(OllamaStatus {
-            installed: false,
-            models: vec![],
-            needs_setup: true,
-        });
-    }
-
-    // Check models
-    let models = get_ollama_models().await.unwrap_or_default();
-    // Allow mistral, llama3, dolphin-mistral, dolphin-llama3, etc.
-    let has_brain = models.iter().any(|m| 
-        m.contains("dolphin") || 
-        m.contains("mistral") || 
-        m.contains("llama3") || 
-        m.contains("gemma")
-    );
+    let cloud_model = OllamaModel {
+        name: "Llama 3.3 70B (Uncensored Cloud Core)".to_string(),
+        modified_at: "2025-12-20".to_string(),
+        size: 70000000000,
+        digest: "cloud-brain-llama3.3".to_string(),
+        details: serde_json::json!({ "format": "gguf", "family": "llama" }),
+    };
 
     Ok(OllamaStatus {
         installed: true,
-        models,
-        needs_setup: !has_brain,
+        models: vec![cloud_model],
+        needs_setup: false,
     })
 }
 
@@ -2423,61 +2409,47 @@ async fn ask_cortex_llm(
         }
     }
     
-    // 0. Model Selection
-    let model_to_use = if let Some(m) = model_name {
-        m // User selected
-    } else {
-        // Auto-Detect Best Model
-        let models_res = client.get("http://localhost:11434/api/tags")
-            .timeout(std::time::Duration::from_secs(2))
-            .send()
-            .await;
+    // 0. CLOUD BRAIN CONNECTION (Replaces Local Ollama)
+    // We bypass local model selection and go straight to the Uncensored Cloud Brain.
+    
+    let gateway_url = "https://ai-gateway.word-hacker-404.workers.dev/v1/chat";
+    let access_secret = "word-hacker-ai-secret";
 
-        match models_res {
-            Ok(res) => {
-                if res.status().is_success() {
-                    let tags: OllamaTagsResponse = res.json().await.unwrap_or_default();
-                    if let Some(preferred) = tags.models.iter().find(|m| m.name.contains("mistral") || m.name.contains("llama3")) {
-                         preferred.name.clone()
-                    } else if let Some(first) = tags.models.first() {
-                        first.name.clone()
-                    } else {
-                        "mistral".to_string() // Fallback
-                    }
-                } else {
-                    "mistral".to_string()
-                }
-            },
-            Err(_) => return Err("Ollama Connection Failed. Is the app running?".to_string())
-        }
-    };
+    // We append the system instructions to the user message because the Cloud Brain
+    // might override the system prompt in 'uncensored' mode.
+    // We want the 'uncensored' power BUT with the tool-use capabilities.
+    let full_prompt = format!("{}\n\nUser Query: {}", CORTEX_SYSTEM_PROMPT, query);
 
-    println!("🧠 [Cortex] Using Model: {}", model_to_use);
+    let payload = serde_json::json!({
+        "messages": [
+            { "role": "user", "content": full_prompt }
+        ],
+        "mode": "uncensored", // Use the powerful model
+        "temperature": 0.7
+    });
 
-    // 1. First Pass: Ask LLM (Is a tool needed?)
-    let payload = OllamaRequest {
-        model: model_to_use.clone(), // FIX: Clone here so we can use it again in pass 2
-        prompt: query.clone(),
-        stream: false, 
-        system: CORTEX_SYSTEM_PROMPT.to_string(),
-    };
+    println!("🧠 [Cortex] Contacting Cloud Brain (Uncensored)...");
 
-    // 1. First Pass
-    let res = client.post("http://localhost:11434/api/generate")
-        .timeout(std::time::Duration::from_secs(120)) 
+    let res = client.post(gateway_url)
+        .header("x-access-secret", access_secret)
+        .header("Content-Type", "application/json")
         .json(&payload)
         .send()
         .await
-        .map_err(|e| format!("Cortex Connect Error: {}", e))?;
+        .map_err(|e| format!("Cloud Brain Error: {}", e))?;
 
     if !res.status().is_success() {
-        let status = res.status();
-        let body = res.text().await.unwrap_or_else(|_| "No error details".to_string());
-        return Err(format!("Ollama Error {}: {}", status, body));
+        return Err(format!("Cloud Brain Failed: {}", res.status()));
     }
 
-    let body: OllamaResponse = res.json().await.map_err(|e| e.to_string())?;
-    let initial_response = body.response.trim().to_string();
+    let body: serde_json::Value = res.json().await.map_err(|e| e.to_string())?;
+    
+    // Parse Cloud Brain response
+    let initial_response = body["content"]
+        .as_str()
+        .unwrap_or("Error parsing response")
+        .trim()
+        .to_string();
 
     // 2. Check for Tool Invocation
     
@@ -2998,16 +2970,8 @@ async fn analyze_process_safety(proc_name: String, proc_path: String, memory_mb:
                 if let Some(preferred) = tags.models.iter().find(|m| m.name.contains("mistral") || m.name.contains("llama3")) {
                         preferred.name.clone()
                 } else if let Some(first) = tags.models.first() {
-                    first.name.clone()
-                } else {
-                    return Err("No AI models found. Please install a model in Settings.".to_string());
-                }
-            } else {
-                return Err("Ollama service not reachable.".to_string());
-            }
-        },
-        Err(_) => return Err("Ollama service is offline.".to_string())
-    };
+    let gateway_url = "https://ai-gateway.word-hacker-404.workers.dev/v1/chat";
+    let access_secret = "word-hacker-ai-secret";
 
     let prompt = format!(
         "Analyze this Windows process for security threats.
@@ -3019,35 +2983,26 @@ async fn analyze_process_safety(proc_name: String, proc_path: String, memory_mb:
         proc_name, proc_path, memory_mb
     );
 
-    let body = serde_json::json!({
-        "model": model_to_use,
-        "prompt": prompt,
-        "stream": false
+    let payload = serde_json::json!({
+        "messages": [
+            { "role": "user", "content": prompt }
+        ],
+        "mode": "security", // Use the security wrapper
+        "temperature": 0.3
     });
 
-    let res = client.post("http://localhost:11434/api/generate")
-        .json(&body)
+    let res = client.post(gateway_url)
+        .header("x-access-secret", access_secret)
+        .header("Content-Type", "application/json")
+        .json(&payload)
         .send()
         .await
         .map_err(|e| e.to_string())?;
 
     if res.status().is_success() {
-        let ollama_res: OllamaResponse = res.json().await.map_err(|e| e.to_string())?;
-        Ok(ollama_res.response)
-    } else {
-        Err(format!("AI Error: {}", res.status()))
-    }
-}
-
-/// NEW: AI Safety Check for File Deletion (FORENSIC LEVEL)
-#[tauri::command]
-async fn analyze_file_safety(path: String) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    let path_obj = std::path::Path::new(&path);
-    
-    // 1. Auto-Detect Best Model
-    let models_res = client.get("http://localhost:11434/api/tags")
-        .timeout(std::time::Duration::from_secs(2))
+        let body: serde_json::Value = res.json().await.map_err(|e| e.to_string())?;
+        let content = body["content"].as_str().unwrap_or("No response").to_string();
+        Ok(contentration::from_secs(2))
         .send()
         .await;
 
@@ -3061,14 +3016,9 @@ async fn analyze_file_safety(path: String) -> Result<String, String> {
                     first.name.clone()
                 } else {
                     return Err("No Ollama models found.".to_string());
-                }
-            } else {
-                return Err("Ollama not responding.".to_string());
-            }
-        },
-        Err(_) => return Err("Ollama Connection Failed.".to_string())
-    };
-
+    let gateway_url = "https://ai-gateway.word-hacker-404.workers.dev/v1/chat";
+    let access_secret = "word-hacker-ai-secret";
+    
     // 2. GATHER FORENSIC EVIDENCE (The "Super Power")
     let mut evidence = Vec::new();
     evidence.push(format!("PRIMARY TARGET PATH: {}", path));
@@ -3174,13 +3124,17 @@ async fn analyze_file_safety(path: String) -> Result<String, String> {
     );
 
     let payload = serde_json::json!({
-        "model": model_to_use,
-        "prompt": prompt,
-        "stream": false
+        "messages": [
+            { "role": "user", "content": prompt }
+        ],
+        "mode": "security", // Use the security wrapper
+        "temperature": 0.1
     });
 
     // 4. Send Request
-    let res = client.post("http://localhost:11434/api/generate")
+    let res = client.post(gateway_url)
+        .header("x-access-secret", access_secret)
+        .header("Content-Type", "application/json")
         .json(&payload)
         .send()
         .await
@@ -3191,24 +3145,7 @@ async fn analyze_file_safety(path: String) -> Result<String, String> {
     }
 
     let body: serde_json::Value = res.json().await.map_err(|e| e.to_string())?;
-    let response_text = body["response"].as_str().unwrap_or("No response").to_string();
-
-    Ok(response_text)
-}
-
-// ------------------------------------------------------------------
-// GOD MODE: DEEP STASIS ENGINE
-// ------------------------------------------------------------------
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct RegistryApp {
-    pub name: String,
-    pub install_location: String,
-    pub uninstall_string: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct GhostFolder {
+    let response_text = body["content
     pub path: String,
     pub name: String,
     pub size: u64,
