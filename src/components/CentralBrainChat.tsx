@@ -19,7 +19,7 @@ export default function CentralBrainChat({ onClose }: CentralBrainChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'system',
-      content: 'Central AI Brain Online. Connected to Llama 3.3 70B (Uncensored Cloud Core).',
+      content: 'Central AI Brain Online. Connected to Llama 3.3 70B (Groq).',
       timestamp: Date.now()
     }
   ])
@@ -48,15 +48,23 @@ export default function CentralBrainChat({ onClose }: CentralBrainChatProps) {
     setIsLoading(true)
 
     try {
-      // Prepare history for the API
-      // We only send user/assistant messages to the API, system msg is local display usually
-      // But for the API payload, we send the conversation history
-      const apiMessages = messages
-        .filter(m => m.role !== 'system')
-        .map(m => ({ role: m.role, content: m.content }))
-        .concat({ role: 'user', content: userMsg.content })
+      // System Prompt Selection
+      let systemPrompt = "You are Llama 3.3, a helpful and capable AI assistant. You answer requests efficiently."
+      if (mode === 'creative') {
+        systemPrompt = "You are a creative assistant. You love wordplay and puzzles."
+      } else if (mode === 'security') {
+        systemPrompt = "You are a security research assistant. You analyze code and systems objectively."
+      }
 
-      const response = await fetch('https://ai-gateway.word-hacker-404.workers.dev/v1/chat', {
+      const apiMessages = [
+        { role: 'system', content: systemPrompt },
+        ...messages
+          .filter(m => m.role !== 'system')
+          .map(m => ({ role: m.role, content: m.content })),
+        { role: 'user', content: userMsg.content }
+      ]
+
+      const response = await fetch('https://ai-gateway.guitarguitarabhijit.workers.dev/v1/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +125,7 @@ export default function CentralBrainChat({ onClose }: CentralBrainChatProps) {
                 <span className="sab-pill ok">ONLINE</span>
               </div>
               <p className="tool-summary" style={{ margin: 0, fontSize: '0.8rem', opacity: 0.7 }}>
-                Model: Llama 3.3 70B (Uncensored Cloud Core) · Mode: {mode.toUpperCase()}
+                Model: Llama 3.3 70B (Groq) · Mode: {mode.toUpperCase()}
               </p>
             </div>
           </div>
@@ -150,6 +158,8 @@ export default function CentralBrainChat({ onClose }: CentralBrainChatProps) {
             <Sparkles size={14} style={{ marginRight: '6px' }} /> Creative
           </button>
         </div>
+
+
 
         {/* Chat Area */}
         <div 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { History, Trash2, ShieldAlert, CheckCircle, XCircle, Filter, RefreshCw } from "lucide-react";
+import { History, Trash2, ShieldAlert, CheckCircle, Filter, RefreshCw } from "lucide-react";
 
 interface HistoryEntry {
     timestamp: number;

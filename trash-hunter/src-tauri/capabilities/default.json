@@ -7,6 +7,15 @@
   ],
   "permissions": [
     "core:default",
-    "opener:default"
+    "opener:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://ai-gateway.word-hacker-404.workers.dev/*"
+        }
+      ],
+      "deny": []
+    }
   ]
 }

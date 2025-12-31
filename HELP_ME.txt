@@ -1,0 +1,29 @@
+# 🆘 HELP ME - QUICK START GUIDE
+
+## 1. How to Run as a Developer (One Click)
+If you want to see the code running without installing anything:
+1. Double-click the file named **`RUN_DEV_MODE.bat`** in this folder.
+2. A black window will open (that's the server).
+3. The App should open automatically.
+4. If it doesn't, open your browser and go to: `http://localhost:1420`
+
+## 2. How to Install the Real App
+1. Go to the **`Release`** folder.
+2. Run the installer file (`.msi`).
+3. The app will be installed on your PC like any other software.
+4. You can find "Cyber Sentinel Edu" in your Start Menu.
+
+## 3. How to Fix "WSL Offline"
+If the app says "WSL Offline":
+1. Right-click `INIT_CYBER_SENTINEL.ps1` and select "Run with PowerShell".
+2. Wait for it to finish installing Kali Linux.
+3. Restart your computer.
+
+## 4. How to Use the "Jammer"
+1. Open the App.
+2. Click **START RECON**.
+3. Click on a target network.
+4. Click **WIFI JAMMER**.
+5. Watch the logs!
+
+Enjoy!

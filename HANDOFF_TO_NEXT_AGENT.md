@@ -26,12 +26,16 @@ I am handing off "Word Hacker 404". Here is the exact state of the project, what
     *   "God Mode" enabled for Admin.
 
 ## ⚠️ CRITICAL "GOTCHAS" (Don't Break These)
-1.  **Secrets (`.env`):**
+1.  **REALISM IS PRIORITY #1:**
+    *   **NO FAKE FEATURES.** We do not simulate "Cloud GPUs" or "Magic Decryption".
+    *   **Hardware Check:** If the user lacks a Wi-Fi adapter, we show a warning and *only then* simulate the radio layer for educational purposes.
+    *   **Logic Must Be Real:** Even in simulation mode, the AI logic, command parsing, and strategy must be 100% authentic.
+2.  **Secrets (`.env`):**
     *   Must be **PLAIN TEXT**.
     *   ❌ `KEY='123'` (Quotes break the build).
     *   ✅ `KEY=123` (Correct).
     *   I created `verify-env-content.js` to enforce this.
-2.  **Downloads:**
+3.  **Downloads:**
     *   **NO `.exe` on Firebase Free Plan.**
     *   All installers are ZIPPED (`WordHacker404-Setup.zip`).
     *   Code links point to `.zip`.

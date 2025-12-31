@@ -12,7 +12,6 @@ interface ProcessInfo {
 
 export default function SystemMonitor({ onBack }: { onBack: () => void }) {
   const [processes, setProcesses] = useState<ProcessInfo[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedPid, setSelectedPid] = useState<number | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -22,7 +21,7 @@ export default function SystemMonitor({ onBack }: { onBack: () => void }) {
       const list = await invoke<ProcessInfo[]>('get_running_processes');
       // Sort by Memory usage (descending)
       setProcesses(list.sort((a, b) => b.memory - a.memory));
-      setLoading(false);
+      // setLoading(false);
     } catch (e) {
       console.error(e);
     }

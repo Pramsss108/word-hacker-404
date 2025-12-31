@@ -47,8 +47,6 @@ export default function Brain() {
     const [targetPath, setTargetPath] = useState<string>("");
     const [availableDrives, setAvailableDrives] = useState<string[]>([]);
     const [logs, setLogs] = useState<AgentLog[]>([]);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [report, setReport] = useState<DeepScanReport | null>(null);
     
     // Strategy Deck State
     const [cards, setCards] = useState<StrategyCard[]>([]);
@@ -143,7 +141,7 @@ export default function Brain() {
 
         setAgentState('ANALYZING');
         setLogs([]);
-        setReport(null);
+        // setReport(null);
         setCards([]);
         setCurrentCardIndex(0);
         
@@ -184,7 +182,7 @@ export default function Brain() {
             // Artificial delay for "Uploading" feel
             await new Promise(r => setTimeout(r, 1000));
             
-            setReport(result);
+            // setReport(result);
 
             // Phase 4: Generate Strategy Cards
             const newCards: StrategyCard[] = [];

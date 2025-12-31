@@ -7,6 +7,29 @@ An AI-powered word game application built with React, TypeScript, and Vite.
 - **Word Detective Mode**: Find hidden words with AI hints
 - **Pattern Hunter**: Discover word patterns and connections (Coming Soon)
 - **Speed Challenge**: Race against time with AI opponents (Coming Soon)
+- **Black Ops**: Advanced Network Diagnostics & Security Tools (Requires WSL2 + Kali Linux)
+
+## 🛡️ Black Ops Setup (Advanced)
+
+To use the "Black Ops" features (Sniper, Vacuum, Ghost), you must have the **Kali Linux** engine installed.
+
+### 1. Install the Engine
+Run the automated setup script:
+```powershell
+./cyber-sentinel-edu/SETUP_BLACK_OPS.ps1
+```
+
+### 2. Enable USB Passthrough (Required for Real Attacks)
+To access external Wi-Fi adapters for Monitor Mode:
+1. Run `SETUP_USB_PASSTHROUGH.ps1` as Administrator.
+2. Plug in your USB Wi-Fi Adapter.
+3. Follow the on-screen instructions to bind the device.
+
+### 3. Accessing the Tools
+- Open the app.
+- Go to the **Tools** page.
+- Click the **Black Ops** (Shield) button.
+- If you see "Simulation Mode", ensure you are running the Desktop App (`npm run tauri:dev`), not the web version.
 
 ## 🚀 Getting Started
 

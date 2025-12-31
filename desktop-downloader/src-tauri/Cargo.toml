@@ -10,16 +10,19 @@ rust-version = "1.70"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "devtools", "shell-execute", "protocol-asset", "window-all", "shell-open", "shell-sidecar", "fs-all", "dialog-all", "http-all"] }
+tauri = { version = "1", features = [ "clipboard-all", "devtools", "shell-execute", "protocol-asset", "window-all", "shell-open", "shell-sidecar", "fs-all", "dialog-all", "http-all"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.11", features = ["json", "cookies"] }
 regex = "1"
 urlencoding = "2"
 rand = "0.8"
 tokio = { version = "1", features = ["full"] }
 aes-gcm = "0.10"
 sha2 = "0.10"
+quick-xml = { version = "0.31", features = ["serialize"] }
+base64 = "0.21"
+anyhow = "1.0.100"
 
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3", features = ["debugapi", "processthreadsapi"] }

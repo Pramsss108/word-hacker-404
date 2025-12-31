@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 
 // --- Types ---
 
@@ -32,6 +33,13 @@ interface Skill {
     description: string;
     premiumFeatures: string[];
     commands: string[];
+}
+
+interface OllamaModel {
+    name: string;
+    size: number;
+    digest: string;
+    details: any;
 }
 
 // --- Data ---
@@ -235,6 +243,10 @@ export default function CortexPanel({ isOpen, onClose }: { isOpen: boolean, onCl
     const [input, setInput] = useState("");
     const [isThinking, setIsThinking] = useState(false);
     const [metrics, setMetrics] = useState<SystemMetrics>({ cpu_usage: 0, ram_used: 0, ram_total: 0 });
+    
+    // Model State
+    const [availableModels, setAvailableModels] = useState<OllamaModel[]>([]);
+    const [selectedModel, setSelectedModel] = useState<string>("groq-cloud");
 
     // Viz State
     const [vizPath, setVizPath] = useState<string | null>(null);
@@ -267,6 +279,36 @@ export default function CortexPanel({ isOpen, onClose }: { isOpen: boolean, onCl
 
     // System Pulse (Live Header Stats)
     useEffect(() => {
+        // TRIGGER CLEANUP (Once per session ideally, but here is fine)
+        invoke("cleanup_unused_models").catch(console.error);
+
+        // Fetch Models
+        invoke<OllamaModel[]>("get_ollama_models").then(models => {
+            // Manually inject Groq Cloud as the first option
+            const cloudModel: OllamaModel = {
+                name: "groq-cloud",
+                size: 0,
+                digest: "cloud-v1",
+                details: {}
+            };
+            setAvailableModels([cloudModel, ...models]);
+            
+            // Default to cloud if available, else first local
+            if (!selectedModel || selectedModel === "") {
+                setSelectedModel("groq-cloud");
+            }
+        }).catch(e => {
+            console.error("Failed to load models", e);
+            // Fallback to just cloud if local fails
+            setAvailableModels([{
+                name: "groq-cloud",
+                size: 0,
+                digest: "cloud-v1",
+                details: {}
+            }]);
+            setSelectedModel("groq-cloud");
+        });
+
         const interval = setInterval(async () => {
             if (!isOpen) return; // Save cycles if closed
             try {
@@ -320,21 +362,111 @@ export default function CortexPanel({ isOpen, onClose }: { isOpen: boolean, onCl
         setIsThinking(true);
 
         try {
-            const history = messages.slice(-5).map(m =>
-                `${m.role === 'user' ? 'USER' : 'AI'}: ${m.text}`
-            ).join("\n");
+            let responseText = "";
+            let relatedFiles: FileInfo[] = [];
 
-            const response = await invoke<CortexResponse>("ask_cortex_llm", {
-                query: input,
-                context: history,
-                modelName: null
-            });
+            // HYBRID ROUTING: Cloud (Frontend) vs Local (Backend)
+            if (selectedModel === "groq-cloud") {
+                // 1. CLOUD PATH (Frontend Fetch - Like Tools Page)
+                const apiMessages = messages.slice(-5).map(m => ({
+                    role: m.role === 'user' ? 'user' : 'assistant',
+                    content: m.text
+                })).concat({ role: 'user', content: input });
+
+                // Add System Prompt for Tools
+                apiMessages.unshift({
+                    role: 'system',
+                    content: `You are Cortex. You are helpful and precise.
+COMMANDS:
+- [SEARCH: query] -> Find files
+- [HEALTH] -> System stats
+- [PROCESSES] -> Top apps
+- [APPS] -> Installed apps
+- [LARGEFILES] -> Find large files
+- [DUPLICATES] -> Find duplicates
+- [JUNK] -> Clean junk
+- [ORGANIZE] -> Organize Desktop
+- [SORT] -> Sort Downloads
+- [UNDO] -> Undo last sort
+- [NUKE_EMPTY] -> Delete empty folders
+- [CMD: command] -> Run terminal command
+
+If user asks to find files, output ONLY: [SEARCH: filename].`
+                });
+
+                // 1. CLOUD PATH (Dual Strategy: RustLS -> Browser Fetch)
+                let data;
+                try {
+                    // Strategy A: Rust Backend (RustLS) - Bypasses CORS, handles SSL manually
+                    data = await invoke<{ content: string }>('ask_groq_cloud', {
+                        request: {
+                            messages: apiMessages,
+                            mode: 'general',
+                            temperature: 0.7
+                        }
+                    });
+                } catch (rustErr: any) {
+                    console.warn("Rust Cloud failed, trying Browser Fetch fallback...", rustErr);
+                    
+                    try {
+                        // Strategy B: Browser Fetch (WebView2) - Uses system browser stack (like the website)
+                        const res = await window.fetch('https://ai-gateway.guitarguitarabhijit.workers.dev/v1/chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-access-secret': 'word-hacker-ai-secret'
+                            },
+                            body: JSON.stringify({
+                                messages: apiMessages,
+                                mode: 'general',
+                                temperature: 0.7
+                            })
+                        });
+                        if (!res.ok) throw new Error(`Cloud Error (Fallback): ${res.status}`);
+                        data = await res.json();
+                    } catch (fetchErr: any) {
+                        // If BOTH fail, throw a combined error so user sees the Rust error too
+                        throw new Error(`ALL CONNECTIONS FAILED.\n\n1. Rust Backend: ${rustErr}\n\n2. Browser Fallback: ${fetchErr.message}`);
+                    }
+                }
+                responseText = data.content || "No response.";
+
+                // 2. EXECUTE TOOLS (If Cloud returned a command)
+                if (responseText.includes("[")) {
+                    try {
+                        // Execute the command via Backend
+                        const cmdResult = await invoke<CortexResponse>('execute_cortex_command', { 
+                            commandResponse: responseText 
+                        });
+                        responseText = cmdResult.text;
+                        relatedFiles = cmdResult.related_files;
+                    } catch (err) {
+                        console.error("Tool Execution Failed:", err);
+                    }
+                }
+
+            } else {
+                // 2. LOCAL PATH (Backend)
+                // Send history as JSON string so Rust can parse it into proper message objects
+                const history = JSON.stringify(messages.slice(-5).map(m => ({
+                    role: m.role === 'user' ? 'user' : 'assistant',
+                    content: m.text
+                })));
+
+                const response = await invoke<CortexResponse>("ask_cortex_llm", {
+                    query: input,
+                    context: history,
+                    modelName: selectedModel
+                });
+                responseText = response.text;
+                relatedFiles = response.related_files;
+            }
 
             const aiMsg: LogMessage = {
                 id: Date.now() + 1,
                 role: "ai",
-                text: response.text,
-                files: response.related_files,
+                text: responseText,
+                files: relatedFiles,
                 timestamp: Date.now()
             };
             setMessages(prev => [...prev, aiMsg]);
@@ -342,7 +474,7 @@ export default function CortexPanel({ isOpen, onClose }: { isOpen: boolean, onCl
             const errorMsg: LogMessage = {
                 id: Date.now() + 1,
                 role: "system",
-                text: `Cortex Error: ${e.toString()}. Is Ollama running?`,
+                text: `Cortex Error: ${e.toString()}`,
                 timestamp: Date.now()
             };
             setMessages(prev => [...prev, errorMsg]);
@@ -513,7 +645,34 @@ export default function CortexPanel({ isOpen, onClose }: { isOpen: boolean, onCl
                     <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.6)] animate-pulse"></span>
                     CORTEX v1.0 <span className="text-white/20 ml-2 text-xs font-mono">CPU {metrics.cpu_usage.toFixed(0)}% • RAM {(metrics.ram_used / 1024 / 1024 / 1024).toFixed(1)}GB</span>
                 </h2>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
+                    {/* Model Selector */}
+                    {availableModels.length > 0 && (
+                        <select 
+                            value={selectedModel}
+                            onChange={(e) => {
+                                const newModel = e.target.value;
+                                if (newModel !== selectedModel) {
+                                    if (window.confirm("⚠️ Switching models will clear your chat history.\n\nContinue?")) {
+                                        setSelectedModel(newModel);
+                                        setMessages([{ 
+                                            id: Date.now(), 
+                                            role: "system", 
+                                            text: `System Rebooted. Core switched to: ${newModel}`, 
+                                            timestamp: Date.now() 
+                                        }]);
+                                    }
+                                }
+                            }}
+                            className="bg-black/50 border border-white/20 text-white/70 text-xs rounded px-2 py-1 outline-none focus:border-purple-500 mr-2"
+                        >
+                            {availableModels.map(m => (
+                                <option key={m.name} value={m.name} className="bg-black text-white">
+                                    {m.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
                     <button
                         onClick={() => setShowSkills(!showSkills)}
                         className={`text-xs px-3 py-1 rounded border transition-colors ${showSkills ? 'bg-white text-black border-white' : 'bg-transparent text-white/50 border-white/20 hover:border-white/50'}`}

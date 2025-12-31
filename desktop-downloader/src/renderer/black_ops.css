@@ -1,0 +1,223 @@
+:root {
+    --bo-bg: #050505;
+    --bo-panel: #0a0a0a;
+    --bo-border: #333;
+    --bo-accent: #0aff6a;
+    /* Matrix Green */
+    --bo-text: #e0e0e0;
+    --bo-muted: #666;
+}
+
+/* Scoped to Black Ops View */
+#app-blackops {
+    background: var(--bo-bg);
+    color: var(--bo-text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Glitch Effect Class */
+.glitch {
+    position: relative;
+    animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+/* Layout */
+.ops-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Sidebar (Console/Controls) */
+.ops-sidebar {
+    background: var(--bo-panel);
+    border-right: 1px solid var(--bo-border);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+}
+
+.ops-main {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+}
+
+/* Components */
+.terminal-log {
+    flex: 1;
+    background: black;
+    border: 1px solid var(--bo-border);
+    padding: 8px;
+    overflow-y: auto;
+    font-size: 0.75rem;
+    color: var(--bo-accent);
+    opacity: 0.8;
+    border-radius: 4px;
+}
+
+.log-line {
+    margin-bottom: 2px;
+}
+
+.log-line.error {
+    color: #ff4444;
+}
+
+.log-line.success {
+    color: #0aff6a;
+}
+
+.log-line.warning {
+    color: #ffbb00;
+}
+
+.btn-ops {
+    background: rgba(10, 255, 106, 0.1);
+    border: 1px solid var(--bo-accent);
+    color: var(--bo-accent);
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.btn-ops:hover {
+    background: rgba(10, 255, 106, 0.2);
+    box-shadow: 0 0 10px rgba(10, 255, 106, 0.2);
+}
+
+.btn-ops.danger {
+    border-color: #ff4444;
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.btn-ops.danger:hover {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.2);
+}
+
+/* Library Grid */
+.library-view {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.course-card {
+    background: var(--bo-panel);
+    border: 1px solid var(--bo-border);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.course-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--bo-accent);
+}
+
+.course-thumb {
+    height: 140px;
+    background: #222;
+}
+
+.course-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.course-meta {
+    padding: 12px;
+}
+
+.course-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Overlay */
+.login-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.radar-spinner {
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(10, 255, 106, 0.2);
+    border-top-color: var(--bo-accent);
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Utilities */
+.hidden {
+    display: none !important;
+}
+
+/* View Switch Animation */
+.app-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.view-hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.view-active {
+    opacity: 1;
+    z-index: 1;
+}

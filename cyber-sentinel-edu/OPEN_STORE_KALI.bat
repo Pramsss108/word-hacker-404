@@ -1,0 +1,1 @@
+start ms-windows-store://pdp/?ProductId=9PKR34TNCV07

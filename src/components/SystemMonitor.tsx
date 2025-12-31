@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Shield, Activity, Cpu, HardDrive, Brain, Search } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
-import { useGlobalAIWorker } from '../services/GlobalAIWorker';
+import { groqService } from '../services/groq';
 
 interface ProcessInfo {
   pid: number;
@@ -17,7 +17,6 @@ export default function SystemMonitor({ onBack }: { onBack: () => void }) {
   const [selectedPid, setSelectedPid] = useState<number | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const { getWorker } = useGlobalAIWorker();
 
   const fetchProcesses = async () => {
     try {
@@ -41,13 +40,6 @@ export default function SystemMonitor({ onBack }: { onBack: () => void }) {
     setAiAnalysis(null);
     setSelectedPid(proc.pid);
 
-    const worker = getWorker();
-    if (!worker) {
-      setAiAnalysis("AI Engine not ready. Please wait...");
-      setAnalyzing(false);
-      return;
-    }
-
     const prompt = `Analyze this Windows process for security threats.
     Name: ${proc.name}
     Path: ${proc.path || "Unknown (System Protected)"}
@@ -55,14 +47,14 @@ export default function SystemMonitor({ onBack }: { onBack: () => void }) {
     
     Is this safe? If it's a system process, say SAFE. If it looks like a miner or malware, say DANGER. Keep it short.`;
 
-    worker.onmessage = (e: MessageEvent) => {
-      if (e.data.status === 'complete') {
-        setAiAnalysis(e.data.output);
-        setAnalyzing(false);
-      }
-    };
-
-    worker.postMessage({ type: 'generate', text: prompt });
+    try {
+      const result = await groqService.rewrite(prompt, 'security');
+      setAiAnalysis(result);
+    } catch (e) {
+      setAiAnalysis("Analysis failed. Check connection.");
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   return (

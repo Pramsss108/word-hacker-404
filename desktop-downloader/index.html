@@ -1,21 +1,30 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WH404 - Social Media Downloader</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/src/renderer/style.css?v=10" />
-    <link rel="stylesheet" href="/src/renderer/tutorial.css?v=10" />
-    <link rel="stylesheet" href="/src/renderer/upgradeModal.css?v=10" />
-    <link rel="stylesheet" href="/src/renderer/premiumEffects.css?v=10" />
-  </head>
-  <body>
-    <!-- Bridge must load before renderer -->
-    <script type="module" src="/src/renderer/bridge.js?v=11"></script>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WH404 - Social Media Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/src/renderer/style.css?v=10" />
+  <link rel="stylesheet" href="/src/renderer/black_ops.css?v=1" />
+  <link rel="stylesheet" href="/src/renderer/tutorial.css?v=10" />
+  <link rel="stylesheet" href="/src/renderer/upgradeModal.css?v=10" />
+  <link rel="stylesheet" href="/src/renderer/premiumEffects.css?v=10" />
+</head>
+
+<body>
+  <!-- Bridge must load before renderer -->
+  <script type="module" src="/src/renderer/bridge.js?v=11"></script>
+  <!-- Global Scripts -->
+  <script type="module" src="/src/renderer/bridge.js?v=11"></script>
+  <!-- NOTE: Launcher script removed. View switching handled by index.js now. -->
+  <div id="app-basic" class="app-view view-active">
     <div id="loading-screen" class="loading-screen">
       <div class="loading-content">
         <div class="loading-logo">
@@ -46,7 +55,8 @@
           </div>
           <div class="menu-group">
             <button class="menu-btn" data-menu-trigger="platforms">Supported Platforms ▾</button>
-            <div class="menu-dropdown platforms-dropdown" id="platforms-menu" role="menu" aria-label="Supported platforms">
+            <div class="menu-dropdown platforms-dropdown" id="platforms-menu" role="menu"
+              aria-label="Supported platforms">
               <div class="platforms-content">
                 <p class="platforms-title">📥 Supported Platforms</p>
                 <div class="platforms-grid">
@@ -75,6 +85,7 @@
                     <div class="platform-list">
                       <span class="platform-badge">Khan Academy</span>
                       <span class="platform-badge">Coursera</span>
+                      <span class="platform-badge">Udemy</span>
                     </div>
                   </div>
                 </div>
@@ -87,25 +98,20 @@
             <div class="menu-dropdown" id="about-menu" role="menu" aria-label="About menu">
               <div class="about-content">
                 <h3>WH404 - Social Media Downloader</h3>
-                <p class="version">v1.0.3</p>
-                <p class="description">
-                  A professional, legal desktop tool for personal media archiving. 
-                  This software operates strictly as a browser automation utility, simulating user interactions to download content you have access to.
-                  <br><br>
-                  <strong>Legal Compliance:</strong>
-                  <br>• No API circumvention or decryption of DRM-protected content.
-                  <br>• Respects "robots.txt" and public access permissions.
-                  <br>• Intended for personal offline viewing and fair use only.
-                  <br>• User assumes all responsibility for copyright compliance.
-                </p>
-                <div class="about-features" style="margin-top: 10px; font-size: 0.8rem; color: #9aa3b2;">
-                   <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 4px;"><span style="color: #0aff6a;">✓</span> Client-Side Processing</div>
-                   <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 4px;"><span style="color: #0aff6a;">✓</span> No Data Collection</div>
-                   <div style="display: flex; gap: 5px; align-items: center;"><span style="color: #0aff6a;">✓</span> Secure Local Storage</div>
-                </div>
+                <p class="version">v1.0.0</p>
+                <p class="description">A professional desktop tool for downloading and editing media from popular
+                  platforms including YouTube, TikTok, Twitter, Reddit, Vimeo, SoundCloud, and more. Features advanced
+                  trimming controls, metadata toolkit, and high-quality export options.</p>
                 <p class="copyright">© 2025 Word Hacker 404</p>
               </div>
             </div>
+          </div>
+          <!-- INJECTED: Detached Black Ops Launcher -->
+          <div class="menu-group" style="margin-left: 20px;">
+            <button id="launch-black-ops" class="menu-btn"
+              style="color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1);">
+              ⚠️ ACCESS BLACK OPS
+            </button>
           </div>
           <div class="menu-group">
             <button class="menu-btn" data-menu-trigger="help">Help ▾</button>
@@ -158,7 +164,8 @@
                   <span>Story</span>
                 </label>
               </div>
-              <button id="premium-refresh" class="ghost ghost-icon insight-refresh" type="button" title="Refresh metadata">
+              <button id="premium-refresh" class="ghost ghost-icon insight-refresh" type="button"
+                title="Refresh metadata">
                 ↻
               </button>
             </div>
@@ -178,17 +185,20 @@
             </div>
           </header>
           <div id="metadata-backdrop" class="insight-backdrop" aria-hidden="true"></div>
-          <div id="metadata-popover" class="insight-modal" role="dialog" aria-modal="false" aria-labelledby="metadata-popover-title" aria-hidden="true">
+          <div id="metadata-popover" class="insight-modal" role="dialog" aria-modal="false"
+            aria-labelledby="metadata-popover-title" aria-hidden="true">
             <div class="insight-modal-shell">
               <header class="insight-modal-header">
                 <div>
                   <p class="eyebrow mini">Insight detail</p>
                   <h3 id="metadata-popover-title">Smart thumbnail</h3>
                 </div>
-                <button id="metadata-close" class="ghost ghost-icon" data-close-metadata aria-label="Close insight">✕</button>
+                <button id="metadata-close" class="ghost ghost-icon" data-close-metadata
+                  aria-label="Close insight">✕</button>
               </header>
               <div class="insight-modal-body">
-                <article class="insight-panel premium-card active" data-popover-panel="thumbnail" data-premium-card="thumbnail">
+                <article class="insight-panel premium-card active" data-popover-panel="thumbnail"
+                  data-premium-card="thumbnail">
                   <header class="insight-panel-header">
                     <div>
                       <p class="eyebrow mini">Visual</p>
@@ -216,14 +226,16 @@
                       <h4>SEO keyword stack</h4>
                     </div>
                     <div class="insight-panel-actions">
-                      <button id="youtube-oauth-btn" class="ghost-mini oauth-btn" title="Login for 100% tag accuracy">🔐 YT Login</button>
+                      <button id="youtube-oauth-btn" class="ghost-mini oauth-btn" title="Login for 100% tag accuracy">🔐
+                        YT Login</button>
                       <button class="ghost-mini" data-premium-copy="keywords">Copy tags</button>
                     </div>
                   </header>
                   <div class="insight-panel-body premium-card-keywords">
                     <p class="premium-field-label">Keyword string</p>
                     <div id="premium-keywords-string" class="premium-field-box">Keywords will appear here</div>
-                    <p class="keyword-disclaimer">⚠️ Some tags may be hidden by YouTube. <span id="oauth-status"></span></p>
+                    <p class="keyword-disclaimer">⚠️ Some tags may be hidden by YouTube. <span id="oauth-status"></span>
+                    </p>
                   </div>
                 </article>
                 <article class="insight-panel premium-card" data-popover-panel="title" data-premium-card="story-title">
@@ -242,7 +254,8 @@
                     <div id="premium-title" class="premium-field-box single-line">Title not ready</div>
                   </div>
                 </article>
-                <article class="insight-panel premium-card" data-popover-panel="description" data-premium-card="story-description">
+                <article class="insight-panel premium-card" data-popover-panel="description"
+                  data-premium-card="story-description">
                   <header class="insight-panel-header">
                     <div>
                       <p class="eyebrow mini">Caption</p>
@@ -255,7 +268,8 @@
                   </header>
                   <div class="insight-panel-body premium-card-description">
                     <p class="premium-field-label">Draft</p>
-                    <div id="premium-description" class="premium-field-box">Description will appear here when a clip is selected.</div>
+                    <div id="premium-description" class="premium-field-box">Description will appear here when a clip is
+                      selected.</div>
                   </div>
                 </article>
               </div>
@@ -351,23 +365,23 @@
               <div class="premium-timeline" id="premium-timeline">
                 <!-- Background track -->
                 <div class="timeline-track"></div>
-                
+
                 <!-- Green fill between handles -->
                 <div class="timeline-fill" id="timeline-fill"></div>
-                
+
                 <!-- Playhead (shows during playback) -->
                 <div class="timeline-playhead" id="timeline-playhead"></div>
-                
+
                 <!-- Hover time preview -->
                 <div class="timeline-hover-time" id="timeline-hover-time" style="display: none;">00:00</div>
-                
+
                 <!-- Left handle (start) with grip lines -->
                 <div class="timeline-handle timeline-handle-left" id="handle-left">
                   <div class="handle-line"></div>
                   <div class="handle-line"></div>
                   <div class="handle-line"></div>
                 </div>
-                
+
                 <!-- Right handle (end) with grip lines -->
                 <div class="timeline-handle timeline-handle-right" id="handle-right">
                   <div class="handle-line"></div>
@@ -375,13 +389,13 @@
                   <div class="handle-line"></div>
                 </div>
               </div>
-              
+
               <!-- Time markers -->
               <div class="timeline-markers">
                 <span class="marker-start">00:00</span>
                 <span class="marker-end" id="marker-end">00:00</span>
               </div>
-              
+
               <!-- Hidden inputs for trim values -->
               <input id="trim-start" type="range" min="0" value="0" step="0.1" style="display: none;" />
               <input id="trim-end" type="range" min="0" value="0" step="0.1" style="display: none;" />
@@ -472,166 +486,285 @@
         </div>
       </footer>
     </div>
+  </div>
 
-    <div id="export-pop" class="export-pop" aria-hidden="true">
-      <div class="export-card">
-        <header>
+  <!-- ########################################## -->
+  <!-- BLACK OPS VIEW (HIDDEN BY DEFAULT) -->
+  <!-- ########################################## -->
+  <div id="app-blackops" class="app-view view-hidden" style="display: none;">
+    <!-- Title Bar -->
+    <header class="menu-bar" style="background: #000; border-bottom: 1px solid #333;">
+      <div class="menu-left">
+        <span class="mono text-danger" style="letter-spacing: 1px;">WH404 // BLACK OPS</span>
+      </div>
+      <div class="window-controls">
+        <!-- Close button for black ops returns to basic view -->
+        <button id="exit-black-ops" class="win-btn close"
+          style="width: auto; padding: 0 10px; font-size: 12px; color: #fff;">EXIT TO SURFACE</button>
+      </div>
+    </header>
+
+    <div class="ops-grid">
+      <!-- LEFT: Control Deck -->
+      <aside class="ops-sidebar">
+        <div style="text-align: center; margin-bottom: 10px;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0aff6a" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div class="mono text-xs text-muted mt-2">SYS.STATUS: ONLINE</div>
+        </div>
+
+        <nav style="display: flex; flex-direction: column; gap: 8px;">
+          <button id="launch-browser-btn" class="btn-ops">
+            <span>📡</span> LAUNCH SATELLITE
+          </button>
+          <button id="refresh-library-btn" class="btn-ops">
+            <span>🔄</span> REFRESH MATRIX
+          </button>
+          <button id="force-mode-btn" class="btn-ops danger">
+            <span>⚡</span> FORCE MODE: OFF
+          </button>
+        </nav>
+
+        <div style="margin-top: auto;">
+          <label class="mono text-xs text-muted">TERMINAL LOG</label>
+          <div id="sniffer-logs" class="terminal-log">
+            <div class="log-line">> Initializing Black Ops...</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Data Matrix -->
+      <main class="ops-main">
+        <!-- Login State / Empty State -->
+        <div id="black-ops-login" class="login-overlay">
+          <div class="radar-spinner" style="border-color: #0aff6a; border-top-color: transparent;"></div>
+          <h2 class="mono text-accent" style="margin-bottom: 20px;">SYSTEM LOCKED // AUTH REQUIRED</h2>
+
+          <button id="login-exit-btn" class="btn-ops danger"
+            style="margin-bottom: 20px; font-size: 0.75rem; padding: 4px 12px; border: 1px solid #ff4444; color: #ff4444; background: transparent;">
+            ABORT MISSION (EXIT)
+          </button>
+
+          <div
+            style="background: #111; padding: 20px; border: 1px solid #333; border-radius: 8px; text-align: center; max-width: 400px;">
+            <p class="text-white text-sm mb-4">Choose an infiltration method:</p>
+
+            <!-- Method 1: Satellite -->
+            <button id="center-launch-btn" class="btn-ops"
+              style="width: 100%; margin-bottom: 15px; background: rgba(10, 255, 106, 0.1);">
+              <span>📡</span> METHOD 1: LAUNCH SATELLITE
+            </button>
+            <p class="text-muted text-xs mb-4">Launches a stealth browser. Login normally, then click 'Scan' below.</p>
+
+            <!-- Method 2: Manual -->
+            <div style="border-top: 1px solid #333; padding-top: 15px;">
+              <input type="text" id="manual-token-input" placeholder="Paste Access Token (Bearer ...)"
+                style="width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 8px; margin-bottom: 8px; font-family: monospace; font-size: 12px;">
+              <button id="manual-scan-btn" class="btn-ops" style="width: 100%; margin-bottom: 8px;">
+                <span>🔓</span> METHOD 2: INJECT MANUALLY
+              </button>
+              <button id="paste-clipboard-btn" class="btn-ops"
+                style="width: 100%; border-color: #0aff6a; color: #0aff6a;">
+                <span>📋</span> METHOD 3: PASTE FROM CLIPBOARD
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Library Content -->
+        <div id="black-ops-library" class="library-view hidden" style="display: none;">
+          <header class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+            <h2 class="text-xl text-white font-bold mono">TARGET LIBRARY</h2>
+            <span id="target-count" class="text-accent text-sm mono">0 TARGETS ACQUIRED</span>
+          </header>
+
+          <div id="course-items-container" class="course-grid">
+            <!-- Dynamic Items Injected Here -->
+          </div>
+
+          <!-- Expanded View for Lectures (Hidden Default) -->
+          <div id="lecture-view" class="hidden" style="display: none; height: 100%; flex-direction: column;">
+            <div class="flex items-center gap-4 mb-4">
+              <button id="back-to-library" class="btn-ops" style="width: auto; padding: 6px 12px;">←
+                BACK</button>
+              <h3 id="current-course-title" class="text-lg text-white truncate">Course Title</h3>
+            </div>
+            <div id="lecture-list" style="flex: 1; overflow-y: auto;"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="export-pop" class="export-pop" aria-hidden="true">
+    <div class="export-card">
+      <header>
+        <div>
+          <p class="eyebrow">Export</p>
+          <h3 id="export-target">Select slot</h3>
+        </div>
+        <button id="export-cancel" class="ghost ghost-icon" title="Close">✕</button>
+      </header>
+      <div class="export-status">
+        <div id="export-loader" class="export-loader" aria-hidden="true"></div>
+        <p id="export-message" class="hint">
+          <span id="export-message-text">Choose resolution and format for export.</span>
+          <span id="export-message-dots" aria-hidden="true"></span>
+        </p>
+      </div>
+      <div class="export-form">
+        <label for="export-type">Type</label>
+        <select id="export-type">
+          <option value="video">Video</option>
+          <option value="audio">Audio</option>
+        </select>
+        <label for="export-resolution">Resolution / Quality</label>
+        <select id="export-resolution"></select>
+        <label for="export-format">Output format</label>
+        <select id="export-format"></select>
+        <!-- RE-ADDED: Audio Language Selection -->
+        <div id="export-audio-track-row" style="display: none;">
+          <label for="export-audio-track">Audio Track</label>
+          <select id="export-audio-track"></select>
+        </div>
+        <label for="export-path">Destination</label>
+        <div class="path-row">
+          <input id="export-path" type="text" placeholder="Downloads/WordHackerDownloads" readonly />
+          <button id="export-browse" class="ghost">Browse</button>
+        </div>
+      </div>
+      <div class="export-insights" id="export-meta">
+        <div class="export-insight" data-export-meta="thumbnail">
           <div>
-            <p class="eyebrow">Export</p>
-            <h3 id="export-target">Select slot</h3>
+            <p class="export-insight-label">Thumbnail</p>
+            <p class="export-insight-value" id="export-meta-thumbnail">Not attached</p>
           </div>
-          <button id="export-cancel" class="ghost ghost-icon" title="Close">✕</button>
-        </header>
-        <div class="export-status">
-          <div id="export-loader" class="export-loader" aria-hidden="true"></div>
-          <p id="export-message" class="hint">
-            <span id="export-message-text">Choose resolution and format for export.</span>
-            <span id="export-message-dots" aria-hidden="true"></span>
-          </p>
+          <button class="ghost-mini" data-export-download="thumbnail">Download</button>
         </div>
-        <div class="export-form">
-          <label for="export-type">Type</label>
-          <select id="export-type">
-            <option value="video">Video</option>
-            <option value="audio">Audio</option>
-          </select>
-          <label for="export-resolution">Resolution / Quality</label>
-          <select id="export-resolution"></select>
-          <label for="export-format">Output format</label>
-          <select id="export-format"></select>
-          <label for="export-path">Destination</label>
-          <div class="path-row">
-            <input id="export-path" type="text" placeholder="Downloads/WordHackerDownloads" readonly />
-            <button id="export-browse" class="ghost">Browse</button>
+        <div class="export-insight" data-export-meta="keywords">
+          <div>
+            <p class="export-insight-label">SEO keywords</p>
+            <p class="export-insight-value" id="export-meta-keywords">Disabled</p>
           </div>
+          <button class="ghost-mini" data-export-copy="keywords">Copy</button>
         </div>
-        <div class="export-insights" id="export-meta">
-          <div class="export-insight" data-export-meta="thumbnail">
-            <div>
-              <p class="export-insight-label">Thumbnail</p>
-              <p class="export-insight-value" id="export-meta-thumbnail">Not attached</p>
-            </div>
-            <button class="ghost-mini" data-export-download="thumbnail">Download</button>
+        <div class="export-insight" data-export-meta="story">
+          <div>
+            <p class="export-insight-label">Title & description</p>
+            <p class="export-insight-value" id="export-meta-title">Disabled</p>
           </div>
-          <div class="export-insight" data-export-meta="keywords">
-            <div>
-              <p class="export-insight-label">SEO keywords</p>
-              <p class="export-insight-value" id="export-meta-keywords">Disabled</p>
-            </div>
-            <button class="ghost-mini" data-export-copy="keywords">Copy</button>
-          </div>
-          <div class="export-insight" data-export-meta="story">
-            <div>
-              <p class="export-insight-label">Title & description</p>
-              <p class="export-insight-value" id="export-meta-title">Disabled</p>
-            </div>
-            <button class="ghost-mini" data-export-copy="story">Copy</button>
-          </div>
-        </div>
-        <div class="export-actions">
-          <button id="export-confirm" class="primary full">Export selection</button>
+          <button class="ghost-mini" data-export-copy="story">Copy</button>
         </div>
       </div>
-    </div>
-
-    <!-- Keyboard Shortcuts Overlay -->
-    <div id="shortcuts-modal" class="shortcuts-modal" style="display: none;">
-      <div class="shortcuts-content">
-        <div class="shortcuts-header">
-          <h2>⌨️ Keyboard Shortcuts</h2>
-          <button id="shortcuts-close" class="shortcuts-close">✕</button>
-        </div>
-        <div class="shortcuts-grid">
-          <div class="shortcuts-section">
-            <h3>🎬 Playback</h3>
-            <div class="shortcut-item">
-              <kbd>Space</kbd> or <kbd>K</kbd>
-              <span>Play / Pause</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>J</kbd>
-              <span>Rewind 1 second</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>L</kbd>
-              <span>Forward 1 second</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>←</kbd>
-              <span>Jump back 5 seconds</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>→</kbd>
-              <span>Jump forward 5 seconds</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>Shift</kbd> + <kbd>,</kbd>
-              <span>Previous frame (0.1s)</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>Shift</kbd> + <kbd>.</kbd>
-              <span>Next frame (0.1s)</span>
-            </div>
-          </div>
-          
-          <div class="shortcuts-section">
-            <h3>✂️ Trimming</h3>
-            <div class="shortcut-item">
-              <kbd>I</kbd>
-              <span>Set IN point (trim start)</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>O</kbd>
-              <span>Set OUT point (trim end)</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>Home</kbd>
-              <span>Jump to trim start</span>
-            </div>
-            <div class="shortcut-item">
-              <kbd>End</kbd>
-              <span>Jump to trim end</span>
-            </div>
-          </div>
-          
-          <div class="shortcuts-section">
-            <h3>🖱️ Mouse Controls</h3>
-            <div class="shortcut-item">
-              <span class="mouse-icon">🖱️</span>
-              <span>Click video to play/pause</span>
-            </div>
-            <div class="shortcut-item">
-              <span class="mouse-icon">🖱️🖱️</span>
-              <span>Double-click for fullscreen</span>
-            </div>
-            <div class="shortcut-item">
-              <span class="mouse-icon">🔄</span>
-              <span>Mouse wheel to scrub timeline</span>
-            </div>
-            <div class="shortcut-item">
-              <span class="mouse-icon">👆</span>
-              <span>Click trim sliders to jump</span>
-            </div>
-            <div class="shortcut-item">
-              <span class="mouse-icon">🖱️⬇️</span>
-              <span>Drag sliders for live preview</span>
-            </div>
-          </div>
-        </div>
-        <div class="shortcuts-footer">
-          <p>💡 <strong>Pro Tip:</strong> Drag trim sliders to see live video preview while adjusting!</p>
-        </div>
+      <div class="export-actions">
+        <button id="export-confirm" class="primary full">Export selection</button>
       </div>
     </div>
+  </div>
 
-    <!-- Security & Monetization System -->
-    <script type="module" src="/src/renderer/licenseManager.js?v=11"></script>
-    <script type="module" src="/src/renderer/freeTierManager.js?v=11"></script>
-    <script type="module" src="/src/renderer/premiumEffects.js?v=12"></script>
-    <script type="module" src="/src/renderer/premiumToggle.js?v=11"></script>
-    <script type="module" src="/src/renderer/upgradeModal.js?v=11"></script>
-    <script type="module" src="/src/renderer/adPopup.js?v=12"></script>
-    <script type="module" src="/src/index.js?v=11"></script>
-    <script type="module" src="/src/renderer/tutorial.js?v=10"></script>
-  </body>
+  <!-- Keyboard Shortcuts Overlay -->
+  <div id="shortcuts-modal" class="shortcuts-modal" style="display: none;">
+    <div class="shortcuts-content">
+      <div class="shortcuts-header">
+        <h2>⌨️ Keyboard Shortcuts</h2>
+        <button id="shortcuts-close" class="shortcuts-close">✕</button>
+      </div>
+      <div class="shortcuts-grid">
+        <div class="shortcuts-section">
+          <h3>🎬 Playback</h3>
+          <div class="shortcut-item">
+            <kbd>Space</kbd> or <kbd>K</kbd>
+            <span>Play / Pause</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>J</kbd>
+            <span>Rewind 1 second</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>L</kbd>
+            <span>Forward 1 second</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>←</kbd>
+            <span>Jump back 5 seconds</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>→</kbd>
+            <span>Jump forward 5 seconds</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>Shift</kbd> + <kbd>,</kbd>
+            <span>Previous frame (0.1s)</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>Shift</kbd> + <kbd>.</kbd>
+            <span>Next frame (0.1s)</span>
+          </div>
+        </div>
+
+        <div class="shortcuts-section">
+          <h3>✂️ Trimming</h3>
+          <div class="shortcut-item">
+            <kbd>I</kbd>
+            <span>Set IN point (trim start)</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>O</kbd>
+            <span>Set OUT point (trim end)</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>Home</kbd>
+            <span>Jump to trim start</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>End</kbd>
+            <span>Jump to trim end</span>
+          </div>
+        </div>
+
+        <div class="shortcuts-section">
+          <h3>🖱️ Mouse Controls</h3>
+          <div class="shortcut-item">
+            <span class="mouse-icon">🖱️</span>
+            <span>Click video to play/pause</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="mouse-icon">🖱️🖱️</span>
+            <span>Double-click for fullscreen</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="mouse-icon">🔄</span>
+            <span>Mouse wheel to scrub timeline</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="mouse-icon">👆</span>
+            <span>Click trim sliders to jump</span>
+          </div>
+          <div class="shortcut-item">
+            <span class="mouse-icon">🖱️⬇️</span>
+            <span>Drag sliders for live preview</span>
+          </div>
+        </div>
+      </div>
+      <div class="shortcuts-footer">
+        <p>💡 <strong>Pro Tip:</strong> Drag trim sliders to see live video preview while adjusting!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security & Monetization System -->
+  <script type="module" src="/src/renderer/licenseManager.js?v=11"></script>
+  <script type="module" src="/src/renderer/freeTierManager.js?v=11"></script>
+  <script type="module" src="/src/renderer/premiumEffects.js?v=12"></script>
+  <script type="module" src="/src/renderer/premiumToggle.js?v=11"></script>
+  <script type="module" src="/src/renderer/upgradeModal.js?v=11"></script>
+  <script type="module" src="/src/renderer/viewManager.js?v=1"></script>
+  <script type="module" src="/src/index.js?v=11"></script>
+  <script type="module" src="/src/renderer/sniffer.js?v=11"></script>
+  <script type="module" src="/src/renderer/tutorial.js?v=10"></script>
+</body>
+
 </html>

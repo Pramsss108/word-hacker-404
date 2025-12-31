@@ -31,8 +31,14 @@ class AIEngineService {
      */
     async chat(messages: ChatMessage[], systemPrompt?: string, mode: 'general' | 'security' | 'creative' = 'general'): Promise<AIResponse> {
         try {
+            // Clone messages to avoid mutating state
+            let finalMessages = messages.map(m => ({ ...m }));
+            
+            // CLEAN PASS-THROUGH
+            // No client-side injection. We trust the backend or the model itself.
+            
             const payload = {
-                messages: messages,
+                messages: finalMessages,
                 system: systemPrompt || "You are a helpful AI assistant specialized in word games and coding.",
                 temperature: mode === 'creative' ? 0.9 : 0.7,
                 mode: mode

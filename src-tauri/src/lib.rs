@@ -5,6 +5,7 @@ use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton};
 mod trash_hunter;
 mod ipc_client;
 mod security; // 🛡️ Import Security Module
+mod black_ops; // 🏴‍☠️ Black Ops Module
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -24,7 +25,8 @@ pub fn run() {
       trash_hunter::scan_shadow_copies,
       trash_hunter::delete_shadow_copy,
       trash_hunter::get_running_processes, // 🧠 AI Overseer: Process Scanner
-      ipc_client::send_service_command
+      ipc_client::send_service_command,
+      black_ops::run_black_ops
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {

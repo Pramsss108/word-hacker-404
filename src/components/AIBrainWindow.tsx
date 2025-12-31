@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Mic, Volume2, StopCircle, Terminal, Unlock, Sparkles } from 'lucide-react'
+import { X, Send, Cpu, Activity, ShieldAlert, Lock, Zap, Trash2, Mic, Volume2, StopCircle } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { aiEngine, type ChatMessage } from '../services/AIEngine'
@@ -16,15 +16,20 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
     const saved = localStorage.getItem('cortex_history');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // FORCE FIX: If the old GPT-OSS message exists, replace it.
+        if (parsed.length > 0 && parsed[0].content.includes('SYSTEM ONLINE')) {
+             parsed[0].content = "SYSTEM ONLINE. Connected to Llama 3.3 70B (Groq). Awaiting input...";
+        }
+        return parsed;
       } catch (e) { console.error("Failed to load history", e) }
     }
-    return [{ role: 'assistant', content: "SYSTEM ONLINE. Connected to Central Neural Net (Llama 3.3 70B Uncensored). Awaiting input..." }];
+    return [{ role: 'assistant', content: "SYSTEM ONLINE. Connected to Llama 3.3 70B (Groq). Awaiting input..." }];
   })
 
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [mode, setMode] = useState<'general' | 'security' | 'creative'>('general')
+  const [mode] = useState<'general' | 'security' | 'creative'>('general')
 
   // Auth State
   const [authStatus, setAuthStatus] = useState<UserStatus>('loading');
@@ -233,7 +238,8 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
           </div>
         </header>
 
-        {/* MODE SELECTOR */}
+        {/* MODE SELECTOR - HIDDEN (Always Uncensored) */}
+        {/* 
         <div style={{ padding: '0 1.5rem 1rem', display: 'flex', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <button 
             className={`btn ${mode === 'general' ? 'cta-open' : 'ghost'}`}
@@ -257,6 +263,7 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
             <Sparkles size={14} style={{ marginRight: '6px' }} /> Creative
           </button>
         </div>
+        */}
 
         {/* CHAT AREA */}
         <div className="ai-chat-viewport">
@@ -319,7 +326,7 @@ export default function AIBrainWindow({ onClose }: AIBrainWindowProps) {
             </button>
           </div>
           <div className="ai-footer-info">
-            Model: Llama 3.3 70B (Uncensored Cloud Core) • {authStatus === 'god_mode' ? 'UNLIMITED' : 'FREE TIER'}
+            Model: Llama 3.3 70B (Groq) • {authStatus === 'god_mode' ? 'UNLIMITED' : 'FREE TIER'}
           </div>
         </footer>
 

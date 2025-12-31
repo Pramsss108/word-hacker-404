@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Search, Zap, Brain, ChevronRight, Waves, Wand2, Music4, Lock, Sparkles } from 'lucide-react'
+import { Search, Zap, Brain, ChevronRight, Wand2, Music4, Lock, Sparkles, Shield } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
+import DebugHub from './components/DebugHub'
 import VoiceEncrypter from './components/VoiceEncrypter'
+import BlackOps from './components/BlackOps'
 import ToolsPage from './components/ToolsPage'
 import RawWatchdogIndicator from './components/RawWatchdogIndicator'
 import RawDiagnosticsPanel from './components/RawDiagnosticsPanel'
 import LoginDashboard from './components/LoginDashboard'
 import { getSharedArrayBufferWatchdogReport } from './raw'
-import { useGlobalAIWorker } from './services/GlobalAIWorker'
 import { proAuth, type UserStatus } from './services/ProAuth'
+
+import { NeuralEditor } from './components/NeuralEditor/NeuralEditor'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -26,7 +29,7 @@ const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: st
 ]
 
 function App() {
-  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools'>('menu')
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools' | 'neural-editor' | 'black-ops'>('menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -45,11 +48,27 @@ function App() {
 
   const heroRef = useRef<HTMLDivElement | null>(null)
   const sabReport = useMemo(() => getSharedArrayBufferWatchdogReport(), [])
-  const { initWorker } = useGlobalAIWorker();
+
+  // ENABLE F12 DEVTOOLS (DEBUGGING)
+  useEffect(() => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
+      if (e.key === 'F12') {
+        try {
+          // Dynamic import to avoid breaking web build
+          const { getCurrentWindow } = await import('@tauri-apps/api/window');
+          await (getCurrentWindow() as any).openDevTools();
+        } catch (err) {
+          console.warn("DevTools not available (Web Mode?)", err);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     // Start AI loading in background immediately when app opens
-    initWorker();
+    // initWorker();
     
     const t = setTimeout(() => setShowIntro(false), 2400)
     return () => clearTimeout(t)
@@ -57,6 +76,7 @@ function App() {
 
   return (
     <div className="app">
+      <DebugHub />
       {/* Background effect */}
       <MatrixRain opacity={0.08} density={24} speed={2} />
       <RawWatchdogIndicator />
@@ -67,6 +87,10 @@ function App() {
         <ToolsPage
           onBackToHome={() => setGameMode('menu')}
         />
+      ) : gameMode === 'neural-editor' ? (
+        <NeuralEditor onExit={() => setGameMode('menu')} />
+      ) : gameMode === 'black-ops' ? (
+        <BlackOps onBack={() => setGameMode('menu')} addLog={() => {}} />
       ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}
@@ -124,7 +148,12 @@ function App() {
             {/* Tools strip */}
             <section className="tools-strip" aria-label="Tools">
               <div className="tools-row">
-                <button className="tool glass"><Waves size={18} /> Sound Lab</button>
+                <button 
+                  className="tool glass"
+                  onClick={() => setGameMode('neural-editor')}
+                >
+                  <Brain size={18} /> Neural Writer
+                </button>
                 <button 
                   className="tool glass"
                   onClick={() => setGameMode('tools')}
@@ -136,6 +165,13 @@ function App() {
                   onClick={() => setGameMode('voice-encrypter')}
                 >
                   <Music4 size={18} /> Voice Encryptor
+                </button>
+                <button 
+                  className="tool glass danger-glow"
+                  onClick={() => setGameMode('black-ops')}
+                  style={{ borderColor: 'rgba(220, 38, 38, 0.3)', color: '#ef4444' }}
+                >
+                  <Shield size={18} /> Black Ops
                 </button>
                 {/* Consolidated to a single enhanced Voice Encrypter as requested */}
                 <button className="tool glass"><Lock size={18} /> Private Drops</button>

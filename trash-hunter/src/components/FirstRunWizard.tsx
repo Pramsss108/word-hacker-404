@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
+interface OllamaModel {
+    name: string;
+    size: number;
+    digest: string;
+    details: any;
+}
+
 interface OllamaStatus {
     installed: boolean;
-    models: string[];
+    models: OllamaModel[];
     needs_setup: boolean;
 }
 
@@ -19,47 +26,22 @@ export function FirstRunWizard({ onComplete }: { onComplete: () => void }) {
     const checkStatus = async () => {
         try {
             setStatusText("Scanning for Neural Core...");
-            const status = await invoke<OllamaStatus>("check_ollama_status");
-            console.log("Create Status:", status);
-
-            if (!status.installed) {
-                setStep("error_ollama");
-                return;
-            }
-
-            if (status.needs_setup) {
-                setStep("installing_brain");
-                startDownload();
-            } else {
-                completeSetup();
-            }
+            
+            // CLOUD MODE: We don't need to check for Ollama anymore.
+            // Just trigger a cleanup of old models and proceed.
+            await invoke("cleanup_unused_models");
+            
+            completeSetup();
         } catch (e) {
             console.error("Setup Check Failed:", e);
-            setStep("error_ollama"); // Assume worst if backend fails
+            // Even if cleanup fails, we proceed because Cloud is primary
+            completeSetup();
         }
     };
 
     const startDownload = async () => {
-        try {
-            // Trigger the download
-            setStatusText("Downloading Neural Weights (Dolphin-Llama3)...");
-
-            // Listen for progress events? For now we just know it launched a terminal window
-            await invoke("download_ollama_model", { modelName: "dolphin-llama3" });
-
-            // Poll for completion every 5 seconds
-            const interval = setInterval(async () => {
-                const status = await invoke<OllamaStatus>("check_ollama_status");
-                if (!status.needs_setup) {
-                    clearInterval(interval);
-                    completeSetup();
-                }
-            }, 5000);
-
-        } catch (e) {
-            console.error("Download Trigger Failed:", e);
-            setStatusText("Download failed. Please try again.");
-        }
+        // DEPRECATED: We use Cloud now.
+        completeSetup();
     };
 
     const completeSetup = () => {

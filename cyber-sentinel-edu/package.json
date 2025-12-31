@@ -1,0 +1,32 @@
+{
+    "version":  "0.1.0",
+    "name":  "cyber-sentinel-edu",
+    "scripts":  {
+                    "preview":  "vite preview",
+                    "build":  "tsc \u0026\u0026 vite build",
+                    "dev":  "vite",
+                    "tauri":  "tauri"
+                },
+    "devDependencies":  {
+                            "@vitejs/plugin-react":  "^4.2.0",
+                            "postcss":  "^8.4.31",
+                            "@tauri-apps/cli":  "^1.5.0",
+                            "@types/react-dom":  "^18.2.15",
+                            "tailwindcss":  "^3.3.5",
+                            "autoprefixer":  "^10.4.16",
+                            "@types/react":  "^18.2.37",
+                            "typescript":  "^5.2.2",
+                            "vite":  "^5.0.0"
+                        },
+    "type":  "module",
+    "dependencies":  {
+                         "react-dom":  "^18.2.0",
+                         "lucide-react":  "^0.292.0",
+                         "tailwind-merge":  "^2.0.0",
+                         "zustand":  "^4.4.6",
+                         "clsx":  "^2.0.0",
+                         "react":  "^18.2.0",
+                         "@tauri-apps/api":  "^1.5.0"
+                     },
+    "private":  true
+}

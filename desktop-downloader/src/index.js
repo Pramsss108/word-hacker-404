@@ -1,5 +1,11 @@
 /* eslint-disable */
-console.log('[Init] Loaded index.js v11 - FORCE RELOAD - EXPORT FIX APPLIED');
+
+// ==========================================
+// SINGLE WINDOW ARCHITECTURE (SPA MODE)
+// ==========================================
+// NOTE: View switching logic moved to src/renderer/viewManager.js
+// This ensures it runs even if index.js fails elsewhere.
+
 
 const PRESET_LABELS = {
   'mp4-1080': 'Best Quality (4K+)',
@@ -182,6 +188,8 @@ const exportPathInput = document.getElementById('export-path')
 const exportCancel = document.getElementById('export-cancel')
 const exportTypeSelect = document.getElementById('export-type')
 const exportResolutionSelect = document.getElementById('export-resolution')
+const exportAudioTrackRow = document.getElementById('export-audio-track-row')
+const exportAudioTrackSelect = document.getElementById('export-audio-track')
 const exportConfirmDefaultLabel = exportConfirm?.textContent || 'Export selection'
 
 const formatCache = new Map()
@@ -301,14 +309,14 @@ const updateThumbnailRatioLabel = () => {
 const updateMediaStatusHeader = () => {
   const statusIndicator = document.getElementById('media-status-indicator')
   const statusText = document.getElementById('media-status-text')
-  
+
   if (!statusIndicator || !statusText) return
-  
+
   if (state.preview.ready && previewVideo?.src) {
     const width = previewVideo.videoWidth
     const height = previewVideo.videoHeight
     const duration = state.preview.duration || 0
-    
+
     statusIndicator.classList.add('active')
     statusText.textContent = `${width}×${height} • ${formatTime(duration)}`
   } else {
@@ -426,11 +434,11 @@ const updateInsightData = () => {
   const thumbRatio = document.getElementById('thumb-ratio')
   const thumbDownload = document.getElementById('thumb-download')
   const thumbPreview = document.getElementById('thumb-preview')
-  
+
   if (thumbImage && state.preview.metadata.thumbnail) {
     thumbImage.src = state.preview.metadata.thumbnail
     thumbDownload.disabled = false
-    
+
     // Detect aspect ratio
     const img = new Image()
     img.onload = () => {
@@ -444,7 +452,7 @@ const updateInsightData = () => {
         '0.75': '3:4'
       }
       thumbRatio.textContent = common[ratio] || `${img.width}x${img.height}`
-      
+
       // Auto-adjust container aspect ratio to match image
       if (thumbPreview) {
         thumbPreview.style.aspectRatio = `${img.width} / ${img.height}`
@@ -459,7 +467,7 @@ const updateInsightData = () => {
       thumbPreview.style.aspectRatio = '16 / 9' // Reset to default
     }
   }
-  
+
   // Keywords
   const keywordsField = document.getElementById('summary-keywords')
   if (keywordsField) {
@@ -472,7 +480,7 @@ const updateInsightData = () => {
       keywordsField.classList.remove('ready')
     }
   }
-  
+
   // Title
   const titleField = document.getElementById('summary-title')
   if (titleField) {
@@ -484,7 +492,7 @@ const updateInsightData = () => {
       titleField.classList.remove('ready')
     }
   }
-  
+
   // Description
   const descField = document.getElementById('summary-description')
   if (descField) {
@@ -505,12 +513,12 @@ const applyPremiumToggleUI = () => {
   const seoCards = document.querySelectorAll('[data-insight-feature="seo"]')
   const storyCards = document.querySelectorAll('[data-insight-feature="story"]')
   const previewVideo = document.getElementById('preview-video')
-  
+
   const thumbnailEnabled = state.preview.premium.thumbnail
   const seoEnabled = state.preview.premium.seo
   const storyEnabled = state.preview.premium.story
   const anyEnabled = thumbnailEnabled || seoEnabled || storyEnabled
-  
+
   if (thumbnailCard) {
     thumbnailCard.style.display = thumbnailEnabled ? 'block' : 'none'
   }
@@ -520,7 +528,7 @@ const applyPremiumToggleUI = () => {
   storyCards.forEach(card => {
     card.style.display = storyEnabled ? 'block' : 'none'
   })
-  
+
   // Control overlay visibility with active class
   if (overlay) {
     if (anyEnabled) {
@@ -529,7 +537,7 @@ const applyPremiumToggleUI = () => {
       overlay.classList.remove('active')
     }
   }
-  
+
   // Hide video when any insight is active, show when all are off
   if (previewVideo) {
     if (anyEnabled) {
@@ -545,17 +553,17 @@ const applyPremiumToggleUI = () => {
       previewVideo.style.pointerEvents = 'auto'
     }
   }
-  
+
   // Update modal cards
   Object.entries(premiumCardGroups).forEach(([feature, cards]) => {
     cards.forEach((card) => card?.classList.toggle('disabled', !state.preview.premium[feature]))
   })
-  
+
   const activeFeature = summaryFeatureLookup[state.preview.activePanel]
   if (activeFeature && !state.preview.premium[activeFeature]) {
     setActiveMetadataPanel(getFirstEnabledPanel())
   }
-  
+
   updateInsightData()
   renderExportMetadata()
 }
@@ -607,7 +615,7 @@ const renderPremiumMetadata = () => {
     const keywords = (state.preview.metadata.keywords || []).map((word) => word.trim()).filter(Boolean)
     const hashtags = state.preview.metadata.extractedHashtags || []
     const commaTags = state.preview.metadata.commaSeparatedTags || []
-    
+
     // DEBUG: Log what we extracted
     console.log('[Keywords Debug]', {
       keywords,
@@ -615,14 +623,14 @@ const renderPremiumMetadata = () => {
       commaTags,
       fullMetadata: state.preview.metadata
     })
-    
+
     // Combine all metadata sources
     const allTags = [
       ...keywords,
       ...commaTags,
       ...hashtags.map(h => h.replace('#', ''))  // Remove # for display
     ].filter(Boolean)
-    
+
     // Display with section labels if we have multiple sources
     if (keywords.length || hashtags.length || commaTags.length) {
       let display = ''
@@ -725,31 +733,31 @@ const fetchPremiumMetadata = async (item) => {
   console.log('[Metadata] Response tags:', response?.tags)
 
   const description = response?.description || fallback.description || ''
-  
+
   console.log('[Metadata] Description:', description)
-  
+
   // Extract hashtags from description (multiple patterns)
   const hashtagPattern1 = /#[\w\u0980-\u09FF]+/g  // Standard + Bengali
   const hashtagPattern2 = /#[a-zA-Z0-9_]+/g       // Alphanumeric only
-  
+
   const hashtags1 = description.match(hashtagPattern1) || []
   const hashtags2 = description.match(hashtagPattern2) || []
   const hashtags = [...new Set([...hashtags1, ...hashtags2])]  // Remove duplicates
-  
+
   console.log('[Metadata] Extracted hashtags:', hashtags)
-  
+
   // Extract comma-separated tags from description (smart parsing)
   const commaTags = description
     .split(/[,،]/)  // Support English and Bengali commas
     .map(t => t.trim())
     .filter(t => t && !t.startsWith('#') && t.length > 2 && t.length < 50)
     .slice(0, 20)  // Limit to 20 tags max
-  
+
   console.log('[Metadata] Extracted comma tags:', commaTags)
-  
+
   // Extract keywords/tags - check multiple possible field names
   let extractedKeywords = []
-  
+
   // Priority: tags > keywords > categories
   if (Array.isArray(response?.tags) && response.tags.length) {
     extractedKeywords = response.tags
@@ -764,14 +772,14 @@ const fetchPremiumMetadata = async (item) => {
     extractedKeywords = fallback.keywords
     console.log('[Metadata] Using fallback keywords:', fallback.keywords)
   }
-  
+
   // ENHANCE: If we only have 1-2 keywords (likely fallback), add hashtags as keywords
   if (extractedKeywords.length <= 2 && hashtags.length > 0) {
     const hashtagWords = hashtags.map(h => h.replace('#', '').toLowerCase())
     extractedKeywords = [...extractedKeywords, ...hashtagWords]
     console.log('[Metadata] Enhanced keywords with hashtags:', extractedKeywords)
   }
-  
+
   // ENHANCE: Add title words if keywords are still weak
   if (extractedKeywords.length <= 3 && response?.title) {
     const titleWords = response.title
@@ -782,7 +790,7 @@ const fetchPremiumMetadata = async (item) => {
     extractedKeywords = [...extractedKeywords, ...titleWords]
     console.log('[Metadata] Enhanced keywords with title words:', extractedKeywords)
   }
-  
+
   const normalized = {
     title: response?.title || fallback.title,
     description: description,
@@ -842,11 +850,11 @@ const buildBatchSummaryMarkup = (items) => {
       <p class="batch-summary-header">${items.length} clips selected</p>
       <div class="batch-summary-list">
         ${items
-          .map((item, idx) => {
-            const meta = getBatchStatusMeta(item)
-            const label = escapeHtml(item.platform ? item.platform.name : `Clip ${idx + 1}`)
-            const safeUrl = escapeHtml(item.url)
-            return `
+      .map((item, idx) => {
+        const meta = getBatchStatusMeta(item)
+        const label = escapeHtml(item.platform ? item.platform.name : `Clip ${idx + 1}`)
+        const safeUrl = escapeHtml(item.url)
+        return `
               <div class="batch-summary-row">
                 <div>
                   <strong>${label}</strong>
@@ -858,15 +866,15 @@ const buildBatchSummaryMarkup = (items) => {
                 </div>
               </div>
             `
-          })
-          .join('')}
+      })
+      .join('')}
       </div>
       <p class="batch-summary-footer">Run Export Selected to process them together.</p>
     </div>
   `
 }
 
-let syncPreviewWithSelection = () => {}
+let syncPreviewWithSelection = () => { }
 
 const handlePremiumCopy = async (target) => {
   let payload = ''
@@ -898,38 +906,38 @@ const handlePremiumSave = async (target) => {
       setPremiumStatus('Title not ready yet.', 'error')
       return
     }
-    
+
     const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '-').substring(0, 50)
     const savePath = await window.systemDialogs?.saveFile({
       defaultPath: `${sanitizedTitle}-title.txt`,
       filters: [{ name: 'Text Files', extensions: ['txt'] }]
     })
-    
+
     if (!savePath) return  // User cancelled
-    
+
     const encoder = new TextEncoder()
     const buffer = encoder.encode(title)
     await window.downloader.saveFile(savePath, buffer.buffer)
     setPremiumStatus('Title saved successfully.', 'success')
     return
   }
-  
+
   if (target === 'description') {
     const description = state.preview.metadata.description || ''
     if (!description) {
       setPremiumStatus('Description not ready yet.', 'error')
       return
     }
-    
+
     const title = state.preview.metadata.title || 'description'
     const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '-').substring(0, 50)
     const savePath = await window.systemDialogs?.saveFile({
       defaultPath: `${sanitizedTitle}-description.txt`,
       filters: [{ name: 'Text Files', extensions: ['txt'] }]
     })
-    
+
     if (!savePath) return  // User cancelled
-    
+
     const encoder = new TextEncoder()
     const buffer = encoder.encode(description)
     await window.downloader.saveFile(savePath, buffer.buffer)
@@ -1104,10 +1112,10 @@ const buildFileList = (item) => {
   wrapper.className = 'slot-files'
   const title = document.createElement('p')
   title.className = 'slot-files-title'
-  
+
   const isExported = item.exported && item.exportedFiles && item.exportedFiles.length
   const displayFiles = isExported ? item.exportedFiles : item.files
-  
+
   if (isExported) {
     title.textContent = displayFiles.length === 1 ? '✓ Exported file' : `✓ Exported files (${displayFiles.length})`
   } else {
@@ -1146,9 +1154,9 @@ const buildFileList = (item) => {
         const path = file;
         console.log('[Batch] Opening folder for:', path);
         if (window.downloader?.openFolderLocation) {
-           window.downloader.openFolderLocation(path);
+          window.downloader.openFolderLocation(path);
         } else if (window.systemDialogs?.openFolder) {
-           window.systemDialogs.openFolder(path);
+          window.systemDialogs.openFolder(path);
         }
       };
       revealBtn.textContent = '📂'
@@ -1344,15 +1352,15 @@ const resolveItemFiles = async (item) => {
     console.warn('[Resolve] No files in item to resolve')
     return
   }
-  
+
   // Process each file in the item
   for (let i = 0; i < item.files.length; i++) {
     const source = item.files[i]
     console.log(`[Resolve] Checking file [${i}]: ${source}`)
-    
+
     try {
       const { dir: sourceDir, base: sourceFile, sep: sourceSep } = splitPathComponents(source)
-      
+
       // 1. Check if exact path exists
       let exists = false
       if (window.downloader && window.downloader.checkFileExists) {
@@ -1370,9 +1378,9 @@ const resolveItemFiles = async (item) => {
         console.log('[Resolve] File exists, skipping search.')
         continue // File is good, move to next
       }
-      
+
       console.warn(`[Resolve] File not found: ${source}. Searching directory...`)
-      
+
       // 2. Search directory
       if (sourceDir && window.downloader && window.downloader.readDir) {
         try {
@@ -1388,7 +1396,7 @@ const resolveItemFiles = async (item) => {
           }
           const files = (rawEntries || []).map(entryToName).filter(Boolean)
           console.log(`[Resolve] Found ${files.length} files in directory`)
-          
+
           const normalizeForMatch = (str) => {
             // Remove .f123 (format code) if present
             let normalized = str.replace(/\.f\d{2,3}(?=\.\w+$)/gi, '')
@@ -1397,24 +1405,24 @@ const resolveItemFiles = async (item) => {
             // Keep only alphanumeric
             return normalized.toLowerCase().replace(/[^a-z0-9]/g, '')
           }
-          
+
           const expectedNormalized = normalizeForMatch(sourceFile)
           console.log(`[Resolve] Looking for normalized: ${expectedNormalized}`)
-          
+
           // Try exact match first (normalized)
           let match = files.find((filename) => normalizeForMatch(filename) === expectedNormalized)
-          
+
           // Try fuzzy match
           if (!match) {
             // Take first 20 chars of normalized title
             const searchKey = expectedNormalized.slice(0, 20)
             console.log(`[Resolve] Fuzzy search key: ${searchKey}`)
-            
+
             match = files.find((filename) => {
               return normalizeForMatch(filename).includes(searchKey)
             })
           }
-          
+
           if (match) {
             const newPath = joinPathSegments(sourceDir, match, sourceSep)
             console.log(`[Resolve] ✅ Found match: ${newPath}`)
@@ -1442,30 +1450,30 @@ const loadPreviewFromItem = async (item) => {
     setStatus('Preview not ready yet. Finish the download first.')
     return
   }
-  
+
   // Ensure files are resolved before loading
   await resolveItemFiles(item)
-  
+
   // Find the first video/audio file
-  const source = item.files.find(f => 
+  const source = item.files.find(f =>
     f.endsWith('.mp4') || f.endsWith('.webm') || f.endsWith('.mkv') || f.endsWith('.mp3') || f.endsWith('.m4a')
   ) || item.files[0]
-  
+
   state.preview.file = source
   state.preview.url = item.url
-  
+
   // Clear any previous errors
   previewVideo.removeAttribute('poster')
   previewEmpty.classList.add('hidden')
-  
+
   console.log('[Preview] Loading:', source)
   console.log('[Preview] CODE VERSION: BULLETPROOF_V2')
-  
+
   // Skip Blob loading for now - causes memory issues with large files
   // Try asset protocol directly
   let fileUrl = toFileUrl(source);
   console.log('[Preview] Using Asset URL:', fileUrl);
-  
+
   previewVideo.src = fileUrl
   previewVideo.load()
   previewInfo.textContent = item.url
@@ -1508,17 +1516,17 @@ const detectVideoFormat = () => {
   const width = previewVideo.videoWidth
   const height = previewVideo.videoHeight
   const aspectRatio = width / height
-  
+
   // Remove all format classes
   previewCard.classList.remove('video-horizontal', 'video-vertical', 'video-shorts')
   if (premiumThumbnailFrame) premiumThumbnailFrame.classList.remove('vertical', 'shorts')
-  
+
   let format = 'Unknown'
-  
+
   if (height > width) {
     // Vertical video (likely Shorts, Reels, TikTok)
     if (premiumThumbnailFrame) premiumThumbnailFrame.classList.add('vertical')
-    
+
     if (aspectRatio < 0.6) {
       format = '9:16 Shorts'
       previewCard.classList.add('video-shorts')
@@ -1538,7 +1546,7 @@ const detectVideoFormat = () => {
     }
     previewCard.classList.add('video-horizontal')
   }
-  
+
   videoFormatBadge.textContent = `${format} · ${width}×${height}`
   console.log(`[Preview] Format: ${format} (${width}×${height}, ratio: ${aspectRatio.toFixed(2)})`)
 }
@@ -1554,11 +1562,11 @@ const resetPreviewRanges = (duration) => {
   trimStartLabel.textContent = formatTime(0)
   trimEndLabel.textContent = formatTime(duration)
   trimDurationLabel.textContent = formatTime(duration)
-  
+
   // Safe timeline display updates
   if (currentTimeDisplay) currentTimeDisplay.textContent = formatTime(0)
   if (totalTimeDisplay) totalTimeDisplay.textContent = formatTime(duration)
-  
+
   state.preview.ready = true
   updateMediaStatusHeader()
   // OLD updateTrimFill() call deleted
@@ -1577,7 +1585,7 @@ const clampPreviewRanges = () => {
   trimEndLabel.textContent = formatTime(end)
   trimDurationLabel.textContent = formatTime(end - start)
   // OLD updateTrimFill() call deleted
-  
+
   // Trigger background trim processing
   debouncedBackgroundTrim()
 }
@@ -1585,7 +1593,7 @@ const clampPreviewRanges = () => {
 let trimDebounceTimer = null
 const debouncedBackgroundTrim = () => {
   if (trimDebounceTimer) clearTimeout(trimDebounceTimer)
-  
+
   // Wait 2 seconds after user stops adjusting trim handles
   trimDebounceTimer = setTimeout(() => {
     processBackgroundTrim()
@@ -1595,29 +1603,29 @@ const debouncedBackgroundTrim = () => {
 const processBackgroundTrim = async () => {
   // Only process if trim is active and ready
   if (!state.preview.ready || !state.preview.file) return
-  
+
   const isTrimmed = state.preview.start > 0 || state.preview.end < state.preview.duration
   if (!isTrimmed) {
     state.preview.trimmedFile = null
     return
   }
-  
+
   if (state.preview.trimProcessing) return
-  
+
   console.log('[Background Trim] Starting pre-processing...')
   state.preview.trimProcessing = true
   setStatus('Pre-processing trim in background...')
-  
+
   try {
     const trimData = {
       start: state.preview.start,
       end: state.preview.end,
       sourceFile: state.preview.file
     }
-    
+
     // Process trim in background
     const result = await window.systemDialogs?.backgroundTrim(trimData)
-    
+
     if (result && result.trimmedFile) {
       state.preview.trimmedFile = result.trimmedFile
       console.log('[Background Trim] Complete:', result.trimmedFile)
@@ -1707,7 +1715,7 @@ const togglePreviewPlayback = () => {
     const trimStart = parseFloat(trimStartInput.value) || 0
     const trimEnd = parseFloat(trimEndInput.value) || previewVideo.duration
     const currentTime = previewVideo.currentTime
-    
+
     // Smart playback: Continue from current OR start from trim if outside
     if (currentTime < trimStart || currentTime >= trimEnd) {
       // Outside trim range - jump to trim start
@@ -1717,7 +1725,7 @@ const togglePreviewPlayback = () => {
       // Inside trim range - CONTINUE from current position
       console.log(`[Play] Continuing from ${currentTime.toFixed(2)}s`)
     }
-    
+
     previewVideo.play()
     previewPlayBtn.textContent = '⏸' // Pause icon
   } else {
@@ -1819,7 +1827,7 @@ const renderQueue = () => {
       event.stopPropagation()
       openExportDrawer([item])
     })
-    
+
     const cancelBtn = slot.querySelector('[data-cancel]')
     if (cancelBtn) {
       cancelBtn.addEventListener('click', async (event) => {
@@ -1844,7 +1852,7 @@ const renderQueue = () => {
         moveQueueItem(item.id, Number(btn.dataset.move))
       })
     })
-    
+
     const deleteBtn = slot.querySelector('[data-delete]')
     if (deleteBtn) {
       deleteBtn.addEventListener('click', (event) => {
@@ -1890,9 +1898,9 @@ const moveQueueItem = (id, delta) => {
 const deleteQueueItem = (id) => {
   const index = state.queue.findIndex((item) => item.id === id)
   if (index === -1) return
-  
+
   const item = state.queue[index]
-  
+
   // If this item is currently loaded in preview, clear the player
   if (state.preview.url === item.url) {
     resetPreviewPlayer('Preview cleared. Paste a new link to restart the flow.')
@@ -1902,11 +1910,11 @@ const deleteQueueItem = (id) => {
   if (item.status === 'complete' && !item.exported) {
     updateHistoryStatus(item.url, 'retry')
   }
-  
+
   // Remove from queue
   state.queue.splice(index, 1)
   state.queueSelection.delete(id)
-  
+
   renderQueue()
   updateSelectionCounter()
   pushLog(`Deleted: ${item.url}`)
@@ -1963,7 +1971,7 @@ const onDownload = async () => {
     pushLog('⚠ Download system not ready. Please restart the app.')
     return
   }
-  
+
   // ============================================
   // AD CHECK - DISABLED (Temporary Bypass)
   // ============================================
@@ -2008,7 +2016,7 @@ const onDownload = async () => {
     return // STOP download if ad fails
   }
   */
-  
+
   try {
     setBusy(true)
     updateEngineChip()
@@ -2055,7 +2063,7 @@ const closeExportDrawer = () => {
 const extractResolutionsFromFormats = (formats) => {
   const videoFormats = formats.filter(fmt => fmt.height && fmt.vcodec && fmt.vcodec !== 'none')
   const resolutions = new Map()
-  
+
   videoFormats.forEach(fmt => {
     const key = `${fmt.height}p`
     if (!resolutions.has(key) || (resolutions.get(key).tbr || 0) < (fmt.tbr || 0)) {
@@ -2070,13 +2078,13 @@ const extractResolutionsFromFormats = (formats) => {
       })
     }
   })
-  
+
   return Array.from(resolutions.values()).sort((a, b) => b.height - a.height)
 }
 
 const extractAudioFormatsFromFormats = (formats) => {
   const audioFormats = formats.filter(fmt => fmt.acodec && fmt.acodec !== 'none' && (!fmt.vcodec || fmt.vcodec === 'none'))
-  
+
   // Map all audio formats with their details, using tbr as fallback for abr
   const formattedAudio = audioFormats.map(fmt => ({
     id: fmt.id,
@@ -2086,7 +2094,7 @@ const extractAudioFormatsFromFormats = (formats) => {
     abr: fmt.abr || fmt.tbr || 128,
     ext: fmt.ext
   }))
-  
+
   // Sort by bitrate descending (highest quality first)
   return formattedAudio.sort((a, b) => (b.abr || 0) - (a.abr || 0))
 }
@@ -2111,20 +2119,45 @@ const updateExportResolutionSelect = () => {
 const renderExportOptions = (formats) => {
   const resolutions = extractResolutionsFromFormats(formats)
   const audioFormats = extractAudioFormatsFromFormats(formats)
-  
+
   state.exportContext.resolutions = resolutions
   state.exportContext.audioFormats = audioFormats
-  
+
   updateExportResolutionSelect()
 
-  const outputFormats = state.exportContext.type === 'video' 
+  const outputFormats = state.exportContext.type === 'video'
     ? ['mp4', 'mkv', 'avi', 'webm']
     : ['mp3', 'm4a', 'ogg', 'wav']
-  
+
   exportFormatSelect.innerHTML = outputFormats
     .map((format) => `<option value="${format}">${format.toUpperCase()}</option>`)
     .join('')
-  
+
+  // RE-ADDED: Audio Track Logic
+  if (exportAudioTrackRow) {
+    const validAudio = formats.filter(f => f.acodec && f.acodec !== 'none' && f.vcodec === 'none');
+    // Group by language to avoid duplicates, keep best quality
+    const tracksByLang = new Map();
+    validAudio.forEach(t => {
+      const lang = t.language || 'und';
+      if (!tracksByLang.has(lang) || (t.abr || 0) > (tracksByLang.get(lang).abr || 0)) {
+        tracksByLang.set(lang, t);
+      }
+    });
+
+    const uniqueTracks = Array.from(tracksByLang.values());
+
+    if (uniqueTracks.length > 0) {
+      exportAudioTrackRow.style.display = 'block';
+      exportAudioTrackSelect.innerHTML = uniqueTracks.map(t =>
+        `<option value="${t.id}">${(t.language || 'Unknown').toUpperCase()} [${Math.round(t.abr || 0)}k]</option>`
+      ).join('');
+    } else {
+      exportAudioTrackRow.style.display = 'none';
+      exportAudioTrackSelect.innerHTML = '';
+    }
+  }
+
   state.exportContext.selectedFormat = outputFormats[0]
   updateExportMessage('Ready to export.')
 }
@@ -2142,17 +2175,17 @@ const openExportDrawer = async (items = []) => {
     pushLog('Only completed downloads can be exported.')
     return
   }
-  
+
   document.body.classList.add('exporting')
   updateExportMessage('Preparing export options', { loading: true })
-  
+
   state.exportContext.targets = completed
   state.exportContext.type = 'video'
   exportTypeSelect.value = 'video'
   exportTarget.textContent = formatExportTargetLabel(completed)
   exportPop.classList.add('open')
   exportPop.setAttribute('aria-hidden', 'false')
-  
+
   const targetUrl = completed[0].url
   const cached = formatCache.get(targetUrl)
 
@@ -2190,11 +2223,14 @@ const populateExportOptions = (meta) => {
     acodec: fmt.acodec,
     abr: fmt.abr,
     tbr: fmt.tbr,
-    filesize: fmt.filesize
+    abr: fmt.abr,
+    tbr: fmt.tbr,
+    filesize: fmt.filesize,
+    language: fmt.language // Added for Audio Track Selection
   }))
   state.exportContext.formats = mapped
   renderExportOptions(mapped)
-  
+
   // Enable controls
   exportConfirm.disabled = false
   exportFormatSelect.disabled = false
@@ -2213,16 +2249,16 @@ const bindPreviewEvents = () => {
     setStatus(`Preview ready: ${Math.round(previewVideo.duration)}s`)
     updateGuideProgress('preview')
     console.log('[Preview] Loaded successfully, duration:', previewVideo.duration)
-    
+
     // Initialize premium timeline after video loads
     console.log('[Preview] Initializing premium timeline...')
     initPremiumTimeline()
   })
-  
+
   // Update current time display and playhead during playback - THROTTLED
   let rafId = null
   let playheadUpdateFrame = null
-  
+
   // Continuous playhead animation function
   const updatePlayheadContinuously = () => {
     if (!previewVideo || previewVideo.paused || !previewVideo.duration) {
@@ -2232,7 +2268,7 @@ const bindPreviewEvents = () => {
       }
       return
     }
-    
+
     // Update playhead position
     const playheadElement = document.getElementById('timeline-playhead')
     if (playheadElement && previewVideo.currentTime !== undefined) {
@@ -2240,17 +2276,17 @@ const bindPreviewEvents = () => {
       playheadElement.style.left = `${Math.max(0, Math.min(100, currentPercent))}%`
       playheadElement.classList.add('active')
     }
-    
+
     // Continue animation loop
     playheadUpdateFrame = requestAnimationFrame(updatePlayheadContinuously)
   }
-  
+
   // Start playhead animation on play
   previewVideo.addEventListener('play', () => {
     console.log('[Playhead] ▶️ Starting continuous animation')
     updatePlayheadContinuously()
   })
-  
+
   // Stop playhead animation on pause
   previewVideo.addEventListener('pause', () => {
     console.log('[Playhead] ⏸️ Stopping animation')
@@ -2265,64 +2301,64 @@ const bindPreviewEvents = () => {
       playheadElement.style.left = `${currentPercent}%`
     }
   })
-  
+
   previewVideo.addEventListener('timeupdate', () => {
     if (!state.preview.ready || !previewVideo.duration) return
-    
+
     // Cancel previous frame if still pending
     if (rafId) cancelAnimationFrame(rafId)
-    
+
     // Throttle updates to animation frames only
     rafId = requestAnimationFrame(() => {
       const currentTime = previewVideo.currentTime
-      
+
       // Safe update for timeline display
       if (currentTimeDisplay) {
         currentTimeDisplay.textContent = formatTime(currentTime)
       }
-      
+
       // Auto-loop at trim end - use current input values
       const trimStart = parseFloat(trimStartInput.value) || 0
       const trimEnd = parseFloat(trimEndInput.value) || previewVideo.duration
-      
+
       if (currentTime >= trimEnd) {
         previewVideo.currentTime = trimStart
         // Keep playing (loop)
       }
-      
+
       // If somehow before trim start, jump to start
       if (currentTime < trimStart) {
         previewVideo.currentTime = trimStart
       }
-      
+
       rafId = null
     })
   })
-  
+
   previewVideo.addEventListener('play', () => {
     previewPlayBtn.textContent = '⏸' // Pause icon - matches video playing
   })
-  
+
   previewVideo.addEventListener('pause', () => {
     previewPlayBtn.textContent = '▶' // Play icon - matches video paused
   })
-  
+
   previewVideo.addEventListener('error', (e) => {
     console.error('[Preview] Error loading video:', e)
     console.error('[Preview] Error details:', previewVideo.error)
-    const errorMsg = previewVideo.error ? 
-      `Video error: ${previewVideo.error.message || 'Could not load file'}` : 
+    const errorMsg = previewVideo.error ?
+      `Video error: ${previewVideo.error.message || 'Could not load file'}` :
       'Failed to load video'
     setStatus(errorMsg)
     resetPreviewPlayer('Video reset. Load another link to keep going.')
   })
-  
+
   previewVideo.addEventListener('canplay', () => {
     console.log('[Preview] Video can play')
   })
-  
+
   // OLD timeline hover code DELETED - elements don't exist
-  
+
   // Button event listeners
   previewPlayBtn.addEventListener('click', togglePreviewPlayback)
   previewStopBtn.addEventListener('click', stopPreview)
@@ -2331,7 +2367,7 @@ const bindPreviewEvents = () => {
   // Magnetic snap functionality for trim timeline
   let activeTrimHandle = null
   const SNAP_THRESHOLD = 30 // pixels for magnetic snap
-  
+
   const handleTrimTimelineClick = (event) => {
     if (!state.preview.ready) return
     const timeline = event.currentTarget
@@ -2339,14 +2375,14 @@ const bindPreviewEvents = () => {
     const clickX = event.clientX - rect.left
     const clickPercent = (clickX / rect.width) * 100
     const clickTime = (clickPercent / 100) * state.preview.duration
-    
+
     // Calculate distances to both handles
     const startDistance = Math.abs(state.preview.start - clickTime)
     const endDistance = Math.abs(state.preview.end - clickTime)
-    
+
     // Snap to nearest handle if within threshold
     const threshold = (SNAP_THRESHOLD / rect.width) * state.preview.duration
-    
+
     if (startDistance < threshold && startDistance < endDistance) {
       // Snap to start handle
       trimStartInput.value = clickTime
@@ -2359,38 +2395,38 @@ const bindPreviewEvents = () => {
       // Click-to-seek: Jump playback to clicked position within trim range
       const trimStart = state.preview.start
       const trimEnd = state.preview.end
-      
+
       // Only seek if click is within trim range
       if (clickTime >= trimStart && clickTime <= trimEnd) {
         previewVideo.currentTime = clickTime
         console.log(`[Timeline] Seek to ${clickTime.toFixed(2)}s within trim range`)
       }
     }
-    
+
     clampPreviewRanges()
   }
-  
+
   const trimTimeline = document.querySelector('.trim-timeline')
   if (trimTimeline) {
     trimTimeline.addEventListener('click', handleTrimTimelineClick)
-    
+
     // Add drag support for magnetic handles
     let isDragging = false
-    
+
     trimTimeline.addEventListener('mousedown', (event) => {
       if (event.target.classList.contains('trim-track') || event.target.classList.contains('trim-range-fill')) {
         handleTrimTimelineClick(event)
         isDragging = true
       }
     })
-    
+
     trimTimeline.addEventListener('mousemove', (event) => {
       if (!isDragging || !activeTrimHandle) return
       const rect = trimTimeline.getBoundingClientRect()
       const clickX = event.clientX - rect.left
       const clickPercent = Math.max(0, Math.min(100, (clickX / rect.width) * 100))
       const clickTime = (clickPercent / 100) * state.preview.duration
-      
+
       if (activeTrimHandle === 'start') {
         trimStartInput.value = clickTime
       } else {
@@ -2398,7 +2434,7 @@ const bindPreviewEvents = () => {
       }
       clampPreviewRanges()
     })
-    
+
     document.addEventListener('mouseup', () => {
       isDragging = false
       activeTrimHandle = null
@@ -2407,7 +2443,7 @@ const bindPreviewEvents = () => {
 
   trimStartInput.addEventListener('input', clampPreviewRanges)
   trimEndInput.addEventListener('input', clampPreviewRanges)
-  
+
   // Jump to position and play when clicking trim START slider
   trimStartInput.addEventListener('click', () => {
     if (!state.preview.ready) return
@@ -2417,7 +2453,7 @@ const bindPreviewEvents = () => {
     previewVideo.play()
     previewPlayBtn.textContent = '\u23f8' // Pause icon
   })
-  
+
   // Jump to position and STOP when clicking trim END slider
   trimEndInput.addEventListener('click', () => {
     if (!state.preview.ready) return
@@ -2427,24 +2463,24 @@ const bindPreviewEvents = () => {
     previewVideo.pause()
     previewPlayBtn.textContent = '\u25b6' // Play icon
   })
-  
+
   // Professional Feature: Mouse wheel to scrub through timeline
   previewVideo.addEventListener('wheel', (event) => {
     if (!state.preview.ready) return
     event.preventDefault()
-    
+
     // Scroll up = forward, scroll down = backward
     const delta = -event.deltaY * 0.01 // Smooth scroll amount
     const newTime = Math.max(0, Math.min(previewVideo.duration, previewVideo.currentTime + delta))
     previewVideo.currentTime = newTime
     console.log(`[Wheel] Scrub to ${newTime.toFixed(2)}s`)
   }, { passive: false })
-  
+
   // Professional Feature: Live preview while dragging trim sliders
   let isDraggingSlider = false
   let isDraggingStart = false
   let wasPausedBeforeDrag = false
-  
+
   const startSliderDrag = (isStartHandle) => {
     isDraggingSlider = true
     isDraggingStart = isStartHandle
@@ -2454,47 +2490,47 @@ const bindPreviewEvents = () => {
     previewPlayBtn.textContent = '▶' // Show play icon
     console.log(`[Drag Start] ${isStartHandle ? 'START' : 'END'} slider grabbed - video paused for precision`)
   }
-  
+
   const updateSliderDrag = (slider, isStartHandle) => {
     if (!isDraggingSlider || !state.preview.ready) return
     const value = parseFloat(slider.value) || 0
-    
+
     // INSTANT video preview at slider position
     previewVideo.currentTime = value
-    
+
     // Visual feedback in console
     const label = isStartHandle ? 'TRIM START' : 'TRIM END'
     console.log(`[${label} Drag] 🎬 Previewing frame at ${value.toFixed(2)}s`)
-    
+
     // Update time display
     if (currentTimeDisplay) {
       currentTimeDisplay.textContent = formatTime(value)
     }
   }
-  
+
   const endSliderDrag = () => {
     if (isDraggingSlider) {
       const wasStart = isDraggingStart
       isDraggingSlider = false
       isDraggingStart = false
-      
+
       console.log(`[Drag End] Trim ${wasStart ? 'START' : 'END'} set - ready to continue`)
-      
+
       // DON'T auto-resume - let user decide when to play
       // This gives them time to review the frame they selected
     }
   }
-  
+
   trimStartInput.addEventListener('mousedown', () => startSliderDrag(true))
   trimStartInput.addEventListener('input', () => updateSliderDrag(trimStartInput, true))
   trimStartInput.addEventListener('mouseup', endSliderDrag)
   trimStartInput.addEventListener('mouseleave', endSliderDrag)
-  
+
   trimEndInput.addEventListener('mousedown', () => startSliderDrag(false))
   trimEndInput.addEventListener('input', () => updateSliderDrag(trimEndInput, false))
   trimEndInput.addEventListener('mouseup', endSliderDrag)
   trimEndInput.addEventListener('mouseleave', endSliderDrag)
-  
+
   // Professional Feature: Double-click video to toggle fullscreen
   previewVideo.addEventListener('dblclick', () => {
     if (document.fullscreenElement) {
@@ -2503,7 +2539,7 @@ const bindPreviewEvents = () => {
       previewVideo.requestFullscreen()
     }
   })
-  
+
   // Professional Feature: Click on video to play/pause
   previewVideo.addEventListener('click', (event) => {
     // Don't interfere with double-click
@@ -2547,17 +2583,17 @@ const handleMenuAction = (action) => {
 const checkForUpdates = async () => {
   const currentVersion = 'v1.0.0'
   const appName = 'WH404 - YT Downloader 1.0'
-  
+
   pushLog('Checking for updates...')
   window.alert(`${appName}\n\nCurrent version: 1.0.0\n\nChecking GitHub for updates...`)
-  
+
   try {
     const response = await fetch('https://api.github.com/repos/Pramsss108/word-hacker-404/releases/latest')
     const data = await response.json()
     const latestVersion = data.tag_name || data.name || 'v1.0.0'
-    
+
     pushLog(`Latest version: ${latestVersion}`)
-    
+
     if (latestVersion === currentVersion) {
       window.alert(`${appName}\n\n✅ You're up to date!\n\nCurrent: ${currentVersion}\nLatest: ${latestVersion}`)
     } else {
@@ -2620,68 +2656,68 @@ const wireEvents = () => {
         setPreviewMode('video')
       }
     }
-    
+
     // Don't interfere with typing in input fields
     if (event.target.matches('input, textarea, select')) return
-    
+
     // Professional Timeline Keyboard Shortcuts
     if (!state.preview.ready) return
-    
-    switch(event.code) {
+
+    switch (event.code) {
       case 'Space':
         // Spacebar: Play/Pause
         event.preventDefault()
         togglePreviewPlayback()
         break
-        
+
       case 'KeyK':
         // K: Play/Pause (industry standard)
         event.preventDefault()
         togglePreviewPlayback()
         break
-        
+
       case 'KeyJ':
         // J: Rewind 1 second (frame back)
         event.preventDefault()
         previewVideo.currentTime = Math.max(0, previewVideo.currentTime - 1)
         console.log(`[J] Rewind to ${previewVideo.currentTime.toFixed(2)}s`)
         break
-        
+
       case 'KeyL':
         // L: Forward 1 second (frame forward)
         event.preventDefault()
         previewVideo.currentTime = Math.min(previewVideo.duration, previewVideo.currentTime + 1)
         console.log(`[L] Forward to ${previewVideo.currentTime.toFixed(2)}s`)
         break
-        
+
       case 'ArrowLeft':
         // Arrow Left: Jump back 5 seconds
         event.preventDefault()
         previewVideo.currentTime = Math.max(0, previewVideo.currentTime - 5)
         console.log(`[←] Jump back to ${previewVideo.currentTime.toFixed(2)}s`)
         break
-        
+
       case 'ArrowRight':
         // Arrow Right: Jump forward 5 seconds
         event.preventDefault()
         previewVideo.currentTime = Math.min(previewVideo.duration, previewVideo.currentTime + 5)
         console.log(`[→] Jump forward to ${previewVideo.currentTime.toFixed(2)}s`)
         break
-        
+
       case 'Home':
         // Home: Jump to trim START
         event.preventDefault()
         previewVideo.currentTime = parseFloat(trimStartInput.value) || 0
         console.log(`[Home] Jump to trim start`)
         break
-        
+
       case 'End':
         // End: Jump to trim END
         event.preventDefault()
         previewVideo.currentTime = parseFloat(trimEndInput.value) || previewVideo.duration
         console.log(`[End] Jump to trim end`)
         break
-        
+
       case 'KeyI':
         // I: Set IN point (trim start at current position)
         event.preventDefault()
@@ -2689,7 +2725,7 @@ const wireEvents = () => {
         clampPreviewRanges()
         console.log(`[I] Set IN point at ${previewVideo.currentTime.toFixed(2)}s`)
         break
-        
+
       case 'KeyO':
         // O: Set OUT point (trim end at current position)
         event.preventDefault()
@@ -2697,7 +2733,7 @@ const wireEvents = () => {
         clampPreviewRanges()
         console.log(`[O] Set OUT point at ${previewVideo.currentTime.toFixed(2)}s`)
         break
-        
+
       case 'Comma':
         // , (comma): Previous frame (0.1s back)
         if (event.shiftKey) {
@@ -2706,7 +2742,7 @@ const wireEvents = () => {
           console.log(`[,] Frame back to ${previewVideo.currentTime.toFixed(2)}s`)
         }
         break
-        
+
       case 'Period':
         // . (period): Next frame (0.1s forward)
         if (event.shiftKey) {
@@ -2723,26 +2759,26 @@ const wireEvents = () => {
     state.destination = storedDestination
   }
   updateDestinationLabel()
-  
+
   // Keyboard Shortcuts Modal
   const shortcutsModal = document.getElementById('shortcuts-modal')
   const shortcutsBtn = document.getElementById('shortcuts-help')
   const shortcutsClose = document.getElementById('shortcuts-close')
-  
+
   const openShortcutsModal = () => {
     if (shortcutsModal) {
       shortcutsModal.style.display = 'flex'
       console.log('[Shortcuts] Modal opened')
     }
   }
-  
+
   const closeShortcutsModal = () => {
     if (shortcutsModal) {
       shortcutsModal.style.display = 'none'
       console.log('[Shortcuts] Modal closed')
     }
   }
-  
+
   shortcutsBtn?.addEventListener('click', openShortcutsModal)
   shortcutsClose?.addEventListener('click', closeShortcutsModal)
   shortcutsModal?.addEventListener('click', (e) => {
@@ -2751,7 +2787,7 @@ const wireEvents = () => {
       closeShortcutsModal()
     }
   })
-  
+
   // Add ? key to open shortcuts
   document.addEventListener('keydown', (e) => {
     if (e.key === '?' && !e.target.matches('input, textarea, select')) {
@@ -2856,11 +2892,11 @@ const wireEvents = () => {
   const diagnosticMenuToggle = document.getElementById('diagnostic-menu-toggle')
   const diagnosticOutput = document.getElementById('diagnostic-output')
   const diagnosticCopyBtn = document.getElementById('diagnostic-copy')
-  
+
   let diagnosticActive = false
   let lastInspectedElement = null
   let lastInspectedCode = ''
-  
+
   // Toggle diagnostic mode
   const toggleDiagnostic = () => {
     diagnosticActive = !diagnosticActive
@@ -2872,12 +2908,12 @@ const wireEvents = () => {
     }
     console.log('[Diagnostic] Mode:', diagnosticActive ? 'ON' : 'OFF')
   }
-  
+
   // Get element details
   const getElementDetails = (element) => {
     const rect = element.getBoundingClientRect()
     const computedStyle = window.getComputedStyle(element)
-    
+
     return {
       tag: element.tagName,
       id: element.id || 'none',
@@ -2898,7 +2934,7 @@ const wireEvents = () => {
       innerHTML: element.innerHTML.substring(0, 200)
     }
   }
-  
+
   // Format diagnostic output
   const formatDiagnosticOutput = (details) => {
     return `ELEMENT DETAILS:
@@ -2928,38 +2964,38 @@ INNER HTML (first 200 chars):
 ${details.innerHTML}
 ━━━━━━━━━━━━━━━━━━━━`
   }
-  
+
   // Click handler for element inspection
   const handleDiagnosticClick = (e) => {
     if (!diagnosticActive) return
     if (e.target.closest('#diagnostic-panel')) return
-    
+
     e.preventDefault()
     e.stopPropagation()
-    
+
     // Remove previous highlight
     if (lastInspectedElement) {
       lastInspectedElement.classList.remove('diagnostic-active')
     }
-    
+
     // Highlight new element
     e.target.classList.add('diagnostic-active')
     lastInspectedElement = e.target
-    
+
     // Get and display details
     const details = getElementDetails(e.target)
     lastInspectedCode = formatDiagnosticOutput(details)
-    
+
     if (diagnosticOutput) {
       diagnosticOutput.textContent = lastInspectedCode
     }
     if (diagnosticCopyBtn) {
       diagnosticCopyBtn.style.display = 'block'
     }
-    
+
     console.log('[Diagnostic] Inspected:', details.tag, details.id, details.classes)
   }
-  
+
   // Copy diagnostic output
   const copyDiagnosticOutput = () => {
     if (lastInspectedCode) {
@@ -2975,7 +3011,7 @@ ${details.innerHTML}
       })
     }
   }
-  
+
   // Wire diagnostic events
   if (diagnosticToggleBtn) {
     diagnosticToggleBtn.addEventListener('click', toggleDiagnostic)
@@ -2989,10 +3025,10 @@ ${details.innerHTML}
   if (diagnosticCopyBtn) {
     diagnosticCopyBtn.addEventListener('click', copyDiagnosticOutput)
   }
-  
+
   // Global click listener for diagnostic mode
   document.addEventListener('click', handleDiagnosticClick, true)
-  
+
   console.log('[Init] Diagnostic panel initialized')
 
   if (metadataUIEnabled && summaryOpenTriggers.length) {
@@ -3041,7 +3077,7 @@ ${details.innerHTML}
 
   if (metadataUIEnabled) {
     const metadataBackdrop = document.getElementById('metadata-backdrop')
-    
+
     metadataBackdrop?.addEventListener('click', (e) => {
       if (state.previewMode === 'insights') {
         console.log('[Backdrop] Clicked, closing modal')
@@ -3077,15 +3113,15 @@ ${details.innerHTML}
   // 🔐 YouTube OAuth Login Button
   const youtubeOAuthBtn = document.getElementById('youtube-oauth-btn')
   const oauthStatus = document.getElementById('oauth-status')
-  
+
   if (youtubeOAuthBtn) {
     youtubeOAuthBtn.addEventListener('click', async () => {
       youtubeOAuthBtn.disabled = true
       youtubeOAuthBtn.textContent = '⏳ Logging in...'
-      
+
       try {
         const result = await window.systemDialogs?.youtubeOAuthLogin?.()
-        
+
         if (result?.success) {
           youtubeOAuthBtn.textContent = '✅ Logged In'
           youtubeOAuthBtn.classList.add('success-state')
@@ -3094,7 +3130,7 @@ ${details.innerHTML}
             oauthStatus.style.color = '#0aff6a'
           }
           setPremiumStatus('YouTube login successful! Re-fetch metadata for full tags.', 'success')
-          
+
           // Auto-refresh metadata if video loaded
           if (state.preview.ready && state.preview.currentItem) {
             setTimeout(() => fetchPremiumMetadata(state.preview.currentItem), 1000)
@@ -3119,36 +3155,36 @@ ${details.innerHTML}
         setPremiumStatus('Thumbnail not ready yet.', 'error')
         return
       }
-      
+
       // Disable button during download
       btn.disabled = true
       btn.textContent = 'Downloading...'
-      
+
       try {
         const result = await window.downloader.downloadThumbnail(
           state.preview.metadata.thumbnail,
           'wh404-thumbnail.jpg'
         )
-        
+
         if (result.cancelled) {
           setPremiumStatus('Download cancelled.', 'info')
           btn.textContent = 'Download'
           btn.disabled = false
           return
         }
-        
+
         if (!result.success) {
           setPremiumStatus(`Download failed: ${result.error}`, 'error')
           btn.textContent = 'Download'
           btn.disabled = false
           return
         }
-        
+
         // Success! Change button to "Open Location"
         btn.textContent = 'Open Location'
         btn.classList.add('success-state')
         btn.disabled = false
-        
+
         // Replace click handler with open location
         btn.onclick = async () => {
           const openResult = await window.downloader.openFolderLocation(result.path)
@@ -3156,9 +3192,9 @@ ${details.innerHTML}
             setPremiumStatus(`Could not open folder: ${openResult.error}`, 'error')
           }
         }
-        
+
         setPremiumStatus('Thumbnail saved! Click "Open Location" to view.', 'success')
-        
+
       } catch (err) {
         console.error('[Premium] Thumbnail download failed:', err)
         setPremiumStatus(`Unexpected error: ${err.message}`, 'error')
@@ -3182,36 +3218,36 @@ ${details.innerHTML}
         updateExportMessage('Thumbnail not ready yet.', { variant: 'error' })
         return
       }
-      
+
       // Disable button during download
       btn.disabled = true
       btn.textContent = 'Downloading...'
-      
+
       try {
         const result = await window.downloader.downloadThumbnail(
           state.preview.metadata.thumbnail,
           'wh404-thumbnail.jpg'
         )
-        
+
         if (result.cancelled) {
           updateExportMessage('Download cancelled.', { variant: 'info' })
           btn.textContent = 'Download'
           btn.disabled = false
           return
         }
-        
+
         if (!result.success) {
           updateExportMessage(`Download failed: ${result.error}`, { variant: 'error' })
           btn.textContent = 'Download'
           btn.disabled = false
           return
         }
-        
+
         // Success! Change button to "Open Location"
         btn.textContent = 'Open Location'
         btn.classList.add('success-state')
         btn.disabled = false
-        
+
         // Replace click handler with open location
         btn.onclick = async () => {
           const openResult = await window.downloader.openFolderLocation(result.path)
@@ -3219,12 +3255,12 @@ ${details.innerHTML}
             updateExportMessage(`Could not open folder: ${openResult.error}`, { variant: 'error' })
           }
         }
-        
+
         updateExportMessage(
           `Thumbnail saved! Click "Open Location" to view.`,
           { variant: 'success' }
         )
-        
+
       } catch (err) {
         console.error('[Download] Thumbnail download failed:', err)
         updateExportMessage(`Unexpected error: ${err.message}`, { variant: 'error' })
@@ -3258,26 +3294,26 @@ ${details.innerHTML}
   const thumbDownloadBtn = document.getElementById('thumb-download')
   thumbDownloadBtn?.addEventListener('click', async () => {
     if (!state.preview.metadata.thumbnail) return
-    
+
     try {
       // Professional Save As dialog
       const title = state.preview.metadata.title || 'thumbnail'
       const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '-').substring(0, 50)
       const defaultName = `${sanitizedTitle}-thumbnail.jpg`
-      
+
       const savePath = await window.systemDialogs?.saveFile({
         defaultPath: defaultName,
         filters: [
           { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp'] }
         ]
       })
-      
+
       if (!savePath) return // User cancelled
-      
+
       const response = await fetch(state.preview.metadata.thumbnail)
       const blob = await response.blob()
       const buffer = await blob.arrayBuffer()
-      
+
       await window.downloader.saveFile(savePath, buffer)
       console.log('[Thumbnail] Saved to:', savePath)
     } catch (error) {
@@ -3310,7 +3346,7 @@ ${details.innerHTML}
       updateExportMessage('No items to export.', { variant: 'error' })
       return
     }
-    
+
     // Collect all temp files from selected items
     const allFiles = []
     targets.forEach(item => {
@@ -3318,43 +3354,43 @@ ${details.innerHTML}
         allFiles.push(...item.files)
       }
     })
-    
+
     if (!allFiles.length) {
       updateExportMessage('No files available to export.', { variant: 'error' })
       return
     }
-    
+
     try {
       // INSTANT feedback - no delay
       exportConfirm.disabled = true
       exportConfirm.textContent = 'Processing...'
       exportConfirm.style.opacity = '0.7'
       updateExportMessage('Starting export', { loading: true })
-      
+
       // CRITICAL: Ensure files exist before exporting
       // This handles cases where user exports without previewing, or if files were moved
       updateExportMessage('Verifying files...', { loading: true })
-      
+
       // Re-collect files after resolution
       const resolvedFiles = []
-      
+
       console.log('[Export] Starting file resolution loop for', targets.length, 'items');
       for (const item of targets) {
         console.log('[Export] Resolving item:', item.url);
         // Force resolution and capture the result
         const files = await resolveItemFiles(item);
         if (files && files.length) {
-           console.log('[Export] Resolved files for item:', files);
-           resolvedFiles.push(...files);
+          console.log('[Export] Resolved files for item:', files);
+          resolvedFiles.push(...files);
         } else {
-           console.warn('[Export] No files returned from resolution for item:', item.url);
-           // Fallback to existing files if resolution returned nothing (shouldn't happen if modified correctly)
-           if (item.files) resolvedFiles.push(...item.files);
+          console.warn('[Export] No files returned from resolution for item:', item.url);
+          // Fallback to existing files if resolution returned nothing (shouldn't happen if modified correctly)
+          if (item.files) resolvedFiles.push(...item.files);
         }
       }
-      
+
       console.log('[Export] Final resolved files list:', resolvedFiles);
-      
+
       if (!resolvedFiles.length) {
         updateExportMessage('No valid files found to export.', { variant: 'error' })
         exportConfirm.disabled = false
@@ -3375,7 +3411,7 @@ ${details.innerHTML}
       }, 800)
       const destination = exportPathInput.value || state.destination || undefined
       const outputFormat = exportFormatSelect.value || 'mp4'
-      
+
       console.log('[Export] 🚀 Starting export process:', {
         filesCount: resolvedFiles.length,
         outputFormat,
@@ -3385,27 +3421,27 @@ ${details.innerHTML}
         trimEnd: state.preview.end,
         duration: state.preview.duration
       })
-      
+
       // Use pre-processed trim file if available, otherwise pass trim data
       let trimData = null
       // CRITICAL: Use the explicitly resolved files list
       let exportFiles = resolvedFiles
-      
+
       // Get actual trim values from inputs (state.preview may be outdated)
       const trimStartValue = parseFloat(trimStartInput?.value || 0)
       const trimEndValue = parseFloat(trimEndInput?.value || state.preview.duration)
-      
-      const isTrimmed = state.preview.ready && 
+
+      const isTrimmed = state.preview.ready &&
         state.preview.duration > 0 &&
         (trimStartValue > 0 || trimEndValue < state.preview.duration)
-      
+
       console.log('[Export] ✂️ Trim detection:', {
         trimStart: trimStartValue,
         trimEnd: trimEndValue,
         duration: state.preview.duration,
         isTrimmed
       })
-      
+
       if (isTrimmed) {
         if (state.preview.trimmedFile) {
           // Use pre-processed file for instant export
@@ -3415,17 +3451,17 @@ ${details.innerHTML}
         } else {
           // Fall back to real-time trimming - USE INPUT VALUES
           console.log('[Export] ✂️ Processing trim in real-time:', trimStartValue, 's →', trimEndValue, 's')
-          trimData = { 
-            start: trimStartValue, 
-            end: trimEndValue 
+          trimData = {
+            start: trimStartValue,
+            end: trimEndValue
           }
           // FIX: Ensure we use the resolved files for trimming source
-          exportFiles = resolvedFiles 
+          exportFiles = resolvedFiles
         }
       } else {
         console.log('[Export] 📹 No trim - full video/audio export')
       }
-      
+
       const metadataPayload = buildMetadataPayload()
       const exportPayload = {
         files: exportFiles,
@@ -3436,7 +3472,7 @@ ${details.innerHTML}
       if (metadataPayload) {
         exportPayload.metadata = metadataPayload
       }
-      
+
       console.log('[Export] 📦 Sending to backend:', {
         files: exportPayload.files, // LOGGING ADDED: Show exact paths
         filesCount: exportPayload.files.length,
@@ -3449,47 +3485,48 @@ ${details.innerHTML}
       // 1. Ask user where to save (if not already set or if user wants to choose)
       // We'll use the save dialog to get a path
       let finalDestination = destination
-      
-      // Only ask if no destination is set
-      if (!finalDestination) {
-        try {
-          const { dialog } = window.__TAURI__
-          // If we have multiple files, we pick a folder. If single file, we could pick a file, 
-          // but the backend logic seems designed to take a directory and output files there.
-          // Let's stick to "Pick a Folder" for consistency.
-          
-          const selectedPath = await dialog.open({
-            directory: true,
-            multiple: false,
-            defaultPath: undefined,
-            title: 'Select Export Folder'
-          })
-          
-          if (selectedPath) {
-            finalDestination = selectedPath
-            exportPayload.destination = selectedPath
-            // Update state for next time
-            setDestination(selectedPath)
-          } else {
-            // User cancelled dialog
-            console.log('[Export] User cancelled save dialog')
-            updateExportMessage('Export cancelled', { variant: 'info' })
-            exportConfirm.disabled = false
-            exportConfirm.textContent = 'Export'
-            exportConfirm.style.opacity = '1'
-            if (activeHeartbeat) clearInterval(activeHeartbeat)
-            return
-          }
-        } catch (dialogErr) {
-          console.warn('[Export] Dialog failed, falling back to default:', dialogErr)
-          // Continue with default destination if dialog fails
+
+      // If no destination set, or if we want to force "Save As" behavior
+      // For batch exports, we might want to pick a folder. For single files, a file path.
+      // Since exportFiles backend handles directory creation, let's ask for a DIRECTORY.
+
+      try {
+        const { dialog } = window.__TAURI__
+        // If we have multiple files, we pick a folder. If single file, we could pick a file, 
+        // but the backend logic seems designed to take a directory and output files there.
+        // Let's stick to "Pick a Folder" for consistency.
+
+        const selectedPath = await dialog.open({
+          directory: true,
+          multiple: false,
+          defaultPath: destination || undefined,
+          title: 'Select Export Folder'
+        })
+
+        if (selectedPath) {
+          finalDestination = selectedPath
+          exportPayload.destination = selectedPath
+          // Update state for next time
+          setDestination(selectedPath)
+        } else {
+          // User cancelled dialog
+          console.log('[Export] User cancelled save dialog')
+          updateExportMessage('Export cancelled', { variant: 'info' })
+          exportConfirm.disabled = false
+          exportConfirm.textContent = 'Export'
+          exportConfirm.style.opacity = '1'
+          if (activeHeartbeat) clearInterval(activeHeartbeat)
+          return
         }
+      } catch (dialogErr) {
+        console.warn('[Export] Dialog failed, falling back to default:', dialogErr)
+        // Continue with default destination if dialog fails
       }
 
       const result = await window.systemDialogs?.exportFiles(exportPayload)
-      
+
       console.log('[Export] 📥 Backend result:', result)
-      
+
       // CRITICAL: Check if audio was requested but video was returned
       if (state.exportContext.type === 'audio' && result?.exported) {
         const firstFile = result.exported[0]
@@ -3499,46 +3536,46 @@ ${details.innerHTML}
           console.error('[Export] ⚠️ Backend did not convert to audio format!')
         }
       }
-      
+
       if (activeHeartbeat) {
         clearInterval(activeHeartbeat)
         activeHeartbeat = null
       }
-      
+
       if (result && result.exported && result.exported.length > 0) {
         // FIX: Prefer the specific file path so Explorer selects/highlights it
         const outputPath = result.exported[0] || result.outputDir
         pushLog(`✔ Exported ${result.exported.length} file${result.exported.length === 1 ? '' : 's'} to ${result.outputDir}`)
-        
+
         // Show success state with folder reveal button
         // ENHANCEMENT: Allow opening folder AND exporting again
         const escapedPath = outputPath.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-        
+
         // Create a cleaner success UI
         updateExportMessage(
           `<div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
              <span>✓ Saved!</span>
              <button class="ghost-btn" onclick="window.downloader.openFolderLocation('${escapedPath}'); return false;" style="background: rgba(10, 255, 106, 0.1); color: #0aff6a; border: 1px solid #0aff6a; padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">📂 Open Folder</button>
-           </div>`, 
+           </div>`,
           { variant: 'success', html: true }
         )
-        
+
         // Reset button to allow another export immediately
         exportConfirm.textContent = 'Export Selection'
         exportConfirm.style.background = ''
         exportConfirm.style.opacity = '1'
         exportConfirm.disabled = false
-        
+
         // Remove any previous action overrides
         delete exportConfirm.dataset.action
         delete exportConfirm.dataset.path
-        
+
         // Update items to show exported status
         targets.forEach(item => {
           item.exported = true
           item.exportedFiles = result.exported
           item.exportPath = outputPath
-          
+
           // Track export signature for duplicate detection
           const exportSig = `${item.url}_${trimData ? trimData.start : 0}_${trimData ? trimData.end : 0}_${outputFormat}`
           if (!item.exportHistory) item.exportHistory = []
@@ -3547,16 +3584,16 @@ ${details.innerHTML}
             timestamp: Date.now(),
             files: result.exported
           })
-          
+
           updateHistoryStatus(item.url, 'exported')
         })
         renderQueue()
-        
+
         // Store last export path for folder open button
         state.lastExportPath = outputPath
-        
+
         console.log('[Export] 📁 Saved to:', outputPath)
-        
+
         // Keep drawer open so user can click "Open Folder"
         // setTimeout(() => { closeExportDrawer() }, 1800)
       } else if (result && (!result.exported || result.exported.length === 0)) {
@@ -3589,22 +3626,22 @@ ${details.innerHTML}
   exportTypeSelect.addEventListener('change', () => {
     const selectedType = exportTypeSelect.value
     state.exportContext.type = selectedType
-    
+
     console.log('[Export] 🎛️ Type changed to:', selectedType)
-    
+
     updateExportResolutionSelect()
-    
+
     // FIXED: Correct logic - if type is 'audio', use audio formats
     const outputFormats = selectedType === 'audio'
       ? ['mp3', 'm4a', 'ogg', 'wav']  // Audio formats
       : ['mp4', 'mkv', 'avi', 'webm']  // Video formats
-    
+
     console.log('[Export] 📋 Available formats:', outputFormats)
-    
+
     exportFormatSelect.innerHTML = outputFormats
       .map((format) => `<option value="${format}">${format.toUpperCase()}</option>`)
       .join('')
-    
+
     state.exportContext.selectedFormat = outputFormats[0]
   })
 
@@ -3652,9 +3689,9 @@ const initHistoryDropdown = () => {
   const historyToggle = document.getElementById('history-toggle')
   const historyDropdown = document.getElementById('history-dropdown')
   const historyClearAll = document.getElementById('history-clear-all')
-  
+
   if (!historyToggle || !historyDropdown) return
-  
+
   // Toggle dropdown
   historyToggle.addEventListener('click', (e) => {
     e.stopPropagation()
@@ -3663,14 +3700,14 @@ const initHistoryDropdown = () => {
       renderHistory()
     }
   })
-  
+
   // Close when clicking outside
   document.addEventListener('click', (e) => {
     if (!historyDropdown.contains(e.target) && e.target !== historyToggle) {
       historyDropdown.classList.remove('open')
     }
   })
-  
+
   // Clear all history
   if (historyClearAll) {
     historyClearAll.addEventListener('click', () => {
@@ -3681,7 +3718,7 @@ const initHistoryDropdown = () => {
       }
     })
   }
-  
+
   renderHistory()
 }
 
@@ -3696,14 +3733,14 @@ const addToHistory = (url, platform, filename, status = 'downloaded') => {
       date: new Date().toLocaleString(),
       status
     }
-    
+
     // Remove duplicates and add to front
     const filtered = history.filter(h => h.url !== url)
     filtered.unshift(entry)
-    
+
     // Keep only recent items
     const trimmed = filtered.slice(0, MAX_HISTORY_ITEMS)
-    
+
     localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(trimmed))
     renderHistory()
   } catch (err) {
@@ -3737,20 +3774,16 @@ const updateHistoryStatus = (url, status) => {
 const renderHistory = () => {
   const historyList = document.getElementById('history-list')
   if (!historyList) return
-  
+
   const history = getHistory()
-  
+
   if (history.length === 0) {
     historyList.innerHTML = '<p class="history-empty">No download history yet</p>'
     return
   }
-  
+
   historyList.innerHTML = history.map(item => {
     const statusMeta = getHistoryStatusMeta(item.status)
-    // Check if we have a valid export path to open
-    const canOpen = item.status === 'exported' && item.exportPath;
-    const escapedPath = canOpen ? item.exportPath.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
-    
     return `
       <div class="history-item" data-url="${item.url}">
         <div class="history-item-header">
@@ -3765,17 +3798,10 @@ const renderHistory = () => {
         </div>
         <div class="history-url">${item.url}</div>
         <div class="history-filename">${item.filename}</div>
-        ${canOpen ? `
-        <div class="history-actions" style="margin-top: 8px; display: flex; justify-content: flex-end;">
-           <button class="ghost-btn" onclick="event.stopPropagation(); window.downloader.openFolderLocation('${escapedPath}'); return false;" style="background: rgba(10, 255, 106, 0.1); color: #0aff6a; border: 1px solid #0aff6a; padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-             <span>📂</span> Open Folder
-           </button>
-        </div>
-        ` : ''}
       </div>
     `
   }).join('')
-  
+
   // Add click handlers
   historyList.querySelectorAll('.history-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -3799,24 +3825,24 @@ const formatHistoryDate = (timestamp) => {
   const minutes = Math.floor(seconds / 60)
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
-  
+
   if (seconds < 60) return 'Just now'
   if (minutes < 60) return `${minutes}m ago`
   if (hours < 24) return `${hours}h ago`
   if (days < 7) return `${days}d ago`
-  
+
   return new Date(timestamp).toLocaleDateString()
 }
 
 const bindIpc = () => {
   console.log('[IPC] Binding IPC handlers...')
-  
+
   // Check if window.downloader exists (Electron mode only)
   if (!window.downloader) {
     console.log('[IPC] Running in Tauri mode - using bridge event system')
     return
   }
-  
+
   window.downloader.onStatus((payload = {}) => {
     engineOffline = payload.network === 'offline'
     updateEngineChip()
@@ -3843,15 +3869,15 @@ const bindIpc = () => {
       console.warn('[RENDERER] No queue item found for URL:', url)
       return
     }
-    
+
     // Update immediately - no animation, show exactly what yt-dlp reports
     item.status = 'downloading'
     item.percent = percent
     item.speed = speed
     item.eta = eta
-    
+
     console.log('[RENDERER] Updated item:', { id: item.id, percent: item.percent, speed: item.speed })
-    
+
     // Render immediately for real-time updates
     renderQueue()
   })
@@ -3865,16 +3891,16 @@ const bindIpc = () => {
       item.eta = '00:00'
       item.files = files || []
       item.tempDir = tempDir
-      
+
       // Add to history
       const filename = files && files.length > 0 ? files[0].split(/[/\\]/).pop() : 'download'
       const platform = item.platform ? item.platform.name : 'Unknown'
       addToHistory(url, platform, filename)
       updateGuideProgress('download')
       window.tutorial?.triggerAfterFirstDownload?.()
-      
+
       console.log('[Download Complete]', { url, files, tempDir })
-      
+
       // Auto-load preview for the first completed item
       if (state.queue.filter(i => i.status === 'complete').length === 1) {
         setTimeout(() => loadPreviewFromItem(item), 500)
@@ -3901,7 +3927,7 @@ const bindIpc = () => {
     item.eta = 'Retry'
     renderQueue()
     pushLog(`⚠ Error: ${message || 'Download failed'}`)
-    
+
     // Check if all jobs are done to update engine state
     const hasActive = state.queue.some(i => i.status === 'downloading' || i.status === 'pending')
     if (!hasActive) {
@@ -3909,7 +3935,7 @@ const bindIpc = () => {
       updateEngineChip()
     }
   })
-  
+
   window.downloader.onJobCancelled(({ url }) => {
     console.log('[Job Cancelled]', url)
     const item = ensureQueueItem(url)
@@ -3919,7 +3945,7 @@ const bindIpc = () => {
     item.percent = 0
     renderQueue()
     pushLog(`🚫 Cancelled: ${url}`)
-    
+
     // Check if all jobs are done
     const hasActive = state.queue.some(i => i.status === 'downloading' || i.status === 'pending')
     if (!hasActive) {
@@ -3929,24 +3955,24 @@ const bindIpc = () => {
   })
 
   let lastExportUpdate = 0
-  
+
   window.downloader.onExportProgress(({ file, percent, status }) => {
     if (!exportPop.classList.contains('open')) return
-    
+
     // Stop heartbeat when real progress arrives
     if (activeHeartbeat && percent > 0) {
       clearInterval(activeHeartbeat)
       activeHeartbeat = null
     }
-    
+
     // Throttle updates to max 2 per second to avoid UI spam
     const now = Date.now()
     if (now - lastExportUpdate < 500 && percent < 100) return
     lastExportUpdate = now
-    
+
     const safePercent = Math.min(100, Math.max(0, Math.round(percent ?? 0)))
     const fileName = file.length > 25 ? file.slice(0, 22) + '...' : file
-    
+
     updateExportMessage(`Converting ${fileName}`, { loading: true })
     exportConfirm.textContent = `${safePercent}%`
     exportConfirm.style.background = `linear-gradient(90deg, var(--highlight) ${safePercent}%, rgba(255, 255, 255, 0.08) ${safePercent}%)`
@@ -3958,9 +3984,9 @@ const bindIpc = () => {
 const hideLoadingScreen = () => {
   const loadingScreen = document.getElementById('loading-screen')
   const mainWindow = document.querySelector('.window')
-  
+
   console.log('[Startup] Hiding loading screen immediately...')
-  
+
   // IMMEDIATE visibility - no delays
   if (loadingScreen) {
     loadingScreen.style.display = 'none'
@@ -4019,7 +4045,7 @@ setTimeout(() => {
   console.log('[Startup] FORCING loading screen removal...')
   const loadingScreen = document.getElementById('loading-screen')
   const mainWindow = document.querySelector('.window')
-  
+
   if (loadingScreen) {
     loadingScreen.style.display = 'none'
     loadingScreen.remove() // COMPLETELY REMOVE IT
@@ -4028,7 +4054,7 @@ setTimeout(() => {
     mainWindow.style.opacity = '1'
     mainWindow.style.visibility = 'visible'
   }
-  
+
   // Sync toggle checkboxes with state on load
   premiumToggleControls.forEach((toggle) => {
     const checkbox = toggle.querySelector('input[type="checkbox"]')
@@ -4037,10 +4063,10 @@ setTimeout(() => {
       state.preview.premium[feature] = checkbox.checked
     }
   })
-  
+
   // Apply initial UI state
   applyPremiumToggleUI()
-  
+
   console.log('[Startup] UI should be visible now!')
 }, 500)
 
@@ -4051,11 +4077,11 @@ console.log('[Startup] Renderer initialized')
 // ========================================
 function initPremiumTimeline() {
   console.log('[Timeline Init] 🎬 Checking elements...')
-  
+
   const premiumTimeline = document.getElementById('premium-timeline')
   const handleLeft = document.getElementById('handle-left')
   const handleRight = document.getElementById('handle-right')
-  
+
   const elements = {
     timeline: premiumTimeline,
     leftHandle: handleLeft,
@@ -4064,7 +4090,7 @@ function initPremiumTimeline() {
     trimStartInput: trimStartInput,
     trimEndInput: trimEndInput
   }
-  
+
   console.log('[Timeline Init] Element check:', {
     timeline: !!premiumTimeline,
     leftHandle: !!handleLeft,
@@ -4073,50 +4099,50 @@ function initPremiumTimeline() {
     trimStart: !!trimStartInput,
     trimEnd: !!trimEndInput
   })
-  
+
   if (!premiumTimeline || !handleLeft || !handleRight || !previewVideo) {
     console.warn('[Timeline Init] ❌ Missing required elements!')
     return
   }
-  
+
   console.log('[Timeline] ✅ All elements found! Initializing...')
-  
+
   let isDragging = false
   let currentHandle = null
   let startX = 0
   let startPercent = 0
   let isDraggingActive = false
   let lastSeekTime = 0
-  
+
   // Get hover time element
   const hoverTimeElement = document.getElementById('timeline-hover-time')
-  
+
   // Get playhead element
   const playheadElement = document.getElementById('timeline-playhead')
-  
+
   // Update visual positions
   function updateVisualPositions() {
     if (!previewVideo.duration || isNaN(previewVideo.duration)) return
-    
+
     const duration = previewVideo.duration
     const startTime = parseFloat(trimStartInput.value) || 0
     const endTime = parseFloat(trimEndInput.value) || duration
-    
+
     const startPercent = (startTime / duration) * 100
     const endPercent = (endTime / duration) * 100
-    
+
     handleLeft.style.left = `${startPercent}%`
     handleRight.style.left = `${endPercent}%`
-    
+
     // Update playhead position - RELATIVE TO FULL TIMELINE WIDTH
     if (playheadElement && previewVideo.currentTime) {
       const currentTime = previewVideo.currentTime
-      
+
       // Calculate position on the full timeline (between 0% and 100% of timeline width)
       // But playhead should be positioned relative to the HANDLE positions
       // If at startTime, playhead at startPercent. If at endTime, playhead at endPercent.
       const playheadPercent = (currentTime / duration) * 100
-      
+
       // Only show playhead if within trim range
       if (currentTime >= startTime && currentTime <= endTime) {
         playheadElement.style.left = `${playheadPercent}%`
@@ -4126,7 +4152,7 @@ function initPremiumTimeline() {
       }
     }
   }
-  
+
   // Handle mouse down on handles
   handleLeft.addEventListener('mousedown', (e) => {
     console.log('[Timeline] 👈 LEFT handle grabbed!')
@@ -4142,7 +4168,7 @@ function initPremiumTimeline() {
     document.body.style.userSelect = 'none'
     if (hoverTimeElement) hoverTimeElement.style.display = 'none'
   })
-  
+
   handleRight.addEventListener('mousedown', (e) => {
     console.log('[Timeline] 👉 RIGHT handle grabbed!')
     e.preventDefault()
@@ -4157,7 +4183,7 @@ function initPremiumTimeline() {
     document.body.style.userSelect = 'none'
     if (hoverTimeElement) hoverTimeElement.style.display = 'none'
   })
-  
+
   // Create drag tooltip for showing time while dragging
   let dragTooltip = document.getElementById('drag-tooltip')
   if (!dragTooltip) {
@@ -4181,22 +4207,22 @@ function initPremiumTimeline() {
     `
     document.body.appendChild(dragTooltip)
   }
-  
+
   // Handle mouse move - OPTIMIZED FOR SPEED
   document.addEventListener('mousemove', (e) => {
     if (!isDragging || !currentHandle || !previewVideo.duration) return
-    
+
     const rect = premiumTimeline.getBoundingClientRect()
     const percent = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100))
     const timeValue = (percent / 100) * previewVideo.duration
-    
+
     let newTime = 0
-    
+
     if (currentHandle === 'left') {
       const maxTime = parseFloat(trimEndInput.value) || previewVideo.duration
       newTime = Math.max(0, Math.min(maxTime - 0.1, timeValue))
       trimStartInput.value = newTime.toFixed(2)
-      
+
       // Direct visual update - NO function calls for speed
       const startPercent = (newTime / previewVideo.duration) * 100
       handleLeft.style.left = `${startPercent}%`
@@ -4204,12 +4230,12 @@ function initPremiumTimeline() {
       const minTime = parseFloat(trimStartInput.value) || 0
       newTime = Math.max(minTime + 0.1, Math.min(previewVideo.duration, timeValue))
       trimEndInput.value = newTime.toFixed(2)
-      
+
       // Direct visual update - NO function calls for speed
       const endPercent = (newTime / previewVideo.duration) * 100
       handleRight.style.left = `${endPercent}%`
     }
-    
+
     // Show drag tooltip with exact time
     if (dragTooltip && newTime !== undefined) {
       const minutes = Math.floor(newTime / 60)
@@ -4221,7 +4247,7 @@ function initPremiumTimeline() {
       dragTooltip.style.display = 'block'
     }
   })
-  
+
   // Handle mouse up
   document.addEventListener('mouseup', () => {
     if (isDragging) {
@@ -4234,26 +4260,26 @@ function initPremiumTimeline() {
       }
       currentHandle = null
       document.body.style.userSelect = ''
-      
+
       // Hide drag tooltip
       if (dragTooltip) {
         dragTooltip.style.display = 'none'
       }
-      
+
       // Small delay to prevent click-to-seek after drag
       setTimeout(() => {
         isDraggingActive = false
       }, 100)
     }
   })
-  
+
   // Click-to-seek and play on timeline
   premiumTimeline.addEventListener('click', (e) => {
     // Don't seek if we just finished dragging
     if (isDraggingActive) return
     if (e.target === handleLeft || e.target === handleRight) return
     if (e.target.closest('.timeline-handle')) return
-    
+
     // Prevent rapid seeking (debounce 300ms)
     const now = Date.now()
     if (now - lastSeekTime < 300) {
@@ -4261,22 +4287,22 @@ function initPremiumTimeline() {
       return
     }
     lastSeekTime = now
-    
+
     const rect = premiumTimeline.getBoundingClientRect()
     const percent = (e.clientX - rect.left) / rect.width
     const seekTime = percent * previewVideo.duration
-    
+
     // Get trim range
     const trimStart = parseFloat(trimStartInput.value) || 0
     const trimEnd = parseFloat(trimEndInput.value) || previewVideo.duration
-    
+
     // Only allow clicking INSIDE trim area
     if (seekTime >= trimStart && seekTime <= trimEnd) {
       const wasPlaying = !previewVideo.paused
-      
+
       console.log(`[Timeline] 🎯 Seek to: ${seekTime.toFixed(2)}s`)
       previewVideo.currentTime = seekTime
-      
+
       // Only auto-play if was paused
       if (!wasPlaying && previewVideo.paused) {
         previewVideo.play()
@@ -4285,7 +4311,7 @@ function initPremiumTimeline() {
       } else if (wasPlaying) {
         console.log(`[Timeline] ⏯ Seeking during playback`)
       }
-      
+
       // Show playhead immediately at click position
       if (playheadElement) {
         playheadElement.style.left = `${percent * 100}%`
@@ -4295,40 +4321,40 @@ function initPremiumTimeline() {
       console.log(`[Timeline] ❌ Click outside trim area ignored`)
     }
   })
-  
+
   // Hover time preview
   premiumTimeline.addEventListener('mousemove', (e) => {
     if (isDragging || !previewVideo.duration || !hoverTimeElement) return
-    
+
     const rect = premiumTimeline.getBoundingClientRect()
     const percent = (e.clientX - rect.left) / rect.width
     const hoverTime = percent * previewVideo.duration
-    
+
     // Update hover time display
     const minutes = Math.floor(hoverTime / 60)
     const seconds = Math.floor(hoverTime % 60)
     hoverTimeElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-    
+
     // Position hover time above cursor
     hoverTimeElement.style.left = `${percent * 100}%`
     hoverTimeElement.style.display = 'block'
   })
-  
+
   // Hide hover time when mouse leaves timeline
   premiumTimeline.addEventListener('mouseleave', () => {
     if (hoverTimeElement) {
       hoverTimeElement.style.display = 'none'
     }
   })
-  
+
   // NOTE: timeupdate listener already exists above - no need for duplicate
   // Update handles when trim inputs change
   trimStartInput.addEventListener('input', updateVisualPositions)
   trimEndInput.addEventListener('input', updateVisualPositions)
-  
+
   // Initial position update
   updateVisualPositions()
-  
+
   console.log('[Timeline] 🎉 Premium timeline initialized successfully!')
 }
 
