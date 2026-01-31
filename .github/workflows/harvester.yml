@@ -9,6 +9,9 @@ on:
         description: 'Pro License Key'
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   harvest:
     runs-on: ubuntu-latest
