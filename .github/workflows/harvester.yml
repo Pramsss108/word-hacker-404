@@ -36,25 +36,28 @@ jobs:
         uses: actions/setup-node@v4
         with: { node-version: 20 }
       
-      - name: Setup yt-dlp & POT Provider
+      - name: Setup yt-dlp
         run: |
           python -m pip install yt-dlp
-          python -m pip install bgutil-ytdlp-pot-provider
-      
-      - name: Start POT Provider Server
+          sudo apt-get install -y ffmpeg
+
+      - name: Secure Download (Safe Mode)
+        id: download
+        continue-on-error: true
         run: |
-          bgutil-ytdlp-pot-provider serve & 
-          sleep 5
+          yt-dlp "${{ github.event.inputs.url }}" -o "media.mp4" 2> error.log
       
-      - name: Secure Download
+      - name: Check Files
         run: |
-          yt-dlp --extractor-args "youtube:player-client=mweb,default;po_token=mweb.gvs+TOKEN" \
-          "${{ github.event.inputs.url }}" -o "media.mp4"
+          ls -lh
+          if [ ! -f "media.mp4" ]; then echo "Download failed!"; fi
 
       - name: Forever Storage
         uses: softprops/action-gh-release@v1
         with:
-          files: media.mp4
+          files: |
+            media.mp4
+            error.log
           tag_name: harvest-${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
