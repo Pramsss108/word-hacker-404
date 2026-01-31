@@ -32,32 +32,17 @@ jobs:
              echo "Verifying License: $USER_LICENSE"
           fi
 
-      - name: Setup Node & Python
+      - name: Setup Node
         uses: actions/setup-node@v4
         with: { node-version: 20 }
-      
-      - name: Setup yt-dlp
-        run: |
-          python -m pip install yt-dlp
-          sudo apt-get install -y ffmpeg
 
-      - name: Secure Download (Safe Mode)
-        id: download
-        continue-on-error: true
-        run: |
-          yt-dlp "${{ github.event.inputs.url }}" -o "media.mp4" 2> error.log
+      - name: Hello World
+        run: echo "System Check - $(date)" > system_check.txt
       
-      - name: Check Files
-        run: |
-          ls -lh
-          if [ ! -f "media.mp4" ]; then echo "Download failed!"; fi
-
       - name: Forever Storage
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            media.mp4
-            error.log
+          files: system_check.txt
           tag_name: harvest-${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
