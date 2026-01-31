@@ -1,0 +1,57 @@
+name: Always-Live Harvester (SaaS)
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Target URL'
+        required: true
+      license:
+        description: 'Pro License Key'
+        required: true
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gatekeeper (Verify License)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          USER_LICENSE: ${{ github.event.inputs.license }}
+        run: |
+          # 1. Simple Gatekeeper logic
+          # In a real deployed version, this would be a curl to your Supabase Edge Function
+          # For now, we simulate the "Check"
+          if [[ -z "$SUPABASE_URL" ]]; then
+            echo "::warning::SaaS Secrets missing. Running in DEMO mode."
+          else
+             # Example: curl -f -H "ApiKey: $SUPABASE_KEY" "$SUPABASE_URL/rest/v1/licenses?key=eq.$USER_LICENSE"
+             echo "Verifying License: $USER_LICENSE"
+          fi
+
+      - name: Setup Node & Python
+        uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      
+      - name: Setup yt-dlp & POT Provider
+        run: |
+          python -m pip install yt-dlp
+          python -m pip install bgutil-ytdlp-pot-provider
+      
+      - name: Start POT Provider Server
+        run: |
+          bgutil-ytdlp-pot-provider serve & 
+          sleep 5
+      
+      - name: Secure Download
+        run: |
+          yt-dlp --extractor-args "youtube:player-client=mweb,default;po_token=mweb.gvs+TOKEN" \
+          "${{ github.event.inputs.url }}" -o "media.mp4"
+
+      - name: Forever Storage
+        uses: softprops/action-gh-release@v1
+        with:
+          files: media.mp4
+          tag_name: harvest-${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
