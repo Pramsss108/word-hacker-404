@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Zap, Brain, ChevronRight, Wand2, Music4, Lock, Sparkles, Shield } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
-import DebugHub from './components/DebugHub'
 import VoiceEncrypter from './components/VoiceEncrypter'
 import BlackOps from './components/BlackOps'
 import ToolsPage from './components/ToolsPage'
@@ -13,23 +12,25 @@ import { getSharedArrayBufferWatchdogReport } from './raw'
 import { proAuth, type UserStatus } from './services/ProAuth'
 
 import { NeuralEditor } from './components/NeuralEditor/NeuralEditor'
+import SarkariCompress from './components/SarkariCompress'
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
-const SAMPLE_DECODES: Array<{ id: string; word: string; tone: Tone; teaser: string; emoji: string }>= [
+const SAMPLE_DECODES: Array<{ id: string; word: string; tone: Tone; teaser: string; emoji: string }> = [
   { id: 'w1', word: 'ভাইরাল', tone: 'comedic', teaser: 'সবাই বলে, কিন্তু ভিতরে চাপা insecurity।', emoji: '🔥' },
   { id: 'w2', word: 'খিস্তি', tone: 'angry', teaser: 'রাগ না, ব্যথা—চোখে পরে না, মুখে বেরোয়।', emoji: '🗡️' },
   { id: 'w3', word: 'সামল', tone: 'friendly', teaser: 'বন্ধুদের ঠাট্টা—ভালোবাসার ছদ্মবেশ।', emoji: '🫶' },
 ]
 
-const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: string; tones: Tone[]; lang: 'bn'|'hi'|'en' }>= [
-  { id: 'd1', word: 'লাউডা', literal: 'শব্দ/গালি', street: 'ভাইয়েরা রেগে গেলে—অথবা জোকস।', tones: ['angry','comedic','taboo'], lang: 'bn' },
-  { id: 'd2', word: 'BC', literal: 'cuss acronym', street: 'মিমে ছুঁড়ে দেওয়া আগুন।', tones: ['comedic','taboo'], lang: 'hi' },
-  { id: 'd3', word: 'simp', literal: 'simpleton', street: 'attention-ভিত্তিক প্রেমের তুলি।', tones: ['friendly','comedic'], lang: 'en' },
+const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: string; tones: Tone[]; lang: 'bn' | 'hi' | 'en' }> = [
+  { id: 'd1', word: 'লাউডা', literal: 'শব্দ/গালি', street: 'ভাইয়েরা রেগে গেলে—অথবা জোকস।', tones: ['angry', 'comedic', 'taboo'], lang: 'bn' },
+  { id: 'd2', word: 'BC', literal: 'cuss acronym', street: 'মিমে ছুঁড়ে দেওয়া আগুন।', tones: ['comedic', 'taboo'], lang: 'hi' },
+  { id: 'd3', word: 'simp', literal: 'simpleton', street: 'attention-ভিত্তিক প্রেমের তুলি।', tones: ['friendly', 'comedic'], lang: 'en' },
 ]
 
 function App() {
-  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools' | 'neural-editor' | 'black-ops'>('menu')
+  const isStandaloneSarkari = window.location.pathname === '/freesarkarifilecompress';
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools' | 'neural-editor' | 'black-ops' | 'sarkari-compress'>(isStandaloneSarkari ? 'sarkari-compress' : 'menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -69,19 +70,26 @@ function App() {
   useEffect(() => {
     // Start AI loading in background immediately when app opens
     // initWorker();
-    
-    const t = setTimeout(() => setShowIntro(false), 2400)
+
+    const t = setTimeout(() => setShowIntro(false), 800)
     return () => clearTimeout(t)
   }, [])
 
   return (
     <div className="app">
-      <DebugHub />
       {/* Background effect */}
       <MatrixRain opacity={0.08} density={24} speed={2} />
       <RawWatchdogIndicator />
 
-      {gameMode === 'voice-encrypter' ? (
+      {gameMode === 'sarkari-compress' ? (
+        <SarkariCompress onClose={() => {
+          if (isStandaloneSarkari) {
+            window.location.href = 'https://google.com'; // Anonymous exit
+          } else {
+            setGameMode('menu');
+          }
+        }} />
+      ) : gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
       ) : gameMode === 'tools' ? (
         <ToolsPage
@@ -90,17 +98,17 @@ function App() {
       ) : gameMode === 'neural-editor' ? (
         <NeuralEditor onExit={() => setGameMode('menu')} />
       ) : gameMode === 'black-ops' ? (
-        <BlackOps onBack={() => setGameMode('menu')} addLog={() => {}} />
+        <BlackOps onBack={() => setGameMode('menu')} addLog={() => { }} />
       ) : gameMode === 'menu' ? (
         <>
           {/* System bar (mood setter) */}
           <div className="sysbar">
             <div className="sys-item clickable" onClick={() => setShowLogin(true)} style={{ cursor: 'pointer' }}>
-              <span className={`dot ${currentUser ? 'active' : ''}`} style={{ background: currentUser ? '#0aff6a' : (authStatus === 'loading' ? '#f59e0b' : '#d92e2e') }} /> 
+              <span className={`dot ${currentUser ? 'active' : ''}`} style={{ background: currentUser ? '#0aff6a' : (authStatus === 'loading' ? '#f59e0b' : '#d92e2e') }} />
               {authStatus === 'loading' ? 'ACCESS: VERIFYING...' : (currentUser ? `ID: ${currentUser.displayName?.split(' ')[0].toUpperCase()}` : 'ACCESS: GUEST')}
             </div>
             <div className="sys-item mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-            <div className="sys-item mono">BETA · MATRIX-{Math.abs((Date.now()/1000|0)%999)}</div>
+            <div className="sys-item mono">BETA · MATRIX-{Math.abs((Date.now() / 1000 | 0) % 999)}</div>
             <div className={`sys-item mono sab-pill ${sabReport.available ? 'ok' : 'warn'}`}>
               {sabReport.available ? 'SAB LOCK' : 'SAB FALLBACK'}
             </div>
@@ -148,25 +156,25 @@ function App() {
             {/* Tools strip */}
             <section className="tools-strip" aria-label="Tools">
               <div className="tools-row">
-                <button 
+                <button
                   className="tool glass"
                   onClick={() => setGameMode('neural-editor')}
                 >
                   <Brain size={18} /> Neural Writer
                 </button>
-                <button 
+                <button
                   className="tool glass"
                   onClick={() => setGameMode('tools')}
                 >
                   <Wand2 size={18} /> Useful Tools
                 </button>
-                <button 
+                <button
                   className="tool glass"
                   onClick={() => setGameMode('voice-encrypter')}
                 >
                   <Music4 size={18} /> Voice Encryptor
                 </button>
-                <button 
+                <button
                   className="tool glass danger-glow"
                   onClick={() => setGameMode('black-ops')}
                   style={{ borderColor: 'rgba(220, 38, 38, 0.3)', color: '#ef4444' }}
@@ -209,12 +217,12 @@ function App() {
                 />
               </div>
               <div className="dict-tags">
-                {['Bengali','Hindi','English','para','meme'].map(t => (
+                {['Bengali', 'Hindi', 'English', 'para', 'meme'].map(t => (
                   <span key={t} className="tag">#{t}</span>
                 ))}
               </div>
               <div className="dict-results">
-                {SAMPLE_DICT.filter(x => x.word.toLowerCase().includes(query.toLowerCase())).slice(0,6).map(x => (
+                {SAMPLE_DICT.filter(x => x.word.toLowerCase().includes(query.toLowerCase())).slice(0, 6).map(x => (
                   <article key={x.id} className="dict-card glass">
                     <header className="dict-head">
                       <h3 className="dict-word">{x.word}</h3>
@@ -262,7 +270,7 @@ function App() {
         <main className="main container">
           <div className="game">
             <div className="game-header glass">
-              <button 
+              <button
                 className="back-button"
                 onClick={() => setGameMode('menu')}
               >
@@ -270,7 +278,7 @@ function App() {
               </button>
               <div className="score">Score: {score}</div>
             </div>
-            
+
             <div className="game-content">
               <div className="game-placeholder">
                 <Brain className="placeholder-icon" />
