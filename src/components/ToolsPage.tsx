@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState, useEffect, lazy, Suspense } from 'react'
+import { type ReactNode, useMemo, useState, useEffect } from 'react'
 import {
   ArrowLeft,
   ShieldCheck,
@@ -6,14 +6,23 @@ import {
   Cpu,
   Waves,
   Wand2,
+  Globe,
+  Smartphone,
+  Video,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
+import PhantomSim from './PhantomSim'
 import BlackOps from './BlackOps'
 import VectorCommandCenter from './VectorCommandCenter'
 import CentralBrainChat from './CentralBrainChat'
 import CyberCanvas from './CyberCanvas'
 import VoiceEncrypter from './VoiceEncrypter'
 import RawDiagnosticsPanel from './RawDiagnosticsPanel'
+import ProjectGhost from './ProjectGhost'
+import ShadowFightArena from './ShadowFightArena'
+import YouTubeDownloader from './YouTubeDownloader'
+import GhostFactory from './tools/GhostFactory'
+import SarkariCompress from './SarkariCompress'
 import { proAuth, type UserStatus } from '../services/ProAuth'
 
 interface ToolBannerMeta {
@@ -39,6 +48,16 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const toolList = useMemo<ToolBannerMeta[]>(() => {
     return [
       {
+        id: 'ghost-factory',
+        name: 'Global Voice Factory',
+        summary: 'Zero-Shot Multi-lingual cloning. F5-TTS Engine.',
+        icon: <Globe size={22} aria-hidden />,
+        status: 'open',
+        badge: 'POLYGLOT',
+        motionClass: 'voice-waves',
+        openId: 'ghost-factory',
+      },
+      {
         id: 'central-brain',
         name: 'Central AI Brain',
         summary: 'Powered by Llama 3.3 70B (Uncensored Cloud Core). The Master Intelligence.',
@@ -59,6 +78,16 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         openId: 'raw-decoder',
       },
       {
+        id: 'yt-swarm',
+        name: 'YouTube Swarm',
+        summary: 'Unlimited 4K/MP3 Downloader. Powered by Decentralized Proxy Swarm.',
+        icon: <Video size={22} aria-hidden />,
+        status: 'open',
+        badge: 'RED TEAM',
+        motionClass: 'voice-waves',
+        openId: 'yt-swarm',
+      },
+      {
         id: 'voice-encrypter',
         name: 'Voice Encryptor FX',
         summary: 'FX toggles + mastering queue for drops.',
@@ -67,6 +96,26 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         badge: 'ACTIVE',
         motionClass: 'voice-waves',
         openId: 'voice-encrypter',
+      },
+      {
+        id: 'project-ghost',
+        name: 'Project Ghost VPN',
+        summary: 'Zero-Cost, Undetectable Hybrid VPN. Cloudflare + P2P Swarm.',
+        icon: <Globe size={22} aria-hidden />,
+        status: 'open',
+        badge: 'BETA',
+        motionClass: 'ai-circuits',
+        openId: 'project-ghost',
+      },
+      {
+        id: 'phantom-sim',
+        name: 'Phantom SIM Forge',
+        summary: 'Generate ephemeral eSIM profiles for SMS bypass. Black Ops Grade.',
+        icon: <Smartphone size={22} aria-hidden />,
+        status: 'open',
+        badge: 'BLACK OPS',
+        motionClass: 'sim-glitch',
+        openId: 'phantom-sim',
       },
       {
         id: 'cipher-strip',
@@ -107,6 +156,26 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         motionClass: 'ai-circuits',
         openId: 'cyber-canvas',
       },
+      {
+        id: 'shadow-fight',
+        name: 'Shadow Fight Arena (Dev)',
+        summary: 'P2P Fighting Game Prototype with Red Team Tools.',
+        icon: <ShieldCheck size={22} aria-hidden />,
+        status: 'open',
+        badge: 'DEV',
+        motionClass: 'vector-grid',
+        openId: 'shadow-fight',
+      },
+      {
+        id: 'sarkari-compress',
+        name: 'Sarkari Compress',
+        summary: 'Ultra-fast, secure file compression and optimization tool.',
+        icon: <ShieldCheck size={22} aria-hidden />,
+        status: 'open',
+        badge: 'NEW',
+        motionClass: 'vector-grid',
+        openId: 'sarkari-compress',
+      },
     ]
   }, [authStatus])
 
@@ -132,18 +201,36 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
     )
   }
 
+  if (activeTool === 'phantom-sim') {
+    return <PhantomSim onClose={() => setActiveTool(null)} />
+  }
+
   if (activeTool === 'black-ops') {
-    return <BlackOps onBack={() => setActiveTool(null)} addLog={() => {}} />
+    return <BlackOps onBack={() => setActiveTool(null)} addLog={() => { }} />
+  }
+  if (activeTool === 'shadow-fight') {
+    return <ShadowFightArena onBack={() => setActiveTool(null)} />
+  }
+  if (activeTool === 'project-ghost') {
+    return <ProjectGhost onBack={() => setActiveTool(null)} />
+  }
+
+  if (activeTool === 'yt-swarm') {
+    return <YouTubeDownloader onClose={() => setActiveTool(null)} />
   }
 
   if (activeTool === 'vector-sovereign') {
-    return <VectorCommandCenter 
+    return <VectorCommandCenter
       onBack={() => {
         setActiveTool(null);
         setVectorImage(undefined);
-      }} 
+      }}
       initialImageUrl={vectorImage}
     />
+  }
+
+  if (activeTool === 'ghost-factory') {
+    return <GhostFactory onClose={() => setActiveTool(null)} />
   }
 
   if (activeTool === 'central-brain') {
@@ -158,7 +245,7 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0b0b0d' }}>
         <div style={{ padding: '10px', borderBottom: '1px solid #333', display: 'flex', alignItems: 'center' }}>
-          <button 
+          <button
             onClick={() => setActiveTool(null)}
             style={{ background: 'transparent', border: 'none', color: '#0aff6a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
@@ -170,6 +257,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         </div>
       </div>
     )
+  }
+
+  if (activeTool === 'sarkari-compress') {
+    return <SarkariCompress onClose={() => setActiveTool(null)} />
   }
 
   return (
