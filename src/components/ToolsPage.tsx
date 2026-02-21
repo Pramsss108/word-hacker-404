@@ -11,17 +11,12 @@ import {
   Video,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
-import PhantomSim from './PhantomSim'
 import BlackOps from './BlackOps'
 import VectorCommandCenter from './VectorCommandCenter'
 import CentralBrainChat from './CentralBrainChat'
 import CyberCanvas from './CyberCanvas'
 import VoiceEncrypter from './VoiceEncrypter'
 import RawDiagnosticsPanel from './RawDiagnosticsPanel'
-import ProjectGhost from './ProjectGhost'
-import ShadowFightArena from './ShadowFightArena'
-import YouTubeDownloader from './YouTubeDownloader'
-import GhostFactory from './tools/GhostFactory'
 import SarkariCompress from './SarkariCompress'
 import { proAuth, type UserStatus } from '../services/ProAuth'
 
@@ -201,22 +196,8 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
     )
   }
 
-  if (activeTool === 'phantom-sim') {
-    return <PhantomSim onClose={() => setActiveTool(null)} />
-  }
-
   if (activeTool === 'black-ops') {
     return <BlackOps onBack={() => setActiveTool(null)} addLog={() => { }} />
-  }
-  if (activeTool === 'shadow-fight') {
-    return <ShadowFightArena onBack={() => setActiveTool(null)} />
-  }
-  if (activeTool === 'project-ghost') {
-    return <ProjectGhost onBack={() => setActiveTool(null)} />
-  }
-
-  if (activeTool === 'yt-swarm') {
-    return <YouTubeDownloader onClose={() => setActiveTool(null)} />
   }
 
   if (activeTool === 'vector-sovereign') {
@@ -227,10 +208,6 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
       }}
       initialImageUrl={vectorImage}
     />
-  }
-
-  if (activeTool === 'ghost-factory') {
-    return <GhostFactory onClose={() => setActiveTool(null)} />
   }
 
   if (activeTool === 'central-brain') {
