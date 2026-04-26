@@ -168,9 +168,9 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   const sources = sms.api_count || swarmStatus?.targets || 0
 
   const INTENSITY_PRESETS = {
-    lite:    { label: 'Lite',    emoji: '💧', rounds: '1',  stagger: '0.5', workers: 2,  dual: false, color: '#60a5fa', desc: '~90 SMS · Quiet' },
-    normal:  { label: 'Normal', emoji: '⚡', rounds: '3',  stagger: '0.3', workers: 3,  dual: true,  color: T.brand,   desc: '~270 SMS · Balanced' },
-    heavy:   { label: 'Heavy',  emoji: '🔥', rounds: '5',  stagger: '0.1', workers: 5,  dual: true,  color: T.yellow,  desc: '~450 SMS · Fast' },
+    lite:    { label: 'Lite',    emoji: '💧', rounds: '1',  stagger: '0.5', workers: 2,  dual: false, color: '#60a5fa', desc: '~1-3 SMS · Quiet' },
+    normal:  { label: 'Normal', emoji: '⚡', rounds: '3',  stagger: '0.3', workers: 3,  dual: true,  color: T.brand,   desc: '~3-9 SMS · Balanced' },
+    heavy:   { label: 'Heavy',  emoji: '🔥', rounds: '5',  stagger: '0.1', workers: 5,  dual: true,  color: T.yellow,  desc: '~5-15 SMS · Fast' },
     nuclear: { label: 'Nuclear',emoji: '💀', rounds: '0',  stagger: '0.0', workers: 10, dual: true,  color: T.red,     desc: 'Unlimited · Max Power' },
   } as const
 
@@ -341,13 +341,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
             }}>
               <span>{INTENSITY_PRESETS[intensity].desc}</span>
               <span style={{ color: T.muted, fontSize: 10 }}>
-                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'} · ~{(() => {
-                  const t = sources > 0 ? sources + (dualVector ? 15 : 0) : 113
-                  const s = Math.max(0.05, parseFloat(stagger) || 0.3)
-                  const w = mode === 'swarm' ? swarmWorkers : 1
-                  const wavesec = (t / w) * s + 4
-                  return Math.round((60 * t) / wavesec)
-                })()}/min
+                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'} · ~{Math.max(1, Math.round((maxWaves === '0' ? 5 : parseInt(maxWaves) || 1) * 3))} real OTP
               </span>
             </div>
 

@@ -1540,8 +1540,11 @@ def parse_body(body: str, http_status: int) -> tuple[str, int | None]:
     if any(k in low for k in _KW_FAKE_OK):
         return "200_FAKE", cooldown
 
-    # Ambiguous 200 — body has neither confirm nor deny keywords
-    return "OTP_SENT" if http_status in (200, 201) else "200_FAKE", cooldown
+    # Ambiguous 200 — body has neither confirm nor deny keywords.
+    # CHANGED 2026-04-26: Used to lie and tag these as OTP_SENT, inflating success
+    # numbers ~3-5x. Now honest: ambiguous = 200_FAKE (probable silent fail).
+    # Only count true OTP_SENT when explicit confirm keywords are present.
+    return "200_FAKE", cooldown
 
 
 # ─────────────────────────────────────────────
@@ -2151,17 +2154,21 @@ def liveness_check(targets: list, verbose: bool = True) -> list:
         try:
             # Strip query params for the probe, use dummy phone
             probe_url = t["url"].split("?")[0].replace("<PHONE>", "9999999999")
-            requests.get(
+            r = requests.get(
                 probe_url,
                 headers={"User-Agent": random.choice(USER_AGENTS)},
-                timeout=1.5,
+                timeout=2.5,
                 allow_redirects=False,
             )
-            return t, True
+            # CHANGED 2026-04-26: stricter — 5xx server errors = unhealthy, prune.
+            # Only keep endpoints that respond with non-server-error status.
+            return t, r.status_code < 500
         except requests.exceptions.ConnectionError:
             return t, False     # DNS failure / connection refused = truly dead
+        except requests.exceptions.Timeout:
+            return t, False     # CHANGED: timeouts = also dead, was kept before
         except Exception:
-            return t, True      # timeout / 4xx / 5xx = server exists, keep it
+            return t, True      # other (TLS etc) = give benefit of doubt
 
     print(f"\n{CYAN}[LIVENESS] Probing {len(targets)} endpoints ({min(40, len(targets))} threads)...{RESET}")
     live: list = []
