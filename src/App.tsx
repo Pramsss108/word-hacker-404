@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Search, Zap, Brain, ChevronRight, Wand2, Music4, Lock, Sparkles, Shield } from 'lucide-react'
+import { Search, Zap, Brain, ChevronRight, Wand2, Music4, Lock, Sparkles, Shield, Terminal } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
 import RawWatchdogIndicator from './components/RawWatchdogIndicator'
@@ -15,6 +15,7 @@ const BlackOps        = lazy(() => import('./components/BlackOps'))
 const ToolsPage       = lazy(() => import('./components/ToolsPage'))
 const NeuralEditor    = lazy(() => import('./components/NeuralEditor/NeuralEditor').then(m => ({ default: m.NeuralEditor })))
 const SarkariCompress = lazy(() => import('./components/SarkariCompress'))
+const HydraConsole    = lazy(() => import('./components/HydraConsole'))
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -32,7 +33,7 @@ const SAMPLE_DICT: Array<{ id: string; word: string; literal: string; street: st
 
 function App() {
   const isStandaloneSarkari = window.location.pathname === '/freesarkarifilecompress';
-  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools' | 'neural-editor' | 'black-ops' | 'sarkari-compress'>(isStandaloneSarkari ? 'sarkari-compress' : 'menu')
+  const [gameMode, setGameMode] = useState<'menu' | 'playing' | 'voice-encrypter' | 'tools' | 'neural-editor' | 'black-ops' | 'sarkari-compress' | 'hydra'>(isStandaloneSarkari ? 'sarkari-compress' : 'menu')
   const [score] = useState(0)
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
@@ -95,6 +96,8 @@ function App() {
         }} />
       ) : gameMode === 'voice-encrypter' ? (
         <VoiceEncrypter onBackToHome={() => setGameMode('menu')} />
+      ) : gameMode === 'hydra' ? (
+        <HydraConsole onBack={() => setGameMode('menu')} />
       ) : gameMode === 'tools' ? (
         <ToolsPage
           onBackToHome={() => setGameMode('menu')}
@@ -186,6 +189,13 @@ function App() {
                   <Shield size={18} /> Black Ops
                 </button>
                 {/* Consolidated to a single enhanced Voice Encrypter as requested */}
+                <button
+                  className="tool glass"
+                  style={{ borderColor: 'rgba(10, 255, 106, 0.3)', color: '#0aff6a' }}
+                  onClick={() => setGameMode('hydra')}
+                >
+                  <Terminal size={18} /> HYDRA v5
+                </button>
                 <button className="tool glass"><Lock size={18} /> Private Drops</button>
               </div>
             </section>
