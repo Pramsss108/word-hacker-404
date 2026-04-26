@@ -4,6 +4,7 @@
 ║                                                              ║
 ║  Endpoints:                                                  ║
 ║    GET  /api/status        → current attack state JSON      ║
+║                              Phase 9: includes php_bridge   ║
 ║    GET  /api/categories    → list of target categories      ║
 ║    GET  /api/stream        → SSE live log stream            ║
 ║    GET  /api/intel         → Phase 3.4 intelligence stats   ║
@@ -12,6 +13,9 @@
 ║    POST /api/swarm/start   → Phase 5 — launch swarm         ║
 ║    POST /api/swarm/stop    → Phase 5 — stop all workers     ║
 ║    GET  /api/swarm/status  → Phase 5 — per-worker stats     ║
+║    GET  /api/report/list   → Phase 6 — list saved reports   ║
+║    POST /api/report/generate → Phase 6 — manual generate   ║
+║    GET  /hydra_reports/<f> → Phase 6 — serve report file    ║
 ╚══════════════════════════════════════════════════════════════╝
 """
 
@@ -40,6 +44,7 @@ from hydra_v4 import (
     TARGETS, RECOVERY_TARGETS, STOP,
     run_wave, liveness_check, save_log, session_log, db_get_stats,
     _AUTOSYNC_AVAILABLE, _DB_PATH,
+    _PHP_AVAILABLE,   # Phase 9 — PHP bridge availability
 )
 try:
     from hydra_autosync import build_dynamic_targets as _autosync
@@ -210,7 +215,10 @@ threading.Thread(target=_init_targets, daemon=True).start()
 @app.route("/api/status")
 def api_status():
     s = dict(_state)
-    s["api_count"] = len(_active_targets)
+    s["api_count"]   = len(_active_targets)
+    # Phase 9 — PHP bridge availability
+    s["php_bridge"]  = bool(_PHP_AVAILABLE)
+    s["php_version"] = _PHP_AVAILABLE if _PHP_AVAILABLE else None
     return jsonify(s)
 
 
