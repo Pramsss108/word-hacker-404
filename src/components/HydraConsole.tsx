@@ -341,7 +341,13 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
             }}>
               <span>{INTENSITY_PRESETS[intensity].desc}</span>
               <span style={{ color: T.muted, fontSize: 10 }}>
-                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'} · ~{stagger === '0.0' ? Math.round(swarmWorkers / 0.02 * 60) : Math.round(swarmWorkers / (parseFloat(stagger) || 0.3) * 60)}/min
+                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'} · ~{(() => {
+                  const t = sources > 0 ? sources + (dualVector ? 15 : 0) : 113
+                  const s = Math.max(0.05, parseFloat(stagger) || 0.3)
+                  const w = mode === 'swarm' ? swarmWorkers : 1
+                  const wavesec = (t / w) * s + 4
+                  return Math.round((60 * t) / wavesec)
+                })()}/min
               </span>
             </div>
 
