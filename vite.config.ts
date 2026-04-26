@@ -38,7 +38,7 @@ export default defineConfig({
   // base: '/', // Removed duplicate
   server: {
     port: 3001,
-    strictPort: true,
+    strictPort: false,
     host: true,
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
