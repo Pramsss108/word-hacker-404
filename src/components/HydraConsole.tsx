@@ -71,6 +71,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   const [maxWaves, setMaxWaves] = useState('3')
   const [dualVector, setDualVector] = useState(true)
   const [swarmWorkers, setSwarmWorkers] = useState(3)
+  const [intensity, setIntensity] = useState<'lite'|'normal'|'heavy'|'nuclear'>('normal')
 
   // Live state (preserved)
   const [logs, setLogs]               = useState<LogEntry[]>([])
@@ -166,10 +167,23 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   } : { sent: sms.sent, blocked: sms.blocked, rate: sms.ratelimited, wave: sms.wave }
   const sources = sms.api_count || swarmStatus?.targets || 0
 
-  const setRounds = (rounds: number | 'inf') => {
-    if (rounds === 'inf' && !isPro) { setShowUpsell('unlimited'); return }
-    setMaxWaves(rounds === 'inf' ? '0' : String(rounds))
+  const INTENSITY_PRESETS = {
+    lite:    { label: 'Lite',    emoji: '💧', rounds: '1',  stagger: '0.5', workers: 2,  dual: false, color: '#60a5fa', desc: '~90 SMS · Quiet' },
+    normal:  { label: 'Normal', emoji: '⚡', rounds: '3',  stagger: '0.3', workers: 3,  dual: true,  color: T.brand,   desc: '~270 SMS · Balanced' },
+    heavy:   { label: 'Heavy',  emoji: '🔥', rounds: '5',  stagger: '0.1', workers: 5,  dual: true,  color: T.yellow,  desc: '~450 SMS · Fast' },
+    nuclear: { label: 'Nuclear',emoji: '💀', rounds: '0',  stagger: '0.0', workers: 10, dual: true,  color: T.red,     desc: 'Unlimited · Max Power' },
+  } as const
+
+  const applyIntensity = (lvl: 'lite'|'normal'|'heavy'|'nuclear') => {
+    if ((lvl === 'heavy' || lvl === 'nuclear') && !isPro) { setShowUpsell('turbo'); return }
+    const p = INTENSITY_PRESETS[lvl]
+    setIntensity(lvl)
+    setMaxWaves(p.rounds)
+    setStagger(p.stagger)
+    setSwarmWorkers(p.workers)
+    setDualVector(p.dual)
   }
+
   const currentRounds: number | 'inf' = maxWaves === '0' ? 'inf' : (parseInt(maxWaves) || 1)
   const switchMode = (m: 'single' | 'swarm') => {
     if (m === 'swarm' && !isPro) { setShowUpsell('turbo'); return }
@@ -297,18 +311,38 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
               />
             </div>
 
-            {/* Rounds */}
-            <label style={labelStyle}>How Many Rounds?</label>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
-              {[1, 3, 5, 10].map(n => (
-                <button key={n} onClick={() => setRounds(n)} disabled={running} style={chipStyle(currentRounds === n, running)}>{n}</button>
-              ))}
-              <button onClick={() => setRounds('inf')} disabled={running} style={{
-                ...chipStyle(currentRounds === 'inf', running), flex: '1 1 90px', minWidth: 90,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-              }}>
-                ♾ Unlimited {!isPro && <Lock size={10} color={T.yellow} />}
-              </button>
+            {/* Intensity presets */}
+            <label style={labelStyle}>Blast Intensity</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 5, marginBottom: 16 }}>
+              {(['lite','normal','heavy','nuclear'] as const).map(lvl => {
+                const p = INTENSITY_PRESETS[lvl]
+                const active = intensity === lvl
+                const locked = (lvl === 'heavy' || lvl === 'nuclear') && !isPro
+                return (
+                  <button key={lvl} onClick={() => applyIntensity(lvl)} disabled={running} style={{
+                    padding: '9px 4px', borderRadius: 10, border: `1px solid ${active ? p.color : T.border}`,
+                    background: active ? `${p.color}18` : T.bg, color: active ? p.color : T.muted,
+                    cursor: running ? 'not-allowed' : 'pointer', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: 2, transition: 'all 0.18s', opacity: running ? 0.5 : 1,
+                    boxShadow: active ? `0 0 12px ${p.color}44` : 'none',
+                  }}>
+                    <span style={{ fontSize: 16 }}>{p.emoji}</span>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 0.3 }}>{p.label}</span>
+                    {locked && <Lock size={8} color={T.yellow} />}
+                  </button>
+                )
+              })}
+            </div>
+            <div style={{
+              padding: '7px 10px', background: T.bg, borderRadius: 8,
+              border: `1px solid ${INTENSITY_PRESETS[intensity].color}44`,
+              fontSize: 11, color: INTENSITY_PRESETS[intensity].color, marginBottom: 14,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <span>{INTENSITY_PRESETS[intensity].desc}</span>
+              <span style={{ color: T.muted, fontSize: 10 }}>
+                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'}
+              </span>
             </div>
 
             {/* Sending Mode */}
@@ -333,9 +367,9 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
                 <Shield size={16} color={dualVector ? T.brand : T.muted} />
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: 12.5, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    Smart Routing {!isPro && <Lock size={10} color={T.yellow} />}
+                    Double Vector {!isPro && <Lock size={10} color={T.yellow} />}
                   </div>
-                  <div style={{ fontSize: 10.5, color: T.muted, marginTop: 1 }}>Auto-fallback when blocked</div>
+                  <div style={{ fontSize: 10.5, color: T.muted, marginTop: 1 }}>Fires 2nd recovery wave in parallel — more SMS</div>
                 </div>
               </div>
               <div style={{
@@ -359,30 +393,63 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
             </button>
 
             {showAdvanced && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 6, paddingTop: 10, borderTop: `1px dashed ${T.border}` }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 6, paddingTop: 10, borderTop: `1px dashed ${T.border}` }}>
+
+                {/* Power slider — workers */}
                 {isSwarm && (
                   <div>
-                    <label style={advLabel}>Servers</label>
-                    <select value={swarmWorkers} onChange={e => setSwarmWorkers(parseInt(e.target.value))} disabled={running} style={selectStyle}>
-                      {[2, 3, 4, 5, 6, 8, 10].map(n => <option key={n} value={n}>{n}</option>)}
-                    </select>
+                    <label style={{ ...advLabel, display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Swarm Power</span>
+                      <span style={{ color: swarmWorkers >= 8 ? T.red : swarmWorkers >= 5 ? T.yellow : T.brand, fontWeight: 800 }}>
+                        {swarmWorkers} workers {swarmWorkers === 10 ? '🔴 MAX' : swarmWorkers >= 7 ? '🔥' : ''}
+                      </span>
+                    </label>
+                    <input
+                      type="range" min={2} max={10} step={1}
+                      value={swarmWorkers}
+                      disabled={running}
+                      onChange={e => setSwarmWorkers(parseInt(e.target.value))}
+                      style={{ width: '100%', accentColor: swarmWorkers >= 8 ? T.red : T.brand, cursor: running ? 'not-allowed' : 'pointer' }}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9.5, color: T.muted, marginTop: 2 }}>
+                      <span>2 (Quiet)</span><span>5 (Heavy)</span><span>10 (Nuclear)</span>
+                    </div>
                   </div>
                 )}
+
+                {/* Speed */}
                 <div>
-                  <label style={advLabel}>Category</label>
+                  <label style={advLabel}>Speed Between SMS</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 4 }}>
+                    {[
+                      { v: '0.0', label: '⚡', sub: 'Instant' },
+                      { v: '0.1', label: '🔥', sub: 'Fast' },
+                      { v: '0.3', label: '●', sub: 'Normal' },
+                      { v: '0.5', label: '👻', sub: 'Stealth' },
+                      { v: '1.0', label: '🌙', sub: 'Ghost' },
+                    ].map(s => (
+                      <button key={s.v} onClick={() => setStagger(s.v)} disabled={running} style={{
+                        padding: '6px 2px', borderRadius: 8,
+                        border: `1px solid ${stagger === s.v ? T.cyan : T.border}`,
+                        background: stagger === s.v ? `${T.cyan}18` : T.bg,
+                        color: stagger === s.v ? T.cyan : T.muted,
+                        cursor: running ? 'not-allowed' : 'pointer',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
+                        fontSize: 14, transition: 'all 0.15s',
+                      }}>
+                        <span>{s.label}</span>
+                        <span style={{ fontSize: 8.5, fontWeight: 600 }}>{s.sub}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Category */}
+                <div>
+                  <label style={advLabel}>SMS Category Filter</label>
                   <select value={category} onChange={e => setCategory(e.target.value)} disabled={running} style={selectStyle}>
                     <option value="all">All ({sms.api_count || 0})</option>
                     {cats.map(c => <option key={c.name} value={c.name}>{c.name} ({c.count})</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={advLabel}>Speed</label>
-                  <select value={stagger} onChange={e => setStagger(e.target.value)} disabled={running} style={selectStyle}>
-                    <option value="0.0">⚡ Instant</option>
-                    <option value="0.1">🔥 Fast</option>
-                    <option value="0.3">Normal</option>
-                    <option value="0.5">Stealth</option>
-                    <option value="1.0">Ghost</option>
                   </select>
                 </div>
 
@@ -699,13 +766,6 @@ const selectStyle: React.CSSProperties = {
   border: `1px solid ${T.border}`, borderRadius: 7, color: T.text,
   fontSize: 12.5, fontFamily: T.sans, outline: 'none', boxSizing: 'border-box',
 }
-const chipStyle = (active: boolean, disabled: boolean): React.CSSProperties => ({
-  flex: '1 1 50px', minWidth: 50, padding: '9px 10px', borderRadius: 8,
-  fontSize: 12.5, fontWeight: 700, cursor: disabled ? 'not-allowed' : 'pointer',
-  border: active ? `1.5px solid ${T.brand}` : `1px solid ${T.border}`,
-  background: active ? 'rgba(10,255,106,0.12)' : T.bg,
-  color: active ? T.brand : T.text, transition: 'all 0.15s',
-})
 const modePillStyle = (active: boolean, color: string, disabled: boolean): React.CSSProperties => ({
   flex: 1, padding: '11px 8px', borderRadius: 9,
   fontSize: 12.5, fontWeight: 700, cursor: disabled ? 'not-allowed' : 'pointer',
