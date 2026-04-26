@@ -66,14 +66,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    exclude: [
-      'wasm-vips',
-      '@tensorflow/tfjs',
-      '@tensorflow/tfjs-core',
-      '@tensorflow/tfjs-backend-webgl',
-      '@xenova/transformers',
-      '@imgly/background-removal',
-    ]
+    exclude: ['wasm-vips']
   },
   worker: {
     format: 'es'
