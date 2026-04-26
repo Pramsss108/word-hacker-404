@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, Play, Square, RefreshCw, Zap, MessageSquare, Brain } from 'lucide-react'
+import { ArrowLeft, Play, Square, RefreshCw, Zap, MessageSquare, Brain, FileText } from 'lucide-react'
 
 const HYDRA_BASE = 'http://localhost:4040'
 
@@ -75,8 +75,10 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   const [swarmWorkers, setSwarmWorkers] = useState(3)
   const [swarmStatus, setSwarmStatus]   = useState<SwarmStatus | null>(null)
   const [showSwarm, setShowSwarm]       = useState(false)
+  const [reportUrl, setReportUrl]       = useState<string | null>(null)
   const logRef                    = useRef<HTMLDivElement>(null)
   const barCanvasRef              = useRef<HTMLCanvasElement>(null)
+  const wasRunning                = useRef(false)
 
   const probe = async () => {
     try {
@@ -122,6 +124,21 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   }, [up])
 
   useEffect(() => { if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight }, [logs])
+
+  // Phase 6 — detect attack-stop transition, fetch latest report URL
+  useEffect(() => {
+    if (wasRunning.current && !sms.running && sms.wave > 0) {
+      fetch(`${HYDRA_BASE}/api/report/list`)
+        .then(r => r.json())
+        .then((list: { html_file: string }[]) => {
+          if (list.length > 0) {
+            setReportUrl(`${HYDRA_BASE}/hydra_reports/${list[0].html_file}`)
+          }
+        })
+        .catch(() => {})
+    }
+    wasRunning.current = sms.running
+  }, [sms.running])
 
   // Draw category bar chart when intel updates
   useEffect(() => {
@@ -219,6 +236,13 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
           <button onClick={stop} style={{ padding: '4px 12px', background: 'rgba(255,77,109,0.15)', border: `1px solid ${C.red}`, color: C.red, borderRadius: 5, cursor: 'pointer', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
             <Square size={11} /> STOP
           </button>
+        )}
+
+        {/* Phase 6 — VIEW REPORT button (appears after attack completes) */}
+        {!running && reportUrl && (
+          <a href={reportUrl} target="_blank" rel="noreferrer" style={{ padding: '4px 12px', background: 'rgba(192,116,255,0.12)', border: `1px solid ${C.purple}`, color: C.purple, borderRadius: 5, cursor: 'pointer', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5, textDecoration: 'none' }}>
+            <FileText size={11} /> VIEW REPORT
+          </a>
         )}
       </header>
 

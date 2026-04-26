@@ -23,11 +23,19 @@ import threading
 import time
 from datetime import datetime
 
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 # ── Import Hydra engine ──────────────────────────────────────
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Phase 6 — Report generator
+try:
+    from hydra_reporter import generate_report, list_reports
+    _REPORTER_OK = True
+except ImportError:
+    _REPORTER_OK = False
+
 from hydra_v4 import (
     TARGETS, RECOVERY_TARGETS, STOP,
     run_wave, liveness_check, save_log, session_log, db_get_stats,
@@ -64,6 +72,7 @@ _state = {
 _active_targets: list = list(TARGETS)
 _attack_thread: threading.Thread | None = None
 _log_queue: queue.Queue = queue.Queue(maxsize=2000)
+_last_report: dict = {}   # Phase 6 — tracks last generated report paths
 
 
 def _push_log(msg: str, lvl: str = "info"):
@@ -158,6 +167,16 @@ def _run_attack(phone: str, mode: str, category: str, stagger: float, max_waves:
         session_log["end_time"] = datetime.now().isoformat()
         save_log()
         _push_log("Attack stopped. Session saved.", "sys")
+        # Phase 6 — auto-generate report
+        if _REPORTER_OK and session_log.get("results"):
+            try:
+                html_p, json_p = generate_report(dict(session_log))
+                _last_report["html"] = html_p
+                _last_report["json"] = json_p
+                _last_report["session_id"] = session_log.get("session_id", "")
+                _push_log(f"Report saved → {os.path.basename(html_p)}", "sys")
+            except Exception as _re:
+                _push_log(f"Report generation failed: {_re}", "warn")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -286,6 +305,41 @@ def api_stream():
 
     return Response(generate(), mimetype="text/event-stream",
                     headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ─────────────────────────────────────────────────────────────
+#  PHASE 6 — REPORTING ROUTES
+# ─────────────────────────────────────────────────────────────
+_REPORTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hydra_reports")
+
+@app.route("/api/report/list")
+def api_report_list():
+    """Phase 6 — list all generated reports."""
+    if not _REPORTER_OK:
+        return jsonify({"ok": False, "error": "hydra_reporter not available"})
+    return jsonify(list_reports(_REPORTS_DIR))
+
+
+@app.route("/api/report/generate", methods=["POST"])
+def api_report_generate():
+    """Phase 6 — manually trigger report for last session."""
+    if not _REPORTER_OK:
+        return jsonify({"ok": False, "error": "hydra_reporter not available"})
+    if not session_log.get("results"):
+        return jsonify({"ok": False, "error": "No session data to report"})
+    try:
+        html_p, json_p = generate_report(dict(session_log), _REPORTS_DIR)
+        sid = session_log.get("session_id", "")
+        _last_report.update(html=html_p, json=json_p, session_id=sid)
+        return jsonify({"ok": True, "html_file": os.path.basename(html_p), "json_file": os.path.basename(json_p)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/hydra_reports/<path:filename>")
+def serve_report(filename: str):
+    """Phase 6 — serve HTML/JSON report files."""
+    return send_from_directory(_REPORTS_DIR, filename)
 
 
 # ─────────────────────────────────────────────────────────────
