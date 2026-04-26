@@ -9,6 +9,7 @@ import {
   Globe,
   Smartphone,
   Video,
+  Zap,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
 const BlackOps           = lazy(() => import('./BlackOps'))
@@ -18,6 +19,7 @@ const CyberCanvas        = lazy(() => import('./CyberCanvas'))
 const VoiceEncrypter     = lazy(() => import('./VoiceEncrypter'))
 const RawDiagnosticsPanel = lazy(() => import('./RawDiagnosticsPanel'))
 const SarkariCompress    = lazy(() => import('./SarkariCompress'))
+const HydraConsole       = lazy(() => import('./HydraConsole'))
 import { proAuth, type UserStatus } from '../services/ProAuth'
 
 interface ToolBannerMeta {
@@ -173,6 +175,16 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         openId: 'sarkari-compress',
         imageUrl: './logo.png'
       },
+      {
+        id: 'hydra-console',
+        name: 'HYDRA v5.0 — OTP Recon',
+        summary: '90 live Indian platform endpoints. Real-time SSE stream. PHP bridge + Swarm mode.',
+        icon: <Zap size={22} aria-hidden />,
+        status: 'open',
+        badge: 'BLACK OPS',
+        motionClass: 'vector-grid',
+        openId: 'hydra-console',
+      },
     ]
   }, [authStatus])
 
@@ -245,6 +257,10 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
 
   if (activeTool === 'sarkari-compress') {
     return <Suspense fallback={toolFallback}><SarkariCompress onClose={() => setActiveTool(null)} /></Suspense>
+  }
+
+  if (activeTool === 'hydra-console') {
+    return <Suspense fallback={toolFallback}><HydraConsole onBack={() => setActiveTool(null)} /></Suspense>
   }
 
   return (

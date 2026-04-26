@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Play, Square, RefreshCw, Zap, MessageSquare, Brain, FileText } from 'lucide-react'
+import HelpModal from './HelpModal'
 
 const HYDRA_BASE = 'http://localhost:4040'
 
@@ -59,6 +60,7 @@ function StatCard({ label, value, color }: { label: string; value: string | numb
 //  MAIN COMPONENT
 // ─────────────────────────────────────────────────────────
 function HydraConsole({ onBack }: { onBack: () => void }) {
+  const [showHelp, setShowHelp] = useState(false)
   const [phone, setPhone]       = useState('')
   const [mode, setMode]         = useState<'single' | 'debug' | 'swarm'>('swarm')
   const [category, setCategory] = useState('all')
@@ -554,6 +556,20 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1a2640; border-radius: 2px; }
       `}</style>
+      
+      {/* Floating help button isolated to HYDRA module */}
+      <button
+        className="help-fab"
+        onClick={() => setShowHelp(true)}
+        aria-label="Help guide"
+        title="How to use HYDRA"
+      >
+        ?
+      </button>
+
+      {showHelp && (
+        <HelpModal onClose={() => setShowHelp(false)} />
+      )}
     </div>
   )
 }
