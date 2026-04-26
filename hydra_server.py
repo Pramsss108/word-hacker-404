@@ -187,19 +187,55 @@ def _run_attack(phone: str, mode: str, category: str, stagger: float, max_waves:
 # ─────────────────────────────────────────────────────────────
 #  SERVER STARTUP  (init targets once)
 # ─────────────────────────────────────────────────────────────
+_LIVENESS_CACHE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    "hydra_data", "liveness_cache.json")
+_LIVENESS_CACHE_TTL  = 1800   # 30 minutes — skip full probe if cache is fresh
+
+def _load_liveness_cache() -> list | None:
+    """Return cached live target names if cache is < 30 min old, else None."""
+    try:
+        with open(_LIVENESS_CACHE_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+        age = time.time() - data.get("ts", 0)
+        if age < _LIVENESS_CACHE_TTL:
+            return data.get("names", [])
+    except Exception:
+        pass
+    return None
+
+def _save_liveness_cache(live_targets: list):
+    try:
+        os.makedirs(os.path.dirname(_LIVENESS_CACHE_PATH), exist_ok=True)
+        with open(_LIVENESS_CACHE_PATH, "w", encoding="utf-8") as f:
+            json.dump({"ts": time.time(), "names": [t.get("name") for t in live_targets]}, f)
+    except Exception:
+        pass
+
 def _init_targets():
     global _active_targets
+    # Step 1 — autosync (fast: uses offline cache if GitHub unreachable)
     if _AUTOSYNC_OK:
         _active_targets = _autosync(TARGETS, verbose=False)
     else:
         _active_targets = list(TARGETS)
-    # Liveness check silently
-    try:
-        _active_targets = liveness_check(_active_targets, verbose=False)
-    except Exception:
-        pass
+
+    # Step 2 — liveness: use cached results if fresh, otherwise probe and save
+    cached_names = _load_liveness_cache()
+    if cached_names is not None:
+        # Filter to names in the cache (skip dead ones from last check)
+        name_set = set(cached_names)
+        _active_targets = [t for t in _active_targets if t.get("name") in name_set]
+        _push_log(f"Server ready — {len(_active_targets)} live APIs (cached liveness)", "sys")
+    else:
+        try:
+            _active_targets = liveness_check(_active_targets, verbose=False)
+            _save_liveness_cache(_active_targets)
+        except Exception:
+            pass
+        _push_log(f"Server ready — {len(_active_targets)} live APIs", "sys")
+
     _state["api_count"] = len(_active_targets)
-    _push_log(f"Server ready — {len(_active_targets)} live APIs", "sys")
+
     # Phase 8.2 — background refresh every 30 min
     if _AUTOSYNC_OK:
         start_scheduled_refresh(_active_targets, TARGETS, interval_seconds=1800)

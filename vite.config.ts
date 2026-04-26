@@ -38,7 +38,7 @@ export default defineConfig({
   // base: '/', // Removed duplicate
   server: {
     port: 3001,
-    strictPort: false, // Allow fallback to next available port
+    strictPort: true,
     host: true,
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
@@ -65,7 +65,14 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    exclude: ['wasm-vips']
+    exclude: [
+      'wasm-vips',
+      '@tensorflow/tfjs',
+      '@tensorflow/tfjs-core',
+      '@tensorflow/tfjs-backend-webgl',
+      '@xenova/transformers',
+      '@imgly/background-removal',
+    ]
   },
   worker: {
     format: 'es'

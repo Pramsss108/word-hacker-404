@@ -2154,7 +2154,7 @@ def liveness_check(targets: list, verbose: bool = True) -> list:
             requests.get(
                 probe_url,
                 headers={"User-Agent": random.choice(USER_AGENTS)},
-                timeout=3,
+                timeout=1.5,
                 allow_redirects=False,
             )
             return t, True
