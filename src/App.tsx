@@ -1,18 +1,20 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Zap, Brain, ChevronRight, Wand2, Music4, Lock, Sparkles, Shield } from 'lucide-react'
 import './App.css'
 import MatrixRain from './components/MatrixRain'
-import VoiceEncrypter from './components/VoiceEncrypter'
-import BlackOps from './components/BlackOps'
-import ToolsPage from './components/ToolsPage'
 import RawWatchdogIndicator from './components/RawWatchdogIndicator'
 import RawDiagnosticsPanel from './components/RawDiagnosticsPanel'
 import LoginDashboard from './components/LoginDashboard'
 import { getSharedArrayBufferWatchdogReport } from './raw'
 import { proAuth, type UserStatus } from './services/ProAuth'
+import HelpModal from './components/HelpModal'
 
-import { NeuralEditor } from './components/NeuralEditor/NeuralEditor'
-import SarkariCompress from './components/SarkariCompress'
+// Lazy-load heavy route-level components — drastically cuts initial JS parse time
+const VoiceEncrypter = lazy(() => import('./components/VoiceEncrypter'))
+const BlackOps        = lazy(() => import('./components/BlackOps'))
+const ToolsPage       = lazy(() => import('./components/ToolsPage'))
+const NeuralEditor    = lazy(() => import('./components/NeuralEditor/NeuralEditor').then(m => ({ default: m.NeuralEditor })))
+const SarkariCompress = lazy(() => import('./components/SarkariCompress'))
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -35,6 +37,7 @@ function App() {
   const [query, setQuery] = useState('')
   const [showIntro, setShowIntro] = useState(true)
   const [showLogin, setShowLogin] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
   const [authStatus, setAuthStatus] = useState<UserStatus>('loading')
   const [currentUser, setCurrentUser] = useState<any>(null)
 
@@ -81,6 +84,7 @@ function App() {
       <MatrixRain opacity={0.08} density={24} speed={2} />
       <RawWatchdogIndicator />
 
+      <Suspense fallback={<div className="lazy-loading"><span className="mono">Loading...</span></div>}>
       {gameMode === 'sarkari-compress' ? (
         <SarkariCompress onClose={() => {
           if (isStandaloneSarkari) {
@@ -290,8 +294,24 @@ function App() {
         </main>
       )}
 
+      </Suspense>
+
+      {/* Floating help button */}
+      <button
+        className="help-fab"
+        onClick={() => setShowHelp(true)}
+        aria-label="Help guide"
+        title="How to use HYDRA"
+      >
+        ?
+      </button>
+
       {showLogin && (
         <LoginDashboard onClose={() => setShowLogin(false)} />
+      )}
+
+      {showHelp && (
+        <HelpModal onClose={() => setShowHelp(false)} />
       )}
     </div>
   )
