@@ -341,7 +341,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
             }}>
               <span>{INTENSITY_PRESETS[intensity].desc}</span>
               <span style={{ color: T.muted, fontSize: 10 }}>
-                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'}
+                {maxWaves === '0' ? '∞ rounds' : `${maxWaves} rounds`} · {swarmWorkers} workers · {stagger === '0.0' ? 'Instant' : stagger === '0.1' ? 'Fast' : stagger === '0.3' ? 'Normal' : stagger === '0.5' ? 'Stealth' : 'Ghost'} · ~{stagger === '0.0' ? Math.round(swarmWorkers / 0.02 * 60) : Math.round(swarmWorkers / (parseFloat(stagger) || 0.3) * 60)}/min
               </span>
             </div>
 
