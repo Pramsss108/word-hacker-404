@@ -1,0 +1,119 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "updated": "2026-04-26",
+    "description": "OTP platform fingerprint map — expiry, lockout, lockout scope per platform",
+    "fields": {
+      "otp_expiry_s": "seconds until OTP expires",
+      "max_attempts": "max OTP requests before lockout (-1 = unknown)",
+      "lockout_duration_s": "seconds of lockout (-1 = unknown)",
+      "lockout_scope": "ip | phone | both | unknown",
+      "notes": "free-form observations"
+    }
+  },
+  "Paytm": {
+    "otp_expiry_s": 120,
+    "max_attempts": 5,
+    "lockout_duration_s": 300,
+    "lockout_scope": "phone",
+    "notes": "5 attempts per 5-min window per number"
+  },
+  "Flipkart": {
+    "otp_expiry_s": 180,
+    "max_attempts": 3,
+    "lockout_duration_s": 600,
+    "lockout_scope": "both",
+    "notes": "Aggressive WAF — Cloudflare bot challenge on IP after 3 rapid requests"
+  },
+  "Swiggy": {
+    "otp_expiry_s": 60,
+    "max_attempts": 5,
+    "lockout_duration_s": 1800,
+    "lockout_scope": "phone",
+    "notes": "Short expiry; 30-min lockout per number after 5 hits"
+  },
+  "Zomato": {
+    "otp_expiry_s": 120,
+    "max_attempts": 4,
+    "lockout_duration_s": 600,
+    "lockout_scope": "phone",
+    "notes": "CDN-level rate limiting on /api/v2.1/"
+  },
+  "Ola": {
+    "otp_expiry_s": 300,
+    "max_attempts": 10,
+    "lockout_duration_s": 3600,
+    "lockout_scope": "phone",
+    "notes": "Longer window — 10 OTPs / hour per number"
+  },
+  "Rapido": {
+    "otp_expiry_s": 120,
+    "max_attempts": 5,
+    "lockout_duration_s": 300,
+    "lockout_scope": "both",
+    "notes": "IP + phone lockout combination"
+  },
+  "PhonePe": {
+    "otp_expiry_s": 180,
+    "max_attempts": 3,
+    "lockout_duration_s": 900,
+    "lockout_scope": "phone",
+    "notes": "Fintech; aggressive per-phone limits"
+  },
+  "MakeMyTrip": {
+    "otp_expiry_s": 300,
+    "max_attempts": 5,
+    "lockout_duration_s": 600,
+    "lockout_scope": "ip",
+    "notes": "IP-based throttling; phone limit is looser"
+  },
+  "Snapdeal": {
+    "otp_expiry_s": 180,
+    "max_attempts": -1,
+    "lockout_duration_s": -1,
+    "lockout_scope": "unknown",
+    "notes": "Unverified — needs manual Burp Suite test"
+  },
+  "Myntra": {
+    "otp_expiry_s": 180,
+    "max_attempts": 5,
+    "lockout_duration_s": 600,
+    "lockout_scope": "phone",
+    "notes": "Standard 5-attempt 10-min window"
+  },
+  "Dream11": {
+    "otp_expiry_s": 120,
+    "max_attempts": 3,
+    "lockout_duration_s": 1800,
+    "lockout_scope": "phone",
+    "notes": "Gaming app — strict per-number limits"
+  },
+  "PolicyBazaar": {
+    "otp_expiry_s": 300,
+    "max_attempts": 5,
+    "lockout_duration_s": 600,
+    "lockout_scope": "phone",
+    "notes": "Insurance portal — moderate limits"
+  },
+  "Naukri": {
+    "otp_expiry_s": 300,
+    "max_attempts": 5,
+    "lockout_duration_s": 300,
+    "lockout_scope": "ip",
+    "notes": "IP-based limiting; per-phone is more lenient"
+  },
+  "Airtel": {
+    "otp_expiry_s": 120,
+    "max_attempts": 3,
+    "lockout_duration_s": 3600,
+    "lockout_scope": "phone",
+    "notes": "Telecom — very strict; 1hr lockout after 3 tries"
+  },
+  "Jio": {
+    "otp_expiry_s": 180,
+    "max_attempts": 5,
+    "lockout_duration_s": 1800,
+    "lockout_scope": "phone",
+    "notes": "Telecom — per-number 30-min lockout"
+  }
+}
