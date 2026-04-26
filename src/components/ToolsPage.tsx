@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState, useEffect } from 'react'
+import { type ReactNode, lazy, Suspense, useMemo, useState, useEffect } from 'react'
 import {
   ArrowLeft,
   ShieldCheck,
@@ -9,15 +9,17 @@ import {
   Globe,
   Smartphone,
   Video,
+  Zap,
 } from 'lucide-react'
 import MatrixRain from './MatrixRain'
-import BlackOps from './BlackOps'
-import VectorCommandCenter from './VectorCommandCenter'
-import CentralBrainChat from './CentralBrainChat'
-import CyberCanvas from './CyberCanvas'
-import VoiceEncrypter from './VoiceEncrypter'
-import RawDiagnosticsPanel from './RawDiagnosticsPanel'
-import SarkariCompress from './SarkariCompress'
+const BlackOps           = lazy(() => import('./BlackOps'))
+const VectorCommandCenter = lazy(() => import('./VectorCommandCenter'))
+const CentralBrainChat   = lazy(() => import('./CentralBrainChat'))
+const CyberCanvas        = lazy(() => import('./CyberCanvas'))
+const VoiceEncrypter     = lazy(() => import('./VoiceEncrypter'))
+const RawDiagnosticsPanel = lazy(() => import('./RawDiagnosticsPanel'))
+const SarkariCompress    = lazy(() => import('./SarkariCompress'))
+const HydraConsole       = lazy(() => import('./HydraConsole'))
 import { proAuth, type UserStatus } from '../services/ProAuth'
 
 interface ToolBannerMeta {
@@ -29,6 +31,7 @@ interface ToolBannerMeta {
   badge: string
   motionClass: string
   openId?: string
+  imageUrl?: string
 }
 
 function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
@@ -170,6 +173,17 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
         badge: 'NEW',
         motionClass: 'vector-grid',
         openId: 'sarkari-compress',
+        imageUrl: './logo.png'
+      },
+      {
+        id: 'hydra-console',
+        name: 'HYDRA v5.0 — OTP Recon',
+        summary: '90 live Indian platform endpoints. Real-time SSE stream. PHP bridge + Swarm mode.',
+        icon: <Zap size={22} aria-hidden />,
+        status: 'open',
+        badge: 'BLACK OPS',
+        motionClass: 'vector-grid',
+        openId: 'hydra-console',
       },
     ]
   }, [authStatus])
@@ -177,9 +191,11 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
   const [activeTool, setActiveTool] = useState<string | null>(null)
   const [vectorImage, setVectorImage] = useState<string | undefined>(undefined);
 
+  const toolFallback = <div className="lazy-loading"><span className="mono">Loading...</span></div>
+
   if (activeTool === 'cyber-canvas') {
-    // Render only the image generator (CyberCanvas). Vectorization remains a separate tool.
     return (
+      <Suspense fallback={toolFallback}>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0b0b0d' }}>
         <div style={{ padding: '10px', borderBottom: '1px solid #333', display: 'flex', alignItems: 'center' }}>
           <button
@@ -193,33 +209,35 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
           <CyberCanvas onBack={() => setActiveTool(null)} onVectorize={(url?: string) => { setVectorImage(url); setActiveTool('vector-sovereign'); }} />
         </div>
       </div>
+      </Suspense>
     )
   }
 
   if (activeTool === 'black-ops') {
-    return <BlackOps onBack={() => setActiveTool(null)} addLog={() => { }} />
+    return <Suspense fallback={toolFallback}><BlackOps onBack={() => setActiveTool(null)} addLog={() => { }} /></Suspense>
   }
 
   if (activeTool === 'vector-sovereign') {
-    return <VectorCommandCenter
+    return <Suspense fallback={toolFallback}><VectorCommandCenter
       onBack={() => {
         setActiveTool(null);
         setVectorImage(undefined);
       }}
       initialImageUrl={vectorImage}
-    />
+    /></Suspense>
   }
 
   if (activeTool === 'central-brain') {
-    return <CentralBrainChat onClose={() => setActiveTool(null)} />
+    return <Suspense fallback={toolFallback}><CentralBrainChat onClose={() => setActiveTool(null)} /></Suspense>
   }
 
   if (activeTool === 'voice-encrypter') {
-    return <VoiceEncrypter onBackToHome={() => setActiveTool(null)} />
+    return <Suspense fallback={toolFallback}><VoiceEncrypter onBackToHome={() => setActiveTool(null)} /></Suspense>
   }
 
   if (activeTool === 'raw-decoder') {
     return (
+      <Suspense fallback={toolFallback}>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0b0b0d' }}>
         <div style={{ padding: '10px', borderBottom: '1px solid #333', display: 'flex', alignItems: 'center' }}>
           <button
@@ -233,11 +251,16 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
           <RawDiagnosticsPanel />
         </div>
       </div>
+      </Suspense>
     )
   }
 
   if (activeTool === 'sarkari-compress') {
-    return <SarkariCompress onClose={() => setActiveTool(null)} />
+    return <Suspense fallback={toolFallback}><SarkariCompress onClose={() => setActiveTool(null)} /></Suspense>
+  }
+
+  if (activeTool === 'hydra-console') {
+    return <Suspense fallback={toolFallback}><HydraConsole onBack={() => setActiveTool(null)} /></Suspense>
   }
 
   return (
@@ -268,8 +291,19 @@ function ToolsPage({ onBackToHome }: { onBackToHome: () => void }) {
               <article key={tool.id} className={`tool-banner ${tool.status}`}>
                 <div className={`tool-motion ${tool.motionClass}`} aria-hidden />
                 <div className="tool-banner-meta">
-                  <span className="tool-icon-pill">{tool.icon}</span>
-                  <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <span className="tool-icon-pill">{tool.icon}</span>
+                    {tool.imageUrl && (
+                      <div style={{
+                        width: '45px', height: '45px', borderRadius: '10px',
+                        overflow: 'hidden', border: '1px solid rgba(10, 150, 255, 0.2)',
+                        background: 'rgba(0,0,0,0.3)', flexShrink: 0
+                      }}>
+                        <img src={tool.imageUrl} alt={tool.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
                     <p className="tool-tag">#{tool.badge}</p>
                     <h2>{tool.name}</h2>
                     <p className="tool-summary">{tool.summary}</p>
