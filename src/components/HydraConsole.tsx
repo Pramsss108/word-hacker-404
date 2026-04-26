@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeft, Play, Square, RefreshCw, Zap, FileText, Lock,
-  Phone, Shield, Settings, X,
+  Phone, Shield, Settings, X, HelpCircle,
 } from 'lucide-react'
 import HelpModal from './HelpModal'
 import { proAuth, type UserStatus } from '../services/ProAuth'
@@ -58,6 +58,10 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   const [showHelp, setShowHelp] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [showUpsell, setShowUpsell] = useState<string | null>(null)
+  const [showTerms, setShowTerms] = useState(false)
+  const [agreedTos, setAgreedTos] = useState<boolean>(() => {
+    try { return localStorage.getItem('hydra_tos_v1') === 'yes' } catch { return false }
+  })
 
   // Form state (preserved)
   const [phone, setPhone]       = useState('')
@@ -125,6 +129,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
   // Unified launch
   const launch = async () => {
     setErr(null)
+    if (!agreedTos) { setErr('Please agree to the Terms & Disclaimer below before sending.'); return }
     if (!/^\d{10}$/.test(phone.trim())) { setErr('Please enter a valid 10-digit phone number'); return }
     setReportUrl(null)
     if (mode === 'swarm') {
@@ -241,6 +246,17 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
               <FileText size={11} /> Last Report
             </a>
           )}
+
+          <button onClick={() => setShowHelp(true)} title="How to use" aria-label="Help guide" style={{
+            background: 'rgba(10,255,106,0.08)', border: `1px solid ${T.brand}55`, color: T.brand,
+            width: 32, height: 32, borderRadius: 8, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.18s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(10,255,106,0.18)'; e.currentTarget.style.boxShadow = `0 0 12px ${T.brand}55` }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,255,106,0.08)'; e.currentTarget.style.boxShadow = 'none' }}
+          >
+            <HelpCircle size={16} />
+          </button>
         </div>
       </header>
 
@@ -391,14 +407,48 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
 
           {/* CTA pinned to bottom */}
           <div style={{ padding: 14, borderTop: `1px solid ${T.border}`, background: T.surface2 }}>
+            {!running && (
+              <label style={{
+                display: 'flex', alignItems: 'flex-start', gap: 9,
+                background: agreedTos ? 'rgba(10,255,106,0.06)' : 'rgba(255,213,74,0.06)',
+                border: `1px solid ${agreedTos ? T.brand + '55' : T.yellow + '55'}`,
+                borderRadius: 10, padding: '9px 11px', marginBottom: 10,
+                cursor: 'pointer', fontSize: 11.5, lineHeight: 1.45, color: T.text,
+                transition: 'all 0.2s',
+              }}>
+                <input
+                  type="checkbox"
+                  checked={agreedTos}
+                  onChange={e => {
+                    const v = e.target.checked
+                    setAgreedTos(v)
+                    try { localStorage.setItem('hydra_tos_v1', v ? 'yes' : 'no') } catch {}
+                    if (v) setErr(null)
+                  }}
+                  style={{ marginTop: 2, accentColor: T.brand, cursor: 'pointer', width: 14, height: 14 }}
+                />
+                <span>
+                  I agree to the{' '}
+                  <a href="#" onClick={e => { e.preventDefault(); setShowTerms(true) }}
+                     style={{ color: T.cyan, textDecoration: 'underline', fontWeight: 600 }}>Terms</a>
+                  {' '}and{' '}
+                  <a href="#" onClick={e => { e.preventDefault(); setShowTerms(true) }}
+                     style={{ color: T.cyan, textDecoration: 'underline', fontWeight: 600 }}>Disclaimer</a>.
+                  <span style={{ display: 'block', color: T.muted, fontSize: 10.5, marginTop: 2 }}>
+                    For testing your own number only · Educational use · No spam, no harassment
+                  </span>
+                </span>
+              </label>
+            )}
             {!running ? (
-              <button onClick={launch} disabled={!up} style={{
+              <button onClick={launch} disabled={!up || !agreedTos} style={{
                 width: '100%', padding: '14px 18px', borderRadius: 11,
-                background: up ? `linear-gradient(135deg, ${T.brand}, ${T.brandDim})` : T.dim,
+                background: (up && agreedTos) ? `linear-gradient(135deg, ${T.brand}, ${T.brandDim})` : T.dim,
                 border: 'none', color: '#000', fontWeight: 900, fontSize: 14.5, letterSpacing: 0.6,
-                cursor: up ? 'pointer' : 'not-allowed',
+                cursor: (up && agreedTos) ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
-                boxShadow: up ? `0 6px 22px rgba(10,255,106,0.35)` : 'none', transition: 'all 0.2s',
+                boxShadow: (up && agreedTos) ? `0 6px 22px rgba(10,255,106,0.35)` : 'none', transition: 'all 0.2s',
+                opacity: (up && agreedTos) ? 1 : 0.55,
               }}>
                 <Play size={16} fill="#000" /> Start Sending
               </button>
@@ -531,9 +581,48 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
         </section>
       </main>
 
-      {/* ───── HELP FAB (bottom-right) ───── */}
-      <button className="help-fab" onClick={() => setShowHelp(true)} aria-label="Help guide" title="How to use SMS Bomber">?</button>
+      {/* ───── HELP MODAL (button is in header now to avoid SAB FALLBACK clash) ───── */}
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
+
+      {/* ───── TERMS / DISCLAIMER MODAL ───── */}
+      {showTerms && (
+        <div onClick={() => setShowTerms(false)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(6px)',
+          zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: T.surface, border: `1px solid ${T.borderHi}`, borderRadius: 14,
+            maxWidth: 640, width: '100%', maxHeight: '85vh', overflow: 'auto',
+            padding: '22px 24px', color: T.text, fontFamily: T.sans,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <Shield size={20} color={T.brand} />
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Terms of Use & Disclaimer</h2>
+              <button onClick={() => setShowTerms(false)} style={{
+                marginLeft: 'auto', background: 'transparent', border: 'none', color: T.muted, cursor: 'pointer',
+              }}><X size={18} /></button>
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.65, color: T.text }}>
+              <p><strong style={{ color: T.brand }}>1. Educational & Personal-Testing Use Only.</strong> SMS Bomber Pro is provided strictly for users to test the resilience of <em>their own</em> mobile number, learn how OTP/transactional SMS pipelines work, and study anti-spam systems.</p>
+              <p><strong style={{ color: T.yellow }}>2. No Targeting Third Parties.</strong> You agree NOT to use this tool against any phone number that is not yours, or for which you do not have explicit written consent from the owner. Doing so may violate local laws including India's IT Act 2000 (§66, §66A jurisprudence), the Indian Telegraph Act, and TRAI UCC regulations.</p>
+              <p><strong style={{ color: T.red }}>3. No Harassment.</strong> Pranks, revenge, intimidation, financial fraud, OTP-flood attacks, or any malicious use is strictly forbidden and may constitute criminal harassment, stalking, or cyber-terrorism in your jurisdiction.</p>
+              <p><strong>4. No Warranty.</strong> The tool is provided "AS IS" without warranty of any kind. SMS delivery rates depend on third-party gateways which may rate-limit, block, or change behaviour at any time.</p>
+              <p><strong>5. Your Responsibility.</strong> You are solely responsible for your use of this tool. The developers, operators, and contributors of Word Hacker 404 disclaim all liability for misuse, damages, or legal consequences arising from your actions.</p>
+              <p><strong>6. Privacy.</strong> The phone number you enter is sent only to the SMS gateway sources for the duration of the send and is not stored on our servers. Reports are saved locally on the backend machine you control.</p>
+              <p><strong>7. Indemnity.</strong> You agree to indemnify and hold harmless the developers from any claim, damage, or legal action resulting from your misuse of this software.</p>
+              <p style={{ marginTop: 18, padding: 12, background: 'rgba(255,77,109,0.08)', border: `1px solid ${T.red}55`, borderRadius: 9, color: '#ffb1c0', fontSize: 12 }}>
+                <strong>By checking the agreement box, you confirm that you have read, understood, and accept these terms in full. If you do not agree, do not use this tool.</strong>
+              </p>
+            </div>
+            <button onClick={() => setShowTerms(false)} style={{
+              marginTop: 16, width: '100%', padding: '11px 14px', borderRadius: 10,
+              background: `linear-gradient(135deg, ${T.brand}, ${T.brandDim})`,
+              border: 'none', color: '#000', fontWeight: 800, fontSize: 13, cursor: 'pointer',
+            }}>Got it</button>
+          </div>
+        </div>
+      )}
 
       {/* ───── UPSELL MODAL ───── */}
       {showUpsell && (

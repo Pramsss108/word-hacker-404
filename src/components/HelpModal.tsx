@@ -45,7 +45,7 @@ The number you enter will receive the SMS messages.`,
 👉 Start with 3 rounds for a clean delivery test.`,
   },
   {
-    emoji: '�',
+    emoji: '🚀',
     title: 'Step 3 — Choose Sending Mode',
     color: '#fb923c',
     content: `Pick how SMS Bomber sends:
@@ -57,7 +57,7 @@ The number you enter will receive the SMS messages.`,
 👉 If you want a controlled, steady test, choose Standard.`,
   },
   {
-    emoji: '�️',
+    emoji: '🛡️',
     title: 'Step 4 — Smart Routing (Anti-Block)',
     color: '#34d399',
     content: `The Smart Routing toggle keeps your delivery rate at 100%.
@@ -107,19 +107,7 @@ In Advanced Settings, choose how many servers (2–10). Each server gets its own
 👉 Use Turbo when you want maximum delivery speed. It's significantly faster than Standard mode. Pro feature 🔒.`,
   },
   {
-    emoji: '🔀',
-    title: 'Smart Routing Explained',
-    color: '#34d399',
-    content: `Smart Routing enables a backup layer of sources that automatically activates when main ones get blocked.
-
-When ON: If main sources get blocked, backup sources automatically take over. Highest delivery rate.
-
-When OFF: Only primary sources are used.
-
-👉 Keep Smart Routing ON for best results. Pro feature 🔒.`,
-  },
-  {
-    emoji: '📄',
+    emoji: '',
     title: 'Reports',
     color: '#60a5fa',
     content: `After every send, SMS Bomber Pro automatically generates a report.
@@ -135,7 +123,7 @@ The report shows:
 Reports are saved locally and can be opened in your browser.`,
   },
   {
-    emoji: '�',
+    emoji: '🔧',
     title: 'Advanced Settings',
     color: '#f472b6',
     content: `Tap "Advanced Settings" to fine-tune your send:
@@ -156,16 +144,16 @@ Most users never need to touch these.`,
 → Press Ctrl + Shift + R (hard refresh) in Chrome
 
 🔴 "Status pill says Offline"
-→ The HYDRA backend isn't running. Wait 5–10s, then click the refresh icon in the status pill.
+→ The backend isn't running. Wait 5–10s, then click the refresh icon in the status pill.
 
 🔴 "All numbers stay at 0 even after Start"
 → Check the Live Activity panel. If it stays empty, the backend is offline.
 
 🔴 "Limited keeps going up"
-→ Normal! Sources block fast requests. Switch Speed Precision to Stealth or Ghost to slow down.
+→ Normal! Sources block fast requests. Switch Speed in Advanced to Stealth or Ghost to slow down.
 
 🔴 "Delivered count is low"
-→ Try a different App Category Filter, or make sure the phone number is a real active Indian number. Turn on Smart Routing for best results.`,
+→ Try a different Category in Advanced Settings, or make sure the phone number is a real active Indian number. Turn on Smart Routing for best results.`,
   },
 ]
 
@@ -179,7 +167,7 @@ export default function HelpModal({ onClose }: Props) {
         {/* Header */}
         <div className="help-header">
           <div className="help-title-row">
-            <span className="help-logo">⚡ HYDRA</span>
+            <span className="help-logo">⚡ SMS Bomber Pro</span>
             <span className="help-subtitle mono">User Guide · Plain Language</span>
           </div>
           <button className="help-close" onClick={onClose} aria-label="Close">✕</button>
