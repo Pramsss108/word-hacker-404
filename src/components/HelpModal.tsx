@@ -7,22 +7,22 @@ interface Props {
 const SECTIONS = [
   {
     emoji: '⚡',
-    title: 'What is HYDRA?',
+    title: 'What is SMS Bomber Pro?',
     color: '#0aff6a',
-    content: `HYDRA is an SMS testing tool. It sends OTP (one-time password) requests to phone numbers using 90+ real app APIs — like Swiggy, JioMart, PhonePe, etc.
+    content: `SMS Bomber Pro is a free SMS testing tool. It sends one-time-password (OTP) requests to phone numbers using 90+ verified Indian app sources — like Swiggy, JioMart, PhonePe, etc.
 
 Use it to:
 • Test if your own number is receiving SMS properly
 • Stress-test API limits during development
 • Check which services are active in your area
 
-Think of it like a "ping test" — but for SMS.`,
+Think of it like a ping test — but for SMS.`,
   },
   {
     emoji: '📱',
     title: 'Step 1 — Enter a Phone Number',
     color: '#38bdf8',
-    content: `Type the 10-digit mobile number in the TARGET box at the top left.
+    content: `Type the 10-digit mobile number in the PHONE NUMBER box.
 
 ✅ Example: 9876543210
 ✅ +91 is added automatically — you don't need to type it.
@@ -32,133 +32,121 @@ The number you enter will receive the SMS messages.`,
   },
   {
     emoji: '🎯',
-    title: 'Step 2 — Choose a Mode',
+    title: 'Step 2 — Choose How Many Rounds',
     color: '#a78bfa',
-    content: `There are 3 modes:
+    content: `Pick a round count using the round chips:
 
-🟢 SWARM — Multiple workers fire at once. Maximum speed. Best for serious testing.
+• 1 round   — ~90 SMS (one pass through every source)
+• 3 rounds  — ~270 SMS (good default test)
+• 5 rounds  — ~450 SMS (heavy test)
+• 10 rounds — ~900 SMS (max for free tier)
+• ♾️ Unlimited — keeps sending until you press Stop (Pro only)
 
-🔵 WAVE — One wave at a time. Controlled, steady. Good for monitoring results.
-
-🟡 DEBUG — Very slow, shows every detail. Use this to check if a specific API is working.
-
-👉 For most users: start with SWARM.`,
+👉 Start with 3 rounds for a clean delivery test.`,
   },
   {
-    emoji: '📂',
-    title: 'Step 3 — Pick a Category',
+    emoji: '�',
+    title: 'Step 3 — Choose Sending Mode',
     color: '#fb923c',
-    content: `The CATEGORY dropdown filters which apps will send SMS.
+    content: `Pick how SMS Bomber sends:
 
-• ALL (90) — Use all 90 APIs at once. Maximum coverage.
-• sms — Generic SMS services
-• food — Food delivery apps (Swiggy, Zomato etc.)
-• payment — PhonePe, Paytm, etc.
-• ecommerce — Shopping apps
-• telecom — Jio, Airtel, BSNL etc.
+• Standard — Sends through one server at a steady pace. Free for everyone.
+• ⚡ Turbo (Multi-Server) — Splits the work across 3–10 parallel servers for maximum speed. Pro only 🔒.
 
-👉 Keep it on ALL for the strongest effect.`,
+👉 If you want fast bulk delivery, choose Turbo.
+👉 If you want a controlled, steady test, choose Standard.`,
   },
   {
-    emoji: '🔥',
-    title: 'Step 4 — Fire Speed & Waves',
-    color: '#f43f5e',
-    content: `FIRE SPEED controls the delay between each API call:
+    emoji: '�️',
+    title: 'Step 4 — Smart Routing (Anti-Block)',
+    color: '#34d399',
+    content: `The Smart Routing toggle keeps your delivery rate at 100%.
 
-• Slow — 2 second gap (safe, avoids rate limits)
-• Normal — 0.5 second gap (balanced)
-• Fast — 0.1 second gap (aggressive)
-• Turbo — Almost no gap (maximum blast)
+When ON: If a main source gets blocked, backup sources automatically take over. Highest delivery success.
 
-WAVES (the number box):
-• 0 = Run forever until you press STOP
-• 1, 2, 3... = Stop after that many rounds
+When OFF: Only the primary sources are used.
 
-👉 Start with Normal speed + 0 waves (unlimited) for a full test.`,
+👉 Keep Smart Routing ON for best results. Pro feature 🔒.`,
   },
   {
     emoji: '🚀',
-    title: 'Step 5 — Launch!',
+    title: 'Step 5 — Press Start Sending!',
     color: '#0aff6a',
-    content: `Press the big green LAUNCH SMS button.
+    content: `Press the big green "Start Sending" button.
 
-You'll see the Live Stream panel start filling up with results in real-time:
+A Live Status card will appear showing:
 
-✅ OTP_SENT — API worked, SMS sent!
-⚠️ RATE_LIMITED — API blocked you temporarily (too many requests)
-❌ BLOCKED — API rejected the request
-🟡 200_FAKE — API said "ok" but probably didn't send
+✅ Delivered — SMS that arrived successfully
+⚠️ Limited — source blocked you temporarily (rate limit)
+❌ Blocked — source rejected the request
 
-Press STOP at any time to end the attack.`,
+Press the red Stop button at any time to end early.`,
   },
   {
     emoji: '📊',
-    title: 'Reading the Stats',
+    title: 'Reading the Live Status',
     color: '#fbbf24',
-    content: `The SMS STATS panel shows live counts:
+    content: `The Live Status card shows three big numbers:
 
-• STATUS — IDLE (waiting) or RUNNING (active)
-• WAVE — Which round you're on
-• OTP SENT — How many SMS were successfully triggered
-• BLOCKED — How many APIs rejected you
-• RATE LIMIT — Temporary bans (resets automatically)
-• 200 FAKE — APIs that lied (returned OK but did nothing)
+• Delivered — SMS that successfully arrived
+• Blocked  — sources that rejected your request
+• Limited  — sources you hit too fast (resets in ~60s)
 
-Bottom right INTELLIGENCE panel shows which category has the best success rate.`,
+The Round counter (top right) shows current round vs total.
+
+The progress bar shows how far through your run you are.`,
   },
   {
     emoji: '🐝',
-    title: 'SWARM Mode (Advanced)',
+    title: 'Turbo Mode (Multi-Server)',
     color: '#a78bfa',
-    content: `Switch to the SWARM tab at the top for multi-worker mode.
+    content: `Switch to Turbo mode to use multiple parallel servers — like having 3–10 phones sending at once.
 
-This splits the 90 APIs across multiple "workers" that run simultaneously — like having 3-5 phones attacking at once.
+In Advanced Settings, choose how many servers (2–10). Each server gets its own card showing live progress.
 
-• Workers — How many parallel attackers (2–5 recommended)
-• Each worker gets its own card showing its progress
-
-👉 Use Swarm when you want the absolute maximum impact. It's significantly faster than single mode.`,
+👉 Use Turbo when you want maximum delivery speed. It's significantly faster than Standard mode. Pro feature 🔒.`,
   },
   {
     emoji: '🔀',
-    title: 'Dual-Vector Toggle',
+    title: 'Smart Routing Explained',
     color: '#34d399',
-    content: `The DUAL-VECTOR toggle (below fire speed) enables a second layer of attack using "recovery targets" — backup APIs that activate when main ones get blocked.
+    content: `Smart Routing enables a backup layer of sources that automatically activates when main ones get blocked.
 
-When ON: If main APIs get blocked, backup APIs automatically take over. Higher success rate.
+When ON: If main sources get blocked, backup sources automatically take over. Highest delivery rate.
 
-When OFF: Only primary APIs are used.
+When OFF: Only primary sources are used.
 
-👉 Keep Dual-Vector ON for best results.`,
+👉 Keep Smart Routing ON for best results. Pro feature 🔒.`,
   },
   {
     emoji: '📄',
     title: 'Reports',
     color: '#60a5fa',
-    content: `After every attack, HYDRA automatically generates a report.
+    content: `After every send, SMS Bomber Pro automatically generates a report.
 
-When the attack stops, a purple VIEW REPORT button appears at the bottom of the Live Stream panel.
+When sending stops, a purple "Last Report" button appears in the top bar.
 
 The report shows:
-• Total OTPs sent
-• Which APIs worked best
-• Blocked/rate-limited breakdown
-• Timestamp of every wave
+• Total SMS delivered
+• Which sources worked best
+• Blocked / rate-limited breakdown
+• Timestamp of every round
 
 Reports are saved locally and can be opened in your browser.`,
   },
   {
-    emoji: '🛠️',
-    title: 'Tools Button (Top Left)',
+    emoji: '�',
+    title: 'Advanced Settings',
     color: '#f472b6',
-    content: `Click TOOLS in the top left to access extra features:
+    content: `Tap "Advanced Settings" to fine-tune your send:
 
-• Voice Encrypter — Record and scramble voice messages
-• Neural Editor — AI-powered text editor
-• Sarkari Compress — Compress PDF/images for government forms
-• RAW Lab — Advanced file processing
+• Test Mode — super-slow debug mode that shows every API call (good for troubleshooting)
+• Number of Servers — only used in Turbo mode (2 to 10)
+• App Category Filter — limit to a specific category (food, payment, telecom...)
+• Speed Precision — fine-grained gap between sends (Instant, Fast, Normal, Stealth, Ghost)
+• Custom Round Count — type any number; 0 means unlimited
 
-These are completely separate from HYDRA SMS testing.`,
+Most users never need to touch these.`,
   },
   {
     emoji: '❓',
@@ -167,17 +155,17 @@ These are completely separate from HYDRA SMS testing.`,
     content: `🔴 "Site is black / not loading"
 → Press Ctrl + Shift + R (hard refresh) in Chrome
 
-🔴 "HYDRA shows 0 APIs"
-→ Wait 5 seconds and refresh. The backend is still loading.
+🔴 "Status pill says Offline"
+→ The HYDRA backend isn't running. Wait 5–10s, then click the refresh icon in the status pill.
 
-🔴 "All stats show 0 even after launch"
-→ Check that the backend is running. Look for "Server ready — 90 live APIs" in the Live Stream.
+🔴 "All numbers stay at 0 even after Start"
+→ Check the Live Activity panel. If it stays empty, the backend is offline.
 
-🔴 "Rate Limited keeps going up"
-→ Normal! APIs block fast requests. Switch to Slow speed or wait 60 seconds.
+🔴 "Limited keeps going up"
+→ Normal! Sources block fast requests. Switch Speed Precision to Stealth or Ghost to slow down.
 
-🔴 "OTP SENT is low"
-→ Try a different Category, or make sure the phone number is a real active Indian number.`,
+🔴 "Delivered count is low"
+→ Try a different App Category Filter, or make sure the phone number is a real active Indian number. Turn on Smart Routing for best results.`,
   },
 ]
 
