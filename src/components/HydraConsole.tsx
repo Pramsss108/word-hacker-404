@@ -65,7 +65,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
 
   // Form state (preserved)
   const [phone, setPhone]       = useState('')
-  const [mode, setMode]         = useState<'single' | 'debug' | 'swarm'>('swarm')
+  const [mode, setMode]         = useState<'single' | 'swarm'>('swarm')
   const [category, setCategory] = useState('all')
   const [stagger, setStagger]   = useState('0.3')
   const [maxWaves, setMaxWaves] = useState('3')
@@ -171,7 +171,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
     setMaxWaves(rounds === 'inf' ? '0' : String(rounds))
   }
   const currentRounds: number | 'inf' = maxWaves === '0' ? 'inf' : (parseInt(maxWaves) || 1)
-  const switchMode = (m: 'single' | 'swarm' | 'debug') => {
+  const switchMode = (m: 'single' | 'swarm') => {
     if (m === 'swarm' && !isPro) { setShowUpsell('turbo'); return }
     setMode(m)
   }
@@ -385,14 +385,7 @@ function HydraConsole({ onBack }: { onBack: () => void }) {
                     <option value="1.0">Ghost</option>
                   </select>
                 </div>
-                <div>
-                  <label style={advLabel}>Test Mode (debug)</label>
-                  <button onClick={() => switchMode('debug')} disabled={running} style={{
-                    ...selectStyle, cursor: running ? 'not-allowed' : 'pointer',
-                    background: mode === 'debug' ? 'rgba(10,255,106,0.1)' : T.bg,
-                    color: mode === 'debug' ? T.brand : T.text, textAlign: 'left',
-                  }}>{mode === 'debug' ? '✓ Debug active' : 'Enable debug mode'}</button>
-                </div>
+
               </div>
             )}
 
