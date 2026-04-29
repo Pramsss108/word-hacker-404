@@ -16,7 +16,7 @@ import os
 import re
 import sys
 import time
-from urllib.parse import quote
+from urllib.parse import quote, quote_plus
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
@@ -103,9 +103,11 @@ def discover_via_code_search() -> list[str]:
             # Default branch lookup is expensive; assume main/master.
             if not repo or not path:
                 continue
+            # URL-quote the path (filenames may contain spaces / unicode)
+            safe_path = quote(path, safe="/")
             for branch in ("main", "master"):
-                raw_urls.append(f"https://raw.githubusercontent.com/{repo}/{branch}/{path}")
-        time.sleep(2)  # respect search rate limits (30/min authenticated)
+                raw_urls.append(f"https://raw.githubusercontent.com/{repo}/{branch}/{safe_path}")
+        time.sleep(8)  # code search is 30/min auth — stay well under
     print(f"[+] Discovered {len(raw_urls)} candidate raw URLs from code search")
     return raw_urls
 
@@ -215,12 +217,13 @@ def main() -> int:
     # Phase 1: Auto-discover repos via GitHub Code Search
     discovered_raw_urls = discover_via_code_search()
 
-    # Phase 2: Fetch raw content from both discovered + curated URLs
+    # Phase 2: Fetch raw content from both discovered + curated URLs.
+    # Catch ALL exceptions — a single bad URL must never crash the cloud job.
     for src in discovered_raw_urls + GITHUB_RAW_SOURCES:
         try:
             body = fetch(src)
-        except (HTTPError, URLError):
-            continue  # quietly skip 404s (one of main/master will fail)
+        except Exception:
+            continue  # 404 / invalid URL / timeout — skip silently
         # Try strict JSON parse first; if it fails, fall back to URL regex.
         parsed = parse_tbomb_json(body) or parse_rss_for_urls(body)
         added_here = 0
