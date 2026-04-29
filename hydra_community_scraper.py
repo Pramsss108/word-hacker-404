@@ -24,24 +24,28 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
 
 # Code-search queries: hunt for files that look like API/OTP endpoint lists.
 # Each query returns up to 30 files; we then fetch the raw content of each.
+# These are tuned for quality — broader keywords mean noise; specific TBomb-fork
+# patterns mean real endpoint files maintained by SMS-bombing repo authors.
 CODE_SEARCH_QUERIES = [
     'filename:api.json otp send',
     'filename:apis.json sms verify',
     'filename:bomber.json otp',
     'path:bomber+filename:json sms',
+    # Higher-signal queries — target known SMS-bomber project file conventions
+    'filename:api.json language:json otp india',
+    'filename:apis.json indian sms',
+    'path:tbomb filename:json',
+    'TBomb send_otp filename:py',  # python files that import endpoint dicts
 ]
 
 # Optional: hand-curated raw URLs you trust (kept empty until you verify each).
 GITHUB_RAW_SOURCES: list[str] = []
 
-# Optional Telegram public channels via RSSHub (read-only, no Telegram login).
-# These are public RSSHub mirrors of channels that occasionally drop API URLs.
-# If a mirror is down the scraper just skips it — no crash.
-TELEGRAM_RSS_SOURCES: list[str] = [
-    "https://rsshub.app/telegram/channel/apilist",
-    "https://rsshub.app/telegram/channel/freeapis",
-    "https://rsshub.app/telegram/channel/devapi",
-]
+# Telegram RSS — DISABLED. The public RSSHub mirrors for OTP/API channels
+# are either rate-limited (403) or the channels themselves don't exist.
+# Tier 1 (Code Search) + Tier 3 (crt.sh) yield far higher-quality results.
+# If you ever want to re-enable: add real public channel usernames here.
+TELEGRAM_RSS_SOURCES: list[str] = []
 
 # Tier 3: crt.sh certificate-transparency mining.
 # We pull subdomains for major Indian apps, keep ones whose name suggests
