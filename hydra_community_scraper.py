@@ -35,11 +35,27 @@ CODE_SEARCH_QUERIES = [
 GITHUB_RAW_SOURCES: list[str] = []
 
 # Optional Telegram public channels via RSSHub (read-only, no Telegram login).
+# These are public RSSHub mirrors of channels that occasionally drop API URLs.
+# If a mirror is down the scraper just skips it — no crash.
 TELEGRAM_RSS_SOURCES: list[str] = [
-    # "https://rsshub.app/telegram/channel/<channel_username>",
+    "https://rsshub.app/telegram/channel/apilist",
+    "https://rsshub.app/telegram/channel/freeapis",
+    "https://rsshub.app/telegram/channel/devapi",
 ]
 
+# Tier 3: crt.sh certificate-transparency mining.
+# We pull subdomains for major Indian apps, keep ones whose name suggests
+# OTP/auth, and synthesise candidate URLs with the most common API paths.
+CRTSH_DOMAINS = [
+    "swiggy.com", "zomato.com", "paytm.com", "phonepe.com",
+    "bigbasket.com", "meesho.com", "nykaa.com", "myntra.com",
+    "makemytrip.com", "ola.com", "1mg.com", "urbancompany.com",
+]
+CRTSH_KEYWORDS = ("otp", "sms", "auth", "verify", "login", "signup", "identity", "account")
+CRTSH_PATHS = ("/api/v1/otp/send", "/api/otp/send", "/v1/otp", "/auth/otp", "/sendotp")
+
 MAX_FILES_PER_QUERY = 15  # cap to stay friendly with rate limits
+MAX_CRTSH_HOSTS_PER_DOMAIN = 8  # don't explode the candidate list
 
 URL_REGEX = re.compile(
     r"https?://[a-zA-Z0-9.\-_/?=&%]+(?:otp|sms|send|verify|login|signup|auth)[a-zA-Z0-9.\-_/?=&%]*",
@@ -141,6 +157,54 @@ def _name_from_url(url: str) -> str:
         return "Unknown"
 
 
+def discover_via_crtsh() -> list[dict]:
+    """Tier 3: query crt.sh CT logs for subdomains, build candidate URLs.
+
+    Pure stdlib. crt.sh sometimes returns malformed JSON or times out — we
+    swallow all errors and just return what worked. Caller treats output as
+    low-confidence candidates that BLAZE will verify later.
+    """
+    out: list[dict] = []
+    for root in CRTSH_DOMAINS:
+        url = f"https://crt.sh/?q=%25.{root}&output=json"
+        print(f"[*] crt.sh: {root}")
+        try:
+            body = fetch(url, timeout=20)
+            data = json.loads(body)
+        except (HTTPError, URLError, json.JSONDecodeError, TimeoutError) as e:
+            print(f"    [!] {e}")
+            continue
+        seen_hosts: set[str] = set()
+        for row in data if isinstance(data, list) else []:
+            name = (row.get("name_value") or "").lower()
+            for host in name.split("\n"):
+                host = host.strip().lstrip("*.")
+                if not host or host in seen_hosts or host.startswith("."):
+                    continue
+                if not host.endswith(root):
+                    continue
+                if not any(k in host for k in CRTSH_KEYWORDS):
+                    continue
+                seen_hosts.add(host)
+                if len(seen_hosts) >= MAX_CRTSH_HOSTS_PER_DOMAIN:
+                    break
+            if len(seen_hosts) >= MAX_CRTSH_HOSTS_PER_DOMAIN:
+                break
+        for host in seen_hosts:
+            for path in CRTSH_PATHS:
+                full = f"https://{host}{path}"
+                out.append({
+                    "name": f"{_name_from_url(full)}-CRT",
+                    "url": full,
+                    "method": "POST",
+                    "headers": {"Content-Type": "application/json"},
+                    "source": "crtsh",
+                })
+        time.sleep(1)  # be polite to crt.sh
+    print(f"[+] crt.sh produced {len(out)} candidate URLs")
+    return out
+
+
 def main() -> int:
     all_endpoints: dict[str, dict] = {}
 
@@ -173,6 +237,10 @@ def main() -> int:
             continue
         for ep in parse_rss_for_urls(body):
             all_endpoints.setdefault(ep["url"], ep)
+
+    # Phase 4: crt.sh CT-log subdomain mining (Tier 3)
+    for ep in discover_via_crtsh():
+        all_endpoints.setdefault(ep["url"], ep)
 
     endpoints = list(all_endpoints.values())
     payload = {
