@@ -1,122 +1,3238 @@
 {
   "generated_by": "hydra_community_scraper",
-  "count": 75,
+  "count": 730,
   "new_endpoints": [
     {
-      "name": "Flipkart",
-      "url": "https://www.flipkart.com/api/5/user/otp/generate",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Goibibo",
-      "url": "https://www.goibibo.com/mobile/?sms=success",
+      "name": "Farvi",
+      "url": "https://farvi.shop/api/v1/sessions/login_request",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.magicbricks.com/bricks/verifyOnCall.html?mobile=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ajio",
-      "url": "https://www.ajio.com/api/auth/signupSendOTP",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Apollopharmacy",
-      "url": "https://www.apollopharmacy.in/sociallogin/mobile/sendotp/",
+      "url": "https://api.ostadkr.com/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.grab.com/grabid/v1/phone/otp",
+      "url": "https://api.alinance.com/user/register/mobile/send/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Pharmeasy",
-      "url": "https://pharmeasy.in/api/auth/requestOTP",
+      "name": "Ws",
+      "url": "https://ws.alibaba.ir/api/v3/account/mobile/otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
+    },
+    {
+      "name": "Pubisha",
+      "url": "https://www.pubisha.com/login/checkCustomerActivation",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bazidone",
+      "url": "https://bazidone.com/?login=true&page=1&redirect_to=https%3A%2F%2Fbazidone.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pubg-Sell",
+      "url": "https://pubg-sell.ir/loginuser?username=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.alopeyk.com/api/v2/login?platform=pwa",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shop",
+      "url": "http://shop.tnovin.com/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dicardo",
+      "url": "https://dicardo.com/main/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pirankalaco",
+      "url": "https://pirankalaco.ir/shop/login.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.bitpin.ir/v3/usr/authenticate/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.alopeyk.com/safir-service/api/v1/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Core",
+      "url": "https://core.otaghak.com/odata/Otaghak/Users/SendVerificationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Digistyle",
+      "url": "https://www.digistyle.com/users/login-register/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Safiran",
+      "url": "https://safiran.shop/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Snappfood",
+      "url": "https://snappfood.ir/mobile/v2/user/loginMobileWithNoPass?lat=35.774&long=51.418&sms_apialClient=WEBSITE&client=WEBSITE&deviceType=WEBSITE&appVersion=8.1.0&UDID=39c62f64-3d2d-4954-9033-816098559ae4&locale=fa",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Amoomilad",
+      "url": "https://amoomilad.demo-hoonammaharat.ir/api/v1.0/Account/Sendcode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bimebazar",
+      "url": "https://bimebazar.com/accounts/api/login_sec/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bigtoys",
+      "url": "https://www.bigtoys.ir/?login=true&back=home&page=1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mrbilit.com/api/login/exists/v2?mobileOrEmail=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Takfarsh",
+      "url": "https://takfarsh.com/wp-content/themes/bakala/template-parts/send.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bimito",
+      "url": "https://bimito.com/api/vehicleorder/v2/app/auth/login-with-verify-code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.beroozmart.com/api/pub/account/send-otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Nobat",
+      "url": "https://nobat.ir/api/public/patient/login/phone",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pooleno.ir/v1/auth/check-mobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Core",
+      "url": "https://core.gap.im/v1/user/resendCode.json?mobile=%2B98",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.sibbank.ir/v1/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Arzinja",
+      "url": "https://arzinja.app/api/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.snapp.market/mart/v1/user/loginMobileWithNoPass?cellphone=",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Riiha",
+      "url": "https://www.riiha.ir/api/v1.0/authenticate",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.timcheh.com/auth/otp/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Crm",
+      "url": "https://crm.see5.net/api_ajax/sendotp.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Exo",
+      "url": "https://exo.ir/index.php?route=account/mobile_login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.snapp.doctor/core/Api/Common/v1/sendVerificationCode/0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Digimaze",
+      "url": "https://digimaze.org/api/sms/v1/otp/request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.snapp.taxi/api/api-passenger-oauth/v2/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mrbilit.ir/api/Token/send?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Kafegheymat",
+      "url": "https://kafegheymat.com/shop/getLoginSms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Coffefastfoodluxury",
+      "url": "https://coffefastfoodluxury.ir/product-category/coffeshop/?login=true&page=1&redirect_to=https%3A%2F%2Fcoffefastfoodluxury.ir%2Fproduct-category%2Fcoffeshop%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Cyclops",
+      "url": "https://cyclops.drnext.ir/v1/patients/auth/send-verification-token",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Farsgraphic",
+      "url": "https://farsgraphic.com/?login=true&page=1&redirect_to=https%3A%2F%2Ffarsgraphic.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Fidibo",
+      "url": "https://fidibo.com/user/login-by-sms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Offdecor",
+      "url": "https://www.offdecor.com/index.php?route=account/login/sendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.bimesho.com/api/v1/auth/otp/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.tapsi.food/v1/api/Authentication/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gateway",
+      "url": "https://gateway.wisgoon.com/api/v1/auth/login/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Kodakamoz",
+      "url": "https://www.kodakamoz.com/?login=true&page=1&redirect_to=https%3A%2F%2Fwww.kodakamoz.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Buskool",
+      "url": "https://www.buskool.com/send_verification_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.rokla.ir/api/request/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shop",
+      "url": "https://shop.opco.co.ir/index.php?route=extension/module/login_verify/update_register_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Cinematicket",
+      "url": "https://cinematicket.org/api/v1/users/signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Azki",
+      "url": "https://www.azki.com/api/vehicleorder/api/customer/register/login-with-vocal-verification-code?phoneNumber=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Drdr",
+      "url": "https://drdr.ir/api/v3/auth/login/mobile/init/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Agent",
+      "url": "https://agent.wide-app.ir/auth/token",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Football360",
+      "url": "https://football360.ir/api/auth/verify-phone/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Backend",
+      "url": "https://backend.topnoor.ir/web/v1/user/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Account",
+      "url": "https://account.api.balad.ir/api/web/auth/login/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mazoocandle",
+      "url": "https://mazoocandle.ir/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Melix",
+      "url": "https://melix.shop/site/api/v1/user/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api-Ebcom",
+      "url": "https://api-ebcom.mci.ir/services/auth/v1.0/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.arshiyan.com/send_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Hiword",
+      "url": "https://hiword.ir/wp-json/otp-login/v1/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Client",
+      "url": "https://client.api.paklean.com/user/resendVoiceCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.torob.com/a/phone/send-pin/?phone_number=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pateh.com/ath/auth/login-or-register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.kukala.ir/api/user/Otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dadpardaz",
+      "url": "https://dadpardaz.com/advice/getLoginConfirmationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Safarmarket",
+      "url": "https://safarmarket.com//api/security/v2/user/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pay",
+      "url": "https://pay.rayanertebat.ir/api/User/Otp?t=1692088339811",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.itoll.com/api/v1/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api-React",
+      "url": "https://api-react.okala.com/C/CustomerAccount/OTPRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bit24",
+      "url": "https://bit24.cash/auth/bit24/api/v3/auth/check-mobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Hamrah-Mechanic",
+      "url": "https://www.hamrah-mechanic.com/api/v1/membership/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Khodro45",
+      "url": "https://khodro45.com/api/v1/customers/otp/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Admin",
+      "url": "https://admin.zoodex.ir/api/v1/login/check",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shahrfarsh",
+      "url": "https://shahrfarsh.com/Account/Login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Deniizshop",
+      "url": "https://deniizshop.com/api/v1/sessions/login_request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sheypoor",
+      "url": "https://www.sheypoor.com/api/v10.0.0/auth/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pirankalaco",
+      "url": "https://pirankalaco.ir/shop/SendPhone.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Client",
+      "url": "https://client.api.paklean.com/user/resendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Didnegar",
+      "url": "https://www.didnegar.com/my-account/?login=true&back=home&page=1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "A4Baz",
+      "url": "https://a4baz.com/api/web/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Candoosms",
+      "url": "https://www.candoosms.com/signup/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mipersia",
+      "url": "https://www.mipersia.com/?login=true&page=1&redirect_to=https%3A%2F%2Fwww.mipersia.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Banankala",
+      "url": "https://banankala.com/home/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.iranamlaak.net/authenticate/send/otp/to/mobile/via/sms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Okcs",
+      "url": "https://okcs.com/users/mobilelogin?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.digikala.com/v1/user/authenticate/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.lendo.ir/api/customer/auth/send-otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.snapp.express/mobile/v4/user/loginMobileWithNoPass?client=PWA&optionalClient=PWA&deviceType=PWA&appVersion=5.6.6&optionalVersion=5.6.6&UDID=bb65d956-f88b-4fec-9911-5f94391edf85",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Web",
+      "url": "https://web.emtiyaz.app/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Glite",
+      "url": "https://www.glite.ir/user-login/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Flightio",
+      "url": "https://flightio.com/bff/Authentication/CheckUserKey",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.dosma.ir/sendverify/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paymishe.com/api/v1/otp/registerOrLogin",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pindo.ir/v1/user/login-register/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Drsaina",
+      "url": "https://www.drsaina.com/RegisterLogin?ReturnUrl=%2Fconsultation",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Abantether",
+      "url": "https://abantether.com/users/register/phone/send/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pinorest.com/frontend/auth/login/mobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shop",
+      "url": "https://shop.hemat-elec.ir/?login=true&page=1&redirect_to=https%3A%2F%2Fshop.hemat-elec.ir%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.ehteraman.com/api/request/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.mohit.online/api/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mobapi",
+      "url": "https://mobapi.banimode.com/api/v2/auth/request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tikban",
+      "url": "https://tikban.com/Account/LoginAndRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.anargift.com/api/people/auth",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Candoosms",
+      "url": "https://www.candoosms.com/wp-admin/admin-ajax.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.komodaa.com/api/v2.6/loginRC/request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Rojashop",
+      "url": "https://rojashop.com/api/auth/sendOtp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Web",
+      "url": "https://web.emtiyaz.app/json/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Azki",
+      "url": "https://www.azki.co/api/vehicleorder/v2/app/auth/check-login-availability/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "I",
+      "url": "https://i.devslop.app/app/ifollow/api/otp.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.snapp.taxi/login/?redirect_to=/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.azkivam.com/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pezeshket.com/core/v1/auth/requestCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bandarazad",
+      "url": "https://bandarazad.com/?login=true&page=1&redirect_to=https%3A%2F%2Fbandarazad.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bitex24",
+      "url": "https://bitex24.com/api/v1/auth/sendSms?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Nx",
+      "url": "https://nx.classino.com/otp/v1/api/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gw",
+      "url": "https://gw.taaghche.com/v4/site/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ids",
+      "url": "https://ids.tapsi.shop/authCustomer/CreateOtpForRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Virgool",
+      "url": "https://virgool.io/api/v1.4/auth/verify",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tj8",
+      "url": "https://tj8.ir/auth/register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Steelalborz",
+      "url": "https://steelalborz.com/?login=true&page=1&redirect_to=https%3A%2F%2Fsteelalborz.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.homtick.com/api/V1/User/GetVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Candoosms",
+      "url": "https://www.candoosms.com",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ketabchi",
+      "url": "https://ketabchi.com/api/v1/auth/requestVerificationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mrbilit.com/api/Token/send/byCall?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tabdil24",
+      "url": "https://tabdil24.net/api/api/v1/auth/login-register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.shab.ir/api/fa/sandbox/v_1_4/auth/login-otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ashraafi",
+      "url": "https://ashraafi.com/login-register/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.bitbarg.com/api/v1/authentication/registerOrLogin",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Daal",
+      "url": "https://daal.co/api/authentication/login-register/method/phone-otp/user-role/customer/verify-request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.hbbs.ir/authentication/SendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.kcd.app/api/v1/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Takshopaccessorise",
+      "url": "https://takshopaccessorise.ir/api/v1/sessions/login_request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pmxchange.co/api/User/Login/SendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Server",
+      "url": "https://server.kilid.com/global_auth_api/v1.0/authenticate/login/realm/otp/start?realm=PORTAL",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.offch.com/auth/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "2",
+      "url": "https://2.rome.api.flipkart.com/api/7/user/otp/generate",
+      "method": "POST",
+      "headers": {
+        "X-User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0 FKUA/website/42/website/Desktop"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Netmeds",
+      "url": "https://www.netmeds.com/mst/rest/v1/id/details/${target}",
+      "method": "GET",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Blinkit",
+      "url": "https://blinkit.com/v2/accounts/",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "auth_key": "c761ec3633c22afad934fb17a66385c1c06c5472b4898b866b7306186d0bb477"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Myntra",
+      "url": "https://www.myntra.com/gateway/v1/auth/getotp",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Origin": "https://www.myntra.com",
+        "Connection": "keep-alive"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Meesho",
+      "url": "https://www.meesho.com/api/v1/user/login/request-otp",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.account.relianceretail.com/service/application/retail-auth/v1.0/send-otp",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXR1cm5fdWlfdXJsIjoid3d3Lmppb21hcnQuY29tL2N1c3RvbWVyL2FjY291bnQvbG9naW4_bXNpdGU9eWVzIiwiaWF0IjoxNzI0MTMzMDIyLCJleHAiOjE3MjQxMzMzMjIsInNhbHQiOjB9.m3-umON2qXV5lMQ1UZ_Mpq5kAYf3ecO7ZLvJQkA0G_A"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Pvt-Product",
+      "url": "https://pvt-product.cars24.com/pp/auth/mobile/otp/send/",
+      "method": "POST",
+      "headers": {
+        "x-api-key": "qGuMZcWGxZpgd8uSH4rgkal4v1evAlCd",
+        "phone_number": "${target}"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Swiggy",
+      "url": "https://www.swiggy.com/dapi/auth/sms-otp",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Olx",
+      "url": "https://www.olx.in/api/auth/authenticate?lang=en-IN",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Accept": "*/*"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Winzogames",
+      "url": "https://www.winzogames.com/sendSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.dream11.com/sendsmslink",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+        "Content-type": "application/x-www-form-urlencoded"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "My11Circle",
+      "url": "https://www.my11circle.com/api/fl/auth/v3/getOtp",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.rooter.io/auth/otp",
+      "method": "POST",
+      "headers": {
+        "device-type": "web",
+        "app-version": "1.0.5",
+        "device-id": "ca1d26f0-6154-11ef-b6c1-af61b646f12b",
+        "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwMDU0NjY3NjksInNJZCI6IjM2MDU0ZDM4LWI0MjUtNDZhZC05YmExLTBmNzg4NTk2MDcyOCIsInJvbGVzIjpbXSwiZGV2aWNlIjoid2ViIiwic2ZDcmVhdGVkQXQiOjE3MjQ0MjAyMjYsImlzVmVyaWZpZWQiOmZhbHNlLCJ1c2VyUm9sZXMiOnt9LCJpYXQiOjE3MjQ0MjAyMjYsImV4cCI6MTcyODMwODIyNn0.MxdBWjtyMlqy4mp78rQf1PWEjnxb9tSB586CN0kjUqc"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Securedapi",
+      "url": "https://securedapi.confirmtkt.com/api/platform/registerOutput?mobileNumber=${target}&newOtp=true&retry=false&testparamsp=true",
+      "method": "GET",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Apigate",
+      "url": "https://apigate.abfrl.in/otp",
+      "method": "POST",
+      "headers": {
+        "devicetype": "desktop"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Unacademy",
+      "url": "https://unacademy.com/api/v3/user/user_check/?enable-email=true",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jio",
+      "url": "https://www.jio.com/api/jio-login-service/login/sendOtp",
+      "method": "POST",
+      "headers": {
+        "Accept": "*/*",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pateh.com/api/v1/LoginOrRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "My",
+      "url": "https://my.limoome.com/api/auth/login/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Khodro45",
+      "url": "https://khodro45.com/api/v1/customers/otp/s",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Drdr",
+      "url": "https://drdr.ir/api/v3/auth/login/mobile/init",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Khanoumi",
+      "url": "https://www.khanoumi.com/accounts/sendotp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Core",
+      "url": "https://core.snapp.doctor/Api/Common/v1/sendVerificationCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gateway",
+      "url": "https://gateway.trip.ir/api/Totp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.snapp.market/mart/v1/user/loginMobileWithNoPass?cellphone=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shab",
+      "url": "https://www.shab.ir/api/fa/sandbox/v_1_4/auth/enter-mobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "47",
+      "url": "http://47.95.130.254/tms-ctwl/orderRegisterUser/getPollCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Vipapi",
+      "url": "https://vipapi.beteng.com/VIP/DoSendByCellPhone",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Scm",
+      "url": "http://scm.qlx56.com/gateway/scm-basic/v1/msgRecord/sendAuthCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Luxiwuliu",
+      "url": "https://luxiwuliu.lxhg.com/Account/SendSMS",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Health",
+      "url": "http://health.jxhci.cn:901/ExternalRequest/WeiXinRequest.ashx",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lugangtong56",
+      "url": "http://www.lugangtong56.com/zuul-lgt/lgt-app-member/wxLogin/sendMessageByRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12356",
+      "url": "http://12356.scwjxx.cn/weixin/reserve/redirectUrl",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Passport",
+      "url": "https://passport.xag.cn/home/sms_code",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "115",
+      "url": "http://115.29.195.18/eam/sys/sms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jianjy",
+      "url": "http://www.jianjy.cn/jarp/api/captcha/get",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wxpay-Web",
+      "url": "https://wxpay-web.yixincapital.com/wxpay-web/minBasis/verificationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "61",
+      "url": "http://61.185.136.37:18083/server/system/msg/sendMsgCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "36",
+      "url": "http://36.142.15.2:22017/plbmfw-webrest/rest/plcheckcode/getCheckCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "219",
+      "url": "http://219.145.189.91:7086/server/system/msg/sendMsgCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "A",
+      "url": "https://a.welife001.com/applet/sendVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "W12345",
+      "url": "http://w12345.linyi.gov.cn/web/api/appeal/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Job0917",
+      "url": "https://www.job0917.com/index.php?c=ajax&a=regcode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Portal",
+      "url": "https://portal.henanjubao.com/jubao/api/code/sms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.kucee.com/website.Access/getPhoneCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jsfw",
+      "url": "https://jsfw.wsjkw.gxzf.gov.cn/qwjw_bzpt/getMessageLoginYzm.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hospital",
+      "url": "https://hospital.fjlyrmyy.com/ihp-gateway/api/cms/sendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Vipainisheng",
+      "url": "https://vipainisheng.com/user/app/open/user/sendSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "125",
+      "url": "http://125.67.201.246:86/WriteLetters/i_GetVerCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Sso",
+      "url": "https://sso.zlgx.com/api/v2/sms/sendVerificationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jgfw",
+      "url": "https://jgfw.furuifeng.net/api/login/sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12345",
+      "url": "https://12345.wx.taian.cn/api/wechat.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Weixin",
+      "url": "http://weixin.wuxi12345.cn/User/GetCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12345",
+      "url": "http://12345.qinghai.gov.cn:90/qh12345ww/common/user/verificationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hf12345",
+      "url": "http://www.hf12345.vip/wx/sms/sendValidateSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "219",
+      "url": "http://219.145.189.96:9000/api/v1/orderCitizen/send_captcha",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "24Haowan",
+      "url": "https://www.24haowan.com/WebAjax/RegisterSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Xiangxiang",
+      "url": "http://www.xiangxiang.gov.cn/e/extend/member/send_mobile_code.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Console",
+      "url": "https://console.shlianlu.com/doApi/sso/phoneCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ttcdw",
+      "url": "https://www.ttcdw.cn/m/common/getSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "App",
+      "url": "https://app.tsbmrx12345.gov.cn/user/login/sendCodeSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12345Wx",
+      "url": "http://12345wx.qingdao.gov.cn:81/hotline12345Interface/CityWebSiteAppeal.ashx",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Njkaba",
+      "url": "https://www.njkaba.cn/api/sms/send.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "9377",
+      "url": "http://www.9377.com/h5/register.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hheduc",
+      "url": "https://www.hheduc.com/sso/usr/sendVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Yhd",
+      "url": "https://yhd.zxykt.cn/wx_hdy/sendSmsCode.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zyjy",
+      "url": "https://zyjy.sdei.edu.cn/xjxlq/api/sdzz/user/registrationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lgdd2015",
+      "url": "https://lgdd2015.cn/api/auth/sms-verify/send",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.5173.com/u/sms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.eheren.com/service-authentication/register/sendVerificationCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12345",
+      "url": "http://12345.zwfwhfgjjfzj.yibin.gov.cn/WriteLetters/i_GetVerCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "User-Web",
+      "url": "https://user-web.yunlizhi.cn/bfs-user/customer_account/send_sms_captcha",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Nc12377",
+      "url": "http://www.nc12377.cn/api/sms/send.ashx",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bj12345Rx",
+      "url": "http://bj12345rx.com/api/wechat.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wjw",
+      "url": "http://wjw.xz110.gov.cn/wm_wjw/index.php/user/authentSms/?",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Yun",
+      "url": "https://yun.sd-port.com/outernet/iframe/sendMessage",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ls",
+      "url": "https://ls.xzrcfw.com/App/Sys/SendPhoneCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wsga",
+      "url": "https://wsga.gaj.cq.gov.cn/apis/member/reg/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zjcgswx",
+      "url": "http://www.zjcgswx.cn/yzga/cgs2/Sendmyzm.ashx",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lft",
+      "url": "https://lft.zwfwtek.cn/lf_12345_api/wx/user/sendMessageOnly",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Fs12345",
+      "url": "https://fs12345.foshan.gov.cn/chat/sms/code/phoneCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Weixin",
+      "url": "http://weixin.gys12345.cn/api/wechat.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ysb",
+      "url": "https://ysb.hj.gov.cn/sendRegisterCode.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Portal",
+      "url": "https://portal.tq-iot.cn/iot/auth/gywlw/smscode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Qzsme",
+      "url": "https://qzsme.net/index.php?g=Member&m=Public&a=checkPhone",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "87218",
+      "url": "http://www.87218.com.cn/member/register.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zjzqy",
+      "url": "https://www.zjzqy.org.cn/policy/sendMobileCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lczxqy",
+      "url": "https://lczxqy.com/login/sendcode.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "39",
+      "url": "http://39.99.142.8:9015/prod-api/valPhone",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Kmszpt",
+      "url": "http://kmszpt.com/member/Login/getMobile.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jmesp",
+      "url": "http://jmesp.com/api/sms/send",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ms",
+      "url": "http://ms.wfcmw.cn/index.php/Suqiu/SendMsg.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Heyuan",
+      "url": "http://www.heyuan.gov.cn/hd/userManageAction/frontDesk/sendSmsValidationQuery.jspx",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wcjyj",
+      "url": "https://www.wcjyj.com/mobile/members/reg_send_sms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Apis",
+      "url": "https://apis.btpmw.com/index/sms/send_code",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jkzz",
+      "url": "https://jkzz.zhangzhou.gov.cn/portal-wx/wx/unifyapi",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Eapuapi",
+      "url": "https://eapuapi.haoxinqing.cn/hxq-eap-user-api/user/getCaptchaWeb",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Pc",
+      "url": "https://pc.alayunchina.com/baseApi/common/sendCodeRequest",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wap",
+      "url": "https://wap.wbtrans.com/plus/web/Passport/SmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Oprsvc",
+      "url": "http://oprsvc.youtekeji.com/UserSetPassword.aspx?action=sendverificationcode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Myepson",
+      "url": "https://myepson.epson.com.cn/epmtoc/pcfrontend/web/login/send_message",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "H5",
+      "url": "https://h5.5173.com/to_url/api/front/login/send/code",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wap",
+      "url": "https://wap.wmsy.mobi/v2/h5/api/register/register_code",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pzds.com/api/h5-client/v2/public/common/sms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bz12345",
+      "url": "http://www.bz12345.cn/WriteLetters/i_GetVerCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12345",
+      "url": "http://12345.lsz.gov.cn/Flow/i_GetVerCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "0852Job",
+      "url": "https://www.0852job.com/wap//index.php?c=ajax&a=regcode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Qhxdrcw",
+      "url": "https://www.qhxdrcw.com/wap//index.php?c=ajax&a=regcode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lbrencai",
+      "url": "https://www.lbrencai.com/api/home/register/actions/sendSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Sgrc0751",
+      "url": "https://www.sgrc0751.com/v1_0/member/sendsms/reg",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Yixuezp",
+      "url": "https://www.yixuezp.com/person/account/sendMobileVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wfrcsc",
+      "url": "https://wfrcsc.com/hrdp/common/sendSMS",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Xuchang6",
+      "url": "https://www.xuchang6.com/mobile/members/reg_send_sms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Rcgy",
+      "url": "https://rcgy.rencaibinzhou.com/api/sms/send.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Gateway",
+      "url": "https://gateway.wt4pl.com/wtkm/getCaptcha",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hhhtzp",
+      "url": "https://hhhtzp.cgzjw.com/app/index.php?c=global&a=sendyzm&refererUrl=https%3A%2F%2Fhhhtzp.cgzjw.com%2Fh5%2F%23%2Fpages_my%2Fmy%2Fmy_login&httpUserAgent=ejobh5%2F10262%7Cdevice%3Aandroid%2FAndroid%2013%2FV2148A%2Fundevid%2F360*800%7Cuni%3A3.1.22%2F0%2F0&thistimestamp=1737437688&secretValue=54d132da8108c947283e70fab99a85a3",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Gzrcw",
+      "url": "https://www.gzrcw.net/m/index.php?",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Dongyingjob",
+      "url": "https://www.dongyingjob.com/mobile/members/reg_send_sms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Gccrc",
+      "url": "http://gccrc.c.jiaodong.cn/index/sms/getsmscode.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Gw",
+      "url": "https://gw.nolibox.com/user/api/v1/sms/verification",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "0911Rcw",
+      "url": "https://www.0911rcw.com/mobile/members/reg_send_sms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Tzjob",
+      "url": "https://www.tzjob.net/mobile/members/reg_send_sms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
     },
     {
       "name": "M",
-      "url": "https://m.pizzahut.co.in/api/cart/send-otp?langCode=en",
+      "url": "http://m.dtrcw.net/member/shoujiyzzc.asp",
       "method": "POST",
       "headers": {},
-      "source": "telegram:rss"
+      "source": "github:tbomb-fork"
     },
     {
       "name": "M",
-      "url": "https://m.pizzahut.co.in/login",
+      "url": "https://m.yuejob.com/ajax_action.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zjk",
+      "url": "https://zjk.call12345.com/api/v1/orderCitizen/send_captcha",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "12345",
+      "url": "https://12345.zjzs.zhoushan.gov.cn/yjxd/weixin/ajax/reg.aspx?action=checkLoginMobile2",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wechat",
+      "url": "https://wechat.yunexpress.cn/api/verify/sendauthcode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Apicore",
+      "url": "https://apicore.htrc.cn/api/Common/GetSmsAli",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Eportyun",
+      "url": "https://www.eportyun.com/sms!sendsmscode.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ic-Api",
+      "url": "https://ic-api.ky-express.com/router/rest?web.login.verification.sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hasrcsc",
+      "url": "https://www.hasrcsc.com/v1_0/member/sendsms/reg",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Sqrcw",
+      "url": "https://www.sqrcw.com/v1_0/member/sendsms/reg",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Yero",
+      "url": "https://yero.com.cn/wap//index.php?c=ajax&a=regcode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Asrc",
+      "url": "http://asrc.qianhuaweb.com:8000/api/ac/anshantalent/sendMsgServiceImpl/sendMsg",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Trggrc",
+      "url": "https://www.trggrc.com/mobile/members/reg_send_sms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "M",
+      "url": "http://m.cangxi.ccoo.cn/Sms/SendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bdc",
+      "url": "https://bdc.nngeo.com/account/SendValidCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ccfcda",
+      "url": "http://www.ccfcda.net/sendMessageRegister.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bdcdj",
+      "url": "http://bdcdj.zrzy.dt.gov.cn/online/platform/sys/user/checking",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Llsbdc",
+      "url": "http://www.llsbdc.cn/online/platform/sys/user/checking",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bhsbdcdjzx",
+      "url": "https://bhsbdcdjzx.com/account/SendValidCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zrgh",
+      "url": "https://zrgh.chengde.gov.cn/online/platform/sys/user/phong_wjmm_yzm",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Afxbdc",
+      "url": "http://www.afxbdc.cn/module/view/getPhoneCode.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ynsbdcdjzx",
+      "url": "https://ynsbdcdjzx.yining.gov.cn/module/view/getPhoneCode.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Pc",
+      "url": "https://pc.ga.ordos.gov.cn/ssoServer/sms/getCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Gat",
+      "url": "http://gat.qinghai.gov.cn/stmhwz/user/sendMessages",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mapi",
+      "url": "https://mapi.312green.com/verify",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Fuwu",
+      "url": "https://fuwu.wsgjp.com/clueForm/getVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jswjj",
+      "url": "http://jswjj.esjkkj.com:8085/wxgzh/sendSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Orderxcx",
+      "url": "https://orderxcx.gzjimmymove.com/proxy/moveService/api/app/user/sendVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hedaoapp",
+      "url": "https://www.hedaoapp.com/Photo/SendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Seller",
+      "url": "https://seller.qbb6.com/sendCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jszg",
+      "url": "https://www.jszg.edu.cn/web/rest/edu/website/historyValid/sendCheckSms",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Shop",
+      "url": "https://shop.kuaishang.cn/OnlineReg//v2/sendSms.do",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wz",
+      "url": "https://wz.stcir.com/applet/sms/getPhoneCode",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Api-Pt",
+      "url": "https://api-pt.4366.com/sms/sendCaptcha",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/jentic/jentic-public-apis/refs/heads/main/apis/openapi/authy.com/main/1.0.0/openapi.json",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Ajio",
-      "url": "https://www.ajio.com/signup",
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/jentic/jentic-public-apis/refs/heads/main/apis/openapi/authy.com/main/1.0.0/apis.json",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Myupchar",
-      "url": "https://www.myupchar.com/user_profile/resend_otp_via_voice?id=",
+      "name": "Twilio",
+      "url": "https://www.twilio.com/docs/authy/api",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Accounts",
-      "url": "https://accounts.practo.com/send_otp",
+      "name": "Github",
+      "url": "https://github.com/jentic/jentic-public-apis/tree/main/apis/openapi/authy.com/main/1.0.0",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Marketing",
-      "url": "https://marketing.tllms.com/elearn/api/v4/authentications/phone_call",
+      "name": "Api",
+      "url": "https://api.authy.com",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Ref-R",
-      "url": "https://www.ref-r.com/clients/lenskart/smsApi",
+      "name": "1MG Voice Call",
+      "url": "https://www.1mg.com/auth_api/v6/create_token",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "okhttp/3.9.1",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "A23 Games",
+      "url": "https://pfapi.a23games.in/a23user/signup_by_mobile_otp/v2",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Animall",
+      "url": "https://animall.in/zap/auth/login",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AstroSage",
+      "url": "https://vartaapi.astrosage.com/sdk/registerAS?operation_name=signup&countrycode=91&pkgname=com.ojassoft.astrosage&appversion=23.7&lang=en&deviceid=android123&regsource=AK_Varta%20user%20app&key=-787506999&phoneno={phone}",
+      "method": "GET",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "BigCash",
+      "url": "https://www.bigcash.live/sendsms.php?mobile={phone}&ip=192.168.1.1",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.bigcash.live/games/poker",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "CodFirm",
+      "url": "https://api.codfirm.in/api/customers/login/otp?medium=sms&phoneNumber=%2B91{phone}&email=&storeUrl=bellavita1.myshopify.com",
+      "method": "GET",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ConfirmTkt",
+      "url": "https://securedapi.confirmtkt.com/api/platform/registerOutput?mobileNumber={phone}",
+      "method": "GET",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Country Delight",
+      "url": "https://api.countrydelight.in/api/v1/customer/requestOtp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Dayco India",
+      "url": "https://ekyc.daycoindia.com/api/nscript_functions.php",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Doubtnut",
+      "url": "https://api.doubtnut.com/v4/student/login",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "user-agent": "okhttp/5.0.0-alpha.2",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Entri",
+      "url": "https://entri.app/api/v3/users/check-phone/",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GoKwik",
+      "url": "https://gkx.gokwik.co/v3/gkstrict/auth/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GoPink Cabs",
+      "url": "https://www.gopinkcabs.com/app/cab/customer/login_admin_code.php",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13; RMX3081 Build/RKQ1.211119.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.6778.135 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Goibibo Voice Call",
+      "url": "https://www.goibibo.com/user/voice-otp/generate/",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "HealthMug",
+      "url": "https://api.healthmug.com/account/createotp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Housing.com",
+      "url": "https://login.housing.com/api/v2/send-otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hungama OTP",
+      "url": "https://communication.api.hungama.com/v1/communication/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lending Plate",
+      "url": "https://lendingplate.com/api.php",
+      "method": "POST",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lifestyle Stores",
+      "url": "https://www.lifestylestores.com/in/en/mobilelogin/sendOTP",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "MamaEarth",
+      "url": "https://auth.mamaearth.in/v1/auth/initiate-signup",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Moglix",
+      "url": "https://apinew.moglix.com/nodeApi/v1/login/sendOTP",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mpokket",
+      "url": "https://web-api.mpokket.in/registration/sendOtp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "MyHubble Money",
+      "url": "https://api.myhubble.money/v1/auth/otp/generate",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "NewMe",
+      "url": "https://prodapi.newme.asia/web/otp/request",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "NoBroker SMS",
+      "url": "https://www.nobroker.in/api/v3/account/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PenPencil",
+      "url": "https://api.penpencil.co/v1/users/resend-otp?smsType=1",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "user-agent": "okhttp/3.9.1",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PenPencil V3",
+      "url": "https://xylem-api.penpencil.co/v1/users/register/64254d66be2a390018e6d348",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ServeTel",
+      "url": "https://api.servetel.in/v1/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 13; Infinix X671B Build/TP1A.220624.014)",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Shemaroome",
+      "url": "https://www.shemaroome.com/users/resend_otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13; RMX3081 Build/RKQ1.211119.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.6778.135 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ShipRocket",
+      "url": "https://sr-wave-api.shiprocket.in/v1/customer/auth/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Smytten",
+      "url": "https://route.smytten.com/discover_user/NewDeviceDetails/addNewOtpCode",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13; RMX3081 Build/RKQ1.211119.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.6778.135 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Snapmint",
+      "url": "https://api.snapmint.com/v1/public/sign_up",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Swiggy Call Verification",
+      "url": "https://profile.swiggy.com/api/v3/app/request_call_verification",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "user-agent": "Swiggy-Android",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Swipe",
+      "url": "https://app.getswipe.in/api/user/mobile_login",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Tata Capital Business",
+      "url": "https://businessloan.tatacapital.com/CLIPServices/otp/services/generateOtp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Tata Capital Voice Call",
+      "url": "https://mobapp.tatacapital.com/DLPDelegator/authentication/mobile/v0.1/sendOtpOnVoice",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Univest",
+      "url": "https://api.univest.in/api/auth/send-otp?type=web4&countryCode=91&contactNumber={phone}",
+      "method": "GET",
+      "headers": {
+        "User-Agent": "okhttp/3.9.1",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Vyapar",
+      "url": "https://vyaparapp.in/api/ftu/v3/send/otp?country_code=91&mobile={phone}",
+      "method": "GET",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Wellness Forever",
+      "url": "https://paalam.wellnessforever.in/crm/v2/firstRegisterCustomer",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "WorkIndia",
+      "url": "https://api.workindia.in/api/candidate/profile/login/verify-number/?mobile_no={phone}&version_number=623",
+      "method": "GET",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zomato Voice Call",
+      "url": "https://www.zomato.com/php/o2_api_handler.php",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Airtel",
+      "url": "https://www.airtel.in/s/shopselfcare/getotp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Amul India",
+      "url": "https://www.amul.com/api/v2/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Asus India",
+      "url": "https://www.asus.com/in/api/v2/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Blue Star",
+      "url": "https://www.bluestarindia.com/api/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Haldiram's",
+      "url": "https://www.haldiram.com/api/v2/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Havells",
+      "url": "https://www.havells.com/api/v2/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jio",
+      "url": "https://www.jio.com/selfcare/login/sendOtp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Lenovo India",
+      "url": "https://www.lenovo.com/in/en/api/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mamaearth",
+      "url": "https://www.mamaearth.in/api/v2/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Marico",
+      "url": "https://www.marico.com/api/v2/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Nokia India",
+      "url": "https://www.nokia.com/in/api/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zomato",
+      "url": "https://www.zomato.com/php/oauth_phone",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "X-Forwarded-For": "103.106.8.104"
+      },
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Grzx",
+      "url": "https://grzx.brily.cn/api/utils/sendSmsCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Flipkart",
-      "url": "https://www.flipkart.com/api/6/user/signup/status",
+      "name": "Id",
+      "url": "http://id.lejiaolexue.com/api/sendvericode.ashx",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Apollopharmacy",
-      "url": "https://www.apollopharmacy.in/sociallogin/mobile/login/",
+      "name": "Gm5",
+      "url": "http://www.gm5.com/auth/registerSms.html",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Direct",
-      "url": "https://direct.delhivery.com/delhiverydirect/order/generate-otp?phoneNo=",
+      "name": "Api",
+      "url": "http://api.hndyjyfw.gov.cn/djapi/mobileVerify",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Account",
+      "url": "https://account.coolapk.com/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "0101Ssd",
+      "url": "https://www.0101ssd.com/user/sendmsg",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Clssn",
+      "url": "https://www.clssn.com/jhxtapi/web/Login/sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dycharts",
+      "url": "https://dycharts.com/vis/auth/send_signin_sms_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Maker",
+      "url": "http://maker.haier.net/client/user/sendregistervcode.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Guhai",
+      "url": "https://www.guhai.com.cn/front/member/sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Cloud",
+      "url": "https://cloud.666idc.com/index/login/sendsms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dhba",
+      "url": "http://dhba.12321.cn/api/verifycode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Feeclouds",
+      "url": "https://www.feeclouds.com/homepage/register/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Decathlon",
+      "url": "https://www.decathlon.com.cn/zh/ajax/rest/model/atg/userprofiling/ProfileActor/send-mobile-verification-code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sdjn-Web",
+      "url": "https://sdjn-web.yxlearning.com/sendphoneCode.gson",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Xiezuocat",
+      "url": "https://xiezuocat.com/verify",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Main",
+      "url": "http://main.jiajiaozaixian.com//reginfo/sendRankByMobileReginfo.action",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tiantang",
+      "url": "http://tiantang.mogencloud.com/web/api/login/code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ztestin",
+      "url": "https://www.ztestin.com/users/send/vercode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sso",
+      "url": "http://sso.mwr.cn/suserRegister/verifyAccountAndphone.action",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "V1",
+      "url": "https://v1.alphazone-data.cn/academy/api/v1/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Maiwe",
+      "url": "https://www.maiwe.com.cn/index/sendcode.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Brand",
+      "url": "https://brand.yunbeilou.com/index.php/smssend",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Elove",
+      "url": "https://elove.darryring.com/api/crm/newGwLogin/getSMSValidCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mallapi",
+      "url": "https://mallapi.yofogo.com/biz-mall-application/v1/user/verifyCode/getVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tmsf",
+      "url": "http://www.tmsf.com/mem/WebMemLoginAction_saveMemMobileCodeImg.jspx",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.hetao101.com/login/v2/account/oauth/verifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Feimaoyun",
+      "url": "https://www.feimaoyun.com/index.php/invite/h5sendmsg",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gpa-Gd",
+      "url": "http://gpa-gd.scnu.edu.cn/member/index/public_send_code.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Reg",
+      "url": "https://reg.ztgame.com/common/sendmpcode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Baodingyun",
+      "url": "https://baodingyun.com.cn/register/send_registerSMS.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Yae920",
+      "url": "https://yae920.com/login/sendSMS",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pdf",
+      "url": "https://pdf.kfsafe.cn/sms/phone/code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Renrendoc",
+      "url": "https://www.renrendoc.com/Reg.aspx/GetUserSMSCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dss",
+      "url": "https://dss.xiaoyezi.com/student_app/auth/validate_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "End",
+      "url": "https://end.huajuetech.com/api/sendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Jssnd",
+      "url": "https://jssnd.edu.cn/apiu/v1/register/auth",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Uc",
+      "url": "https://uc.csdhe.com/v1/sms/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Account-Box",
+      "url": "https://account-box.onethingpcs.com/xluser.core.login/v3/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sdta-Web",
+      "url": "https://sdta-web.yxlearning.com/sendphoneCode.gson",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.gzxyld.cn/HuiEbid/HuiEbidServer/doSendSms/getSms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Callphone",
+      "url": "https://callphone.hnczkj.cn/app_api/json/sendSms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Cuour",
+      "url": "http://www.cuour.org/edu_cloud/sms_send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sso",
+      "url": "http://sso.rcsd.cn/regist/getVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Jrh",
+      "url": "https://jrh.financeun.com/Login/sendMessageCode3.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "http://api.welove520.com/v5/account/phone/verifyCode/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Timing360",
+      "url": "https://www.timing360.com/user/send-captcha",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Lll",
+      "url": "http://www.lll.plus/sendCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bugbank",
+      "url": "https://www.bugbank.cn/api/verifymobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mall",
+      "url": "https://mall.yancais.com/api/sms/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Codeseeding",
+      "url": "https://www.codeseeding.com/loginUser/toSend",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Erp",
+      "url": "https://erp.abiz.com/mobilecode/sendMobileCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Biz",
+      "url": "https://biz.caiyunapp.com/v1/send_sms_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ut7",
+      "url": "http://ut7.whu.edu.cn/Home/studentCommon/Student_getVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Csff",
+      "url": "https://csff.cutv.com/wapi/users/sendregcode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transfer/enable_otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transfer/disable_otp_finalize",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/paymentrequest/verify/ID_OR_CODE",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transfer/resend_otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/charge/submit_otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transaction/charge_authorization",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/customer/deactivate_authorization",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transaction/check_authorization",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transfer/disable_otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Postman-Echo",
+      "url": "https://postman-echo.com/auth/hawk",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Echo",
+      "url": "https://echo.getpostman.com/oauth1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "En",
+      "url": "https://en.wikipedia.org/wiki/Digest_access_authentication",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Postman-Echo",
+      "url": "https://postman-echo.com/basic-auth",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "En",
+      "url": "https://en.wikipedia.org/wiki/Basic_access_authentication",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Oauth",
+      "url": "http://oauth.net/core/1.0a/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Echo",
+      "url": "https://echo.getpostman.com/auth/hawk",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Postman-Echo",
+      "url": "https://postman-echo.com/digest-auth",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Postman-Echo",
+      "url": "https://postman-echo.com/oauth1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.github.com/users/utsanjan",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GNU General Public License v3.0",
+      "url": "https://api.github.com/licenses/gpl-3.0",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Login",
+      "url": "https://login.web.ajio.com/api/auth/signupSendOTP",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -129,99 +3245,64 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/api/pwa/generateotp?country_code=%2B",
+      "name": "Snapdeal",
+      "url": "https://www.snapdeal.com/sendOTP",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Api",
-      "url": "https://api.cloud.altbalaji.com/accounts/mobile/verify?domain=IN",
+      "name": "Backend",
+      "url": "https://backend.clamphook.com//auth/register",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Goibibo",
-      "url": "https://www.goibibo.com/common/downloadsms/",
+      "name": "Cityflo",
+      "url": "https://cityflo.com/website-app-download-link-sms/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Aala",
-      "url": "https://www.aala.com/accustomer/ajax/getOTP",
+      "name": "3Via",
+      "url": "https://3via.ly/api/client/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Webapi",
-      "url": "https://webapi.gradeup.co/user/verify/sendOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.lenskart.com/v2/customers/sendOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Code",
-      "url": "https://code.whitehatjr.com/api/V1/otp/generate?deviceId=ea418d86-07e1-4005-b942-11160d91ac4e&timezone=Asia%2FCalcutta&trackingCode=trackingCode%7CAB-34-V-A%7CAB-38-V-A%7CAB-16-V-A%7CAB-29-V-B%7CAB-24-V-C%7CAB-11-V-B%7CAB-33-V-A%7CAB-20-V-C%7CAB-11136-V-A%7CAB-15-V-A%7CAB-28-V-B%7CAB-10-V-B%7CAB-11135-V-A%7CAB-37-V-A%7CAB-23-V-C%7CAB-19-V-A%7CAB-14-V-B%7CAB-27-V-B%7CAB-9-V-B%7CAB-32-V-A%7CAB-11134-V-A%7CAB-22-V-B%7CAB-13-V-B%7CAB-26-V-B%7CAB-7-V-B%7CAB-31-V-A%7CAB-18-V-A%7CAB-11133-V-A%7CAB-25-V-B%7CAB-21-V-C%7CAB-17-V-B%7CAB-41-V-A&regionId=IN&courseType=CODING&brandId=whitehatjr&timestamp=1624504990983",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/login/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Abhibus",
-      "url": "https://www.abhibus.com/otp/getOtpOnCall",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Cs-India",
-      "url": "https://cs-india.coinswitch.co/auth/api/v1/init/auth",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "1Mg",
-      "url": "https://www.1mg.com/auth_api/v4/create_token",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Services",
-      "url": "https://services.mcdelivery.co.in/api/auth/sendotp?isLoggedIn=false&businessModelID=18&storeID=1",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Magicpin",
-      "url": "https://magicpin.in/samapi/users/get-otp-via-call/",
+      "name": "Careers360",
+      "url": "https://www.careers360.com/user/otp-verify/101e8d6e591af6688f640eee08f5a5f8?destination=&click_location=header&google_success=header",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "M",
-      "url": "https://m.netmeds.com/customer/account/login",
+      "url": "https://m.redbus.in/api/getOtp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "T",
+      "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Book",
+      "url": "https://book.olacabs.com/data-layer/v1/auth/signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Happyeasygo",
+      "url": "https://www.happyeasygo.com/heg_api/user/sendRegisterOTP.do",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -234,190 +3315,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Onlinetestseries",
-      "url": "https://www.onlinetestseries.in/common/ajax-login-signup/voice-call-mobile-verification-code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Extramarks",
-      "url": "https://www.extramarks.com/user/otpverification/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "1Mg",
-      "url": "https://www.1mg.com/pharmacy_api_gateway/v4/otp_call",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Aakash",
-      "url": "https://www.aakash.ac.in/signup-otp-verify",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/api/pwa/generateotp?locale=en",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
       "name": "Api",
-      "url": "https://api.testbook.com/api/v2/mobile/signup?mobile=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.jeet11.com/account-service/external/v1.0.0/sendOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.1mg.com/api/v4/otp_call",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Nykaafashion",
-      "url": "https://www.nykaafashion.com/authorization?authPage=sign-up-mobile&redirectURL=%2F",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "User",
-      "url": "https://user.vedantu.com/user/preLoginVerification",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Magicpin",
-      "url": "https://magicpin.in/samapi/users/get-otp/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "V1",
-      "url": "https://v1.titaneyeplus.com/registerotp/index/sendotp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.dominos.co.in/loginhandler/forgotpassword",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Gradeup",
-      "url": "https://gradeup.co/online-test-series-ssc-cgl?openLogin=y",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "T",
-      "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php?mobile=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Careers360",
-      "url": "https://www.careers360.com/user/otp-verify/0405ac328d58dbbc41444a2dba7f6e01?destination=&click_location=header&google_success=header",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Dineout",
-      "url": "https://www.dineout.co.in/xhr-request/user_signup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Fiewin",
-      "url": "https://www.fiewin.com/fiewin/api/user/sms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Abhibus",
-      "url": "https://www.abhibus.com/sendOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "M",
-      "url": "https://m.dominos.co.in/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Testbook",
-      "url": "https://testbook.com/login?tile=signup&modal=true&base_url=%2Flogin&redirect_url=%2Flogin",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Flipkart",
-      "url": "https://www.flipkart.com/login?ret=%2F&entryPage=HOMEPAGE_HEADER_ACCOUNT&sourceContext=DEFAULT",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Eatsure",
-      "url": "https://www.eatsure.com/v1/api/send_otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Jeet11",
-      "url": "https://www.jeet11.com/login?redirectAs=%2F&redirectUrl=%2F%3F&",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "V1",
-      "url": "https://v1.titaneyeplus.com/customer/account/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Nykaafashion",
-      "url": "https://www.nykaafashion.com/webscripts/api/otp/generate",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Auth",
-      "url": "https://auth.mygov.in/user/register?destination=oauth2/register/mygovweb",
+      "url": "https://api.magicbricks.com/bricks/verifyOnCall.html",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -430,29 +3329,15 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Youla",
-      "url": "https://youla.ru/web-api/auth/request_code",
+      "name": "Box8",
+      "url": "https://box8.in/users/v2/send_otp.json",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Api",
-      "url": "https://api.gotinder.com/v2/auth/sms/send?auth_type=sms&locale=en",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "M",
-      "url": "https://m.redbus.in/api/getOtp?number=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.delitime.ru/api/v2/signup",
+      "name": "Member",
+      "url": "https://member.daraz.com.np/user/api/sendVerificationSms",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -465,67 +3350,2006 @@
       "source": "telegram:rss"
     },
     {
+      "name": "Discord",
+      "url": "https://discord.com/api/v9/auth/register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Zoomcar",
+      "url": "https://www.zoomcar.com/api/v2/users/login-or-signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Youla",
+      "url": "https://youla.ru/web-api/auth/request_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Commonfront",
+      "url": "https://commonfront.paytm.com/v4/api/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Porter",
+      "url": "https://porter.in/restservice/send_app_link_sms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Allensolly",
+      "url": "https://www.allensolly.com/capillarylogin/validateMobileOrEMail",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bekam",
+      "url": "https://bekam.ly/api/client/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mobile-Api",
+      "url": "https://mobile-api.qiwi.com/oauth/authorize",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Lingo",
+      "url": "https://lingo.ly/api/client/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pharmeasy",
+      "url": "https://pharmeasy.in/api/auth/requestOTP",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ajio",
+      "url": "https://www.ajio.com/api/auth/signIn",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Flipkart",
+      "url": "https://www.flipkart.com/api/5/user/otp/generate",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Treebo",
+      "url": "https://www.treebo.com/api/v2/auth/login/otp/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Api",
-      "url": "https://api.pizzahut.com/v1/user/otp",
+      "url": "https://api.gotinder.com/v2/auth/sms/send",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "M",
-      "url": "https://m.lyft.com/api/otp/send",
+      "name": "Frotels",
+      "url": "https://www.frotels.com/appsendsms.php",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Doordash",
-      "url": "https://www.doordash.com/api/v1/auth/query_phone",
+      "name": "Oyorooms",
+      "url": "https://www.oyorooms.com/api/pwa/generate_otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Online",
+      "url": "https://online.kfc.co.in/OTP/ResendOTPToPhoneForLogin",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.grubhub.com/auth/login/otp",
+      "url": "https://api.delitime.ru/api/v2/signup",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Auth",
-      "url": "https://auth.uber.com/api/get-otp",
+      "name": "Online",
+      "url": "https://online.kfc.co.in/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "M",
-      "url": "https://m.netmeds.com/customer/account/login/",
+      "name": "Gapoon",
+      "url": "https://www.gapoon.com/userSignup",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Client-Api",
-      "url": "https://client-api.goomo.com/v2/phone_confirmation/verify_user",
+      "name": "Firstpost",
+      "url": "http://www.firstpost.com/world/authorities-in-sri-lanka-maintain-tight-vigil-as-kandy-seeks-return-to-normalcy-days-after-sectarian-violence-4384643.html",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Oriyamatrimony",
-      "url": "https://www.oriyamatrimony.com/login/mobileappsms-homepage.php",
+      "name": "Akm-Img-A-In",
+      "url": "https://akm-img-a-in.tosshub.com/indiatoday/images/story/201803/moumita_saha_1.jpeg?fug5l3tgD1mlQZQm_Ffwg3lOTpC1w9yh",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "M",
-      "url": "https://m.netmeds.com/sociallogin/popup/nmsgetcode/",
+      "name": "Instagram",
+      "url": "https://instagram.fptp2-1.fna.fbcdn.net/v/t51.71878-15/654471503_953076813838965_7915279390383840701_n.jpg?stp=dst-jpg_e15_tt6&_nc_ht=instagram.fptp2-1.fna.fbcdn.net&_nc_cat=109&_nc_oc=Q6cZ2gFuQCZt0UARoOB0Xe0TDFQPorFazufJmlNHauSd2yvLgMj0ieOP51s4GquCZjanmjo&_nc_ohc=JEfMduEW8DYQ7kNvwGKL2TB&_nc_gid=QhY8OARibuw1GsCGeTVfiQ&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfxSgrLui7XX_BKmdLhHGAV1X-q9OTpNBFsmKKKi4tBQdQ&oe=69CFD37A&_nc_sid=8b3546",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
+    },
+    {
+      "name": "Api-3Cdad91C-1E0D-4A0D-Bbee-9671988Bf9E9",
+      "url": "https://api-3cdad91c-1e0d-4a0d-bbee-9671988bf9e9.sendbird.com/v3",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Lh3",
+      "url": "https://lh3.googleusercontent.com/BMvxPb9RF9F-qz68PAIIrROTp7G352oNEzZWmmT-H1YXSgf2Id33oQBssFYnPL52KwiyFgYY1pSInpEVrhrx1OViFQ=s0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Disqus",
+      "url": "https://disqus.com/api/docs/auth/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tredict",
+      "url": "https://www.tredict.com/blog/oauth_docs/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Loginradius",
+      "url": "https://www.loginradius.com/docs/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Developers",
+      "url": "https://developers.sendinblue.com/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Numverify",
+      "url": "https://numverify.com",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Developers",
+      "url": "https://developers.tiktok.com/doc/login-kit-web",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mojoauth",
+      "url": "https://mojoauth.com",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Docs",
+      "url": "https://docs.sendgrid.com/api-reference/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Kinlane-Productions",
+      "url": "http://kinlane-productions.s3.amazonaws.com/screen-capture-api/142-sendgrid.jpg",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/streamdata-gallery-topics/streamrank/master/_listings/sendgrid/openapi.md",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/streamdata-gallery-topics/streamrank/master/_listings/sendgrid/apis.yaml",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Abhinanadanclasseskotputaliapi",
+      "url": "https://abhinanadanclasseskotputaliapi.classx.co.in",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sankalpclassesmspapi",
+      "url": "https://sankalpclassesmspapi.classx.co.in",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Techiesmsapi",
+      "url": "https://techiesmsapi.classx.co.in",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Kotputlilaweducationapi",
+      "url": "https://kotputlilaweducationapi.classx.co.in",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "OpenWeatherMap",
+      "url": "https://openweathermap.org/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "WeatherAPI",
+      "url": "https://www.weatherapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Visual Crossing Weather",
+      "url": "https://www.visualcrossing.com/weather-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Storm Glass",
+      "url": "https://stormglass.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Tomorrow.io",
+      "url": "https://www.tomorrow.io/weather-api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Weatherbit",
+      "url": "https://www.weatherbit.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AerisWeather",
+      "url": "https://www.aerisweather.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Open-Meteo",
+      "url": "https://open-meteo.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Alpha Vantage",
+      "url": "https://www.alphavantage.co/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "CoinMarketCap",
+      "url": "https://coinmarketcap.com/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ExchangeRate-API",
+      "url": "https://www.exchangerate-api.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Finnhub",
+      "url": "https://finnhub.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Polygon.io",
+      "url": "https://polygon.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "CoinGecko",
+      "url": "https://www.coingecko.com/en/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "IEX Cloud",
+      "url": "https://iexcloud.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Stock Data API",
+      "url": "https://www.stockdata.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Twelve Data",
+      "url": "https://twelvedata.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Fixer.io",
+      "url": "https://fixer.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "OpenAI API",
+      "url": "https://platform.openai.com/docs/api-reference",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Anthropic Claude",
+      "url": "https://www.anthropic.com/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hugging Face",
+      "url": "https://huggingface.co/docs/api-inference",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Stability AI",
+      "url": "https://platform.stability.ai/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Cohere",
+      "url": "https://docs.cohere.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Replicate",
+      "url": "https://replicate.com/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "DeepL Translator",
+      "url": "https://www.deepl.com/pro-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Google Gemini",
+      "url": "https://ai.google.dev/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mistral AI",
+      "url": "https://docs.mistral.ai/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Groq",
+      "url": "https://groq.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Together AI",
+      "url": "https://www.together.ai/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Perplexity AI",
+      "url": "https://docs.perplexity.ai/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ElevenLabs",
+      "url": "https://elevenlabs.io/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AssemblyAI",
+      "url": "https://www.assemblyai.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "RunPod",
+      "url": "https://www.runpod.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "NewsAPI",
+      "url": "https://newsapi.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GNews",
+      "url": "https://gnews.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mediastack",
+      "url": "https://mediastack.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Currents API",
+      "url": "https://currentsapi.services/en",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TheNewsAPI",
+      "url": "https://www.thenewsapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Newscatcher",
+      "url": "https://newscatcherapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "New York Times",
+      "url": "https://developer.nytimes.com/apis",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "The Guardian",
+      "url": "https://open-platform.theguardian.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "SendGrid",
+      "url": "https://sendgrid.com/docs/api-reference/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Twilio",
+      "url": "https://www.twilio.com/docs/usage/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "IPinfo",
+      "url": "https://ipinfo.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "QR Code Generator",
+      "url": "https://goqr.me/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PDFMonkey",
+      "url": "https://www.pdfmonkey.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Hunter.io",
+      "url": "https://hunter.io/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bitly",
+      "url": "https://dev.bitly.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Random User Generator",
+      "url": "https://randomuser.me/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Unsplash",
+      "url": "https://unsplash.com/developers",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Pexels",
+      "url": "https://www.pexels.com/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "IP-API",
+      "url": "https://ip-api.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Free Dictionary API",
+      "url": "https://dictionaryapi.dev/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "REST Countries",
+      "url": "https://restcountries.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Cloudinary",
+      "url": "https://cloudinary.com/documentation",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AbstractAPI",
+      "url": "https://www.abstractapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mailgun",
+      "url": "https://www.mailgun.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Calendarific",
+      "url": "https://calendarific.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Remove.bg",
+      "url": "https://www.remove.bg/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TinyPNG",
+      "url": "https://tinypng.com/developers",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Twitter/X API",
+      "url": "https://developer.twitter.com/en/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Discord API",
+      "url": "https://discord.com/developers/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Reddit API",
+      "url": "https://www.reddit.com/dev/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "YouTube Data API",
+      "url": "https://developers.google.com/youtube/v3",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "LinkedIn API",
+      "url": "https://developer.linkedin.com/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Instagram Graph API",
+      "url": "https://developers.facebook.com/docs/instagram-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Facebook Graph API",
+      "url": "https://developers.facebook.com/docs/graph-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Telegram Bot API",
+      "url": "https://core.telegram.org/bots/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Slack API",
+      "url": "https://api.slack.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Pinterest API",
+      "url": "https://developers.pinterest.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TikTok API",
+      "url": "https://developers.tiktok.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mastodon API",
+      "url": "https://docs.joinmastodon.org/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Spotify Web API",
+      "url": "https://developer.spotify.com/documentation/web-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TMDB (The Movie Database)",
+      "url": "https://developers.themoviedb.org/3",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "RAWG Video Games",
+      "url": "https://rawg.io/apidocs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "IGDB",
+      "url": "https://api-docs.igdb.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TVMaze",
+      "url": "https://www.tvmaze.com/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Open Library",
+      "url": "https://openlibrary.org/developers/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GIPHY",
+      "url": "https://developers.giphy.com/docs/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "JokeAPI",
+      "url": "https://jokeapi.dev/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Quotable",
+      "url": "https://github.com/lukePeavey/quotable",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Cat Facts",
+      "url": "https://catfact.ninja/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PokéAPI",
+      "url": "https://pokeapi.co/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "OMDb API",
+      "url": "https://www.omdbapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Last.fm API",
+      "url": "https://www.last.fm/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Deezer API",
+      "url": "https://developers.deezer.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Jikan (MyAnimeList)",
+      "url": "https://jikan.moe/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Steam Web API",
+      "url": "https://steamcommunity.com/dev",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "BoardGameGeek",
+      "url": "https://boardgamegeek.com/wiki/page/BGG_XML_API2",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Ergast F1 API",
+      "url": "https://ergast.com/mrd/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GitHub API",
+      "url": "https://docs.github.com/en/rest",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "GitLab API",
+      "url": "https://docs.gitlab.com/ee/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "npm Registry API",
+      "url": "https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Can I Use",
+      "url": "https://caniuse.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "WakaTime",
+      "url": "https://wakatime.com/developers",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "JSONPlaceholder",
+      "url": "https://jsonplaceholder.typicode.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "httpbin",
+      "url": "https://httpbin.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ReqRes",
+      "url": "https://reqres.in/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mockaroo",
+      "url": "https://www.mockaroo.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Postman Echo",
+      "url": "https://www.postman.com/postman/workspace/published-postman-templates/documentation/631643-f695cab7-6878-eb55-7943-ad88e1ccfd65",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Libraries.io",
+      "url": "https://libraries.io/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Bundlephobia",
+      "url": "https://bundlephobia.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Shields.io",
+      "url": "https://shields.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ipify",
+      "url": "https://www.ipify.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "World Bank Data",
+      "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Data USA",
+      "url": "https://datausa.io/about/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "OpenAQ",
+      "url": "https://docs.openaq.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "COVID-19 API",
+      "url": "https://disease.sh/docs/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "USAspending",
+      "url": "https://api.usaspending.gov/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Data.gov",
+      "url": "https://www.data.gov/developers/apis",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Eurostat",
+      "url": "https://ec.europa.eu/eurostat/web/main/data/web-services",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "US Census Bureau",
+      "url": "https://www.census.gov/data/developers/data-sets.html",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "FRED (Federal Reserve)",
+      "url": "https://fred.stlouisfed.org/docs/api/fred/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Numbers API",
+      "url": "http://numbersapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "openFDA",
+      "url": "https://open.fda.gov/apis/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "NASA APIs",
+      "url": "https://api.nasa.gov/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Google Maps Platform",
+      "url": "https://developers.google.com/maps/documentation",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Mapbox",
+      "url": "https://docs.mapbox.com/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "OpenStreetMap",
+      "url": "https://wiki.openstreetmap.org/wiki/API",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PositionStack",
+      "url": "https://positionstack.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Nominatim",
+      "url": "https://nominatim.org/release-docs/develop/api/Overview/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "HERE Location Services",
+      "url": "https://developer.here.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TomTom Maps API",
+      "url": "https://developer.tomtom.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "what3words",
+      "url": "https://developer.what3words.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "OpenCage Geocoding",
+      "url": "https://opencagedata.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Geoapify",
+      "url": "https://www.geoapify.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "RapidAPI Hub",
+      "url": "https://rapidapi.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "APILayer",
+      "url": "https://apilayer.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Public APIs",
+      "url": "https://api.publicapis.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Apify",
+      "url": "https://apify.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zapier NLA",
+      "url": "https://nla.zapier.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Make (Integromat)",
+      "url": "https://www.make.com/en/api-documentation",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "n8n",
+      "url": "https://docs.n8n.io/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Pabbly Connect",
+      "url": "https://www.pabbly.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Airtable API",
+      "url": "https://airtable.com/developers/web/api/introduction",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Notion API",
+      "url": "https://developers.notion.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Trello API",
+      "url": "https://developer.atlassian.com/cloud/trello/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Asana API",
+      "url": "https://developers.asana.com/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Monday.com API",
+      "url": "https://developer.monday.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ClickUp API",
+      "url": "https://clickup.com/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Stripe API",
+      "url": "https://stripe.com/docs/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PayPal REST API",
+      "url": "https://developer.paypal.com/docs/api/overview/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Square API",
+      "url": "https://developer.squareup.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Razorpay",
+      "url": "https://razorpay.com/docs/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Braintree",
+      "url": "https://developer.paypal.com/braintree/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Plaid",
+      "url": "https://plaid.com/docs/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AWS APIs",
+      "url": "https://docs.aws.amazon.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Google Cloud APIs",
+      "url": "https://cloud.google.com/apis",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Azure APIs",
+      "url": "https://docs.microsoft.com/en-us/rest/api/azure/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "DigitalOcean API",
+      "url": "https://docs.digitalocean.com/reference/api/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Vercel API",
+      "url": "https://vercel.com/docs/rest-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Netlify API",
+      "url": "https://docs.netlify.com/api/get-started/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Firebase",
+      "url": "https://firebase.google.com/docs/reference",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Supabase",
+      "url": "https://supabase.com/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Auth0",
+      "url": "https://auth0.com/docs/api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Okta",
+      "url": "https://developer.okta.com/docs/reference/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Clerk",
+      "url": "https://clerk.com/docs/reference/backend-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Magic",
+      "url": "https://magic.link/docs",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Spoonacular",
+      "url": "https://spoonacular.com/food-api",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Edamam",
+      "url": "https://developer.edamam.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TheMealDB",
+      "url": "https://www.themealdb.com/api.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TheCocktailDB",
+      "url": "https://www.thecocktaildb.com/api.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Open Brewery DB",
+      "url": "https://www.openbrewerydb.org/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Skyscanner",
+      "url": "https://developers.skyscanner.net/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Amadeus",
+      "url": "https://developers.amadeus.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Aviationstack",
+      "url": "https://aviationstack.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Booking.com",
+      "url": "https://developers.booking.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Tripadvisor",
+      "url": "https://tripadvisor-content-api.readme.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TheSportsDB",
+      "url": "https://www.thesportsdb.com/api.php",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "API-Football",
+      "url": "https://www.api-football.com/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "BallDontLie",
+      "url": "https://www.balldontlie.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "NFL Data",
+      "url": "https://nfl-data-py.readthedocs.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "CountryStateCity",
+      "url": "https://countrystatecity.in/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Genderize.io",
+      "url": "https://genderize.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Agify.io",
+      "url": "https://agify.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Nationalize.io",
+      "url": "https://nationalize.io/",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "YouTube Transcript Scraper",
+      "url": "https://apify.com/supreme_coder/youtube-transcript-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "X/Twitter Scraper",
+      "url": "https://apify.com/mikolabs/x-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Leads Finder",
+      "url": "https://apify.com/code_crafter/leads-finder",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "LinkedIn Profile Scraper",
+      "url": "https://apify.com/anchor/linkedin-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Instagram Scraper",
+      "url": "https://apify.com/apify/instagram-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TikTok Scraper",
+      "url": "https://apify.com/clockworks/tiktok-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Amazon Product Scraper",
+      "url": "https://apify.com/junglee/amazon-crawler",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Google Maps Scraper",
+      "url": "https://apify.com/compass/google-maps-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Indeed Job Scraper",
+      "url": "https://apify.com/misceres/indeed-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Zillow Scraper",
+      "url": "https://apify.com/maxcopell/zillow-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Shopify Store Scraper",
+      "url": "https://apify.com/apify/shopify-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "eBay Scraper",
+      "url": "https://apify.com/dtrungtin/ebay-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Walmart Scraper",
+      "url": "https://apify.com/epctex/walmart-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AliExpress Scraper",
+      "url": "https://apify.com/epctex/aliexpress-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Etsy Scraper",
+      "url": "https://apify.com/dtrungtin/etsy-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Redfin Scraper",
+      "url": "https://apify.com/maxcopell/redfin-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Realtor.com Scraper",
+      "url": "https://apify.com/maxcopell/realtor-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Airbnb Scraper",
+      "url": "https://apify.com/dtrungtin/airbnb-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Booking.com Scraper",
+      "url": "https://apify.com/dtrungtin/booking-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Trulia Scraper",
+      "url": "https://apify.com/maxcopell/trulia-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "LinkedIn Jobs Scraper",
+      "url": "https://apify.com/bebity/linkedin-jobs-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Glassdoor Scraper",
+      "url": "https://apify.com/epctex/glassdoor-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Monster Jobs Scraper",
+      "url": "https://apify.com/misceres/monster-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Dice Tech Jobs Scraper",
+      "url": "https://apify.com/misceres/dice-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "ZipRecruiter Scraper",
+      "url": "https://apify.com/misceres/ziprecruiter-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Yelp Scraper",
+      "url": "https://apify.com/apify/yelp-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "TripAdvisor Scraper",
+      "url": "https://apify.com/maxcopell/tripadvisor-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Trustpilot Scraper",
+      "url": "https://apify.com/epctex/trustpilot-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "G2 Reviews Scraper",
+      "url": "https://apify.com/epctex/g2-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Capterra Scraper",
+      "url": "https://apify.com/epctex/capterra-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Content Writer",
+      "url": "https://apify.com/erinle_sam/ai-content-writer",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Image Generator",
+      "url": "https://apify.com/easyapi/ai-art-generator",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Lead Qualifier",
+      "url": "https://apify.com/quaking_pail/ai-lead-qualifier",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Company Researcher",
+      "url": "https://apify.com/bala-ceg/ai-company-researcher",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Content Detector",
+      "url": "https://apify.com/muhammetakkurtt/ai-content-detector",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "SEO Audit Tool",
+      "url": "https://apify.com/smart-digital/complete-seo-audit-tool",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Backlink Checker",
+      "url": "https://apify.com/daniil.poletaev/backlink-building-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Keyword Research Tool",
+      "url": "https://apify.com/powerai/long-tail-keyword-discovery",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Facebook Ads Library Scraper",
+      "url": "https://apify.com/agenscrape/facebook-ad-library-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Google Ads Scraper",
+      "url": "https://apify.com/epctex/google-ads-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Advanced News Scraper",
+      "url": "https://apify.com/dorcy/advanced-news-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI News Feed",
+      "url": "https://apify.com/patrikbraborec/ai-news",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Hype Tracker",
+      "url": "https://apify.com/wheat_tourist/ai-hype-tracker",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Web Scraper",
+      "url": "https://apify.com/raizen/ai-web-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Markdown Maker",
+      "url": "https://apify.com/onescales/bulk-ai-markdown-maker",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "PDF Data Extractor",
+      "url": "https://apify.com/zayn_0001/extractor-from-pdf-url",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Code Review Agent",
+      "url": "https://apify.com/fiery_dream/ai-code-review-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "README Generator",
+      "url": "https://apify.com/jkuzz/actor-readme-generator-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Flight Travel Agent",
+      "url": "https://apify.com/jakub.kopecky/flight-travel-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Travel Agent",
+      "url": "https://apify.com/harvestlabs/ai-travel-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Expedia Scraper",
+      "url": "https://apify.com/hello.datawizards/expedia-review-scraper-pro",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Company Contact Scraper",
+      "url": "https://apify.com/fatihtahta/waterfall-contact-enricher",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Competitive Intelligence Agent",
+      "url": "https://apify.com/apify/competitive-intelligence-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "SWOT Analysis Tool",
+      "url": "https://apify.com/powerai/swot-business-analysis-tool",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Company Analysis Agent",
+      "url": "https://apify.com/harvestlabs/company-analysis-ai-agent",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Email Campaign Creator",
+      "url": "https://apify.com/easyapi/email-campaign-creator",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "LinkedIn Posts Generator",
+      "url": "https://apify.com/easyapi/linkedin-posts-generator",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Twitter Thread Generator",
+      "url": "https://apify.com/easyapi/twitter-thread-generator",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Steam Game Scraper",
+      "url": "https://apify.com/epctex/steam-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Box Office Tracker",
+      "url": "https://apify.com/deadline/box-office",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "IMDb Scraper",
+      "url": "https://apify.com/epctex/imdb-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Quiz Maker",
+      "url": "https://apify.com/harvestlabs/ai-quiz-maker",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Question Generator",
+      "url": "https://apify.com/sunvic567/ai-question-generator",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Dribbble Scraper",
+      "url": "https://apify.com/practicaltools/apify-dribbble-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Figma Community Scraper",
+      "url": "https://apify.com/eliaalberti/figma-community-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AI Logo Generator",
+      "url": "https://apify.com/dxbear/ai-logo-generator",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Chess Puzzle Analyzer",
+      "url": "https://apify.com/mrahil/chess-puzzle-analyzer",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "DraftKings Scraper",
+      "url": "https://apify.com/syntellect_ai/draftkings-api-actor",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "AutoTrader Scraper",
+      "url": "https://apify.com/dr.ollie/autotrader-com-fast-cheap-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
+    },
+    {
+      "name": "Craigslist Car Hunter",
+      "url": "https://apify.com/querulous_daisy/craigslist-car-scraper",
+      "method": "POST",
+      "headers": {},
+      "source": "github:tbomb-fork"
     }
   ]
 }
