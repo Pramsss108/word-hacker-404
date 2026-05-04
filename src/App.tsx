@@ -1,19 +1,26 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Zap, Brain, ChevronRight, Wand2, Music4, Lock, Sparkles, Shield } from 'lucide-react'
 import './App.css'
-import MatrixRain from './components/MatrixRain'
-import RawWatchdogIndicator from './components/RawWatchdogIndicator'
-import RawDiagnosticsPanel from './components/RawDiagnosticsPanel'
-import LoginDashboard from './components/LoginDashboard'
-import { getSharedArrayBufferWatchdogReport } from './raw'
-import { proAuth, type UserStatus } from './services/ProAuth'
+// MatrixRain is purely decorative — lazy-load so it doesn't block first paint.
+const MatrixRain = lazy(() => import('./components/MatrixRain'))
+// import RawWatchdogIndicator from './components/RawWatchdogIndicator'  // removed: clashes with floating chat
+// Direct deep import (NOT the barrel) so we don't drag RawExportService /
+// wasm-vips into the main chunk just to read a watchdog flag.
+import { getSharedArrayBufferWatchdogReport } from './raw/RawWorkerPool'
+
+// Local type — avoids pulling Firebase into initial bundle
+type UserStatus = 'loading' | 'anonymous' | 'pro' | 'god_mode'
 
 // Lazy-load heavy route-level components — drastically cuts initial JS parse time
-const VoiceEncrypter = lazy(() => import('./components/VoiceEncrypter'))
+const VoiceEncrypter  = lazy(() => import('./components/VoiceEncrypter'))
 const BlackOps        = lazy(() => import('./components/BlackOps'))
 const ToolsPage       = lazy(() => import('./components/ToolsPage'))
 const NeuralEditor    = lazy(() => import('./components/NeuralEditor/NeuralEditor').then(m => ({ default: m.NeuralEditor })))
 const SarkariCompress = lazy(() => import('./components/SarkariCompress'))
+// LoginDashboard pulls Firebase — keep it lazy so first paint is instant
+const LoginDashboard  = lazy(() => import('./components/LoginDashboard'))
+// Diagnostics panel is heavy and below-the-fold — lazy load
+const RawDiagnosticsPanel = lazy(() => import('./components/RawDiagnosticsPanel'))
 
 type Tone = 'friendly' | 'angry' | 'sexual' | 'comedic' | 'taboo'
 
@@ -38,14 +45,41 @@ function App() {
   const [showLogin, setShowLogin] = useState(false)
   const [authStatus, setAuthStatus] = useState<UserStatus>('loading')
   const [currentUser, setCurrentUser] = useState<any>(null)
-
-  // Subscribe to auth changes
+  // Defer mounting MatrixRain until after first paint to keep TTI low.
+  const [showMatrix, setShowMatrix] = useState(false)
   useEffect(() => {
-    const unsub = proAuth.subscribe((status, user) => {
-      setAuthStatus(status)
-      setCurrentUser(user)
-    })
-    return () => unsub()
+    const kick = () => setShowMatrix(true)
+    if ('requestIdleCallback' in window) {
+      const id = (window as any).requestIdleCallback(kick, { timeout: 1200 })
+      return () => (window as any).cancelIdleCallback?.(id)
+    }
+    const t = setTimeout(kick, 350)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Subscribe to auth changes — Firebase loaded LAZILY so it doesn't block first paint
+  useEffect(() => {
+    let unsub: (() => void) | null = null
+    let cancelled = false
+    // Defer Firebase import until after first paint (idle)
+    const kick = () => {
+      import('./services/ProAuth').then(({ proAuth }) => {
+        if (cancelled) return
+        unsub = proAuth.subscribe((status, user) => {
+          setAuthStatus(status)
+          setCurrentUser(user)
+        })
+      }).catch(err => console.warn('ProAuth lazy load failed:', err))
+    }
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(kick, { timeout: 1500 })
+    } else {
+      setTimeout(kick, 200)
+    }
+    return () => {
+      cancelled = true
+      if (unsub) unsub()
+    }
   }, [])
 
   const heroRef = useRef<HTMLDivElement | null>(null)
@@ -78,9 +112,14 @@ function App() {
 
   return (
     <div className="app">
-      {/* Background effect */}
-      <MatrixRain opacity={0.08} density={24} speed={2} />
-      <RawWatchdogIndicator />
+      {/* Background effect — mounted after first paint */}
+      {showMatrix && (
+        <Suspense fallback={null}>
+          <MatrixRain opacity={0.08} density={24} speed={2} />
+        </Suspense>
+      )}
+      {/* SAB watchdog disabled — clashed with floating chat. Status still visible in sysbar. */}
+      {/* <RawWatchdogIndicator /> */}
 
       <Suspense fallback={<div className="lazy-loading"><span className="mono">Loading...</span></div>}>
       {gameMode === 'sarkari-compress' ? (
@@ -295,7 +334,9 @@ function App() {
       </Suspense>
 
       {showLogin && (
-        <LoginDashboard onClose={() => setShowLogin(false)} />
+        <Suspense fallback={null}>
+          <LoginDashboard onClose={() => setShowLogin(false)} />
+        </Suspense>
       )}
     </div>
   )

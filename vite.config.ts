@@ -39,8 +39,20 @@ export default defineConfig({
   // base: '/', // Removed duplicate
   server: {
     port: 3001,
-    strictPort: false,
+    strictPort: true,
     host: true,
+    // Pre-transform critical entry files at server boot so first request is instant
+    warmup: {
+      clientFiles: [
+        './index.html',
+        './src/main.tsx',
+        './src/App.tsx',
+        './src/App.css',
+        './src/index.css',
+        './src/components/MatrixRain.tsx',
+        './src/components/RawWatchdogIndicator.tsx',
+      ],
+    },
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       // 'Cross-Origin-Embedder-Policy': 'require-corp' // Disabled to allow Google Auth Popup
@@ -54,7 +66,16 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // Sourcemaps OFF in production — saves ~26 MB of .map files from being
+    // uploaded to GitHub Pages and (more importantly) served to users.
+    // Re-enable temporarily only when debugging a live regression.
+    sourcemap: false,
+    // Drop console/debugger calls in prod — smaller bundle, faster parse.
+    minify: 'esbuild',
+    target: 'es2020',
+    cssCodeSplit: true,
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 1500,
     rollupOptions: {
       external: ['wasm-vips'],
       output: {
@@ -64,6 +85,9 @@ export default defineConfig({
         }
       }
     }
+  },
+  esbuild: {
+    drop: ['console', 'debugger']
   },
   optimizeDeps: {
     exclude: ['wasm-vips']
