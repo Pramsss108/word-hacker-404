@@ -1,5 +1,186 @@
 {
   "generated_by": "hydra_community_scraper",
-  "count": 0,
-  "new_endpoints": []
+  "count": 20,
+  "new_endpoints": [
+    {
+      "name": "Auth-CRT",
+      "url": "https://www.auth.makemytrip.com/api/v1/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://www.auth.makemytrip.com/api/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://www.auth.makemytrip.com/v1/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://www.auth.makemytrip.com/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://www.auth.makemytrip.com/sendotp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://dbank-auth.makemytrip.com/api/v1/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://dbank-auth.makemytrip.com/api/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://dbank-auth.makemytrip.com/v1/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://dbank-auth.makemytrip.com/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://dbank-auth.makemytrip.com/sendotp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://auth.makemytrip.com/api/v1/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://auth.makemytrip.com/api/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://auth.makemytrip.com/v1/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://auth.makemytrip.com/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Auth-CRT",
+      "url": "https://auth.makemytrip.com/sendotp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://www.dbank-auth.makemytrip.com/api/v1/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://www.dbank-auth.makemytrip.com/api/otp/send",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://www.dbank-auth.makemytrip.com/v1/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://www.dbank-auth.makemytrip.com/auth/otp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    },
+    {
+      "name": "Dbank-Auth-CRT",
+      "url": "https://www.dbank-auth.makemytrip.com/sendotp",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "source": "crtsh"
+    }
+  ]
 }
