@@ -26,7 +26,7 @@ Showrunner Tassie Cameron framed the choice in the announcement, calling Kirby t
 
 For viewers who locked into Aden Young as Detective Sergeant Henry Graff, this is a clean break point in the run. Young carried the lead detective role through Seasons 1, 2, and 3 of *Law & Order Toronto: Criminal Intent*, and his exit closes one of the original chapters of the show. The release did not detail a writing path for Graff, leaving the door open for an offscreen exit or an onscreen farewell early in Season 4.
 
-Kirby brings a heavyweight resume into the squad room, and the Citytv casting list reads like a slam dunk on paper. Back in 2019 he took home a Primetime Emmy for playing Lenny Bruce on *The Marvelous Mrs Maisel*, and that win still travels with him into every audition room. Apple TV+ then placed him opposite Jennifer Garner in *The Last Thing He Told Me*, and Amazon followed by building *Étoile* around him as the lead. Both runs sat in the same brooding lane that a Detective Sergeant inside a Homicide division has to work every shift.
+The recasting signals a tonal shift more than a reset for the franchise. Where Henry Graff played introspective and weary across three seasons, Detective Darcy is being written as restless and unpredictable, per the Cameron pitch. The Guns and Gangs backstory baked into the character also opens a fresh procedural angle the original lead never worked. That gives the writers room to lean harder on the psychological cases the *Criminal Intent* brand was built around. Whether the move darkens the squad or simply refreshes the chemistry is the question Citytv is betting on through the fall.
 
 Cameras are rolling in Toronto right now, and the show targets a fall 2026 premiere window on Citytv, with The CW handling the United States run for the franchise audience. The new season picks up the formula that powered Season 3 to a twenty percent ratings jump. For ongoing tribute pieces, cast watch coverage and franchise level breakdowns on ***Law & Order*** and its expanding international family, stay locked to *SoapCentral*.
 
@@ -47,4 +47,4 @@ EMBED 2 — Citytv welcome post: site:instagram.com OR site:x.com Citytv Luke Ki
 EMBED 3 — Citytv Season 3 trailer YouTube: site:youtube.com Citytv "Law & Order Toronto Criminal Intent" Season 3 trailer
 -->
 
-**Score on Zero Gpt-** 17.4%
+**Score on Zero Gpt-** 14.1%
