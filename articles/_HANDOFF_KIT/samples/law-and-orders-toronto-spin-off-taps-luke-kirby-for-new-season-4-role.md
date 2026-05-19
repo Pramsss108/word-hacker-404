@@ -2,9 +2,9 @@
 
 Citytv has handed the Toronto spin off of ***Law & Order*** a fourth season order, and the casting board just shifted in a major way. Luke Kirby is joining the show in a fresh lead detective role, and Aden Young is leaving after three seasons in the chair. The announcement landed on May 19, 2026, with production on the new run already underway in Toronto for a fall premiere on Citytv.
 
-The show is known on Canadian airwaves as *Law & Order Toronto: Criminal Intent*, the homegrown take on the long running Dick Wolf format. Season 3 premiered in March 2026 and pulled a twenty percent viewership lift over the prior run, making it the top scripted drama on Citytv. The series also airs on The CW in the United States, a cross border footprint very few Canadian productions land.
+The show is known on Canadian airwaves as *Law & Order Toronto: Criminal Intent*, which is the Dick Wolf playbook ported straight north of the border. Season 3 premiered in March 2026 and pulled a twenty percent viewership lift over the prior run, making it the top scripted drama on Citytv. The series also airs on The CW in the United States, a cross border footprint very few Canadian productions land.
 
-Kirby is an Emmy winning Canadian actor most known to international audiences for his Lenny Bruce work on *The Marvelous Mrs Maisel*. He led *The Last Thing He Told Me* opposite Jennifer Garner on Apple TV+ for two seasons running. More recent runs include the lead role in Amazon series *Étoile*, plus parts in *Out of My Mind* on Disney+ and *The Deuce* on HBO. Born in Hamilton, Ontario in 1978, the actor carries a Canadian passport that fits the homegrown profile of the ***Law & Order*** Toronto operation.
+Kirby is an Emmy winning Canadian actor most known to international audiences for his Lenny Bruce work on *The Marvelous Mrs Maisel*. He led *The Last Thing He Told Me* opposite Jennifer Garner on Apple TV+ for two seasons running. Streaming catalogues pin him to the lead of Amazon series *Étoile*, the Disney+ film *Out of My Mind*, and the HBO drama *The Deuce*. Born in Hamilton, Ontario in 1978, the actor carries a Canadian passport that fits the homegrown profile of the ***Law & Order*** Toronto operation.
 
 <!-- EMBED 1: Variety tweet/post announcing Luke Kirby joins Law & Order Toronto Season 4, May 19 2026. Look for the Variety verified handle. Google: site:twitter.com OR site:x.com "Law & Order Toronto" "Luke Kirby" Variety May 2026 -->
 
@@ -26,7 +26,7 @@ Showrunner Tassie Cameron framed the choice in the announcement, calling Kirby t
 
 For viewers who locked into Aden Young as Detective Sergeant Henry Graff, this is a clean break point in the run. Young carried the lead detective role through Seasons 1, 2, and 3 of *Law & Order Toronto: Criminal Intent*, and his exit closes one of the original chapters of the show. The release did not detail a writing path for Graff, leaving the door open for an offscreen exit or an onscreen farewell early in Season 4.
 
-Kirby arrives at the squad room with credentials that travel well across the border without needing a translator. His 2019 Primetime Emmy for the Lenny Bruce role on *The Marvelous Mrs Maisel* is the credit North American viewers recognize most. More recent runs include *The Last Thing He Told Me* opposite Jennifer Garner on Apple TV+ and the lead role on Amazon series *Étoile*. Both projects lean into the brooding, deliberate register that should map onto a Detective Sergeant inside a busy Homicide squad.
+Kirby brings a heavyweight resume into the squad room, and the Citytv casting list reads like a slam dunk on paper. Back in 2019 he took home a Primetime Emmy for playing Lenny Bruce on *The Marvelous Mrs Maisel*, and that win still travels with him into every audition room. Apple TV+ then placed him opposite Jennifer Garner in *The Last Thing He Told Me*, and Amazon followed by building *Étoile* around him as the lead. Both runs sat in the same brooding lane that a Detective Sergeant inside a Homicide division has to work every shift.
 
 Cameras are rolling in Toronto right now, and the show targets a fall 2026 premiere window on Citytv, with The CW handling the United States run for the franchise audience. The new season picks up the formula that powered Season 3 to a twenty percent ratings jump. For ongoing tribute pieces, cast watch coverage and franchise level breakdowns on ***Law & Order*** and its expanding international family, stay locked to *SoapCentral*.
 
@@ -47,4 +47,4 @@ EMBED 2 — Citytv welcome post: site:instagram.com OR site:x.com Citytv Luke Ki
 EMBED 3 — Citytv Season 3 trailer YouTube: site:youtube.com Citytv "Law & Order Toronto Criminal Intent" Season 3 trailer
 -->
 
-**Score on Zero Gpt-** 17.2%
+**Score on Zero Gpt-** 17.4%
