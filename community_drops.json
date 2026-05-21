@@ -1,17 +1,17 @@
 {
   "generated_by": "hydra_community_scraper",
-  "count": 799,
+  "count": 769,
   "new_endpoints": [
     {
-      "name": "Dashboard",
-      "url": "https://dashboard.otp.dev/apis/keys",
+      "name": "Api",
+      "url": "https://api.otp.dev/v1",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Api",
-      "url": "https://api.otp.dev/v1",
+      "name": "Dashboard",
+      "url": "https://dashboard.otp.dev/apis/keys",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -24,22 +24,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "App",
-      "url": "https://app.dosma.ir/sendverify/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.alinance.com/user/register/mobile/send/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Drsaina",
-      "url": "https://www.drsaina.com/RegisterLogin?ReturnUrl=%2Fconsultation",
+      "name": "Ketabchi",
+      "url": "https://ketabchi.com/api/v1/auth/requestVerificationCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -52,260 +38,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Candoosms",
-      "url": "https://www.candoosms.com/wp-admin/admin-ajax.php",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Riiha",
-      "url": "https://www.riiha.ir/api/v1.0/authenticate",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Shop",
-      "url": "https://shop.opco.co.ir/index.php?route=extension/module/login_verify/update_register_code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.pezeshket.com/core/v1/auth/requestCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Candoosms",
-      "url": "https://www.candoosms.com/signup/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Flightio",
-      "url": "https://flightio.com/bff/Authentication/CheckUserKey",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Rojashop",
-      "url": "https://rojashop.com/api/auth/sendOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Hamrah-Mechanic",
-      "url": "https://www.hamrah-mechanic.com/api/v1/membership/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Glite",
-      "url": "https://www.glite.ir/user-login/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.offch.com/auth/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Dicardo",
-      "url": "https://dicardo.com/main/sendsms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Tikban",
-      "url": "https://tikban.com/Account/LoginAndRegister",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Pay",
-      "url": "https://pay.rayanertebat.ir/api/User/Otp?t=1692088339811",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Virgool",
-      "url": "https://virgool.io/api/v1.4/auth/verify",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Account",
-      "url": "https://account.api.balad.ir/api/web/auth/login/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.anargift.com/api/people/auth",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Snappfood",
-      "url": "https://snappfood.ir/mobile/v2/user/loginMobileWithNoPass?lat=35.774&long=51.418&sms_apialClient=WEBSITE&client=WEBSITE&deviceType=WEBSITE&appVersion=8.1.0&UDID=39c62f64-3d2d-4954-9033-816098559ae4&locale=fa",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ids",
-      "url": "https://ids.tapsi.shop/authCustomer/CreateOtpForRegister",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bimito",
-      "url": "https://bimito.com/api/vehicleorder/v2/app/auth/login-with-verify-code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Azki",
-      "url": "https://www.azki.co/api/vehicleorder/v2/app/auth/check-login-availability/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.azkivam.com/auth/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bitex24",
-      "url": "https://bitex24.com/api/v1/auth/sendSms?mobile=0",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.ostadkr.com/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.ehteraman.com/api/request/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.mohit.online/api/auth/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Safarmarket",
-      "url": "https://safarmarket.com//api/security/v2/user/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Abantether",
-      "url": "https://abantether.com/users/register/phone/send/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bit24",
-      "url": "https://bit24.cash/auth/bit24/api/v3/auth/check-mobile",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ketabchi",
-      "url": "https://ketabchi.com/api/v1/auth/requestVerificationCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Okcs",
-      "url": "https://okcs.com/users/mobilelogin?mobile=0",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Hiword",
-      "url": "https://hiword.ir/wp-json/otp-login/v1/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.digikala.com/v1/user/authenticate/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Azki",
-      "url": "https://www.azki.com/api/vehicleorder/api/customer/register/login-with-vocal-verification-code?phoneNumber=0",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Agent",
-      "url": "https://agent.wide-app.ir/auth/token",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Fidibo",
-      "url": "https://fidibo.com/user/login-by-sms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Kafegheymat",
-      "url": "https://kafegheymat.com/shop/getLoginSms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Candoosms",
-      "url": "https://www.candoosms.com",
+      "name": "Arzinja",
+      "url": "https://arzinja.app/api/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -313,104 +47,6 @@
     {
       "name": "Backend",
       "url": "https://backend.topnoor.ir/web/v1/user/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Daal",
-      "url": "https://daal.co/api/authentication/login-register/method/phone-otp/user-role/customer/verify-request",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.snapp.market/mart/v1/user/loginMobileWithNoPass?cellphone=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.arshiyan.com/send_code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.hbbs.ir/authentication/SendCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Gateway",
-      "url": "https://gateway.wisgoon.com/api/v1/auth/login/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bandarazad",
-      "url": "https://bandarazad.com/?login=true&page=1&redirect_to=https%3A%2F%2Fbandarazad.com%2F",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bimebazar",
-      "url": "https://bimebazar.com/accounts/api/login_sec/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Takfarsh",
-      "url": "https://takfarsh.com/wp-content/themes/bakala/template-parts/send.php",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.snapp.express/mobile/v4/user/loginMobileWithNoPass?client=PWA&optionalClient=PWA&deviceType=PWA&appVersion=5.6.6&optionalVersion=5.6.6&UDID=bb65d956-f88b-4fec-9911-5f94391edf85",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Dadpardaz",
-      "url": "https://dadpardaz.com/advice/getLoginConfirmationCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ws",
-      "url": "https://ws.alibaba.ir/api/v3/account/mobile/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Pubisha",
-      "url": "https://www.pubisha.com/login/checkCustomerActivation",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Nx",
-      "url": "https://nx.classino.com/otp/v1/api/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Auth",
-      "url": "https://auth.mrbilit.com/api/Token/send/byCall?mobile=0",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -424,77 +60,7 @@
     },
     {
       "name": "Api",
-      "url": "https://api.paymishe.com/api/v1/otp/registerOrLogin",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Tj8",
-      "url": "https://tj8.ir/auth/register",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Farsgraphic",
-      "url": "https://farsgraphic.com/?login=true&page=1&redirect_to=https%3A%2F%2Ffarsgraphic.com%2F",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Nobat",
-      "url": "https://nobat.ir/api/public/patient/login/phone",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.iranamlaak.net/authenticate/send/otp/to/mobile/via/sms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Offdecor",
-      "url": "https://www.offdecor.com/index.php?route=account/login/sendCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Takshopaccessorise",
-      "url": "https://takshopaccessorise.ir/api/v1/sessions/login_request",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api-Ebcom",
-      "url": "https://api-ebcom.mci.ir/services/auth/v1.0/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.pindo.ir/v1/user/login-register/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Shahrfarsh",
-      "url": "https://shahrfarsh.com/Account/Login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Crm",
-      "url": "https://crm.see5.net/api_ajax/sendotp.php",
+      "url": "https://api.bitpin.ir/v3/usr/authenticate/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -507,15 +73,414 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Digistyle",
-      "url": "https://www.digistyle.com/users/login-register/",
+      "name": "Api-Ebcom",
+      "url": "https://api-ebcom.mci.ir/services/auth/v1.0/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Client",
+      "url": "https://client.api.paklean.com/user/resendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Drdr",
+      "url": "https://drdr.ir/api/v3/auth/login/mobile/init/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.timcheh.com/auth/otp/send",
+      "url": "https://api.alinance.com/user/register/mobile/send/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.snapp.doctor/core/Api/Common/v1/sendVerificationCode/0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Deniizshop",
+      "url": "https://deniizshop.com/api/v1/sessions/login_request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.kukala.ir/api/user/Otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paymishe.com/api/v1/otp/registerOrLogin",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Khodro45",
+      "url": "https://khodro45.com/api/v1/customers/otp/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Amoomilad",
+      "url": "https://amoomilad.demo-hoonammaharat.ir/api/v1.0/Account/Sendcode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Didnegar",
+      "url": "https://www.didnegar.com/my-account/?login=true&back=home&page=1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.mohit.online/api/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Virgool",
+      "url": "https://virgool.io/api/v1.4/auth/verify",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.snapp.taxi/login/?redirect_to=/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "A4Baz",
+      "url": "https://a4baz.com/api/web/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tabdil24",
+      "url": "https://tabdil24.net/api/api/v1/auth/login-register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pmxchange.co/api/User/Login/SendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Safiran",
+      "url": "https://safiran.shop/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.digikala.com/v1/user/authenticate/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.alopeyk.com/safir-service/api/v1/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pateh.com/ath/auth/login-or-register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Account",
+      "url": "https://account.api.balad.ir/api/web/auth/login/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bimito",
+      "url": "https://bimito.com/api/vehicleorder/v2/app/auth/login-with-verify-code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pubisha",
+      "url": "https://www.pubisha.com/login/checkCustomerActivation",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shop",
+      "url": "https://shop.opco.co.ir/index.php?route=extension/module/login_verify/update_register_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.itoll.com/api/v1/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.tapsi.food/v1/api/Authentication/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Takfarsh",
+      "url": "https://takfarsh.com/wp-content/themes/bakala/template-parts/send.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Candoosms",
+      "url": "https://www.candoosms.com",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bitex24",
+      "url": "https://bitex24.com/api/v1/auth/sendSms?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shahrfarsh",
+      "url": "https://shahrfarsh.com/Account/Login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mrbilit.com/api/Token/send/byCall?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Digimaze",
+      "url": "https://digimaze.org/api/sms/v1/otp/request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Snappfood",
+      "url": "https://snappfood.ir/mobile/v2/user/loginMobileWithNoPass?lat=35.774&long=51.418&sms_apialClient=WEBSITE&client=WEBSITE&deviceType=WEBSITE&appVersion=8.1.0&UDID=39c62f64-3d2d-4954-9033-816098559ae4&locale=fa",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api-React",
+      "url": "https://api-react.okala.com/C/CustomerAccount/OTPRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.homtick.com/api/V1/User/GetVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.azkivam.com/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Hamrah-Mechanic",
+      "url": "https://www.hamrah-mechanic.com/api/v1/membership/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Hiword",
+      "url": "https://hiword.ir/wp-json/otp-login/v1/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Server",
+      "url": "https://server.kilid.com/global_auth_api/v1.0/authenticate/login/realm/otp/start?realm=PORTAL",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Agent",
+      "url": "https://agent.wide-app.ir/auth/token",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "I",
+      "url": "https://i.devslop.app/app/ifollow/api/otp.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Abantether",
+      "url": "https://abantether.com/users/register/phone/send/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Offdecor",
+      "url": "https://www.offdecor.com/index.php?route=account/login/sendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pindo.ir/v1/user/login-register/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.pinorest.com/frontend/auth/login/mobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Nx",
+      "url": "https://nx.classino.com/otp/v1/api/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Kafegheymat",
+      "url": "https://kafegheymat.com/shop/getLoginSms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pirankalaco",
+      "url": "https://pirankalaco.ir/shop/login.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Takshopaccessorise",
+      "url": "https://takshopaccessorise.ir/api/v1/sessions/login_request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Football360",
+      "url": "https://football360.ir/api/auth/verify-phone/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.rokla.ir/api/request/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mazoocandle",
+      "url": "https://mazoocandle.ir/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.dosma.ir/sendverify/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Kodakamoz",
+      "url": "https://www.kodakamoz.com/?login=true&page=1&redirect_to=https%3A%2F%2Fwww.kodakamoz.com%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.lendo.ir/api/customer/auth/send-otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.arshiyan.com/send_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bigtoys",
+      "url": "https://www.bigtoys.ir/?login=true&back=home&page=1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mrbilit.com/api/login/exists/v2?mobileOrEmail=0",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -529,21 +494,21 @@
     },
     {
       "name": "Api",
-      "url": "https://api.bitpin.ir/v3/usr/authenticate/",
+      "url": "https://api.bitbarg.com/api/v1/authentication/registerOrLogin",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Core",
-      "url": "https://core.gap.im/v1/user/resendCode.json?mobile=%2B98",
+      "name": "Api",
+      "url": "https://api.kcd.app/api/v1/auth/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Client",
-      "url": "https://client.api.paklean.com/user/resendVoiceCode",
+      "name": "Ws",
+      "url": "https://ws.alibaba.ir/api/v3/account/mobile/otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -556,78 +521,99 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Tabdil24",
-      "url": "https://tabdil24.net/api/api/v1/auth/login-register",
+      "name": "Safarmarket",
+      "url": "https://safarmarket.com//api/security/v2/user/otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Kodakamoz",
-      "url": "https://www.kodakamoz.com/?login=true&page=1&redirect_to=https%3A%2F%2Fwww.kodakamoz.com%2F",
+      "name": "Farsgraphic",
+      "url": "https://farsgraphic.com/?login=true&page=1&redirect_to=https%3A%2F%2Ffarsgraphic.com%2F",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "I",
-      "url": "https://i.devslop.app/app/ifollow/api/otp.php",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api-React",
-      "url": "https://api-react.okala.com/C/CustomerAccount/OTPRegister",
+      "name": "Buskool",
+      "url": "https://www.buskool.com/send_verification_code",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.bitbarg.com/api/v1/authentication/registerOrLogin",
+      "url": "https://api.pezeshket.com/core/v1/auth/requestCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Auth",
-      "url": "https://auth.mrbilit.com/api/login/exists/v2?mobileOrEmail=0",
+      "name": "Mipersia",
+      "url": "https://www.mipersia.com/?login=true&page=1&redirect_to=https%3A%2F%2Fwww.mipersia.com%2F",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Auth",
-      "url": "https://auth.homtick.com/api/V1/User/GetVerifyCode",
+      "name": "Bandarazad",
+      "url": "https://bandarazad.com/?login=true&page=1&redirect_to=https%3A%2F%2Fbandarazad.com%2F",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Khodro45",
-      "url": "https://khodro45.com/api/v1/customers/otp/",
+      "name": "Ashraafi",
+      "url": "https://ashraafi.com/login-register/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.tapsi.food/v1/api/Authentication/otp",
+      "url": "https://api.timcheh.com/auth/otp/send",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Pirankalaco",
-      "url": "https://pirankalaco.ir/shop/login.php",
+      "name": "Api",
+      "url": "https://api.pooleno.ir/v1/auth/check-mobile",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Pubg-Sell",
-      "url": "https://pubg-sell.ir/loginuser?username=0",
+      "name": "Fidibo",
+      "url": "https://fidibo.com/user/login-by-sms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Coffefastfoodluxury",
+      "url": "https://coffefastfoodluxury.ir/product-category/coffeshop/?login=true&page=1&redirect_to=https%3A%2F%2Fcoffefastfoodluxury.ir%2Fproduct-category%2Fcoffeshop%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Melix",
+      "url": "https://melix.shop/site/api/v1/user/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Sheypoor",
+      "url": "https://www.sheypoor.com/api/v10.0.0/auth/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Drsaina",
+      "url": "https://www.drsaina.com/RegisterLogin?ReturnUrl=%2Fconsultation",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -647,64 +633,141 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Digimaze",
-      "url": "https://digimaze.org/api/sms/v1/otp/request",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Exo",
-      "url": "https://exo.ir/index.php?route=account/mobile_login",
+      "name": "Api",
+      "url": "https://api.sibbank.ir/v1/auth/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.beroozmart.com/api/pub/account/send-otp",
+      "url": "https://api.iranamlaak.net/authenticate/send/otp/to/mobile/via/sms",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Shop",
-      "url": "https://shop.hemat-elec.ir/?login=true&page=1&redirect_to=https%3A%2F%2Fshop.hemat-elec.ir%2F",
+      "name": "Dicardo",
+      "url": "https://dicardo.com/main/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Glite",
+      "url": "https://www.glite.ir/user-login/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Riiha",
+      "url": "https://www.riiha.ir/api/v1.0/authenticate",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mrbilit.ir/api/Token/send?mobile=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Digistyle",
+      "url": "https://www.digistyle.com/users/login-register/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Cinematicket",
+      "url": "https://cinematicket.org/api/v1/users/signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pirankalaco",
+      "url": "https://pirankalaco.ir/shop/SendPhone.php",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.snapp.doctor/core/Api/Common/v1/sendVerificationCode/0",
+      "url": "https://api.ehteraman.com/api/request/otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "A4Baz",
-      "url": "https://a4baz.com/api/web/login",
+      "name": "Okcs",
+      "url": "https://okcs.com/users/mobilelogin?mobile=0",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Banankala",
-      "url": "https://banankala.com/home/login",
+      "name": "Pay",
+      "url": "https://pay.rayanertebat.ir/api/User/Otp?t=1692088339811",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Amoomilad",
-      "url": "https://amoomilad.demo-hoonammaharat.ir/api/v1.0/Account/Sendcode",
+      "name": "Tikban",
+      "url": "https://tikban.com/Account/LoginAndRegister",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Cyclops",
-      "url": "https://cyclops.drnext.ir/v1/patients/auth/send-verification-token",
+      "name": "Api",
+      "url": "https://api.torob.com/a/phone/send-pin/?phone_number=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.alopeyk.com/api/v2/login?platform=pwa",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Daal",
+      "url": "https://daal.co/api/authentication/login-register/method/phone-otp/user-role/customer/verify-request",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.offch.com/auth/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tj8",
+      "url": "https://tj8.ir/auth/register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.snapp.express/mobile/v4/user/loginMobileWithNoPass?client=PWA&optionalClient=PWA&deviceType=PWA&appVersion=5.6.6&optionalVersion=5.6.6&UDID=bb65d956-f88b-4fec-9911-5f94391edf85",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bimebazar",
+      "url": "https://bimebazar.com/accounts/api/login_sec/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -718,105 +781,28 @@
     },
     {
       "name": "Api",
-      "url": "https://api.kcd.app/api/v1/auth/login",
+      "url": "https://api.hbbs.ir/authentication/SendCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Pirankalaco",
-      "url": "https://pirankalaco.ir/shop/SendPhone.php",
+      "name": "Client",
+      "url": "https://client.api.paklean.com/user/resendVoiceCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Didnegar",
-      "url": "https://www.didnegar.com/my-account/?login=true&back=home&page=1",
+      "name": "Exo",
+      "url": "https://exo.ir/index.php?route=account/mobile_login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Melix",
-      "url": "https://melix.shop/site/api/v1/user/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Deniizshop",
-      "url": "https://deniizshop.com/api/v1/sessions/login_request",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Shop",
-      "url": "http://shop.tnovin.com/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.pinorest.com/frontend/auth/login/mobile",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "App",
-      "url": "https://app.snapp.taxi/login/?redirect_to=/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Safiran",
-      "url": "https://safiran.shop/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.alopeyk.com/safir-service/api/v1/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Mazoocandle",
-      "url": "https://mazoocandle.ir/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.pooleno.ir/v1/auth/check-mobile",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.rokla.ir/api/request/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Sheypoor",
-      "url": "https://www.sheypoor.com/api/v10.0.0/auth/send",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.sibbank.ir/v1/auth/login",
+      "name": "Core",
+      "url": "https://core.gap.im/v1/user/resendCode.json?mobile=%2B98",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -829,29 +815,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Mobapi",
-      "url": "https://mobapi.banimode.com/api/v2/auth/request",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
       "name": "Api",
-      "url": "https://api.alopeyk.com/api/v2/login?platform=pwa",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "App",
-      "url": "https://app.snapp.taxi/api/api-passenger-oauth/v2/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Cinematicket",
-      "url": "https://cinematicket.org/api/v1/users/signup",
+      "url": "https://api.snapp.market/mart/v1/user/loginMobileWithNoPass?cellphone=",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -864,78 +829,113 @@
       "source": "telegram:rss"
     },
     {
-      "name": "App",
-      "url": "https://app.itoll.com/api/v1/auth/login",
+      "name": "Api",
+      "url": "https://api.anargift.com/api/people/auth",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Ashraafi",
-      "url": "https://ashraafi.com/login-register/",
+      "name": "Shop",
+      "url": "http://shop.tnovin.com/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Arzinja",
-      "url": "https://arzinja.app/api/login",
+      "name": "Candoosms",
+      "url": "https://www.candoosms.com/wp-admin/admin-ajax.php",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Mipersia",
-      "url": "https://www.mipersia.com/?login=true&page=1&redirect_to=https%3A%2F%2Fwww.mipersia.com%2F",
+      "name": "Nobat",
+      "url": "https://nobat.ir/api/public/patient/login/phone",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Drdr",
-      "url": "https://drdr.ir/api/v3/auth/login/mobile/init/",
+      "name": "Crm",
+      "url": "https://crm.see5.net/api_ajax/sendotp.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Azki",
+      "url": "https://www.azki.co/api/vehicleorder/v2/app/auth/check-login-availability/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Candoosms",
+      "url": "https://www.candoosms.com/signup/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Shop",
+      "url": "https://shop.hemat-elec.ir/?login=true&page=1&redirect_to=https%3A%2F%2Fshop.hemat-elec.ir%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gateway",
+      "url": "https://gateway.wisgoon.com/api/v1/auth/login/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Azki",
+      "url": "https://www.azki.com/api/vehicleorder/api/customer/register/login-with-vocal-verification-code?phoneNumber=0",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Banankala",
+      "url": "https://banankala.com/home/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bit24",
+      "url": "https://bit24.cash/auth/bit24/api/v3/auth/check-mobile",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.torob.com/a/phone/send-pin/?phone_number=0",
+      "url": "https://api.beroozmart.com/api/pub/account/send-otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Auth",
-      "url": "https://auth.mrbilit.ir/api/Token/send?mobile=0",
+      "name": "Flightio",
+      "url": "https://flightio.com/bff/Authentication/CheckUserKey",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Bigtoys",
-      "url": "https://www.bigtoys.ir/?login=true&back=home&page=1",
+      "name": "Pubg-Sell",
+      "url": "https://pubg-sell.ir/loginuser?username=0",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Client",
-      "url": "https://client.api.paklean.com/user/resendCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Football360",
-      "url": "https://football360.ir/api/auth/verify-phone/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Coffefastfoodluxury",
-      "url": "https://coffefastfoodluxury.ir/product-category/coffeshop/?login=true&page=1&redirect_to=https%3A%2F%2Fcoffefastfoodluxury.ir%2Fproduct-category%2Fcoffeshop%2F",
+      "name": "Rojashop",
+      "url": "https://rojashop.com/api/auth/sendOtp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -948,43 +948,43 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Buskool",
-      "url": "https://www.buskool.com/send_verification_code",
+      "name": "Cyclops",
+      "url": "https://cyclops.drnext.ir/v1/patients/auth/send-verification-token",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "App",
+      "url": "https://app.snapp.taxi/api/api-passenger-oauth/v2/otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ids",
+      "url": "https://ids.tapsi.shop/authCustomer/CreateOtpForRegister",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dadpardaz",
+      "url": "https://dadpardaz.com/advice/getLoginConfirmationCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.pateh.com/ath/auth/login-or-register",
+      "url": "https://api.ostadkr.com/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Api",
-      "url": "https://api.lendo.ir/api/customer/auth/send-otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.pmxchange.co/api/User/Login/SendCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.kukala.ir/api/user/Otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Server",
-      "url": "https://server.kilid.com/global_auth_api/v1.0/authenticate/login/realm/otp/start?realm=PORTAL",
+      "name": "Mobapi",
+      "url": "https://mobapi.banimode.com/api/v2/auth/request",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -997,251 +997,29 @@
       "source": "telegram:rss"
     },
     {
-      "name": "App",
-      "url": "https://app.example.com/auth/callback",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Googleapis",
-      "url": "https://www.googleapis.com/auth/firebase",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Cloud",
-      "url": "https://cloud.google.com/docs/authentication/api-keys",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Googleapis",
-      "url": "https://www.googleapis.com/auth/cloud-platform",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "2",
-      "url": "https://2.rome.api.flipkart.com/api/7/user/otp/generate",
-      "method": "POST",
-      "headers": {
-        "X-User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0 FKUA/website/42/website/Desktop"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Netmeds",
-      "url": "https://www.netmeds.com/mst/rest/v1/id/details/${target}",
-      "method": "GET",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Blinkit",
-      "url": "https://blinkit.com/v2/accounts/",
-      "method": "POST",
-      "headers": {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
-        "Accept-Encoding": "gzip, deflate, br, zstd",
-        "auth_key": "c761ec3633c22afad934fb17a66385c1c06c5472b4898b866b7306186d0bb477"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Myntra",
-      "url": "https://www.myntra.com/gateway/v1/auth/getotp",
-      "method": "POST",
-      "headers": {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
-        "Origin": "https://www.myntra.com",
-        "Connection": "keep-alive"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Meesho",
-      "url": "https://www.meesho.com/api/v1/user/login/request-otp",
-      "method": "POST",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.account.relianceretail.com/service/application/retail-auth/v1.0/send-otp",
-      "method": "POST",
-      "headers": {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXR1cm5fdWlfdXJsIjoid3d3Lmppb21hcnQuY29tL2N1c3RvbWVyL2FjY291bnQvbG9naW4_bXNpdGU9eWVzIiwiaWF0IjoxNzI0MTMzMDIyLCJleHAiOjE3MjQxMzMzMjIsInNhbHQiOjB9.m3-umON2qXV5lMQ1UZ_Mpq5kAYf3ecO7ZLvJQkA0G_A"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Pvt-Product",
-      "url": "https://pvt-product.cars24.com/pp/auth/mobile/otp/send/",
-      "method": "POST",
-      "headers": {
-        "x-api-key": "qGuMZcWGxZpgd8uSH4rgkal4v1evAlCd",
-        "phone_number": "${target}"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Swiggy",
-      "url": "https://www.swiggy.com/dapi/auth/sms-otp",
-      "method": "POST",
-      "headers": {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Olx",
-      "url": "https://www.olx.in/api/auth/authenticate?lang=en-IN",
-      "method": "POST",
-      "headers": {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
-        "Accept": "*/*"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Winzogames",
-      "url": "https://www.winzogames.com/sendSms",
-      "method": "POST",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.dream11.com/sendsmslink",
-      "method": "POST",
-      "headers": {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
-        "Content-type": "application/x-www-form-urlencoded"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "My11Circle",
-      "url": "https://www.my11circle.com/api/fl/auth/v3/getOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Auth",
-      "url": "https://auth.rooter.io/auth/otp",
-      "method": "POST",
-      "headers": {
-        "device-type": "web",
-        "app-version": "1.0.5",
-        "device-id": "ca1d26f0-6154-11ef-b6c1-af61b646f12b",
-        "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwMDU0NjY3NjksInNJZCI6IjM2MDU0ZDM4LWI0MjUtNDZhZC05YmExLTBmNzg4NTk2MDcyOCIsInJvbGVzIjpbXSwiZGV2aWNlIjoid2ViIiwic2ZDcmVhdGVkQXQiOjE3MjQ0MjAyMjYsImlzVmVyaWZpZWQiOmZhbHNlLCJ1c2VyUm9sZXMiOnt9LCJpYXQiOjE3MjQ0MjAyMjYsImV4cCI6MTcyODMwODIyNn0.MxdBWjtyMlqy4mp78rQf1PWEjnxb9tSB586CN0kjUqc"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Securedapi",
-      "url": "https://securedapi.confirmtkt.com/api/platform/registerOutput?mobileNumber=${target}&newOtp=true&retry=false&testparamsp=true",
-      "method": "GET",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Apigate",
-      "url": "https://apigate.abfrl.in/otp",
-      "method": "POST",
-      "headers": {
-        "devicetype": "desktop"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Unacademy",
-      "url": "https://unacademy.com/api/v3/user/user_check/?enable-email=true",
-      "method": "POST",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Jio",
-      "url": "https://www.jio.com/api/jio-login-service/login/sendOtp",
-      "method": "POST",
-      "headers": {
-        "Accept": "*/*",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0"
-      },
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Xfers",
-      "url": "https://www.xfers.com",
-      "method": "POST",
-      "headers": {},
-      "source": "github:tbomb-fork"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.pateh.com/api/v1/LoginOrRegister",
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/sophie-jentic/openapi-specs/refs/heads/import-jentic-pr-specs/mojoauth.com/mojoauth-api/1.0.0/openapi.json",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.snapp.market/mart/v1/user/loginMobileWithNoPass?cellphone=0",
+      "url": "https://api.mojoauth.com/v1",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Khanoumi",
-      "url": "https://www.khanoumi.com/accounts/sendotp",
+      "name": "Mojoauth",
+      "url": "https://mojoauth.com",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Shab",
-      "url": "https://www.shab.ir/api/fa/sandbox/v_1_4/auth/enter-mobile",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "My",
-      "url": "https://my.limoome.com/api/auth/login/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Core",
-      "url": "https://core.snapp.doctor/Api/Common/v1/sendVerificationCode/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Gateway",
-      "url": "https://gateway.trip.ir/api/Totp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Khodro45",
-      "url": "https://khodro45.com/api/v1/customers/otp/s",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Drdr",
-      "url": "https://drdr.ir/api/v3/auth/login/mobile/init",
+      "name": "Github",
+      "url": "https://github.com/jentic/jentic-public-apis/tree/main/apis/openapi/authy.com/main/1.0.0",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -1254,8 +1032,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Github",
-      "url": "https://github.com/jentic/jentic-public-apis/tree/main/apis/openapi/authy.com/main/1.0.0",
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/jentic/jentic-public-apis/refs/heads/main/apis/openapi/authy.com/main/1.0.0/apis.json",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -1270,13 +1048,6 @@
     {
       "name": "Api",
       "url": "https://api.authy.com",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Raw",
-      "url": "https://raw.githubusercontent.com/jentic/jentic-public-apis/refs/heads/main/apis/openapi/authy.com/main/1.0.0/apis.json",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -2769,134 +2540,8 @@
       "source": "github:tbomb-fork"
     },
     {
-      "name": "Feeclouds",
-      "url": "https://www.feeclouds.com/homepage/register/send",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Jrh",
-      "url": "https://jrh.financeun.com/Login/sendMessageCode3.html",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Pdf",
-      "url": "https://pdf.kfsafe.cn/sms/phone/code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Callphone",
-      "url": "https://callphone.hnczkj.cn/app_api/json/sendSms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "End",
-      "url": "https://end.huajuetech.com/api/sendCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Erp",
-      "url": "https://erp.abiz.com/mobilecode/sendMobileCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "V1",
-      "url": "https://v1.alphazone-data.cn/academy/api/v1/sendsms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Mall",
-      "url": "https://mall.yancais.com/api/sms/send",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Sso",
-      "url": "http://sso.rcsd.cn/regist/getVerifyCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Reg",
-      "url": "https://reg.ztgame.com/common/sendmpcode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Maiwe",
-      "url": "https://www.maiwe.com.cn/index/sendcode.html",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Dycharts",
-      "url": "https://dycharts.com/vis/auth/send_signin_sms_code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Tmsf",
-      "url": "http://www.tmsf.com/mem/WebMemLoginAction_saveMemMobileCodeImg.jspx",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Cuour",
-      "url": "http://www.cuour.org/edu_cloud/sms_send",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Brand",
-      "url": "https://brand.yunbeilou.com/index.php/smssend",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Renrendoc",
-      "url": "https://www.renrendoc.com/Reg.aspx/GetUserSMSCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Sdjn-Web",
-      "url": "https://sdjn-web.yxlearning.com/sendphoneCode.gson",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Maker",
-      "url": "http://maker.haier.net/client/user/sendregistervcode.html",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
       "name": "Api",
-      "url": "http://api.welove520.com/v5/account/phone/verifyCode/send",
+      "url": "https://api.gzxyld.cn/HuiEbid/HuiEbidServer/doSendSms/getSms",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -2909,50 +2554,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "0101Ssd",
-      "url": "https://www.0101ssd.com/user/sendmsg",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "http://api.hndyjyfw.gov.cn/djapi/mobileVerify",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Guhai",
-      "url": "https://www.guhai.com.cn/front/member/sendSmsCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Lll",
-      "url": "http://www.lll.plus/sendCode/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Grzx",
-      "url": "https://grzx.brily.cn/api/utils/sendSmsCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Baodingyun",
-      "url": "https://baodingyun.com.cn/register/send_registerSMS.html",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Jssnd",
-      "url": "https://jssnd.edu.cn/apiu/v1/register/auth",
+      "name": "Cloud",
+      "url": "https://cloud.666idc.com/index/login/sendsms.html",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -2965,57 +2568,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Csff",
-      "url": "https://csff.cutv.com/wapi/users/sendregcode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Yae920",
-      "url": "https://yae920.com/login/sendSMS",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Account",
-      "url": "https://account.coolapk.com/auth/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.gzxyld.cn/HuiEbid/HuiEbidServer/doSendSms/getSms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Uc",
-      "url": "https://uc.csdhe.com/v1/sms/send",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bugbank",
-      "url": "https://www.bugbank.cn/api/verifymobile",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Elove",
-      "url": "https://elove.darryring.com/api/crm/newGwLogin/getSMSValidCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ut7",
-      "url": "http://ut7.whu.edu.cn/Home/studentCommon/Student_getVerifyCode",
+      "name": "Codeseeding",
+      "url": "https://www.codeseeding.com/loginUser/toSend",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3028,78 +2582,22 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Dss",
-      "url": "https://dss.xiaoyezi.com/student_app/auth/validate_code",
+      "name": "Maker",
+      "url": "http://maker.haier.net/client/user/sendregistervcode.html",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Codeseeding",
-      "url": "https://www.codeseeding.com/loginUser/toSend",
+      "name": "Sso",
+      "url": "http://sso.rcsd.cn/regist/getVerifyCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Id",
-      "url": "http://id.lejiaolexue.com/api/sendvericode.ashx",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Biz",
-      "url": "https://biz.caiyunapp.com/v1/send_sms_code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Decathlon",
-      "url": "https://www.decathlon.com.cn/zh/ajax/rest/model/atg/userprofiling/ProfileActor/send-mobile-verification-code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Main",
-      "url": "http://main.jiajiaozaixian.com//reginfo/sendRankByMobileReginfo.action",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Account-Box",
-      "url": "https://account-box.onethingpcs.com/xluser.core.login/v3/sendsms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.hetao101.com/login/v2/account/oauth/verifyCode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ztestin",
-      "url": "https://www.ztestin.com/users/send/vercode",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Cloud",
-      "url": "https://cloud.666idc.com/index/login/sendsms.html",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Mallapi",
-      "url": "https://mallapi.yofogo.com/biz-mall-application/v1/user/verifyCode/getVerifyCode",
+      "name": "Uc",
+      "url": "https://uc.csdhe.com/v1/sms/send",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3112,22 +2610,43 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Tiantang",
-      "url": "http://tiantang.mogencloud.com/web/api/login/code",
+      "name": "Cuour",
+      "url": "http://www.cuour.org/edu_cloud/sms_send",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Gm5",
-      "url": "http://www.gm5.com/auth/registerSms.html",
+      "name": "Mallapi",
+      "url": "https://mallapi.yofogo.com/biz-mall-application/v1/user/verifyCode/getVerifyCode",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Clssn",
-      "url": "https://www.clssn.com/jhxtapi/web/Login/sendSmsCode",
+      "name": "Ut7",
+      "url": "http://ut7.whu.edu.cn/Home/studentCommon/Student_getVerifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "http://api.hndyjyfw.gov.cn/djapi/mobileVerify",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Account-Box",
+      "url": "https://account-box.onethingpcs.com/xluser.core.login/v3/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Biz",
+      "url": "https://biz.caiyunapp.com/v1/send_sms_code",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3140,6 +2659,48 @@
       "source": "telegram:rss"
     },
     {
+      "name": "Sdjn-Web",
+      "url": "https://sdjn-web.yxlearning.com/sendphoneCode.gson",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mall",
+      "url": "https://mall.yancais.com/api/sms/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dycharts",
+      "url": "https://dycharts.com/vis/auth/send_signin_sms_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Csff",
+      "url": "https://csff.cutv.com/wapi/users/sendregcode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Erp",
+      "url": "https://erp.abiz.com/mobilecode/sendMobileCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Decathlon",
+      "url": "https://www.decathlon.com.cn/zh/ajax/rest/model/atg/userprofiling/ProfileActor/send-mobile-verification-code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Sso",
       "url": "http://sso.mwr.cn/suserRegister/verifyAccountAndphone.action",
       "method": "POST",
@@ -3147,8 +2708,218 @@
       "source": "telegram:rss"
     },
     {
+      "name": "Main",
+      "url": "http://main.jiajiaozaixian.com//reginfo/sendRankByMobileReginfo.action",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Id",
+      "url": "http://id.lejiaolexue.com/api/sendvericode.ashx",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Bugbank",
+      "url": "https://www.bugbank.cn/api/verifymobile",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "End",
+      "url": "https://end.huajuetech.com/api/sendCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Clssn",
+      "url": "https://www.clssn.com/jhxtapi/web/Login/sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Lll",
+      "url": "http://www.lll.plus/sendCode/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Maiwe",
+      "url": "https://www.maiwe.com.cn/index/sendcode.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tiantang",
+      "url": "http://tiantang.mogencloud.com/web/api/login/code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Renrendoc",
+      "url": "https://www.renrendoc.com/Reg.aspx/GetUserSMSCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Brand",
+      "url": "https://brand.yunbeilou.com/index.php/smssend",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "http://api.welove520.com/v5/account/phone/verifyCode/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Account",
+      "url": "https://account.coolapk.com/auth/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Elove",
+      "url": "https://elove.darryring.com/api/crm/newGwLogin/getSMSValidCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tmsf",
+      "url": "http://www.tmsf.com/mem/WebMemLoginAction_saveMemMobileCodeImg.jspx",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Callphone",
+      "url": "https://callphone.hnczkj.cn/app_api/json/sendSms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Baodingyun",
+      "url": "https://baodingyun.com.cn/register/send_registerSMS.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Grzx",
+      "url": "https://grzx.brily.cn/api/utils/sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Sdta-Web",
       "url": "https://sdta-web.yxlearning.com/sendphoneCode.gson",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Ztestin",
+      "url": "https://www.ztestin.com/users/send/vercode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Feeclouds",
+      "url": "https://www.feeclouds.com/homepage/register/send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dss",
+      "url": "https://dss.xiaoyezi.com/student_app/auth/validate_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Jrh",
+      "url": "https://jrh.financeun.com/Login/sendMessageCode3.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Reg",
+      "url": "https://reg.ztgame.com/common/sendmpcode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pdf",
+      "url": "https://pdf.kfsafe.cn/sms/phone/code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "V1",
+      "url": "https://v1.alphazone-data.cn/academy/api/v1/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Jssnd",
+      "url": "https://jssnd.edu.cn/apiu/v1/register/auth",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.hetao101.com/login/v2/account/oauth/verifyCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "0101Ssd",
+      "url": "https://www.0101ssd.com/user/sendmsg",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Guhai",
+      "url": "https://www.guhai.com.cn/front/member/sendSmsCode",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gm5",
+      "url": "http://www.gm5.com/auth/registerSms.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Yae920",
+      "url": "https://yae920.com/login/sendSMS",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3162,7 +2933,7 @@
     },
     {
       "name": "Api",
-      "url": "https://api.paystack.co/transfer/disable_otp_finalize",
+      "url": "https://api.paystack.co/paymentrequest/verify/ID_OR_CODE",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3176,14 +2947,28 @@
     },
     {
       "name": "Api",
-      "url": "https://api.paystack.co/transaction/charge_authorization",
+      "url": "https://api.paystack.co/transfer/enable_otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.paystack.co/customer/deactivate_authorization",
+      "url": "https://api.paystack.co/transfer/disable_otp_finalize",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transaction/check_authorization",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.paystack.co/transaction/charge_authorization",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3197,49 +2982,7 @@
     },
     {
       "name": "Api",
-      "url": "https://api.paystack.co/transfer/enable_otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.paystack.co/paymentrequest/verify/ID_OR_CODE",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.paystack.co/transaction/check_authorization",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "En",
-      "url": "https://en.wikipedia.org/wiki/Digest_access_authentication",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Postman-Echo",
-      "url": "https://postman-echo.com/digest-auth",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Oauth",
-      "url": "http://oauth.net/core/1.0a/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Postman-Echo",
-      "url": "https://postman-echo.com/auth/hawk",
+      "url": "https://api.paystack.co/customer/deactivate_authorization",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3259,13 +3002,6 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Echo",
-      "url": "https://echo.getpostman.com/auth/hawk",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
       "name": "En",
       "url": "https://en.wikipedia.org/wiki/Basic_access_authentication",
       "method": "POST",
@@ -3274,7 +3010,42 @@
     },
     {
       "name": "Postman-Echo",
+      "url": "https://postman-echo.com/auth/hawk",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Postman-Echo",
       "url": "https://postman-echo.com/oauth1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Oauth",
+      "url": "http://oauth.net/core/1.0a/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "En",
+      "url": "https://en.wikipedia.org/wiki/Digest_access_authentication",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Postman-Echo",
+      "url": "https://postman-echo.com/digest-auth",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Echo",
+      "url": "https://echo.getpostman.com/auth/hawk",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3294,162 +3065,8 @@
       "source": "github:tbomb-fork"
     },
     {
-      "name": "Api",
-      "url": "https://api.delitime.ru/api/v2/signup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ajio",
-      "url": "https://www.ajio.com/api/auth/signIn",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Allensolly",
-      "url": "https://www.allensolly.com/capillarylogin/validateMobileOrEMail",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "T",
-      "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Qlean",
-      "url": "https://qlean.ru/clients-api/v2/sms_codes/auth/request_code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Gapoon",
-      "url": "https://www.gapoon.com/userSignup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
       "name": "3Via",
       "url": "https://3via.ly/api/client/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Youla",
-      "url": "https://youla.ru/web-api/auth/request_code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Treebo",
-      "url": "https://www.treebo.com/api/v2/auth/login/otp/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.gotinder.com/v2/auth/sms/send",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Zoomcar",
-      "url": "https://www.zoomcar.com/api/v2/users/login-or-signup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Discord",
-      "url": "https://discord.com/api/v9/auth/register",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Mobile-Api",
-      "url": "https://mobile-api.qiwi.com/oauth/authorize",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Commonfront",
-      "url": "https://commonfront.paytm.com/v4/api/sendsms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "M",
-      "url": "https://m.redbus.in/api/getOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Book",
-      "url": "https://book.olacabs.com/data-layer/v1/auth/signup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.magicbricks.com/bricks/verifyOnCall.html",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Online",
-      "url": "https://online.kfc.co.in/OTP/ResendOTPToPhoneForLogin",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Snapdeal",
-      "url": "https://www.snapdeal.com/sendOTP",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Cityflo",
-      "url": "https://cityflo.com/website-app-download-link-sms/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Happyeasygo",
-      "url": "https://www.happyeasygo.com/heg_api/user/sendRegisterOTP.do",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Bekam",
-      "url": "https://bekam.ly/api/client/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Login",
-      "url": "https://login.web.ajio.com/api/auth/signupSendOTP",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3462,78 +3079,22 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Careers360",
-      "url": "https://www.careers360.com/ajax/no-cache/user/otp-send",
+      "name": "M",
+      "url": "https://m.redbus.in/api/getOtp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/api/pwa/generate_otp",
+      "name": "Cityflo",
+      "url": "https://cityflo.com/website-app-download-link-sms/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Frotels",
-      "url": "https://www.frotels.com/appsendsms.php",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Icq",
-      "url": "https://www.icq.com/smsreg/requestPhoneValidation.php",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Lingo",
-      "url": "https://lingo.ly/api/client/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Online",
-      "url": "https://online.kfc.co.in/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Box8",
-      "url": "https://box8.in/users/v2/send_otp.json",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Porter",
-      "url": "https://porter.in/restservice/send_app_link_sms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Member",
-      "url": "https://member.daraz.com.np/user/api/sendVerificationSms",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Backend",
-      "url": "https://backend.clamphook.com//auth/register",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Pharmeasy",
-      "url": "https://pharmeasy.in/api/auth/requestOTP",
+      "name": "Api",
+      "url": "https://api.gotinder.com/v2/auth/sms/send",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3546,6 +3107,34 @@
       "source": "telegram:rss"
     },
     {
+      "name": "Lingo",
+      "url": "https://lingo.ly/api/client/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Mobile-Api",
+      "url": "https://mobile-api.qiwi.com/oauth/authorize",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Treebo",
+      "url": "https://www.treebo.com/api/v2/auth/login/otp/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Online",
+      "url": "https://online.kfc.co.in/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Makaan",
       "url": "https://www.makaan.com/apis/nc/sendOtpOnCall/16257065/",
       "method": "POST",
@@ -3553,64 +3142,197 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Firstpost",
-      "url": "http://www.firstpost.com/world/authorities-in-sri-lanka-maintain-tight-vigil-as-kandy-seeks-return-to-normalcy-days-after-sectarian-violence-4384643.html",
+      "name": "Discord",
+      "url": "https://discord.com/api/v9/auth/register",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Akm-Img-A-In",
-      "url": "https://akm-img-a-in.tosshub.com/indiatoday/images/story/201803/moumita_saha_1.jpeg?fug5l3tgD1mlQZQm_Ffwg3lOTpC1w9yh",
+      "name": "Member",
+      "url": "https://member.daraz.com.np/user/api/sendVerificationSms",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Instagram",
-      "url": "https://instagram.fptp2-1.fna.fbcdn.net/v/t51.71878-15/654471503_953076813838965_7915279390383840701_n.jpg?stp=dst-jpg_e15_tt6&_nc_ht=instagram.fptp2-1.fna.fbcdn.net&_nc_cat=109&_nc_oc=Q6cZ2gFuQCZt0UARoOB0Xe0TDFQPorFazufJmlNHauSd2yvLgMj0ieOP51s4GquCZjanmjo&_nc_ohc=JEfMduEW8DYQ7kNvwGKL2TB&_nc_gid=QhY8OARibuw1GsCGeTVfiQ&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfxSgrLui7XX_BKmdLhHGAV1X-q9OTpNBFsmKKKi4tBQdQ&oe=69CFD37A&_nc_sid=8b3546",
+      "name": "Online",
+      "url": "https://online.kfc.co.in/OTP/ResendOTPToPhoneForLogin",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Api-3Cdad91C-1E0D-4A0D-Bbee-9671988Bf9E9",
-      "url": "https://api-3cdad91c-1e0d-4a0d-bbee-9671988bf9e9.sendbird.com/v3",
+      "name": "Ajio",
+      "url": "https://www.ajio.com/api/auth/signIn",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Lh3",
-      "url": "https://lh3.googleusercontent.com/BMvxPb9RF9F-qz68PAIIrROTp7G352oNEzZWmmT-H1YXSgf2Id33oQBssFYnPL52KwiyFgYY1pSInpEVrhrx1OViFQ=s0",
+      "name": "Qlean",
+      "url": "https://qlean.ru/clients-api/v2/sms_codes/auth/request_code",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Numverify",
-      "url": "https://numverify.com",
+      "name": "Api",
+      "url": "https://api.magicbricks.com/bricks/verifyOnCall.html",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Mojoauth",
-      "url": "https://mojoauth.com",
+      "name": "T",
+      "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Tredict",
-      "url": "https://www.tredict.com/blog/oauth_docs/",
+      "name": "Login",
+      "url": "https://login.web.ajio.com/api/auth/signupSendOTP",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Docs",
-      "url": "https://docs.sendgrid.com/api-reference/",
+      "name": "Bekam",
+      "url": "https://bekam.ly/api/client/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Frotels",
+      "url": "https://www.frotels.com/appsendsms.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.delitime.ru/api/v2/signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Happyeasygo",
+      "url": "https://www.happyeasygo.com/heg_api/user/sendRegisterOTP.do",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Book",
+      "url": "https://book.olacabs.com/data-layer/v1/auth/signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Box8",
+      "url": "https://box8.in/users/v2/send_otp.json",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Pharmeasy",
+      "url": "https://pharmeasy.in/api/auth/requestOTP",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Commonfront",
+      "url": "https://commonfront.paytm.com/v4/api/sendsms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Youla",
+      "url": "https://youla.ru/web-api/auth/request_code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Oyorooms",
+      "url": "https://www.oyorooms.com/api/pwa/generate_otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Allensolly",
+      "url": "https://www.allensolly.com/capillarylogin/validateMobileOrEMail",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Careers360",
+      "url": "https://www.careers360.com/ajax/no-cache/user/otp-send",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.dream11.com/sendsmslink",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Zoomcar",
+      "url": "https://www.zoomcar.com/api/v2/users/login-or-signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Icq",
+      "url": "https://www.icq.com/smsreg/requestPhoneValidation.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Snapdeal",
+      "url": "https://www.snapdeal.com/sendOTP",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Backend",
+      "url": "https://backend.clamphook.com//auth/register",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Porter",
+      "url": "https://porter.in/restservice/send_app_link_sms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Swiggy",
+      "url": "https://www.swiggy.com/dapi/auth/sms-otp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Gapoon",
+      "url": "https://www.gapoon.com/userSignup",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3623,8 +3345,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Disqus",
-      "url": "https://disqus.com/api/docs/auth/",
+      "name": "Developers",
+      "url": "https://developers.sendinblue.com/docs",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3637,15 +3359,43 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Developers",
-      "url": "https://developers.sendinblue.com/docs",
+      "name": "Disqus",
+      "url": "https://disqus.com/api/docs/auth/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Kotputlilaweducationapi",
-      "url": "https://kotputlilaweducationapi.classx.co.in",
+      "name": "Docs",
+      "url": "https://docs.sendgrid.com/api-reference/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Numverify",
+      "url": "https://numverify.com",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Akm-Img-A-In",
+      "url": "https://akm-img-a-in.tosshub.com/indiatoday/images/story/201803/moumita_saha_1.jpeg?fug5l3tgD1mlQZQm_Ffwg3lOTpC1w9yh",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Firstpost",
+      "url": "http://www.firstpost.com/world/authorities-in-sri-lanka-maintain-tight-vigil-as-kandy-seeks-return-to-normalcy-days-after-sectarian-violence-4384643.html",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Tredict",
+      "url": "https://www.tredict.com/blog/oauth_docs/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -3672,6 +3422,20 @@
       "source": "telegram:rss"
     },
     {
+      "name": "Kotputlilaweducationapi",
+      "url": "https://kotputlilaweducationapi.classx.co.in",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Raw",
+      "url": "https://raw.githubusercontent.com/streamdata-gallery-topics/streamrank/master/_listings/sendgrid/apis.yaml",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Kinlane-Productions",
       "url": "http://kinlane-productions.s3.amazonaws.com/screen-capture-api/142-sendgrid.jpg",
       "method": "POST",
@@ -3681,13 +3445,6 @@
     {
       "name": "Raw",
       "url": "https://raw.githubusercontent.com/streamdata-gallery-topics/streamrank/master/_listings/sendgrid/openapi.md",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Raw",
-      "url": "https://raw.githubusercontent.com/streamdata-gallery-topics/streamrank/master/_listings/sendgrid/apis.yaml",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5415,15 +5172,15 @@
       "source": "github:tbomb-fork"
     },
     {
-      "name": "Flipkart",
-      "url": "https://www.flipkart.com/api/6/user/signup/status",
+      "name": "Ajio",
+      "url": "https://www.ajio.com/signup",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Apollopharmacy",
-      "url": "https://www.apollopharmacy.in/sociallogin/mobile/login/",
+      "name": "Direct",
+      "url": "https://direct.delhivery.com/delhiverydirect/order/generate-otp?phoneNo=",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5436,29 +5193,15 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Marketing",
-      "url": "https://marketing.tllms.com/elearn/api/v4/authentications/phone_call",
+      "name": "Apollopharmacy",
+      "url": "https://www.apollopharmacy.in/sociallogin/mobile/sendotp/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Goibibo",
-      "url": "https://www.goibibo.com/mobile/?sms=success",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Myupchar",
-      "url": "https://www.myupchar.com/user_profile/resend_otp_via_voice?id=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "M",
-      "url": "https://m.pizzahut.co.in/api/cart/send-otp?langCode=en",
+      "name": "Aala",
+      "url": "https://www.aala.com/accustomer/ajax/getOTP",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5472,49 +5215,7 @@
     },
     {
       "name": "M",
-      "url": "https://m.pizzahut.co.in/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.magicbricks.com/bricks/verifyOnCall.html?mobile=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Accounts",
-      "url": "https://accounts.practo.com/send_otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.grab.com/grabid/v1/phone/otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Ajio",
-      "url": "https://www.ajio.com/signup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/api/pwa/generateotp?country_code=%2B",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Apollopharmacy",
-      "url": "https://www.apollopharmacy.in/sociallogin/mobile/sendotp/",
+      "url": "https://m.pizzahut.co.in/api/cart/send-otp?langCode=en",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5527,6 +5228,20 @@
       "source": "telegram:rss"
     },
     {
+      "name": "Oyorooms",
+      "url": "https://www.oyorooms.com/api/pwa/generateotp?country_code=%2B",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Marketing",
+      "url": "https://marketing.tllms.com/elearn/api/v4/authentications/phone_call",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Goibibo",
       "url": "https://www.goibibo.com/common/downloadsms/",
       "method": "POST",
@@ -5534,141 +5249,57 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Direct",
-      "url": "https://direct.delhivery.com/delhiverydirect/order/generate-otp?phoneNo=",
+      "name": "Accounts",
+      "url": "https://accounts.practo.com/send_otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Aala",
-      "url": "https://www.aala.com/accustomer/ajax/getOTP",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Fiewin",
-      "url": "https://www.fiewin.com/fiewin/api/user/sms",
+      "name": "Apollopharmacy",
+      "url": "https://www.apollopharmacy.in/sociallogin/mobile/login/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Api",
-      "url": "https://api.dominos.co.in/loginhandler/forgotpassword",
+      "url": "https://api.grab.com/grabid/v1/phone/otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Cs-India",
-      "url": "https://cs-india.coinswitch.co/auth/api/v1/init/auth",
+      "name": "Flipkart",
+      "url": "https://www.flipkart.com/api/6/user/signup/status",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "M",
-      "url": "https://m.dominos.co.in/login",
+      "url": "https://m.pizzahut.co.in/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Gradeup",
-      "url": "https://gradeup.co/online-test-series-ssc-cgl?openLogin=y",
+      "name": "Myupchar",
+      "url": "https://www.myupchar.com/user_profile/resend_otp_via_voice?id=",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Abhibus",
-      "url": "https://www.abhibus.com/sendOtp",
+      "name": "Goibibo",
+      "url": "https://www.goibibo.com/mobile/?sms=success",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Magicpin",
-      "url": "https://magicpin.in/samapi/users/get-otp-via-call/",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Careers360",
-      "url": "https://www.careers360.com/user/otp-verify/0405ac328d58dbbc41444a2dba7f6e01?destination=&click_location=header&google_success=header",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Aakash",
-      "url": "https://www.aakash.ac.in/signup-otp-verify",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Dineout",
-      "url": "https://www.dineout.co.in/xhr-request/user_signup",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "1Mg",
-      "url": "https://www.1mg.com/auth_api/v4/create_token",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "T",
-      "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php?mobile=",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Abhibus",
-      "url": "https://www.abhibus.com/otp/getOtpOnCall",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Services",
-      "url": "https://services.mcdelivery.co.in/api/auth/sendotp?isLoggedIn=false&businessModelID=18&storeID=1",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Webapi",
-      "url": "https://webapi.gradeup.co/user/verify/sendOtp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Nykaafashion",
-      "url": "https://www.nykaafashion.com/authorization?authPage=sign-up-mobile&redirectURL=%2F",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Eatsure",
-      "url": "https://www.eatsure.com/v1/api/send_otp",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/login/",
+      "name": "Api",
+      "url": "https://api.magicbricks.com/bricks/verifyOnCall.html?mobile=",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5688,29 +5319,85 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Code",
-      "url": "https://code.whitehatjr.com/api/V1/otp/generate?deviceId=ea418d86-07e1-4005-b942-11160d91ac4e&timezone=Asia%2FCalcutta&trackingCode=trackingCode%7CAB-34-V-A%7CAB-38-V-A%7CAB-16-V-A%7CAB-29-V-B%7CAB-24-V-C%7CAB-11-V-B%7CAB-33-V-A%7CAB-20-V-C%7CAB-11136-V-A%7CAB-15-V-A%7CAB-28-V-B%7CAB-10-V-B%7CAB-11135-V-A%7CAB-37-V-A%7CAB-23-V-C%7CAB-19-V-A%7CAB-14-V-B%7CAB-27-V-B%7CAB-9-V-B%7CAB-32-V-A%7CAB-11134-V-A%7CAB-22-V-B%7CAB-13-V-B%7CAB-26-V-B%7CAB-7-V-B%7CAB-31-V-A%7CAB-18-V-A%7CAB-11133-V-A%7CAB-25-V-B%7CAB-21-V-C%7CAB-17-V-B%7CAB-41-V-A&regionId=IN&courseType=CODING&brandId=whitehatjr&timestamp=1624504990983",
+      "name": "Cs-India",
+      "url": "https://cs-india.coinswitch.co/auth/api/v1/init/auth",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Magicpin",
-      "url": "https://magicpin.in/samapi/users/get-otp/",
+      "name": "M",
+      "url": "https://m.dominos.co.in/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "V1",
+      "url": "https://v1.titaneyeplus.com/customer/account/login",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Abhibus",
+      "url": "https://www.abhibus.com/otp/getOtpOnCall",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Careers360",
+      "url": "https://www.careers360.com/user/otp-verify/0405ac328d58dbbc41444a2dba7f6e01?destination=&click_location=header&google_success=header",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "T",
+      "url": "https://t.justdial.com/api/india_api_write/18july2018/sendvcode.php?mobile=",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "M",
+      "url": "https://m.netmeds.com/customer/account/login",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "Oyorooms",
-      "url": "https://www.oyorooms.com/api/pwa/generateotp?locale=en",
+      "url": "https://www.oyorooms.com/login/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "Nykaafashion",
-      "url": "https://www.nykaafashion.com/webscripts/api/otp/generate",
+      "name": "Gradeup",
+      "url": "https://gradeup.co/online-test-series-ssc-cgl?openLogin=y",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Dineout",
+      "url": "https://www.dineout.co.in/xhr-request/user_signup",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Auth",
+      "url": "https://auth.mygov.in/user/register?destination=oauth2/register/mygovweb",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Eatsure",
+      "url": "https://www.eatsure.com/v1/api/send_otp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5723,6 +5410,20 @@
       "source": "telegram:rss"
     },
     {
+      "name": "1Mg",
+      "url": "https://www.1mg.com/pharmacy_api_gateway/v4/otp_call",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Nykaafashion",
+      "url": "https://www.nykaafashion.com/authorization?authPage=sign-up-mobile&redirectURL=%2F",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
       "name": "Testbook",
       "url": "https://testbook.com/login?tile=signup&modal=true&base_url=%2Flogin&redirect_url=%2Flogin",
       "method": "POST",
@@ -5730,8 +5431,50 @@
       "source": "telegram:rss"
     },
     {
-      "name": "V1",
-      "url": "https://v1.titaneyeplus.com/customer/account/login",
+      "name": "Api",
+      "url": "https://api.dominos.co.in/loginhandler/forgotpassword",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Onlinetestseries",
+      "url": "https://www.onlinetestseries.in/common/ajax-login-signup/voice-call-mobile-verification-code",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Code",
+      "url": "https://code.whitehatjr.com/api/V1/otp/generate?deviceId=ea418d86-07e1-4005-b942-11160d91ac4e&timezone=Asia%2FCalcutta&trackingCode=trackingCode%7CAB-34-V-A%7CAB-38-V-A%7CAB-16-V-A%7CAB-29-V-B%7CAB-24-V-C%7CAB-11-V-B%7CAB-33-V-A%7CAB-20-V-C%7CAB-11136-V-A%7CAB-15-V-A%7CAB-28-V-B%7CAB-10-V-B%7CAB-11135-V-A%7CAB-37-V-A%7CAB-23-V-C%7CAB-19-V-A%7CAB-14-V-B%7CAB-27-V-B%7CAB-9-V-B%7CAB-32-V-A%7CAB-11134-V-A%7CAB-22-V-B%7CAB-13-V-B%7CAB-26-V-B%7CAB-7-V-B%7CAB-31-V-A%7CAB-18-V-A%7CAB-11133-V-A%7CAB-25-V-B%7CAB-21-V-C%7CAB-17-V-B%7CAB-41-V-A&regionId=IN&courseType=CODING&brandId=whitehatjr&timestamp=1624504990983",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "User",
+      "url": "https://user.vedantu.com/user/preLoginVerification",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Services",
+      "url": "https://services.mcdelivery.co.in/api/auth/sendotp?isLoggedIn=false&businessModelID=18&storeID=1",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.jeet11.com/account-service/external/v1.0.0/sendOtp",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Oyorooms",
+      "url": "https://www.oyorooms.com/api/pwa/generateotp?locale=en",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5751,50 +5494,22 @@
       "source": "telegram:rss"
     },
     {
-      "name": "M",
-      "url": "https://m.netmeds.com/customer/account/login",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.jeet11.com/account-service/external/v1.0.0/sendOtp",
+      "name": "Webapi",
+      "url": "https://webapi.gradeup.co/user/verify/sendOtp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
       "name": "1Mg",
-      "url": "https://www.1mg.com/pharmacy_api_gateway/v4/otp_call",
+      "url": "https://www.1mg.com/auth_api/v4/create_token",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
     },
     {
-      "name": "User",
-      "url": "https://user.vedantu.com/user/preLoginVerification",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Onlinetestseries",
-      "url": "https://www.onlinetestseries.in/common/ajax-login-signup/voice-call-mobile-verification-code",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Auth",
-      "url": "https://auth.mygov.in/user/register?destination=oauth2/register/mygovweb",
-      "method": "POST",
-      "headers": {},
-      "source": "telegram:rss"
-    },
-    {
-      "name": "Api",
-      "url": "https://api.testbook.com/api/v2/mobile/signup?mobile=",
+      "name": "Abhibus",
+      "url": "https://www.abhibus.com/sendOtp",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5807,8 +5522,43 @@
       "source": "telegram:rss"
     },
     {
-      "name": "Client-Api",
-      "url": "https://client-api.goomo.com/v2/phone_confirmation/verify_user",
+      "name": "Nykaafashion",
+      "url": "https://www.nykaafashion.com/webscripts/api/otp/generate",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Fiewin",
+      "url": "https://www.fiewin.com/fiewin/api/user/sms",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Api",
+      "url": "https://api.testbook.com/api/v2/mobile/signup?mobile=",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Aakash",
+      "url": "https://www.aakash.ac.in/signup-otp-verify",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Magicpin",
+      "url": "https://magicpin.in/samapi/users/get-otp/",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "Magicpin",
+      "url": "https://magicpin.in/samapi/users/get-otp-via-call/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5821,8 +5571,8 @@
       "source": "telegram:rss"
     },
     {
-      "name": "M",
-      "url": "https://m.netmeds.com/sociallogin/popup/nmsgetcode/",
+      "name": "Client-Api",
+      "url": "https://client-api.goomo.com/v2/phone_confirmation/verify_user",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
@@ -5830,6 +5580,13 @@
     {
       "name": "Oriyamatrimony",
       "url": "https://www.oriyamatrimony.com/login/mobileappsms-homepage.php",
+      "method": "POST",
+      "headers": {},
+      "source": "telegram:rss"
+    },
+    {
+      "name": "M",
+      "url": "https://m.netmeds.com/sociallogin/popup/nmsgetcode/",
       "method": "POST",
       "headers": {},
       "source": "telegram:rss"
