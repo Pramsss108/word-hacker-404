@@ -42,6 +42,8 @@ https://screenrant.com/off-campus-prime-video-season-1-premiere-date/
 https://www.primevideo.com/detail/Off-Campus/0O6OCZ8V560XN2trLepD2MkMtA/
 https://www.elle.com/culture/movies-tv/a6000000/off-campus-season-2-release-date/
 
+---
+
 **Score on Zero Gpt-** 4.6%
 
 *(QA receipt — remove this line before publishing.)*
