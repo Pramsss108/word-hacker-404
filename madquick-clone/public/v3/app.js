@@ -533,25 +533,40 @@
     // Apply transition-delay from reveal--delay-N modifier.
     seen.forEach(function (el) {
       var m = el.className.match(/reveal--delay-(\d)/);
-      if (m) el.style.transitionDelay = parseInt(m[1], 10) * 90 + "ms";
+      if (m) el.style.setProperty("--reveal-enter-delay", parseInt(m[1], 10) * 90 + "ms");
     });
 
+    function show(target) {
+      if (target.classList.contains("is-visible")) return;
+      var epoch = (target.__revealEpoch || 0) + 1;
+      target.__revealEpoch = epoch;
+      target.classList.remove("motion-force-visible");
+      target.dataset.motionCycle = String((parseInt(target.dataset.motionCycle || "0", 10) || 0) + 1);
+      var section = target.closest("section, footer");
+      if (section) section.classList.add("motion-render-ready");
+      raf(function () {
+        raf(function () {
+          if (target.__revealEpoch !== epoch) return;
+          target.classList.add("is-visible");
+          win.setTimeout(function () {
+            if (target.__revealEpoch !== epoch || !target.classList.contains("is-visible")) return;
+            if (parseFloat(win.getComputedStyle(target).opacity) < 0.98) target.classList.add("motion-force-visible");
+          }, 1000);
+        });
+      });
+    }
+
+    function hide(target) {
+      if (!target.classList.contains("is-visible") && !target.classList.contains("motion-force-visible")) return;
+      target.__revealEpoch = (target.__revealEpoch || 0) + 1;
+      target.classList.remove("is-visible", "motion-force-visible");
+    }
+
     var io = new IntersectionObserver(
-      function (entries, obs) {
+      function (entries) {
         entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var target = entry.target;
-          var section = target.closest("section, footer");
-          if (section) section.classList.add("motion-render-ready");
-          raf(function () {
-            raf(function () {
-              target.classList.add("is-visible");
-              win.setTimeout(function () {
-                if (parseFloat(win.getComputedStyle(target).opacity) < 0.98) target.classList.add("motion-force-visible");
-              }, 1000);
-            });
-          });
-          obs.unobserve(target);
+          if (entry.isIntersecting) show(entry.target);
+          else hide(entry.target);
         });
       },
       { root: null, rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
@@ -1333,33 +1348,48 @@
       return;
     }
 
-    var io = new IntersectionObserver(function (entries, observer) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var target = entry.target;
-        var section = target.closest("section, footer");
-        if (section) section.classList.add("motion-render-ready");
+    function show(target) {
+      if (target.classList.contains("is-scene-visible")) return;
+      var epoch = (target.__sceneEpoch || 0) + 1;
+      target.__sceneEpoch = epoch;
+      target.classList.remove("motion-force-visible");
+      target.dataset.motionCycle = String((parseInt(target.dataset.motionCycle || "0", 10) || 0) + 1);
+      var section = target.closest("section, footer");
+      if (section) section.classList.add("motion-render-ready");
+      raf(function () {
         raf(function () {
-          raf(function () {
-            target.classList.add("is-scene-visible");
-            win.setTimeout(function () {
-              if (parseFloat(win.getComputedStyle(target).opacity) < 0.98) target.classList.add("motion-force-visible");
-            }, 1000);
-          });
+          if (target.__sceneEpoch !== epoch) return;
+          target.classList.add("is-scene-visible");
+          win.setTimeout(function () {
+            if (target.__sceneEpoch !== epoch || !target.classList.contains("is-scene-visible")) return;
+            if (parseFloat(win.getComputedStyle(target).opacity) < 0.98) target.classList.add("motion-force-visible");
+          }, 1000);
         });
-        observer.unobserve(target);
+      });
+    }
+
+    function hide(target) {
+      if (!target.classList.contains("is-scene-visible") && !target.classList.contains("motion-force-visible")) return;
+      target.__sceneEpoch = (target.__sceneEpoch || 0) + 1;
+      target.classList.remove("is-scene-visible", "motion-force-visible");
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) show(entry.target);
+        else hide(entry.target);
       });
     }, { root: null, rootMargin: "0px 0px -5% 0px", threshold: 0.06 });
 
     items.forEach(function (el) { io.observe(el); });
   }
 
-  /* Fast-scroll safety net. IntersectionObserver remains the primary engine;
-     this batched scroll check only handles browsers that report a skipped
-     content-visibility subtree too late. Reads happen first, writes on the
-     following frames, and completed elements drop out permanently. */
+  /* Fast-scroll safety net. The IntersectionObservers own entrance state;
+     this batched check only wakes nearby content-visibility sections. It must
+     never force a child visible, otherwise a late fallback can fight a clean
+     reverse-direction exit. */
   function initMotionScrollSafety() {
-    if (prefersReduced) return;
+    if (prefersReduced || !supportsIO) return;
     var roots = $all("#proof-numbers, .proof-evidence, #services, #work, #process, #about, #faq, #contact, .site-footer");
     if (!roots.length) return;
     var queued = false;
@@ -1377,29 +1407,6 @@
         });
         if (!near.length) return;
         near.forEach(function (root) { root.classList.add("motion-render-ready"); });
-        raf(function () {
-          var revealNow = [];
-          var sceneNow = [];
-          near.forEach(function (root) {
-            $all(".reveal:not(.is-visible), [data-split]:not(.is-visible)", root).forEach(function (el) {
-              var rect = el.getBoundingClientRect();
-              if (rect.bottom >= -40 && rect.top <= vh + 60) revealNow.push(el);
-            });
-            $all(".scene-enter:not(.is-scene-visible)", root).forEach(function (el) {
-              var rect = el.getBoundingClientRect();
-              if (rect.bottom >= -40 && rect.top <= vh + 60) sceneNow.push(el);
-            });
-          });
-          raf(function () {
-            revealNow.forEach(function (el) { el.classList.add("is-visible"); });
-            sceneNow.forEach(function (el) {
-              el.classList.add("is-scene-visible");
-              win.setTimeout(function () {
-                if (parseFloat(win.getComputedStyle(el).opacity) < 0.98) el.classList.add("motion-force-visible");
-              }, 1000);
-            });
-          });
-        });
       });
     });
   }
@@ -2857,6 +2864,53 @@
     });
   }
 
+  /* =========================================================================
+   * OPTIONAL WEBGPU ATMOSPHERE — Phase 4 decorative layer.
+   *    Loaded only behind ?gpu=1 on capable desktop browsers.
+   *    The CSS mood fields remain the guaranteed premium experience;
+   *    this module is purely optional art direction.
+   * ======================================================================= */
+  function initExperimentalWebGpuAtmosphere() {
+    var query;
+    try { query = new URLSearchParams(win.location.search); } catch (error) { query = null; }
+    if (!query || query.get("gpu") !== "1") {
+      docEl.dataset.webgpuAtmosphere = "off";
+      return;
+    }
+
+    var connection = win.navigator.connection || win.navigator.mozConnection || win.navigator.webkitConnection;
+    var mayTry = !!(
+      docEl.dataset.layout === "desktop" &&
+      win.isSecureContext &&
+      win.navigator.gpu &&
+      !prefersReduced &&
+      !doc.hidden &&
+      hasFinePointer &&
+      !(connection && connection.saveData)
+    );
+    if (!mayTry) {
+      docEl.dataset.webgpuAtmosphere = "unavailable";
+      return;
+    }
+
+    docEl.dataset.webgpuAtmosphere = "loading";
+    var load = function () {
+      import("/v3/webgpu-atmosphere.min.js?v=20260720a")
+        .then(function (module) {
+          return module.mountDesktopWebGpuAtmosphere({ document: doc, window: win });
+        })
+        .then(function (result) {
+          docEl.dataset.webgpuAtmosphere = result && result.enabled ? "active" : "fallback";
+        })
+        .catch(function () {
+          docEl.dataset.webgpuAtmosphere = "failed";
+        });
+    };
+
+    if ("requestIdleCallback" in win) win.requestIdleCallback(load, { timeout: 2000 });
+    else win.setTimeout(load, 400);
+  }
+
   function init() {
     // Critical structural/navigation work stays synchronous and small.
     normalizeNarrativeOrder();
@@ -2894,6 +2948,7 @@
         initMagnetic();
         /* initModernCursor disabled — native cursor is cleaner + no floating gold-dot artifact */
         initScrollSpy();
+        initExperimentalWebGpuAtmosphere();
       }, 0);
     });
   }

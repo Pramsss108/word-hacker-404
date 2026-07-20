@@ -75,7 +75,7 @@
   --glow-soft:     0 0 60px -10px rgba(216, 167, 62, 0.45);
 
   /* --- Typography --- */
-  --font-display:  "Syne", system-ui, sans-serif;
+  --font-display:  "Fraunces", "Fraunces Fallback", Georgia, serif;
   --font-body:     "Inter", system-ui, -apple-system, sans-serif;
 
   /* Fluid type scale */
@@ -241,6 +241,19 @@ p { text-wrap: pretty; }
   transition: opacity 1.2s var(--ease-out);
 }
 .bg__canvas.is-ready { opacity: 1; }
+/* Optional WebGPU atmosphere canvas — desktop-only, flag-gated (?gpu=1).
+   Sits behind grain + vignette. If the module fails or is absent, this rule
+   simply has no matching element and the CSS gradient remains the product. */
+.bg__gpu {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out);
+  pointer-events: none;
+}
+.bg__gpu.is-ready { opacity: 1; }
 /* Subtle film grain — masks gradient banding, adds richness */
 .bg__grain {
   position: absolute;
@@ -268,13 +281,14 @@ p { text-wrap: pretty; }
 .js .reveal {
   opacity: 0;
   transform: translateY(var(--reveal-shift));
-  will-change: opacity, transform;
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+  transition-delay: 0ms;
 }
 .reveal.is-visible {
   opacity: 1;
   transform: none;
-  transition: opacity var(--dur-slow) var(--ease-out),
-              transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--reveal-enter-delay, 0ms);
 }
 .reveal--delay-1.is-visible { transition-delay: 0.08s; }
 .reveal--delay-2.is-visible { transition-delay: 0.16s; }
@@ -287,13 +301,13 @@ p { text-wrap: pretty; }
 .js [data-split] .split__line {
   opacity: 0;
   transform: translateY(0.9em) rotate(2deg);
-  will-change: opacity, transform;
+  transition: opacity 0.6s var(--ease-out), transform 0.7s var(--ease-out);
+  transition-delay: 0ms;
 }
 [data-split].is-visible .split__word,
 [data-split].is-visible .split__line {
   opacity: 1;
   transform: none;
-  transition: opacity 0.6s var(--ease-out), transform 0.7s var(--ease-out);
   transition-delay: calc(var(--i, 0) * 0.06s);
 }
 
@@ -2863,7 +2877,7 @@ body { color: var(--text); }  /* (flat bg removed: foundation provides the premi
   justify-content: flex-end;
   min-height: 0;
   /* bleed the column toward the viewport edge for editorial drama */
-  margin-right: calc(var(--gutter) * -1);
+  margin-right: clamp(-60px, -3vw, -20px);
 }
 
 /* (1) Large blurred GOLD radial glow BEHIND head/shoulder */
@@ -6248,7 +6262,7 @@ html:not(.js) .work__narr{ min-height: 0; }
 html,body{ overflow-x:clip !important; }
 
 /* 2 · layout: container never clips; protect the cap-I left bearing */
-.hero__inner--editorial{ width:min(1200px, calc(100% - 56px)) !important; margin-inline:auto !important; }
+.hero__inner--editorial{ width:min(1440px, calc(100% - 48px)) !important; margin-inline:auto !important; }
 .hero__copy--editorial{ max-width:44rem !important; margin-left:0 !important; }
 .hero__title--editorial{
   font-size:clamp(2.6rem, 1.0rem + 5.4vw, 5.4rem) !important;
@@ -6464,7 +6478,7 @@ html,body{ overflow-x:clip !important; }
 @media (max-width:820px){ .hero__metric{ display:none !important; } }
 
 /* 8 · layout: headline never clips */
-.hero__inner--editorial{ width:min(1180px, calc(100% - 48px)) !important; margin-inline:auto !important; }
+.hero__inner--editorial{ width:min(1420px, calc(100% - 40px)) !important; margin-inline:auto !important; }
 .hero__copy--editorial{ max-width:42rem !important; margin-left:0 !important; padding-left:0.06em !important; }
 .hero__title--editorial{ font-size:clamp(2.5rem,1.0rem+5vw,5rem) !important; line-height:1.0 !important; letter-spacing:-0.028em !important; overflow:visible !important; }
 
@@ -7632,6 +7646,16 @@ body::before{
   transition: opacity 0.5s var(--ease-out),
               transform 0.78s var(--ease-spring);
 }
+/* Variant shorthands reset transition-delay, so restore the entry cadence.
+   The later .rv-stagger rule still takes precedence for grouped cards. */
+.reveal.rv-up.is-visible,
+.reveal.rv-up-lg.is-visible,
+.reveal.rv-scale.is-visible,
+.reveal.rv-left.is-visible,
+.reveal.rv-right.is-visible,
+.reveal.rv-bounce.is-visible {
+  transition-delay: var(--reveal-enter-delay, 0ms);
+}
 
 /* ============================================================================
    SECTION TITLE — clip / mask reveal
@@ -7645,11 +7669,12 @@ body::before{
   opacity: 1;                         /* the wipe does the reveal, not opacity */
   transform: none;
   clip-path: inset(0 0 110% 0);       /* fully clipped from the bottom up */
-  will-change: clip-path;
+  transition: clip-path 0.85s var(--ease-out);
+  transition-delay: 0ms;
 }
 .reveal.rv-mask.is-visible {
   clip-path: inset(0 0 -10% 0);       /* slight overscan so descenders aren't cut */
-  transition: clip-path 0.85s var(--ease-out);
+  transition-delay: var(--reveal-enter-delay, 0ms);
 }
 
 /* ============================================================================
@@ -14324,14 +14349,14 @@ html.media-player-open{ overflow:hidden; }
 .js .scene-enter{
   opacity:0;
   transform:translate3d(0,18px,0);
-  will-change:opacity,transform;
+  transition:
+    opacity .58s var(--ease-out),
+    transform .66s var(--ease-out);
+  transition-delay:0ms;
 }
 .js .scene-enter.is-scene-visible{
   opacity:1;
   transform:none;
-  transition:
-    opacity .58s var(--ease-out),
-    transform .66s var(--ease-out);
   transition-delay:calc(min(var(--scene-i,0),5) * 55ms);
 }
 .js .showreel__item.scene-enter{
