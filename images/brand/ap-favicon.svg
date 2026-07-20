@@ -1,0 +1,6 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AP favicon">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#191b20"/><stop offset="1" stop-color="#090b0f"/></linearGradient><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5e2b8"/><stop offset=".5" stop-color="#f1c45a"/><stop offset="1" stop-color="#ad7922"/></linearGradient></defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#bg)"/><rect x="3.5" y="3.5" width="57" height="57" rx="13.5" fill="none" stroke="#d8a73e" stroke-width="1.5"/>
+  <path d="M11 45L19 17H25L33 45H27L25.5 38H18.5L17 45ZM20 32.5H24L22 23Z" fill="#f7f3e9"/>
+  <path d="M31 17H40C47 17 51 21 51 27C51 34 47 38 40 38H37V45H31ZM37 22V33H39.5C43 33 45 31 45 27.5C45 24 43 22 39.5 22Z" fill="url(#g)"/>
+</svg>

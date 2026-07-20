@@ -1,0 +1,20 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AP code-tag monogram logo">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1b1c20"/><stop offset=".55" stop-color="#101216"/><stop offset="1" stop-color="#090b0f"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5e2b8"/><stop offset=".46" stop-color="#f1c45a"/><stop offset="1" stop-color="#b77f25"/></linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f5e2b8"/><stop offset=".52" stop-color="#d8a73e"/><stop offset="1" stop-color="#8a6418"/></linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".38" r=".65"><stop stop-color="#f1c45a" stop-opacity=".24"/><stop offset=".58" stop-color="#d8a73e" stop-opacity=".07"/><stop offset="1" stop-color="#d8a73e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".13"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect x="14" y="14" width="172" height="172" rx="46" fill="url(#glow)"/>
+  <rect x="22" y="22" width="156" height="156" rx="38" fill="url(#base)"/>
+  <rect x="22" y="22" width="156" height="156" rx="38" fill="url(#glow)"/>
+  <rect x="22" y="22" width="156" height="156" rx="38" fill="url(#sheen)"/>
+  <rect x="23.5" y="23.5" width="153" height="153" rx="36.5" fill="none" stroke="url(#rim)" stroke-width="3"/>
+  <rect x="26" y="26" width="148" height="148" rx="34" fill="none" stroke="#fff4d6" stroke-opacity=".16" stroke-width="1"/>
+  <g fill="none" stroke="url(#gold)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M46 67L30 100L46 133"/><path d="M160 67L176 100L160 133"/>
+  </g>
+  <path d="M56 140L75 58H90L109 140H95L91 119H74L70 140ZM78 104H88L83 80Z" fill="#f7f3e9"/>
+  <path d="M112 58H129C143 58 150 68 150 83C150 98 142 108 128 108H125V140H112ZM125 72V95H128C134 95 137 91 137 83C137 76 134 72 128 72Z" fill="url(#gold)"/>
+</svg>

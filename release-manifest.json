@@ -1,0 +1,469 @@
+{
+  "generatedAt": "2026-07-20T15:28:26.235Z",
+  "files": 91,
+  "bytes": 18854605,
+  "excludedRoots": [
+    "public/_proof",
+    "public/madquick-ref",
+    "public/_archive_elementor_homepage",
+    "backups",
+    "perf-reports"
+  ],
+  "assets": [
+    {
+      "file": ".htaccess",
+      "bytes": 939,
+      "sha256": "158ab28fbcbb8f48bf96ef12db6b9580841c71291fc1487693efd4903bfb5996"
+    },
+    {
+      "file": "404.html",
+      "bytes": 1340,
+      "sha256": "37001745d3d0814c3cc9a8be5a424e50124ffa3f99228c701e675eee7ada986a"
+    },
+    {
+      "file": "CNAME",
+      "bytes": 15,
+      "sha256": "74ac851ffee23990041c5db9d6fe154693d6e333633e7a0fd0901d5925972a87"
+    },
+    {
+      "file": "_headers",
+      "bytes": 654,
+      "sha256": "31b77221fdea9981d57afbfd1652666f17d1d7b85565f9125ab6aca0238baf96"
+    },
+    {
+      "file": "_redirects",
+      "bytes": 86,
+      "sha256": "1869053fe7d6a7932f84d635b1bc37f1baf6c3c901f5ff1cdd96ca0472755ae9"
+    },
+    {
+      "file": "abhijit-pramanik-resume.pdf",
+      "bytes": 75714,
+      "sha256": "55f6aa7c92167961d6a64f52c29cf030d4ec51fd65072017cede88d68e8d5443"
+    },
+    {
+      "file": "images/abhijit-about-v2-480.webp",
+      "bytes": 45604,
+      "sha256": "b11e5096d6363b7b92793d2fba82fec998c82f8ea33ec5fb01e7bfe0576cad92"
+    },
+    {
+      "file": "images/abhijit-about-v2-720.webp",
+      "bytes": 95376,
+      "sha256": "2bd0f07b39bb21242cb1f0298c05d7e75c692a1949e8df8b7d21cc24021eae18"
+    },
+    {
+      "file": "images/abhijit-hero-v7-320.webp",
+      "bytes": 25306,
+      "sha256": "543353a8be2d71fb1a0a86b12b329fc262830ab8d4b875ee36111dae3b35178a"
+    },
+    {
+      "file": "images/abhijit-hero-v7-480.webp",
+      "bytes": 50794,
+      "sha256": "6acf8f81ffb38dc6e07546e41b6d4c0b5b8cb71eeaa0ad3867b55b99951dda96"
+    },
+    {
+      "file": "images/abhijit-hero-v7-640.webp",
+      "bytes": 72306,
+      "sha256": "ce937f96d868cc6cfd4c62228b46598f37c6c6bd2253b385fb70c41c3e2251a7"
+    },
+    {
+      "file": "images/abhijit-hero-v7.png",
+      "bytes": 908884,
+      "sha256": "f7fb986ae4c2d6a555017663c26d43d0f7d03774e7e705fc27baeca592ca6645"
+    },
+    {
+      "file": "images/abhijit-hero-v7.webp",
+      "bytes": 109916,
+      "sha256": "864c37b731f40de94933f5256fc22b43883e82ac7959acb38e0ee9ee9c8d15f9"
+    },
+    {
+      "file": "images/abhijit-macbook-360.webp",
+      "bytes": 18722,
+      "sha256": "0dea22ae3b899cc25827f09acbab4650de917450501e8bd575d860233b2f9309"
+    },
+    {
+      "file": "images/abhijit-macbook-480.webp",
+      "bytes": 32376,
+      "sha256": "5be9480ceca484096c7914a97a3be0e736ac6fa5e2a5d1a86bb1186293080246"
+    },
+    {
+      "file": "images/abhijit-macbook-640.webp",
+      "bytes": 48276,
+      "sha256": "e2084cb2cfd505319b1efa29944ba9e2d65fc6601c64cd442d4e717c2e1bd27d"
+    },
+    {
+      "file": "images/abhijit-macbook.png",
+      "bytes": 1021443,
+      "sha256": "a478db2e8d23c83f7ff80389f4c5761ff3530edbb1bc6cfc10f4baf10a66b53f"
+    },
+    {
+      "file": "images/abhijit-macbook.webp",
+      "bytes": 124006,
+      "sha256": "93b85a035cd4f97481476e1015478ca0a3b9efff1f03136f93c06098fa6174d1"
+    },
+    {
+      "file": "images/abhijit-portfolio-share.jpg",
+      "bytes": 81666,
+      "sha256": "f048631e1ea8954c75f2474418211e680faebe4abed3855f1fda480fdb89b2a8"
+    },
+    {
+      "file": "images/abhijit-signature-360.webp",
+      "bytes": 12286,
+      "sha256": "741f5878d93d8704f10a5187845a057795737f4ac6e76b6820e1b2d2e1d9a5f4"
+    },
+    {
+      "file": "images/abhijit-signature-600.webp",
+      "bytes": 20398,
+      "sha256": "a59f4efc4e84f558548494f7da1b8bd99b4ab7af060f445b1c763af2b0c4fed3"
+    },
+    {
+      "file": "images/bongbari-proof-full.jpg",
+      "bytes": 61410,
+      "sha256": "be1a6f9c3b6f04133736d732503e5320d75853e1837035e96579d91172537c41"
+    },
+    {
+      "file": "images/bongbari-proof.jpg",
+      "bytes": 41120,
+      "sha256": "17f0bf4359e582b9bc14c5a09598b3576de10c07192e52e6c00474a4eaf7c767"
+    },
+    {
+      "file": "images/brand/ap-favicon.svg",
+      "bytes": 835,
+      "sha256": "8c2fcede8a37323021ba42e4909f5e699a4396e1325418696a3b83e51602f8af"
+    },
+    {
+      "file": "images/brand/ap-logo-primary.svg",
+      "bytes": 2071,
+      "sha256": "4bf1cb028778795fc0a6babffb6602d07c2527d3464e5390a54a2cd3c2d77891"
+    },
+    {
+      "file": "images/brand/kriti-avatar.png",
+      "bytes": 114803,
+      "sha256": "0f147300cbce2448fb3edbd82c86121f1854fe54dc4ddc28e8d37c28303d9198"
+    },
+    {
+      "file": "images/company-logos/balihans.png",
+      "bytes": 1881,
+      "sha256": "fae1aaf0d447b34d4a81ffb33432871d398ee9db56d8414c9ddbc3ba5c4f21fe"
+    },
+    {
+      "file": "images/company-logos/betterzila.png",
+      "bytes": 11074,
+      "sha256": "f732d53900e2806e38c0f699e39615bb87180052b05b5b201920e6669f410ed1"
+    },
+    {
+      "file": "images/company-logos/byjus.svg",
+      "bytes": 32720,
+      "sha256": "794d71eb162d4f16e98e11fb43d02fd8736728c8c09e0656b077fccb7f4d7319"
+    },
+    {
+      "file": "images/company-logos/google.png",
+      "bytes": 3831,
+      "sha256": "fd4d9d732e7a4af52746ebabe6bb16941ee71ae3e919131af700cf4e1228a16a"
+    },
+    {
+      "file": "images/company-logos/greenverz.webp",
+      "bytes": 7968,
+      "sha256": "281d4372ac28d1b9e92516559bd0aa9165d15a64ad898c1110fdcff9f7703516"
+    },
+    {
+      "file": "images/company-logos/ideoholics.svg",
+      "bytes": 14346,
+      "sha256": "b8d9309f29a2537140f78cd62103708fe0683229efb40061a14cbee45be46a85"
+    },
+    {
+      "file": "images/company-logos/iimi.webp",
+      "bytes": 5370,
+      "sha256": "ee4b947b2da11c48e290480ba6d6807266f79946e49a450029e0f607ea60b43b"
+    },
+    {
+      "file": "images/company-logos/indika-ai.png",
+      "bytes": 2277,
+      "sha256": "531865f2c978079cf6be5d0a33198d78f37e01493e56683e3d67e33709074555"
+    },
+    {
+      "file": "images/company-logos/kaboodle.svg",
+      "bytes": 4686,
+      "sha256": "bc73a84a0809a4a2476898037cac6f24e6a8ac08f7a4108d3c234efcc7c857e5"
+    },
+    {
+      "file": "images/company-logos/kodeclamp.png",
+      "bytes": 6144,
+      "sha256": "1249f213609e592a7b27b3978e5ccb1d928ef34fdc6cc1f50c0b6ee003acb16c"
+    },
+    {
+      "file": "images/company-logos/madquick-clean.webp",
+      "bytes": 15782,
+      "sha256": "7bf9cc6d9d8026ab221c0172268a58e442892fb0b5ac5d60e16a39a01858e5ef"
+    },
+    {
+      "file": "images/company-logos/marpu.webp",
+      "bytes": 8220,
+      "sha256": "9e9de76520b98a14b53e87a34727e0e94a730d848a8e9617a8289027382cdb7e"
+    },
+    {
+      "file": "images/company-logos/otakukart.webp",
+      "bytes": 11518,
+      "sha256": "9a7d9c109b83fe898421f8ea9c4d034b96721f89b5d2e84370593613ecc78b5c"
+    },
+    {
+      "file": "images/company-logos/pregamate.webp",
+      "bytes": 8796,
+      "sha256": "2ecab56b864721ce05b7bb453fb6fddaa3d0f314bc7e8e252dff74dfb5d07a05"
+    },
+    {
+      "file": "images/company-logos/pursueit.webp",
+      "bytes": 2668,
+      "sha256": "90e1cd8613075ce9209ebdb4dbfc54060bf8eb02884975ef347ecc6aa28fe357"
+    },
+    {
+      "file": "images/company-logos/rabins-photography.webp",
+      "bytes": 11228,
+      "sha256": "4641e1b46af752b657325e76d569101b68e266b1b5f3bd834da4ddbe4fa7f545"
+    },
+    {
+      "file": "images/company-logos/revenue-rushy.webp",
+      "bytes": 21400,
+      "sha256": "1d7a99ba0e44633a5e0dcb5f45f1fac5715fbe3f8ce0967ed4f6d26e1fd1ccc5"
+    },
+    {
+      "file": "images/company-logos/rude-labs.png",
+      "bytes": 4841,
+      "sha256": "2964437e6022d57f6ee89e80d3a3c7dea86ca22dbc69b6e8f334834076466112"
+    },
+    {
+      "file": "images/company-logos/x1racing.svg",
+      "bytes": 8782,
+      "sha256": "5d5abaf15c2cf24d02fe75d537c45479c4819cd8b0fbda5fbf206fc29c943a72"
+    },
+    {
+      "file": "images/company-logos/ymedia.webp",
+      "bytes": 4712,
+      "sha256": "f58de5884579686a215ab4734a60cbe56fceeb6d8a157b06343f4fa8c73f26ad"
+    },
+    {
+      "file": "images/company-logos/zestmoney.png",
+      "bytes": 1326,
+      "sha256": "d1981882980ebbf93f587cbfdae377e1b7895b0f547737720e4805696b1a3092"
+    },
+    {
+      "file": "images/evidence/bongbari-insights-589.webp",
+      "bytes": 14320,
+      "sha256": "7f762ff51b29dde6af43e60d3f8b600d2caf8cdfa28847a81ef811a1b2c45a5d"
+    },
+    {
+      "file": "images/hero-glow-720.webp",
+      "bytes": 104758,
+      "sha256": "4ff7479770d74016f46f87fef881f1ae9d33c06461eb66a5e2a8abc9bcbca1c9"
+    },
+    {
+      "file": "images/skl-bg-ai-720.webp",
+      "bytes": 3442,
+      "sha256": "495f9dcda3592d7d644201bc85a201ad73260404f4f8c5eac071046c624c25f6"
+    },
+    {
+      "file": "images/skl-bg-analytics-720.webp",
+      "bytes": 3382,
+      "sha256": "f8cc890f48855cbf3b2a3de2871a455da694de15afec14fae02501cf06bdea27"
+    },
+    {
+      "file": "images/skl-bg-canva-720.webp",
+      "bytes": 3522,
+      "sha256": "7895d8c8fb3a53e80627cdf4d6655628b148b402f0585116931a013c6123f2d0"
+    },
+    {
+      "file": "images/skl-bg-content-720.webp",
+      "bytes": 3154,
+      "sha256": "fbed666b214916a14ae4a4c3b56cefcca20d50e580208e92bef6e03c3e7ba44e"
+    },
+    {
+      "file": "images/skl-bg-content-marketing-720.webp",
+      "bytes": 3230,
+      "sha256": "e92e39f22e4a5401cda70b68a4ec6d306fca7d3394e256f22f9be16b42d8695b"
+    },
+    {
+      "file": "images/skl-bg-seo-720.webp",
+      "bytes": 3286,
+      "sha256": "b9bbc81d2142b0060f9f346baa3aded102655bbf86f16031d5409755d0c4eef7"
+    },
+    {
+      "file": "images/skl-bg-social-720.webp",
+      "bytes": 3270,
+      "sha256": "03279d7fcf472a40f3550ac9a40196f8fa0429a29f5e2df734c5c218c38c7180"
+    },
+    {
+      "file": "images/skl-bg-video-720.webp",
+      "bytes": 3130,
+      "sha256": "56991810ccaff1368dbb6af10cb8dc658f2bf44155e6a660623de98d83deec06"
+    },
+    {
+      "file": "images/skl-bg-wordpress-720.webp",
+      "bytes": 3452,
+      "sha256": "e578bbc41fc08c2840ba6413e7d66d46839019dd375bed770eab1734a08cee25"
+    },
+    {
+      "file": "images/video-showcase/abhijit-video-portrait.webp",
+      "bytes": 51164,
+      "sha256": "3a53fdcbc915dff77badf9968a3ca0b782132b8f145b4a99c1fdf07594cb1b18"
+    },
+    {
+      "file": "images/video-showcase/landscape-01-poster.webp",
+      "bytes": 21920,
+      "sha256": "d5016443bb2af6992242046a5ea8ff25c048c1f6a03d4e5fadaa69d8dc417884"
+    },
+    {
+      "file": "images/video-showcase/landscape-02-poster.webp",
+      "bytes": 38878,
+      "sha256": "a275b5c91fd1ff2b531aef62a60eb0389a0253f3e5dcc9b1b3e87faa8fe0e01e"
+    },
+    {
+      "file": "images/video-showcase/reel-01-poster.webp",
+      "bytes": 39292,
+      "sha256": "da72346568b706ac115aca796781a55326a2f74a9159e91ff6d05d8d63d447bb"
+    },
+    {
+      "file": "images/video-showcase/reel-02-poster.webp",
+      "bytes": 19312,
+      "sha256": "fd534616b80db60d5d61a4106c0a86e77d6309d2afb3496179eb305f7ac93a10"
+    },
+    {
+      "file": "images/video-showcase/reel-03-poster.webp",
+      "bytes": 34320,
+      "sha256": "abf116920dc199b486c22b8447affc41b65a1ac3bc6447be3741b493060015a1"
+    },
+    {
+      "file": "images/video-showcase/reel-04-poster.webp",
+      "bytes": 84348,
+      "sha256": "59496b6911f8c2c710bd1e98407bfee6db2e6a2e3e0f580fed150332a44e11f8"
+    },
+    {
+      "file": "images/work-app-balihans.webp",
+      "bytes": 66750,
+      "sha256": "5402f8b2d59248e620b315f44ab98ad60d3db115412c6a548c12d2b09f73fe06"
+    },
+    {
+      "file": "images/work-seo-strategy.png",
+      "bytes": 38623,
+      "sha256": "500a7a5a211a2e2304a75a24dfc96582b4c36ab45bb3dd949e0d3e78fb0822d0"
+    },
+    {
+      "file": "images/work-social-brand.webp",
+      "bytes": 63616,
+      "sha256": "0d5b42d82c58b844b8717646175579c4a7a244ab1b2960b212b5d398ecab6c54"
+    },
+    {
+      "file": "images/work-social-calendar.webp",
+      "bytes": 75122,
+      "sha256": "613fbb3cb3adae013a8d3c78debc4a684d79105f6b18b41764e939c91b46434f"
+    },
+    {
+      "file": "images/work-social-influencer.webp",
+      "bytes": 47038,
+      "sha256": "a649899f3e5b6466f9458c9a39eaed41e265ed74291d9e8c9734e9cad94f1f6b"
+    },
+    {
+      "file": "images/work-wordpress-blogs.png",
+      "bytes": 27882,
+      "sha256": "16da94dc64c1ab87736be4a62d143af425873a2c66b7c19409fac2e06fe766b0"
+    },
+    {
+      "file": "index.html",
+      "bytes": 157670,
+      "sha256": "30a63596e23e0e4cceb4949f866b961a7ca6cba8e121736c6d322def6e70f89b"
+    },
+    {
+      "file": "privacy.html",
+      "bytes": 4827,
+      "sha256": "b302855a38b1c3f695bcf7588a1815afacee56999d9fe8fdd72a50b314f31a31"
+    },
+    {
+      "file": "robots.txt",
+      "bytes": 67,
+      "sha256": "441cf5b6e86552df93f53cecc400702c40fd9a954b4dab69a6894b2b2ba14d55"
+    },
+    {
+      "file": "sitemap.xml",
+      "bytes": 431,
+      "sha256": "80aee436afcdfd47fea49679f0f56f52bc56c6c19c90fa042725ef1030f319b1"
+    },
+    {
+      "file": "v3/app.min.js",
+      "bytes": 38135,
+      "sha256": "244f6110a17847879e44f07f97feded28896d102091ef49d9ce10f33f7d58f12"
+    },
+    {
+      "file": "v3/chat.css",
+      "bytes": 10990,
+      "sha256": "df58884ed56688d0d63809fa37e0671ba35d5e85a752321fe9eea89822734ebd"
+    },
+    {
+      "file": "v3/chat.js",
+      "bytes": 6442,
+      "sha256": "a3a83fddf20ca754669a721360ad0ff0c46b1d79030c3102bf33bc1eef559f68"
+    },
+    {
+      "file": "v3/fonts/fraunces-latin-italic-used.woff2",
+      "bytes": 56052,
+      "sha256": "7737d2dbcb8cd1c1448c616c1b3c027df3ec46a5ecd6926167964772635c779f"
+    },
+    {
+      "file": "v3/fonts/fraunces-latin-normal-used.woff2",
+      "bytes": 44548,
+      "sha256": "cb87d477a2192c116e835f87a24cb8e1c69f2f2fa99d4b22962ae352771a426a"
+    },
+    {
+      "file": "v3/mobile-app.min.js",
+      "bytes": 46841,
+      "sha256": "9eae9e0ad6e43cc0c555b66a9b521aa52045dc4b4889633ff6dd02f805fe8ec2"
+    },
+    {
+      "file": "v3/mobile.min.css",
+      "bytes": 288696,
+      "sha256": "40d10064f3992c4ac70e660176c2bf51eab4921ad8f215a1c8e7260446a9f974"
+    },
+    {
+      "file": "v3/styles.min.css",
+      "bytes": 242614,
+      "sha256": "186d9a2673d5bbc6b4e86545c4081c3c417dc9cb634bb99c6937c27d765dac20"
+    },
+    {
+      "file": "v3/webgpu-atmosphere.min.js",
+      "bytes": 7542,
+      "sha256": "b8c1e30866bb2a1f72735596e4558a1420401e7317f86944c666ce31b1a59b37"
+    },
+    {
+      "file": "v3/webgpu-cta.min.js",
+      "bytes": 4739,
+      "sha256": "3ab81aff10d61331a6df6027e4b02b076de5dd2b0e22bea11da8c0e68e60e926"
+    },
+    {
+      "file": "videos/video-showcase/landscape-01.mp4",
+      "bytes": 1163179,
+      "sha256": "7ce1e58fdf0296477d6d5b0f61f2d0714cac4cb6d8bc35e7052b9929fc97eddc"
+    },
+    {
+      "file": "videos/video-showcase/landscape-02.mp4",
+      "bytes": 2079410,
+      "sha256": "d074b5482c2a15bb1029feaf9de5a1508ab5960796ae4be87f144daf311f35c6"
+    },
+    {
+      "file": "videos/video-showcase/reel-01.mp4",
+      "bytes": 2062156,
+      "sha256": "4cb809bcf596021c8eac3817b791ca7f90d3770aa9be36505fcbd4fe882a5467"
+    },
+    {
+      "file": "videos/video-showcase/reel-02.mp4",
+      "bytes": 1664183,
+      "sha256": "2de435914b69e688d894d432d3026e92e4f08971dbb5413df27f9c7a6e4a1a82"
+    },
+    {
+      "file": "videos/video-showcase/reel-03.mp4",
+      "bytes": 1569321,
+      "sha256": "081528f3a6d5f00d9964e643e8c49d62760b8ececf91c9192fecc587b9674577"
+    },
+    {
+      "file": "videos/video-showcase/reel-04.mp4",
+      "bytes": 5493635,
+      "sha256": "95ccb0cd4ce5296855043381fe8663a4d5967dfa9860362a087bfc36e43b8086"
+    }
+  ]
+}
